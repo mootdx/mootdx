@@ -4,4 +4,6 @@ Usage
 
 To use cardbin in a project::
 
-    import cardbin
+    from cardbin import cardbin
+
+    cardbin('')
