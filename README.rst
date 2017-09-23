@@ -1,5 +1,5 @@
 =======
-cardbin
+CardBin
 =======
 
 
@@ -18,14 +18,14 @@ cardbin
      :alt: Updates
 
 
-bank card check
+银行卡号验证库
 
 
-* Free software: MIT license
-* Documentation: https://cardbin.readthedocs.io.
+* 开源协议: MIT license
+* 在线文档: https://cardbin.readthedocs.io.
 
 
-Features
+功能
 --------
 
 * TODO
@@ -33,8 +33,4 @@ Features
 Credits
 ---------
 
-This package was created with Cookiecutter_ and the `audreyr/cookiecutter-pypackage`_ project template.
-
-.. _Cookiecutter: https://github.com/audreyr/cookiecutter
-.. _`audreyr/cookiecutter-pypackage`: https://github.com/audreyr/cookiecutter-pypackage
 
