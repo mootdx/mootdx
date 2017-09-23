@@ -1,1 +1,1 @@
-python-stdnum
+python-stdnum==1.7

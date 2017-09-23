@@ -3,8 +3,12 @@
 
 """The setup script."""
 
-from setuptools import setup, find_packages
-import cardbin
+try:
+    from setuptools import setup, find_packages
+except ImportError:
+    from distutils.core import setup, find_packages
+
+from cardbin import __version__
 
 with open('README.rst') as readme_file:
     readme = readme_file.read()
@@ -26,13 +30,13 @@ test_requirements = [
 
 setup(
     name='cardbin',
-    version=cardbin.__version__,
-    description="bank card check lib",
+    version=__version__,
+    description="bankcard valid",
     long_description=readme + '\n\n' + history,
-    author="cardbin",
+    author="bopo.wang",
     author_email='ibopo@126.com',
     url='https://github.com/bopo/cardbin',
-    packages=find_packages(include=['cardbin']),
+    packages=find_packages(include=['cardbin','cardbin.*']),
     include_package_data=True,
     install_requires=requirements,
     license="MIT license",
