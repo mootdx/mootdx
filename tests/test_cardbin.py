@@ -1,10 +1,6 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-"""Tests for `cardbin` package."""
-
-from cardbin import cardbin
+from cardbin.cardbin import valid
 
 def test_content():
-	print(cardbin('6228480402564890018'))
-	# assert type(cardbin('6228480402564890018')) == dict
+	assert valid('6228480402564890018') == dict({'bank': '农业银行', 'type': '金穗通宝卡(银联卡)'})

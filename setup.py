@@ -4,6 +4,7 @@
 """The setup script."""
 
 from setuptools import setup, find_packages
+import cardbin
 
 with open('README.rst') as readme_file:
     readme = readme_file.read()
@@ -25,7 +26,7 @@ test_requirements = [
 
 setup(
     name='cardbin',
-    version='0.1.0',
+    version=cardbin.__version__,
     description="bank card check lib",
     long_description=readme + '\n\n' + history,
     author="cardbin",
