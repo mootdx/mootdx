@@ -1,5 +1,5 @@
 =======
-CardBin
+银行卡号验证库
 =======
 
 
@@ -17,8 +17,6 @@ CardBin
      :target: https://pyup.io/repos/github/bopo/cardbin/
      :alt: Updates
 
-
-银行卡号验证库
 
 
 * 开源协议: MIT license
