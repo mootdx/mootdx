@@ -1,32 +1,32 @@
 =======
-银行卡号验证库
+MooTdx 通达信文件转换
 =======
 
 
-.. image:: https://img.shields.io/pypi/v/cardbin.svg
-        :target: https://pypi.python.org/pypi/cardbin
+.. image:: https://img.shields.io/pypi/v/mootdx.svg
+        :target: https://pypi.python.org/pypi/mootdx
 
-.. image:: https://img.shields.io/travis/bopo/cardbin.svg
-        :target: https://travis-ci.org/bopo/cardbin
+.. image:: https://img.shields.io/travis/bopo/mootdx.svg
+        :target: https://travis-ci.org/bopo/mootdx
 
-.. image:: https://readthedocs.org/projects/cardbin/badge/?version=latest
-        :target: https://cardbin.readthedocs.io/en/latest/?badge=latest
+.. image:: https://readthedocs.org/projects/mootdx/badge/?version=latest
+        :target: https://mootdx.readthedocs.io/en/latest/?badge=latest
         :alt: Documentation Status
 
-.. image:: https://pyup.io/repos/github/bopo/cardbin/shield.svg
-     :target: https://pyup.io/repos/github/bopo/cardbin/
+.. image:: https://pyup.io/repos/github/bopo/mootdx/shield.svg
+     :target: https://pyup.io/repos/github/bopo/mootdx/
      :alt: Updates
 
 
 
 * 开源协议: MIT license
-* 在线文档: https://cardbin.readthedocs.io.
+* 在线文档: https://mootdx.readthedocs.io.
 
 
 功能
 --------
 
-* 检查一个银行卡号是哪个银行，什么卡
+* 通达信文件转换
 
 Credits
 ---------
