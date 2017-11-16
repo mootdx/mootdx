@@ -1,1 +1,2 @@
-python-stdnum==1.7
+pytdx
+click

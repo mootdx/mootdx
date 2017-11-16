@@ -8,7 +8,7 @@ try:
 except ImportError:
     from distutils.core import setup, find_packages
 
-from cardbin import __version__
+from mootdx import __version__
 
 with open('README.rst') as readme_file:
     readme = readme_file.read()
@@ -16,32 +16,29 @@ with open('README.rst') as readme_file:
 with open('HISTORY.rst') as history_file:
     history = history_file.read()
 
-requirements = [
-    'python-stdnum'
-]
-
-setup_requirements = [
-    'pytest-runner',
-]
-
-test_requirements = [
-    'pytest',
-]
+requirements = ['pytdx', 'click',]
+test_requirements = ['pytdx', 'click', 'pytest',]
+setup_requirements = ['pytdx', 'click', 'pytest-runner',]
 
 setup(
-    name='cardbin',
+    name='mootdx',
     version=__version__,
-    description="bankcard valid",
+    description="tdx reader",
     long_description=readme + '\n\n' + history,
     author="bopo.wang",
     author_email='ibopo@126.com',
-    url='https://github.com/bopo/cardbin',
-    packages=find_packages(include=['cardbin','cardbin.*']),
+    url='https://github.com/bopo/mootdx',
+    packages=find_packages(include=['mootdx','mootdx.*']),
     include_package_data=True,
     install_requires=requirements,
     license="MIT license",
     zip_safe=False,
-    keywords='cardbin',
+    keywords='mootdx',
+    entry_points={
+        'console_scripts': [
+            'mootdx = mootdx.cli:main',
+        ]
+    },
     classifiers=[
         'Development Status :: 2 - Pre-Alpha',
         'Intended Audience :: Developers',
