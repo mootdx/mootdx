@@ -1,4 +1,4 @@
-Welcome to cardbin's documentation!
+Welcome to mootdx's documentation!
 ======================================
 
 Contents:

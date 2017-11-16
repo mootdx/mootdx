@@ -8,13 +8,13 @@ Installation
 Stable release
 --------------
 
-To install cardbin, run this command in your terminal:
+To install mootdx, run this command in your terminal:
 
 .. code-block:: console
 
-    $ pip install cardbin
+    $ pip install mootdx
 
-This is the preferred method to install cardbin, as it will always install the most recent stable release. 
+This is the preferred method to install mootdx, as it will always install the most recent stable release. 
 
 If you don't have `pip`_ installed, this `Python installation guide`_ can guide
 you through the process.
@@ -26,19 +26,19 @@ you through the process.
 From sources
 ------------
 
-The sources for cardbin can be downloaded from the `Github repo`_.
+The sources for mootdx can be downloaded from the `Github repo`_.
 
 You can either clone the public repository:
 
 .. code-block:: console
 
-    $ git clone git://github.com/bopo/cardbin
+    $ git clone git://github.com/bopo/mootdx
 
 Or download the `tarball`_:
 
 .. code-block:: console
 
-    $ curl  -OL https://github.com/bopo/cardbin/tarball/master
+    $ curl  -OL https://github.com/bopo/mootdx/tarball/master
 
 Once you have a copy of the source, you can install it with:
 
@@ -47,5 +47,5 @@ Once you have a copy of the source, you can install it with:
     $ python setup.py install
 
 
-.. _Github repo: https://github.com/bopo/cardbin
-.. _tarball: https://github.com/bopo/cardbin/tarball/master
+.. _Github repo: https://github.com/bopo/mootdx
+.. _tarball: https://github.com/bopo/mootdx/tarball/master

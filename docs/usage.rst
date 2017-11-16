@@ -2,8 +2,8 @@
 Usage
 =====
 
-To use cardbin in a project::
+To use mootdx in a project::
 
-    from cardbin import cardbin
+    from mootdx import mootdx
 
-    cardbin('')
+    mootdx('')

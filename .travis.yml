@@ -25,5 +25,5 @@ deploy:
     secure: PLEASE_REPLACE_ME
   on:
     tags: true
-    repo: bopo/cardbin
+    repo: bopo/mootdx
     python: 2.7

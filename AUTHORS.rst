@@ -5,7 +5,7 @@ Credits
 Development Lead
 ----------------
 
-* cardbin <ibopo@126.com>
+* mootdx <ibopo@126.com>
 
 Contributors
 ------------
