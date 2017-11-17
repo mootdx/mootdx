@@ -32,8 +32,9 @@ from QUANTAXIS.QAUtil import (QA_util_date_stamp, QA_util_date_str2int,
                               QA_util_get_real_datelist, QA_util_log_info,
                               QA_util_time_stamp, QA_util_web_ping,
                               trade_date_sse)
-#from pypinyin import lazy_pinyin
+# from pypinyin import lazy_pinyin
 import tushare as ts
+
 
 # 基于Pytdx的数据接口,好处是可以在linux/mac上联入通达信行情
 # 具体参见rainx的pytdx(https://github.com/rainx/pytdx)
@@ -65,6 +66,7 @@ def select_best_ip():
 
 best_ip = select_best_ip()
 
+
 # return 1 if sh, 0 if sz
 
 
@@ -93,28 +95,28 @@ def QA_fetch_get_stock_day(code, start_date, end_date, if_fq='00', level='day', 
         data = pd.concat([api.to_df(api.get_security_bars(level, __select_market_code(
             code), code, (9 - i) * 800, 800)) for i in range(10)], axis=0)
         if if_fq in ['00', 'bfq']:
-            data = data.assign(date=data['datetime'].apply(lambda x: str(x[0:10]))).assign(code=str(code))\
-                .assign(date_stamp=data['datetime'].apply(lambda x: QA_util_date_stamp(str(x)[0:10])))\
-                .set_index('date', drop=False, inplace=False)\
-                .drop(['year', 'month', 'day', 'hour',
-                       'minute', 'datetime'], axis=1)[start_date:end_date]
+            data = data.assign(date=data['datetime'].apply(lambda x: str(x[0:10]))).assign(code=str(code)) \
+                       .assign(date_stamp=data['datetime'].apply(lambda x: QA_util_date_stamp(str(x)[0:10]))) \
+                       .set_index('date', drop=False, inplace=False) \
+                       .drop(['year', 'month', 'day', 'hour',
+                              'minute', 'datetime'], axis=1)[start_date:end_date]
             return data.assign(date=data['date'].apply(lambda x: str(x)[0:10]))
         elif if_fq in ['01', 'qfq']:
             xdxr_data = QA_fetch_get_stock_xdxr(code)
 
             info = xdxr_data[xdxr_data['category'] == 1]
 
-            bfq_data = data\
-                .assign(date=pd.to_datetime(data['datetime'].apply(lambda x: x[0:10])))\
-                .assign(code=str(code))\
-                .assign(date_stamp=data['datetime'].apply(lambda x: QA_util_date_stamp(str(x)[0:10])))\
-                .set_index('date', drop=False, inplace=False)\
+            bfq_data = data \
+                .assign(date=pd.to_datetime(data['datetime'].apply(lambda x: x[0:10]))) \
+                .assign(code=str(code)) \
+                .assign(date_stamp=data['datetime'].apply(lambda x: QA_util_date_stamp(str(x)[0:10]))) \
+                .set_index('date', drop=False, inplace=False) \
                 .drop(['year', 'month', 'day', 'hour',
                        'minute', 'datetime'], axis=1)
 
             bfq_data['if_trade'] = True
             data = pd.concat([bfq_data, info[['category']]
-                              [bfq_data.index[0]:]], axis=1)
+            [bfq_data.index[0]:]], axis=1)
 
             data['date'] = data.index
             data['if_trade'].fillna(value=False, inplace=True)
@@ -134,24 +136,25 @@ def QA_fetch_get_stock_day(code, start_date, end_date, if_fq='00', level='day', 
             data['preclose'] = data['preclose'] * data['adj']
 
             data = data[data['if_trade']]
-            return data.drop(['fenhong', 'peigu', 'peigujia', 'songzhuangu', 'if_trade', 'category'], axis=1)[data['open'] != 0].assign(date=data['date'].apply(lambda x: str(x)[0:10]))[start_date:end_date]
+            return data.drop(['fenhong', 'peigu', 'peigujia', 'songzhuangu', 'if_trade', 'category'], axis=1)[
+                       data['open'] != 0].assign(date=data['date'].apply(lambda x: str(x)[0:10]))[start_date:end_date]
 
         elif if_fq in ['03', 'ddqfq']:
             xdxr_data = QA_fetch_get_stock_xdxr(code)
 
             info = xdxr_data[xdxr_data['category'] == 1]
 
-            bfq_data = data\
-                .assign(date=pd.to_datetime(data['datetime'].apply(lambda x: x[0:10])))\
-                .assign(code=str(code))\
-                .assign(date_stamp=data['datetime'].apply(lambda x: QA_util_date_stamp(str(x)[0:10])))\
-                .set_index('date', drop=False, inplace=False)\
+            bfq_data = data \
+                .assign(date=pd.to_datetime(data['datetime'].apply(lambda x: x[0:10]))) \
+                .assign(code=str(code)) \
+                .assign(date_stamp=data['datetime'].apply(lambda x: QA_util_date_stamp(str(x)[0:10]))) \
+                .set_index('date', drop=False, inplace=False) \
                 .drop(['year', 'month', 'day', 'hour',
                        'minute', 'datetime'], axis=1)
 
             bfq_data['if_trade'] = True
             data = pd.concat([bfq_data, info[['category']]
-                              [bfq_data.index[0]:end_date]], axis=1)
+            [bfq_data.index[0]:end_date]], axis=1)
 
             data['date'] = data.index
             data['if_trade'].fillna(value=False, inplace=True)
@@ -171,24 +174,25 @@ def QA_fetch_get_stock_day(code, start_date, end_date, if_fq='00', level='day', 
             data['preclose'] = data['preclose'] * data['adj']
 
             data = data[data['if_trade']]
-            return data.drop(['fenhong', 'peigu', 'peigujia', 'songzhuangu', 'if_trade', 'category'], axis=1)[data['open'] != 0].assign(date=data['date'].apply(lambda x: str(x)[0:10]))[start_date:end_date]
+            return data.drop(['fenhong', 'peigu', 'peigujia', 'songzhuangu', 'if_trade', 'category'], axis=1)[
+                       data['open'] != 0].assign(date=data['date'].apply(lambda x: str(x)[0:10]))[start_date:end_date]
 
         elif if_fq in ['02', 'hfq']:
             xdxr_data = QA_fetch_get_stock_xdxr(code)
 
             info = xdxr_data[xdxr_data['category'] == 1]
 
-            bfq_data = data\
-                .assign(date=pd.to_datetime(data['datetime'].apply(lambda x: x[0:10])))\
-                .assign(code=str(code))\
-                .assign(date_stamp=data['datetime'].apply(lambda x: QA_util_date_stamp(str(x)[0:10])))\
-                .set_index('date', drop=False, inplace=False)\
+            bfq_data = data \
+                .assign(date=pd.to_datetime(data['datetime'].apply(lambda x: x[0:10]))) \
+                .assign(code=str(code)) \
+                .assign(date_stamp=data['datetime'].apply(lambda x: QA_util_date_stamp(str(x)[0:10]))) \
+                .set_index('date', drop=False, inplace=False) \
                 .drop(['year', 'month', 'day', 'hour',
                        'minute', 'datetime'], axis=1)
 
             bfq_data['if_trade'] = True
             data = pd.concat([bfq_data, info[['category']]
-                              [bfq_data.index[0]:]], axis=1)
+            [bfq_data.index[0]:]], axis=1)
 
             data['date'] = data.index
             data['if_trade'].fillna(value=False, inplace=True)
@@ -207,24 +211,25 @@ def QA_fetch_get_stock_day(code, start_date, end_date, if_fq='00', level='day', 
             data['close'] = data['close'] / data['adj']
             data['preclose'] = data['preclose'] / data['adj']
             data = data[data['if_trade']]
-            return data.drop(['fenhong', 'peigu', 'peigujia', 'songzhuangu', 'if_trade', 'category'], axis=1)[data['open'] != 0].assign(date=data['date'].apply(lambda x: str(x)[0:10]))[start_date:end_date]
+            return data.drop(['fenhong', 'peigu', 'peigujia', 'songzhuangu', 'if_trade', 'category'], axis=1)[
+                       data['open'] != 0].assign(date=data['date'].apply(lambda x: str(x)[0:10]))[start_date:end_date]
 
         elif if_fq in ['04', 'ddhfq']:
             xdxr_data = QA_fetch_get_stock_xdxr(code)
 
             info = xdxr_data[xdxr_data['category'] == 1]
 
-            bfq_data = data\
-                .assign(date=pd.to_datetime(data['datetime'].apply(lambda x: x[0:10])))\
-                .assign(code=str(code))\
-                .assign(date_stamp=data['datetime'].apply(lambda x: QA_util_date_stamp(str(x)[0:10])))\
-                .set_index('date', drop=False, inplace=False)\
+            bfq_data = data \
+                .assign(date=pd.to_datetime(data['datetime'].apply(lambda x: x[0:10]))) \
+                .assign(code=str(code)) \
+                .assign(date_stamp=data['datetime'].apply(lambda x: QA_util_date_stamp(str(x)[0:10]))) \
+                .set_index('date', drop=False, inplace=False) \
                 .drop(['year', 'month', 'day', 'hour',
                        'minute', 'datetime'], axis=1)
 
             bfq_data['if_trade'] = True
             data = pd.concat([bfq_data, info[['category']]
-                              [bfq_data.index[0]:end_date]], axis=1)
+            [bfq_data.index[0]:end_date]], axis=1)
 
             data['date'] = data.index
             data['if_trade'].fillna(value=False, inplace=True)
@@ -243,7 +248,8 @@ def QA_fetch_get_stock_day(code, start_date, end_date, if_fq='00', level='day', 
             data['close'] = data['close'] / data['adj']
             data['preclose'] = data['preclose'] / data['adj']
             data = data[data['if_trade']]
-            return data.drop(['fenhong', 'peigu', 'peigujia', 'songzhuangu', 'if_trade', 'category'], axis=1)[data['open'] != 0].assign(date=data['date'].apply(lambda x: str(x)[0:10]))[start_date:end_date]
+            return data.drop(['fenhong', 'peigu', 'peigujia', 'songzhuangu', 'if_trade', 'category'], axis=1)[
+                       data['open'] != 0].assign(date=data['date'].apply(lambda x: str(x)[0:10]))[start_date:end_date]
 
 
 def QA_fetch_get_stock_min(code, start, end, level='1min', ip=best_ip, port=7709):
@@ -264,13 +270,13 @@ def QA_fetch_get_stock_min(code, start, end, level='1min', ip=best_ip, port=7709
         data = pd.concat([api.to_df(api.get_security_bars(level, __select_market_code(
             str(code)), str(code), (25 - i) * 800, 800)) for i in range(26)], axis=0)
 
-        data = data\
-            .assign(datetime=pd.to_datetime(data['datetime']), code=str(code))\
-            .drop(['year', 'month', 'day', 'hour', 'minute'], axis=1, inplace=False)\
-            .assign(date=data['datetime'].apply(lambda x: str(x)[0:10]))\
-            .assign(date_stamp=data['datetime'].apply(lambda x: QA_util_date_stamp(x)))\
-            .assign(time_stamp=data['datetime'].apply(lambda x: QA_util_time_stamp(x)))\
-            .assign(type=type_).set_index('datetime', drop=False, inplace=False)[start:end]
+        data = data \
+                   .assign(datetime=pd.to_datetime(data['datetime']), code=str(code)) \
+                   .drop(['year', 'month', 'day', 'hour', 'minute'], axis=1, inplace=False) \
+                   .assign(date=data['datetime'].apply(lambda x: str(x)[0:10])) \
+                   .assign(date_stamp=data['datetime'].apply(lambda x: QA_util_date_stamp(x))) \
+                   .assign(time_stamp=data['datetime'].apply(lambda x: QA_util_time_stamp(x))) \
+                   .assign(type=type_).set_index('datetime', drop=False, inplace=False)[start:end]
         return data.assign(datetime=data['datetime'].apply(lambda x: str(x)))
 
 
@@ -280,11 +286,11 @@ def QA_fetch_get_stock_latest(code, ip=best_ip, port=7709):
     with api.connect(ip, port):
         data = pd.concat([api.to_df(api.get_security_bars(
             9, __select_market_code(item), item, 0, 1)).assign(code=item) for item in code], axis=0)
-        return data\
+        return data \
             .assign(date=pd.to_datetime(data['datetime']
                                         .apply(lambda x: x[0:10])), date_stamp=data['datetime']
-                    .apply(lambda x: QA_util_date_stamp(str(x[0:10]))))\
-            .set_index('date', drop=False)\
+                    .apply(lambda x: QA_util_date_stamp(str(x[0:10])))) \
+            .set_index('date', drop=False) \
             .drop(['year', 'month', 'day', 'hour', 'minute', 'datetime'], axis=1)
 
 
@@ -302,33 +308,43 @@ def QA_fetch_get_stock_realtime(code=['000001', '000002'], ip=best_ip, port=7709
 
 
 def QA_fetch_get_stock_list(type_='stock', ip=best_ip, port=7709):
-
     api = TdxHq_API()
     with api.connect(ip, port):
-        data = pd.concat([pd.concat([api.to_df(api.get_security_list(j, i * 1000)).assign(sse='sz' if j == 0 else 'sh').set_index(
-            ['code', 'sse'], drop=False) for i in range(int(api.get_security_count(j) / 1000) + 1)], axis=0) for j in range(2)], axis=0)
+        data = pd.concat(
+            [pd.concat([api.to_df(api.get_security_list(j, i * 1000)).assign(sse='sz' if j == 0 else 'sh').set_index(
+                ['code', 'sse'], drop=False) for i in range(int(api.get_security_count(j) / 1000) + 1)], axis=0) for j
+                in range(2)], axis=0)
         if type_ in ['stock', 'gp']:
-            return pd.concat([data[data['sse'] == 'sz'][data.assign(code=data['code'].apply(lambda x: int(x)))['code'] // 10000 <= 30][data.assign(code=data['code'].apply(lambda x: int(x)))['code'] // 100000 != 2],
-                              data[data['sse'] == 'sh'][data.assign(code=data['code'].apply(lambda x: int(x)))['code'] // 100000 == 6]]).assign(code=data['code'].apply(lambda x: str(x)))
-                #.assign(szm=data['name'].apply(lambda x: ''.join([y[0] for y in lazy_pinyin(x)])))\
-                #.assign(quanpin=data['name'].apply(lambda x: ''.join(lazy_pinyin(x))))
+            return pd.concat([data[data['sse'] == 'sz'][
+                                  data.assign(code=data['code'].apply(lambda x: int(x)))['code'] // 10000 <= 30][
+                                  data.assign(code=data['code'].apply(lambda x: int(x)))['code'] // 100000 != 2],
+                              data[data['sse'] == 'sh'][data.assign(code=data['code'].apply(lambda x: int(x)))[
+                                                            'code'] // 100000 == 6]]).assign(
+                code=data['code'].apply(lambda x: str(x)))
+            # .assign(szm=data['name'].apply(lambda x: ''.join([y[0] for y in lazy_pinyin(x)])))\
+            # .assign(quanpin=data['name'].apply(lambda x: ''.join(lazy_pinyin(x))))
         elif type_ in ['index', 'zs']:
 
-            return pd.concat([data[data['sse'] == 'sz'][data.assign(code=data['code'].apply(lambda x: int(x)))['code'] // 1000 >= 399],
-                              data[data['sse'] == 'sh'][data.assign(code=data['code'].apply(lambda x: int(x)))['code'] // 1000 == 0]]) \
-                .sort_index()\
+            return pd.concat([data[data['sse'] == 'sz'][
+                                  data.assign(code=data['code'].apply(lambda x: int(x)))['code'] // 1000 >= 399],
+                              data[data['sse'] == 'sh'][
+                                  data.assign(code=data['code'].apply(lambda x: int(x)))['code'] // 1000 == 0]]) \
+                .sort_index() \
                 .assign(code=data['code'].apply(lambda x: str(x)))
-                #.assign(szm=data['name'].apply(lambda x: ''.join([y[0] for y in lazy_pinyin(x)])))\
-                #.assign(quanpin=data['name'].apply(lambda x: ''.join(lazy_pinyin(x))))
+            # .assign(szm=data['name'].apply(lambda x: ''.join([y[0] for y in lazy_pinyin(x)])))\
+            # .assign(quanpin=data['name'].apply(lambda x: ''.join(lazy_pinyin(x))))
         elif type_ in ['etf', 'ETF']:
-            return pd.concat([data[data['sse'] == 'sz'][data.assign(code=data['code'].apply(lambda x: int(x)))['code'] // 10000 == 15],
-                              data[data['sse'] == 'sh'][data.assign(code=data['code'].apply(lambda x: int(x)))['code'] // 10000 == 51]]).sort_index().assign(code=data['code'].apply(lambda x: str(x)))\
-                #.assign(szm=data['name'].apply(lambda x: ''.join([y[0] for y in lazy_pinyin(x)])))\
-                #.assign(quanpin=data['name'].apply(lambda x: ''.join(lazy_pinyin(x))))
+            return pd.concat([data[data['sse'] == 'sz'][
+                                  data.assign(code=data['code'].apply(lambda x: int(x)))['code'] // 10000 == 15],
+                              data[data['sse'] == 'sh'][data.assign(code=data['code'].apply(lambda x: int(x)))[
+                                                            'code'] // 10000 == 51]]).sort_index().assign(
+                code=data['code'].apply(lambda x: str(x))) \
+                # .assign(szm=data['name'].apply(lambda x: ''.join([y[0] for y in lazy_pinyin(x)])))\
+            # .assign(quanpin=data['name'].apply(lambda x: ''.join(lazy_pinyin(x))))
 
         else:
             return data.assign(code=data['code'].apply(lambda x: str(x)))
-            #.assign(szm=data['name'].apply(lambda x: ''.join([y[0] for y in lazy_pinyin(x)])))\
+            # .assign(szm=data['name'].apply(lambda x: ''.join([y[0] for y in lazy_pinyin(x)])))\
             #    .assign(quanpin=data['name'].apply(lambda x: ''.join(lazy_pinyin(x))))
 
 
@@ -349,15 +365,17 @@ def QA_fetch_get_index_day(code, start_date, end_date, level='day', ip=best_ip, 
     with api.connect(ip, port):
         if str(code)[0] in ['5', '1']:  # ETF
             data = pd.concat([api.to_df(api.get_security_bars(
-                level, 1 if str(code)[0] in ['0', '8', '9', '5'] else 0, code, (25 - i) * 800, 800)) for i in range(26)], axis=0)
+                level, 1 if str(code)[0] in ['0', '8', '9', '5'] else 0, code, (25 - i) * 800, 800)) for i in
+                range(26)], axis=0)
         else:
             data = pd.concat([api.to_df(api.get_index_bars(
-                level, 1 if str(code)[0] in ['0', '8', '9', '5'] else 0, code, (25 - i) * 800, 800)) for i in range(26)], axis=0)
-        data = data.assign(date=data['datetime'].apply(lambda x: str(x[0:10]))).assign(code=str(code))\
-            .assign(date_stamp=data['datetime'].apply(lambda x: QA_util_date_stamp(str(x)[0:10])))\
-            .set_index('date', drop=False, inplace=False)\
-            .drop(['year', 'month', 'day', 'hour',
-                   'minute', 'datetime'], axis=1)[start_date:end_date]
+                level, 1 if str(code)[0] in ['0', '8', '9', '5'] else 0, code, (25 - i) * 800, 800)) for i in
+                range(26)], axis=0)
+        data = data.assign(date=data['datetime'].apply(lambda x: str(x[0:10]))).assign(code=str(code)) \
+                   .assign(date_stamp=data['datetime'].apply(lambda x: QA_util_date_stamp(str(x)[0:10]))) \
+                   .set_index('date', drop=False, inplace=False) \
+                   .drop(['year', 'month', 'day', 'hour',
+                          'minute', 'datetime'], axis=1)[start_date:end_date]
         return data.assign(date=data['date'].apply(lambda x: str(x)[0:10]))
 
 
@@ -378,31 +396,36 @@ def QA_fetch_get_index_min(code, start, end, level='1min', ip=best_ip, port=7709
     with api.connect(ip, port):
         if str(code)[0] in ['5', '1']:  # ETF
             data = pd.concat([api.to_df(api.get_security_bars(
-                level, 1 if str(code)[0] in ['0', '8', '9', '5'] else 0, code, (25 - i) * 800, 800)) for i in range(26)], axis=0)
+                level, 1 if str(code)[0] in ['0', '8', '9', '5'] else 0, code, (25 - i) * 800, 800)) for i in
+                range(26)], axis=0)
         else:
             data = pd.concat([api.to_df(api.get_index_bars(
-                level, 1 if str(code)[0] in ['0', '8', '9', '5'] else 0, code, (25 - i) * 800, 800)) for i in range(26)], axis=0)
-        data = data\
-            .assign(datetime=pd.to_datetime(data['datetime']), code=str(code))\
-            .drop(['year', 'month', 'day', 'hour', 'minute'], axis=1, inplace=False)\
-            .assign(date=data['datetime'].apply(lambda x: str(x)[0:10]))\
-            .assign(date_stamp=data['datetime'].apply(lambda x: QA_util_date_stamp(x)))\
-            .assign(time_stamp=data['datetime'].apply(lambda x: QA_util_time_stamp(x)))\
-            .assign(type=type_).set_index('datetime', drop=False, inplace=False)[start:end]
+                level, 1 if str(code)[0] in ['0', '8', '9', '5'] else 0, code, (25 - i) * 800, 800)) for i in
+                range(26)], axis=0)
+        data = data \
+                   .assign(datetime=pd.to_datetime(data['datetime']), code=str(code)) \
+                   .drop(['year', 'month', 'day', 'hour', 'minute'], axis=1, inplace=False) \
+                   .assign(date=data['datetime'].apply(lambda x: str(x)[0:10])) \
+                   .assign(date_stamp=data['datetime'].apply(lambda x: QA_util_date_stamp(x))) \
+                   .assign(time_stamp=data['datetime'].apply(lambda x: QA_util_time_stamp(x))) \
+                   .assign(type=type_).set_index('datetime', drop=False, inplace=False)[start:end]
         # data
         return data.assign(datetime=data['datetime'].apply(lambda x: str(x)))
 
 
 def __QA_fetch_get_stock_transaction(code, day, retry, api):
     data_ = pd.concat([api.to_df(api.get_history_transaction_data(
-        __select_market_code(str(code)), str(code), (20 - i) * 800, 800, QA_util_date_str2int(day))) for i in range(21)], axis=0)
+        __select_market_code(str(code)), str(code), (20 - i) * 800, 800, QA_util_date_str2int(day))) for i in
+        range(21)], axis=0)
 
     for _ in range(retry):
         if len(data_) < 2:
             return __QA_fetch_get_stock_transaction(code, day, 0, api)
         else:
-            return data_.assign(date=day).assign(datetime=pd.to_datetime(data_['time'].apply(lambda x: str(day) + ' ' + x)))\
-                        .assign(code=str(code)).assign(order=range(len(data_.index))).set_index('datetime', drop=False, inplace=False)
+            return data_.assign(date=day).assign(
+                datetime=pd.to_datetime(data_['time'].apply(lambda x: str(day) + ' ' + x))) \
+                .assign(code=str(code)).assign(order=range(len(data_.index))).set_index('datetime', drop=False,
+                                                                                        inplace=False)
 
 
 def QA_fetch_get_stock_transaction(code, start, end, retry=2, ip=best_ip, port=7709):
@@ -439,16 +462,16 @@ def QA_fetch_get_stock_xdxr(code, ip=best_ip, port=7709):
         category = {
             '1': '除权除息', '2': '送配股上市', '3': '非流通股上市', '4': '未知股本变动', '5': '股本变化',
             '6': '增发新股', '7': '股份回购', '8': '增发新股上市', '9': '转配股上市', '10': '可转债上市',
-            '11': '扩缩股', '12': '非流通股缩股', '13':  '送认购权证', '14': '送认沽权证'}
+            '11': '扩缩股', '12': '非流通股缩股', '13': '送认购权证', '14': '送认沽权证'}
         data = api.to_df(api.get_xdxr_info(market_code, code))
-        data = data\
-            .assign(date=pd.to_datetime(data[['year', 'month', 'day']]))\
-            .drop(['year', 'month', 'day'], axis=1)\
-            .assign(category_meaning=data['category'].apply(lambda x: category[str(x)]))\
-            .assign(code=str(code))\
+        data = data \
+            .assign(date=pd.to_datetime(data[['year', 'month', 'day']])) \
+            .drop(['year', 'month', 'day'], axis=1) \
+            .assign(category_meaning=data['category'].apply(lambda x: category[str(x)])) \
+            .assign(code=str(code)) \
             .rename(index=str, columns={'panhouliutong': 'liquidity_after',
                                         'panqianliutong': 'liquidity_before', 'houzongguben': 'shares_after',
-                                        'qianzongguben': 'shares_before'})\
+                                        'qianzongguben': 'shares_before'}) \
             .set_index('date', drop=False, inplace=False)
         return data.assign(date=data['date'].apply(lambda x: str(x)[0:10]))
 
