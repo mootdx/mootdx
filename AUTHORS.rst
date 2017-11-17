@@ -1,5 +1,5 @@
 =======
-Credits
+团队荣誉
 =======
 
 Development Lead

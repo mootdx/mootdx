@@ -1,7 +1,7 @@
 .. highlight:: shell
 
 ============
-Contributing
+贡献代码方法
 ============
 
 Contributions are welcome, and they are greatly appreciated! Every

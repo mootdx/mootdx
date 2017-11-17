@@ -10,11 +10,11 @@ class LiveBars(object):
 		self.client = TdxHq_API(**kwargs)
 		self.client.connect()
 
-	def __del__(self):
+	def close(self):
 		self.client.disconnect()
 
 	# K线
-	def bars(self, symbol='000001', category='1', market='1', start='1', count='100'):
+	def bars(self, symbol='000001', category='9', market='0', start='0', count='100'):
 		data = self.client.get_security_bars(category, market, symbol, start, count)
 		return self.client.to_df(data)
 

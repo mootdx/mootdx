@@ -1,7 +1,7 @@
 .. highlight:: shell
 
 ============
-Installation
+快速安装
 ============
 
 
