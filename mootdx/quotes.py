@@ -1,16 +1,20 @@
 # -*- coding: utf-8 -*-
+from mootdx.utils import get_stock_market
+from pytdx.config.hosts import hq_hosts as hosts
 from pytdx.exhq import TdxExHq_API
 from pytdx.hq import TdxHq_API
 
-
-class LiveBars(object):
+class LiveBar(object):
     """股票市场实时行情"""
 
     def __init__(self, **kwargs):
         self.client = TdxHq_API(**kwargs)
 
+    def market_by_symbol(self, symbol=''):
+        return 1
+
     # K线
-    def bars(self, symbol='000001', category='9', market='0', start='0', offset='100'):
+    def bars(self, symbol='000001', category='9', start='0', offset='100'):
         '''
         获取实时日K线数据
 
@@ -21,12 +25,14 @@ class LiveBars(object):
         :param offset: 每次获取条数
         :return: pd.dataFrame or None
         '''
+        market = get_stock_market(symbol)
+
         with self.client.connect():
             data = self.client.get_security_bars(int(category), int(market), str(symbol), int(start), int(offset))
             return self.client.to_df(data)
 
     # 分时数据
-    def minute(self, market='1', symbol=''):
+    def minute(self, symbol=''):
         '''
         获取实时分时数据
 
@@ -34,12 +40,14 @@ class LiveBars(object):
         :param symbol: 股票代码
         :return: pd.DataFrame
         '''
+        market = get_stock_market(symbol)
+
         with self.client.connect():
             data = self.client.get_minute_time_data(int(market), symbol)
             return self.client.to_df(data)
 
     # 分时历史数据
-    def minute_his(self, market='1', symbol='', datetime='20161209'):
+    def minute_his(self, symbol='', datetime='20161209'):
         '''
         分时历史数据
 
@@ -48,78 +56,107 @@ class LiveBars(object):
         :param datetime:
         :return: pd.dataFrame or None
         '''
+        market = get_stock_market(symbol)
+
         with self.client.connect():
             data = self.client.get_history_minute_time_data(int(market), symbol, datetime)
             return self.client.to_df(data)
 
-    def trans(self, market='1', symbol='', start='', offset=10):
+    def trans(self, symbol='', start=0, offset=10):
         '''
+        查询分笔成交
 
-        :param market:
-        :param symbol:
-        :param start:
-        :param offset:
+        :param market: 市场代码
+        :param symbol: 股票代码
+        :param start: 起始位置 
+        :param offset: 请求数量
         :return: pd.dataFrame or None
         '''
+        market = get_stock_market(symbol)
+
         with self.client.connect():
             data = self.client.get_transaction_data(int(market), symbol, int(start), int(market))
             return self.client.to_df(data)
 
-    def trans_his(self, market=1, symbol='', start=0, offset=10, date=''):
+    def trans_his(self, symbol='', start=0, offset=10, date=''):
         '''
+        查询历史分笔成交
 
-        :param market:
-        :param symbol:
-        :param start:
-        :param offset:
-        :param date:
+        :param market: 市场代码
+        :param symbol: 股票代码
+        :param start: 起始位置
+        :param offset: 数量
+        :param date: 日期
         :return: pd.dataFrame or None
         '''
+        market = get_stock_market(symbol)
+
         with self.client.connect():
             data = self.client.get_history_transaction_data(int(market), symbol, int(start), int(offset), date)
             return self.client.to_df(data)
 
-    def company_category(self, market='1', symbol=''):
+    def company_category(self, symbol=''):
         '''
-        获取公司分立
+        查询公司信息目录
 
-        :param market:
-        :param symbol:
+        :param market: 市场代码
+        :param symbol: 股票代码
         :return: pd.dataFrame or None
         '''
+        market = get_stock_market(symbol)
+
         with self.client.connect():
             data = self.client.get_company_info_category(int(market), symbol)
             return self.client.to_df(data)
 
-    def company_content(self, market='1', symbol='', file='', start='', offset=10):
+    def company_content(self, symbol='', file='', start=0, offset=10):
         '''
-        获取公司信息
+        读取公司信息详情
 
-        :param market:
-        :param symbol:
-        :param file:
-        :param start:
-        :param offset:
+        :param market: 市场代码
+        :param symbol: 股票代码
+        :param file: 文件名
+        :param start: 起始位置
+        :param offset: 数量
         :return: pd.dataFrame or None
         '''
+        market = get_stock_market(symbol)
+
         with self.client.connect():
             data = self.client.get_company_info_content(int(market), symbol, file, int(start), int(offset))
             return self.client.to_df(data)
 
-    def finance(self, market='1', symbol=''):
+    def xdxr(self, symbol=''):
         '''
-        获取金融信息
+        读取除权除息信息
 
-        :param market:
-        :param symbol:
+        :param market: 市场代码
+        :param symbol: 股票代码
         :return: pd.dataFrame or None
         '''
+        market = get_stock_market(symbol)
+
+        with self.client.connect():
+            data = self.client.get_xdxr_info(int(market), symbol)
+            return self.client.to_df(data)        
+
+    def finance(self, symbol=''):
+        '''
+        读取财务信息
+
+        :param market: 市场代码
+        :param symbol: 股票代码
+        :return: pd.dataFrame or None
+        '''
+        market = get_stock_market(symbol)
+
         with self.client.connect():
             data = self.client.get_finance_info(int(market), symbol)
             return self.client.to_df(data)
 
-    def k(self, symbol='', start='', offset=10):
+    def k(self, symbol='', start=0, offset=10):
         '''
+        读取k线信息
 
         :param symbol:
         :param start:
@@ -130,7 +167,38 @@ class LiveBars(object):
             data = self.client.get_k_data(symbol, int(start), int(offset))
             return self.client.to_df(data)
 
-    def block(self, tofile="block.dat"):
+    def index(self, symbol='000001', category='9', start='0', offset='100'):
+        '''
+        获取指数k线
+
+        K线种类:
+        - 0 5分钟K线 
+        - 1 15分钟K线 
+        - 2 30分钟K线 
+        - 3 1小时K线 
+        - 4 日K线 
+        - 5 周K线 
+        - 6 月K线 
+        - 7 1分钟 
+        - 8 1分钟K线 
+        - 9 日K线 
+        - 10 季K线 
+        - 11 年K线
+
+        :param symbol: 股票代码
+        :param category: 数据类别
+        :param market: 证券市场
+        :param start: 开始位置
+        :param offset: 每次获取条数
+        :return: pd.dataFrame or None
+        '''
+        market = get_stock_market(symbol)
+
+        with self.client.connect():
+            data = self.client.get_index_bars(int(category), int(market), str(symbol), int(start), int(offset))
+            return self.client.to_df(data)
+
+    def block(self, file="block.dat"):
         '''
         获取证券板块信息
 
@@ -142,7 +210,7 @@ class LiveBars(object):
             return self.client.to_df(data)
 
 
-class ExLiveBars(LiveBars):
+class ExLiveBar(object):
     """扩展市场实时行情"""
 
     def __init__(self, **kwargs):
@@ -159,7 +227,7 @@ class ExLiveBars(LiveBars):
         :param offset:
         :return: pd.dataFrame or None
         '''
-        with self.client.connect():
+        with self.client.connect('61.152.107.141', 7727):
             data = self.client.get_security_bars(int(category), int(market), str(symbol), int(start), int(offset))
             return self.client.to_df(data)
 
@@ -169,7 +237,7 @@ class ExLiveBars(LiveBars):
 
         :return: pd.dataFrame or None
         '''
-        with self.client.connect():
+        with self.client.connect('61.152.107.141', 7727):
             data = self.client.get_markets()
             return self.client.to_df(data)
 
@@ -180,6 +248,6 @@ class ExLiveBars(LiveBars):
         :param offset:
         :return: pd.dataFrame or None
         '''
-        with self.client.connect():
+        with self.client.connect('61.152.107.141', 7727):
             data = self.client.get_instrument_info(int(start), int(offset))
             return self.client.to_df(data)

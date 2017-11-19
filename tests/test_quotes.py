@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from mootdx.reader import Reader, ExReader
-from mootdx.market import LiveBars, ExLiveBars
+from mootdx.quotes import LiveBars, ExLiveBars
 import unittest
 
 class TestLiveBars(unittest.TestCase):
@@ -17,8 +17,7 @@ class TestLiveBars(unittest.TestCase):
     #具体的测试用例，一定要以test开头
     def testBars(self):
         data = self.client.bars(symbol='000001')
-        print(data)
-        # self.assertTrue(data)
+        self.assertNotNull(data)
         
         
     # def testMinbar(self):

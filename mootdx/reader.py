@@ -39,7 +39,6 @@ class Reader(object):
             if os.path.exists(path):
                 return path
 
-        print('文件不存在')
         return None
 
     # 日线
@@ -59,7 +58,7 @@ class Reader(object):
         return None
 
     # 1分钟线
-    def minbar(self, symbol=None):
+    def minute(self, symbol=None):
         '''
         获取1分钟线
 

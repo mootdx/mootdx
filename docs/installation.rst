@@ -32,13 +32,13 @@ You can either clone the public repository:
 
 .. code-block:: console
 
-    $ git clone git://github.com/bopo/mootdx
+    $ git clone git://github.com/bopo/mootdx.git
 
 Or download the `tarball`_:
 
 .. code-block:: console
 
-    $ curl  -OL https://github.com/bopo/mootdx/tarball/master
+    $ curl -OL https://github.com/bopo/mootdx/tarball/master
 
 Once you have a copy of the source, you can install it with:
 
