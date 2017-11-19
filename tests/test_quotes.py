@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
 from mootdx.reader import Reader, ExReader
-from mootdx.quotes import LiveBars, ExLiveBars
+from mootdx.quotes import LiveBar, ExLiveBar
 import unittest
 
-class TestLiveBars(unittest.TestCase):
+class TestLiveBar(unittest.TestCase):
     reader = None
 
     ##初始化工作
     def setUp(self):
-        self.client = LiveBars()
+        self.client = LiveBar()
     
     #退出清理工作
     def tearDown(self):
@@ -17,7 +17,7 @@ class TestLiveBars(unittest.TestCase):
     #具体的测试用例，一定要以test开头
     def testBars(self):
         data = self.client.bars(symbol='000001')
-        self.assertNotNull(data)
+        self.assertTrue(data is not None)
         
         
     # def testMinbar(self):
