@@ -1,12 +1,10 @@
 # -*- coding: utf-8 -*-
 import os
+
+from pytdx.reader import (BlockReader, TdxDailyBarReader,
+                          TdxExHqDailyBarReader, TdxLCMinBarReader)
+
 from mootdx.utils import get_stock_market
-from pytdx.reader import (
-    TdxExHqDailyBarReader,
-    TdxLCMinBarReader,
-    TdxDailyBarReader,
-    BlockReader
-)
 
 
 # 股票市场

@@ -25,15 +25,15 @@ import datetime
 
 import numpy as np
 import pandas as pd
-from pytdx.hq import TdxHq_API
+# from pypinyin import lazy_pinyin
+import tushare as ts
 from pytdx.exhq import TdxExHq_API
+from pytdx.hq import TdxHq_API
 from QUANTAXIS.QAUtil import (QA_util_date_stamp, QA_util_date_str2int,
                               QA_util_date_valid, QA_util_get_real_date,
                               QA_util_get_real_datelist, QA_util_log_info,
                               QA_util_time_stamp, QA_util_web_ping,
                               trade_date_sse)
-# from pypinyin import lazy_pinyin
-import tushare as ts
 
 
 # 基于Pytdx的数据接口,好处是可以在linux/mac上联入通达信行情

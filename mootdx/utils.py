@@ -5,6 +5,7 @@ import time
 from datetime import datetime, timedelta
 from functools import lru_cache
 
+import pandas as pd
 import requests
 from pytdx.config.hosts import hq_hosts as hosts
 from pytdx.exhq import TdxExHq_API
@@ -27,8 +28,7 @@ def ping(ip):
 def best_ip():
     print('Selecting the Best Server IP of TDX')
     data = [ping(x) for x in hosts]
-    print('===The BEST SERVER is :  %s ===' %
-                     (hosts[data.index(min(data))]))
+    print('===The BEST SERVER is :  %s ===' % (hosts[data.index(min(data))]))
     return hosts[data.index(min(data))]
 
 
@@ -71,15 +71,6 @@ def get_code_type(code):
     return 'fund'
 
 
-def get_all_stock_codes():
-    """获取所有股票 ID"""
-    all_stock_codes_url = 'http://www.shdjt.com/js/lib/astock.js'
-    grep_stock_codes = re.compile('~(\d+)`')
-    response = requests.get(all_stock_codes_url)
-    stock_codes = grep_stock_codes.findall(response.text)
-    return stock_codes
-
-
 def round_price_by_code(price, code):
     """
     根据代码类型[股票，基金] 截取制定位数的价格
@@ -91,32 +82,32 @@ def round_price_by_code(price, code):
         return price
 
     typ = get_code_type(code)
+
     if typ == 'fund':
         return '{:.3f}'.format(price)
+
     return '{:.2f}'.format(price)
 
 
 def get_ipo_info(only_today=False):
     import pyquery
+
     response = requests.get('http://vip.stock.finance.sina.com.cn/corp/go.php/vRPD_NewStockIssue/page/1.phtml', headers={'accept-encoding': 'gzip, deflate, sdch'})
     html = response.content.decode('gbk')
 
     html_obj = pyquery.PyQuery(html)
     table_html = html_obj('#con02-0').html()
 
-    import pandas as pd
     df = pd.read_html(io.StringIO(table_html), skiprows=3, converters={
         '证券代码': str,
         '申购代码': str}
     )[0]
+
     if only_today:
         today = datetime.datetime.now().strftime('%Y-%m-%d')
         df = df[df['上网发行日期↓'] == today]
+
     return df
-
-
-
-
 
 @lru_cache()
 def is_holiday(day):
@@ -127,8 +118,10 @@ def is_holiday(day):
     """
     api = 'http://tool.bitefu.net/jiari/'
     params = {'d': day, 'apiserviceid': 1116}
+
     rep = requests.get(api, params)
     res = rep.text
+
     return True if res != "0" else False
 
 
@@ -148,14 +141,17 @@ def is_tradetime_now():
     """
     now_time = time.localtime()
     now = (now_time.tm_hour, now_time.tm_min, now_time.tm_sec)
+    
     if (9, 15, 0) <= now <= (11, 30, 0) or (13, 0, 0) <= now <= (15, 0, 0):
         return True
+
     return False
 
 
 def calc_next_trade_time_delta_seconds():
     now_time = datetime.datetime.now()
     now = (now_time.hour, now_time.minute, now_time.second)
+
     if now < (9, 15, 0):
         next_trade_start = now_time.replace(hour=9, minute=15, second=0, microsecond=0)
     elif (12, 0, 0) < now < (13, 0, 0):
@@ -174,5 +170,6 @@ def calc_next_trade_time_delta_seconds():
                                                           second=0, microsecond=0)
     else:
         return 0
+
     time_delta = next_trade_start - now_time
     return time_delta.total_seconds()
