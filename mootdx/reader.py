@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import os
-
+from mootdx.utils import get_stock_market
 from pytdx.reader import (
     TdxExHqDailyBarReader,
     TdxLCMinBarReader,
@@ -20,24 +20,22 @@ class Reader(object):
         self.tdxdir = tdxdir
 
     # 寻找文件路径
-    def find_path(self, stock=None, subdir='lday', ext='day'):
+    def find_path(self, symbol=None, subdir='lday', ext='day'):
         '''
         寻找文件路径，辅助函数
 
-        :param stock:
+        :param symbol:
         :param subdir:
         :param ext:
         :return: pd.dataFrame or None
         '''
-        paths = [
-            'vipdoc/sz/%s/sz%s.%s' % (subdir, stock, ext),
-            'vipdoc/sh/%s/sh%s.%s' % (subdir, stock, ext),
-        ]
+        market = get_stock_market(symbol)
+        market = 'sz' if market == 1 else 'sh'
+        vipdoc = 'vipdoc/%s/%s/%s%s.%s' % (market, subdir, market, symbol, ext)
+        vipdoc = os.path.join(self.tdxdir, vipdoc)
 
-        for p in paths:
-            path = os.path.join(self.tdxdir, p)
-            if os.path.exists(path):
-                return path
+        if os.path.exists(vipdoc):
+            return vipdoc
 
         return None
 
@@ -50,10 +48,10 @@ class Reader(object):
         :return: pd.dataFrame or None
         '''
         reader = TdxDailyBarReader()
-        symbol = self.find_path(symbol)
+        vipdoc = self.find_path(symbol=symbol, subdir='lday', ext='day')
 
-        if not symbol is None:
-            return reader.get_df(symbol)
+        if not vipdoc is None:
+            return reader.get_df(vipdoc)
 
         return None
 
@@ -131,7 +129,6 @@ class ExReader(Reader):
 
     def daily(self, symbol=None):
         '''
-
 
         :return: pd.dataFrame or None
         '''

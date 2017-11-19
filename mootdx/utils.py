@@ -57,7 +57,7 @@ def get_stock_market(symbol=''):
     if symbol.startswith(('5', '6', '9', '7')):
         market = 'sh'
     
-    return 1 if market == 'sh' else 0
+    return 1 if market == 'sz' else 0
 
 
 def get_code_type(code):

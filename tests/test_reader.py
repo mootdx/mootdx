@@ -18,13 +18,13 @@ class TestReader(unittest.TestCase):
 
     # 具体的测试用例，一定要以test开头
     def testDaily(self):
-        self.assertTrue(self.reader.daily(symbol='000001') is not None)
+        self.assertTrue(self.reader.daily(symbol='600036') is not None)
 
     def testMinbar(self):
-        self.assertTrue(self.reader.minute(symbol='000001') is not None)
+        self.assertTrue(self.reader.minute(symbol='600036') is not None)
 
     def fzlineMinbar(self):
-        self.assertTrue(self.reader.fzline(symbol='000001') is not None)
+        self.assertTrue(self.reader.fzline(symbol='600036') is not None)
 
 
 class TestExReader(unittest.TestCase):
@@ -40,10 +40,10 @@ class TestExReader(unittest.TestCase):
 
     # 具体的测试用例，一定要以test开头
     def testDaily(self):
-        self.assertTrue(not self.reader.daily(symbol='000001') is None)
+        self.assertTrue(not self.reader.daily(symbol='600036') is None)
 
     def testMinbar(self):
-        self.assertTrue(not self.reader.minute(symbol='000001') is None)
+        self.assertTrue(not self.reader.minute(symbol='600036') is None)
 
 
 if __name__ == '__main__':
