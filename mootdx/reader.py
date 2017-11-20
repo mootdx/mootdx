@@ -17,7 +17,6 @@ class Reader(object):
         super(Reader, self).__init__()
         self.tdxdir = tdxdir
 
-    # 寻找文件路径
     def find_path(self, symbol=None, subdir='lday', ext='day'):
         '''
         寻找文件路径，辅助函数
@@ -27,8 +26,7 @@ class Reader(object):
         :param ext:
         :return: pd.dataFrame or None
         '''
-        market = get_stock_market(symbol)
-        market = 'sz' if market == 1 else 'sh'
+        market = get_stock_market(symbol, True)
         vipdoc = 'vipdoc/%s/%s/%s%s.%s' % (market, subdir, market, symbol, ext)
         vipdoc = os.path.join(self.tdxdir, vipdoc)
 
@@ -37,7 +35,6 @@ class Reader(object):
 
         return None
 
-    # 日线
     def daily(self, symbol=None):
         '''
         获取日线数据
@@ -53,7 +50,6 @@ class Reader(object):
 
         return None
 
-    # 1分钟线
     def minute(self, symbol=None):
         '''
         获取1分钟线
@@ -70,7 +66,6 @@ class Reader(object):
 
         return None
 
-    # 5分钟线
     def fzline(self, symbol=None):
         '''
         获取5分钟线
@@ -87,9 +82,9 @@ class Reader(object):
 
         return None
 
-    # 板块
     def block(self, group=False, custom=False):
         '''
+        获取板块数据
 
         :param group:
         :param custom:
@@ -103,10 +98,9 @@ class Reader(object):
 
         return None
 
-        # 指数
-
     def index(self, symbol='incon.dat', group=False):
         '''
+        获取指数数据
 
         :param symbol:
         :param group:
@@ -121,12 +115,12 @@ class Reader(object):
         return None
 
 
-# 扩展市场读取
 class ExReader(Reader):
     """扩展市场读取"""
 
     def daily(self, symbol=None):
         '''
+        获取日线数据
 
         :return: pd.dataFrame or None
         '''

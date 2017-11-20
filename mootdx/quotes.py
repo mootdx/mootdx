@@ -10,6 +10,7 @@ class LiveBar(object):
 
     def __init__(self, **kwargs):
         self.client = TdxHq_API(**kwargs)
+        self.bestip = ('123.126.133.21', 7709)
 
     # K线
     def bars(self, symbol='000001', category='9', start='0', offset='100'):
@@ -25,7 +26,7 @@ class LiveBar(object):
         '''
         market = get_stock_market(symbol)
 
-        with self.client.connect():
+        with self.client.connect(*self.bestip):
             data = self.client.get_security_bars(int(category), int(market), str(symbol), int(start), int(offset))
             return self.client.to_df(data)
 
@@ -40,7 +41,7 @@ class LiveBar(object):
         '''
         market = get_stock_market(symbol)
 
-        with self.client.connect():
+        with self.client.connect(*self.bestip):
             data = self.client.get_minute_time_data(int(market), symbol)
             return self.client.to_df(data)
 
@@ -56,7 +57,7 @@ class LiveBar(object):
         '''
         market = get_stock_market(symbol)
 
-        with self.client.connect():
+        with self.client.connect(*self.bestip):
             data = self.client.get_history_minute_time_data(int(market), symbol, datetime)
             return self.client.to_df(data)
 
@@ -72,7 +73,7 @@ class LiveBar(object):
         '''
         market = get_stock_market(symbol)
 
-        with self.client.connect():
+        with self.client.connect(*self.bestip):
             data = self.client.get_transaction_data(int(market), symbol, int(start), int(market))
             return self.client.to_df(data)
 
@@ -89,7 +90,7 @@ class LiveBar(object):
         '''
         market = get_stock_market(symbol)
 
-        with self.client.connect():
+        with self.client.connect(*self.bestip):
             data = self.client.get_history_transaction_data(int(market), symbol, int(start), int(offset), date)
             return self.client.to_df(data)
 
@@ -115,7 +116,7 @@ class LiveBar(object):
         '''
         market = get_stock_market(symbol)
 
-        with self.client.connect():
+        with self.client.connect(*self.bestip):
             data = self.client.get_company_info_category(int(market), symbol)
             return self.client.to_df(data)
 
@@ -132,7 +133,7 @@ class LiveBar(object):
         '''
         market = get_stock_market(symbol)
 
-        with self.client.connect():
+        with self.client.connect(*self.bestip):
             data = self.client.get_company_info_content(int(market), symbol, file, int(start), int(offset))
             return self.client.to_df(data)
 
@@ -146,7 +147,7 @@ class LiveBar(object):
         '''
         market = get_stock_market(symbol)
 
-        with self.client.connect():
+        with self.client.connect(*self.bestip):
             data = self.client.get_xdxr_info(int(market), symbol)
             return self.client.to_df(data)
 
@@ -160,7 +161,7 @@ class LiveBar(object):
         '''
         market = get_stock_market(symbol)
 
-        with self.client.connect():
+        with self.client.connect(*self.bestip):
             data = self.client.get_finance_info(int(market), symbol)
             return self.client.to_df(data)
 
@@ -173,7 +174,7 @@ class LiveBar(object):
         :param offset:
         :return: pd.dataFrame or None
         '''
-        with self.client.connect():
+        with self.client.connect(*self.bestip):
             data = self.client.get_k_data(symbol, int(start), int(offset))
             return self.client.to_df(data)
 
@@ -204,7 +205,7 @@ class LiveBar(object):
         '''
         market = get_stock_market(symbol)
 
-        with self.client.connect():
+        with self.client.connect(*self.bestip):
             data = self.client.get_index_bars(int(category), int(market), str(symbol), int(start), int(offset))
             return self.client.to_df(data)
 
@@ -215,7 +216,7 @@ class LiveBar(object):
         :param tofile:
         :return: pd.dataFrame or None
         '''
-        with self.client.connect():
+        with self.client.connect(*self.bestip):
             data = self.client.get_and_parse_block_info(tofile)
             return self.client.to_df(data)
 
@@ -236,7 +237,7 @@ class ExLiveBar(object):
 
     def __init__(self, **kwargs):
         self.client = TdxExHq_API(**kwargs)
-        self.best_ip = ('61.152.107.141', 7727)
+        self.bestip = ('202.108.253.130', 7709)
 
     def bars(self, symbol='', category='1', market='0', start='0', offset='100'):
         '''
@@ -249,7 +250,7 @@ class ExLiveBar(object):
         :param offset:
         :return: pd.dataFrame or None
         '''
-        with self.client.connect(*self.best_ip):
+        with self.client.connect(*self.bestip):
             data = self.client.get_security_bars(int(category), int(market), str(symbol), int(start), int(offset))
             return self.client.to_df(data)
 
@@ -259,7 +260,7 @@ class ExLiveBar(object):
 
         :return: pd.dataFrame or None
         '''
-        with self.client.connect(*self.best_ip):
+        with self.client.connect(*self.bestip):
             data = self.client.get_markets()
             return self.client.to_df(data)
 
@@ -270,6 +271,6 @@ class ExLiveBar(object):
         :param offset:
         :return: pd.dataFrame or None
         '''
-        with self.client.connect(*self.best_ip):
+        with self.client.connect(*self.bestip):
             data = self.client.get_instrument_info(int(start), int(offset))
             return self.client.to_df(data)

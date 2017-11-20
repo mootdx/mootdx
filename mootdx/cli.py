@@ -15,7 +15,17 @@ Why does this file exist, and why not put this in __main__?
 
   Also see (1) from http://click.pocoo.org/5/setuptools/#setuptools-integration
 """
+import json
+import logging
+import re
+import socket
+import threading
+import time
+
 import click
+import coloredlogs
+from prettytable import PrettyTable
+from mootdx.verify import check
 
 @click.group()
 @click.option('-v', '--verbose', count=True)
@@ -23,17 +33,26 @@ import click
 def cli(ctx, verbose):
     ctx.obj["VERBOSE"] = verbose
 
+
 @cli.command(help='金融产品的历史数据下载.')
 @click.option('--delay', default='0.5', help='默认每次请求后等待时间')
 @click.option('--thread', default='0.5', help='默认每次请求后等待时间')
 def fetch(delay, thread):
     pass
 
+
 @cli.command(help='读取金融产品的历史数据.')
 @click.option('--delay', default='0.5', help='默认每次请求后等待时间')
 @click.option('--thread', default='0.5', help='默认每次请求后等待时间')
 def read(delay, thread):
     pass
+
+@cli.command(help='测试行情服务器.')
+@click.option('-n', '--limit', default='5', help='显示最快几个')
+@click.option('-t', '--tofile', default=None, help='输出文件')
+@click.option('-v', '--verbose', count=True)
+def hosts(limit, verbose, tofile):
+    check(limit=int(limit), verbose=verbose, tofile=tofile)
 
 def main():
     cli(obj={})

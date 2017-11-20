@@ -1,6 +1,6 @@
+# -*- coding: utf-8 -*-
 import datetime
 import io
-import re
 import time
 from datetime import datetime, timedelta
 from functools import lru_cache
@@ -8,7 +8,6 @@ from functools import lru_cache
 import pandas as pd
 import requests
 from pytdx.config.hosts import hq_hosts as hosts
-from pytdx.exhq import TdxExHq_API
 from pytdx.hq import TdxHq_API
 
 
@@ -35,7 +34,8 @@ def best_ip():
 def get_index_market(symbol=''):
     pass
 
-def get_stock_market(symbol=''):
+
+def get_stock_market(symbol='', string=False):
     """判断股票ID对应的证券市场
     匹配规则
     ['50', '51', '60', '90', '110'] 为 sh
@@ -44,20 +44,23 @@ def get_stock_market(symbol=''):
     :param symbol:股票ID, 若以 'sz', 'sh' 开头直接返回对应类型，否则使用内置规则判断
     :return 'sh' or 'sz'"""
     assert type(symbol) is str, 'stock code need str type'
-    
+
     if symbol.startswith(('sh', 'sz')):
         market = symbol[:2]
-    
+
     if symbol.startswith(('50', '51', '60', '90', '110', '113', '132', '204')):
         market = 'sh'
-    
+
     if symbol.startswith(('00', '13', '18', '15', '16', '18', '20', '30', '39', '115', '1318')):
         market = 'sz'
 
     if symbol.startswith(('5', '6', '9', '7')):
         market = 'sh'
-    
-    return 1 if market == 'sz' else 0
+
+    if string is False:
+        return 1 if market == 'sz' else 0
+
+    return market
 
 
 def get_code_type(code):
@@ -92,7 +95,8 @@ def round_price_by_code(price, code):
 def get_ipo_info(only_today=False):
     import pyquery
 
-    response = requests.get('http://vip.stock.finance.sina.com.cn/corp/go.php/vRPD_NewStockIssue/page/1.phtml', headers={'accept-encoding': 'gzip, deflate, sdch'})
+    response = requests.get('http://vip.stock.finance.sina.com.cn/corp/go.php/vRPD_NewStockIssue/page/1.phtml',
+                            headers={'accept-encoding': 'gzip, deflate, sdch'})
     html = response.content.decode('gbk')
 
     html_obj = pyquery.PyQuery(html)
@@ -101,13 +105,14 @@ def get_ipo_info(only_today=False):
     df = pd.read_html(io.StringIO(table_html), skiprows=3, converters={
         '证券代码': str,
         '申购代码': str}
-    )[0]
+                      )[0]
 
     if only_today:
         today = datetime.datetime.now().strftime('%Y-%m-%d')
         df = df[df['上网发行日期↓'] == today]
 
     return df
+
 
 @lru_cache()
 def is_holiday(day):
@@ -141,7 +146,7 @@ def is_tradetime_now():
     """
     now_time = time.localtime()
     now = (now_time.tm_hour, now_time.tm_min, now_time.tm_sec)
-    
+
     if (9, 15, 0) <= now <= (11, 30, 0) or (13, 0, 0) <= now <= (15, 0, 0):
         return True
 
