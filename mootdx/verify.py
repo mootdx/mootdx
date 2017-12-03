@@ -4,12 +4,11 @@ import socket
 import threading
 import time
 
-# import coloredlogs
+import coloredlogs
 from prettytable import PrettyTable
 from pytdx.config.hosts import hq_hosts
 
 logger = logging.getLogger(__name__)
-# coloredlogs.install(level='DEBUG', logger=logger)
 
 result = []
 hosts = []
@@ -66,25 +65,29 @@ def verify():
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
         # 设置10超时
-        sock.settimeout(10)
+        sock.settimeout(5)
 
         try:
             start = time.clock()
 
             # 连接行情服务器
             sock.connect((proxy['addr'], int(proxy['port'])))
-            proxy['time'] = (time.clock() - start) * 1000
             sock.close()
+
+            proxy['time'] = (time.clock() - start) * 1000
 
             saveresult(proxy)
 
-            logging.debug("%s:%s 验证通过，响应时间：%d ms." % (proxy['addr'], proxy['port'], proxy['time']))
+            logger.debug("%s:%s 验证通过，响应时间：%d ms." % (proxy['addr'], proxy['port'], proxy['time']))
         except Exception as e:
-            logging.error("%s,%s 验证失败." % (proxy['addr'], proxy['port']))
+            logger.error("%s,%s 验证失败." % (proxy['addr'], proxy['port']))
 
 
 def check(limit=10, verbose=False, tofile=''):
     # init thread_pool
+    if verbose:
+        coloredlogs.install(level='DEBUG', logger=logger)
+
     thread_pool = []
 
     for i in range(20):
@@ -107,11 +110,11 @@ def check(limit=10, verbose=False, tofile=''):
     print("最优服务器:")
 
     t = PrettyTable(["Name", "Addr", "Port", "Time"])
-    t.align["Name"] = "l"  # Left align city names
-    t.align["Addr"] = "l"  # Left align city names
-    t.align["Port"] = "l"  # Left align city names
-    t.align["Time"] = "r"  # Left align city names
-    t.padding_width = 1  # One space between column edges and contents (default)
+    t.align["Name"] = "l"
+    t.align["Addr"] = "l"
+    t.align["Port"] = "l"
+    t.align["Time"] = "r"
+    t.padding_width = 1
 
     for x in result[:int(limit)]:
         t.add_row([x['site'], x['addr'], x['port'], '%.2fms' % x['time']])
@@ -125,7 +128,6 @@ def check(limit=10, verbose=False, tofile=''):
     #         writer.writeheader()
     #         for item in result:
     #             writer.writerow(item)
-
 
 if __name__ == '__main__':
     check()

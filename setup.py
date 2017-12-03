@@ -17,8 +17,8 @@ with open('HISTORY.rst') as history_file:
     history = history_file.read()
 
 requirements = ['pytdx', 'click',]
-test_requirements = ['pytdx', 'click', 'pytest',]
-setup_requirements = ['pytdx', 'click', 'pytest-runner',]
+test_requirements = ['pytdx', 'click', 'pytest', 'prettytable', 'coloredlogs']
+setup_requirements = ['pytdx', 'click', 'prettytable', 'coloredlogs']
 
 setup(
     name='mootdx',

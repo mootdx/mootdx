@@ -1,2 +1,5 @@
 pytdx
 click
+pytest
+prettytable
+coloredlogs

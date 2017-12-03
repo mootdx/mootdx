@@ -4,13 +4,17 @@ from pytdx.hq import TdxHq_API
 
 from mootdx.utils import get_stock_market
 
+import os
+
 
 class LiveBar(object):
     """股票市场实时行情"""
 
     def __init__(self, **kwargs):
         self.client = TdxHq_API(**kwargs)
-        self.bestip = ('123.126.133.21', 7709)
+        self.bestip = os.environ.setdefault("MOOTDX_SERVER", '202.108.253.130:7709')
+        self.bestip = self.bestip.split(':')
+        self.bestip[1] = int(self.bestip[1])
 
     # K线
     def bars(self, symbol='000001', category='9', start='0', offset='100'):
@@ -25,6 +29,8 @@ class LiveBar(object):
         :return: pd.dataFrame or None
         '''
         market = get_stock_market(symbol)
+
+        print(market)
 
         with self.client.connect(*self.bestip):
             data = self.client.get_security_bars(int(category), int(market), str(symbol), int(start), int(offset))
@@ -178,7 +184,7 @@ class LiveBar(object):
             data = self.client.get_k_data(symbol, int(start), int(offset))
             return self.client.to_df(data)
 
-    def index(self, symbol='000001', category='9', start='0', offset='100'):
+    def index(self, symbol='000001', market='sh', category='9', start='0', offset='100'):
         '''
         获取指数k线
 
@@ -203,7 +209,7 @@ class LiveBar(object):
         :param offset: 每次获取条数
         :return: pd.dataFrame or None
         '''
-        market = get_stock_market(symbol)
+        market = 1 if market == 'sh' else 0
 
         with self.client.connect(*self.bestip):
             data = self.client.get_index_bars(int(category), int(market), str(symbol), int(start), int(offset))
