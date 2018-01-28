@@ -1,15 +1,15 @@
 # -*- coding: utf-8 -*-
 import unittest
 
-from mootdx.quotes import LiveBar
+from mootdx.quotes import Quotes, ExQuotes
 
 
-class TestLiveBar(unittest.TestCase):
+class TestQuotes(unittest.TestCase):
     reader = None
 
     # 初始化工作
     def setUp(self):
-        self.client = LiveBar()
+        self.client = Quotes()
 
     # 退出清理工作
     def tearDown(self):

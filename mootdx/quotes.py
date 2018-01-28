@@ -7,7 +7,7 @@ from mootdx.utils import get_stock_market
 import os
 
 
-class LiveBar(object):
+class Quotes(object):
     """股票市场实时行情"""
 
     def __init__(self, **kwargs):
@@ -238,7 +238,7 @@ class LiveBar(object):
         pass
 
 
-class ExLiveBar(object):
+class ExQuotes(object):
     """扩展市场实时行情"""
 
     def __init__(self, **kwargs):
