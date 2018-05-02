@@ -27,11 +27,16 @@ class Reader(object):
         :return: pd.dataFrame or None
         '''
         market = get_stock_market(symbol, True)
-        vipdoc = 'vipdoc/%s/%s/%s%s.%s' % (market, subdir, market, symbol, ext)
-        vipdoc = os.path.join(self.tdxdir, vipdoc)
+        ext = ext if isinstance(ext, list) else [ext]
+        
+        for t in ext:
+            vipdoc = 'vipdoc/%s/%s/%s%s.%s' % (market, subdir, market, symbol, t)
+            vipdoc = os.path.join(self.tdxdir, vipdoc)
 
-        if os.path.exists(vipdoc):
-            return vipdoc
+            print(vipdoc)
+            
+            if os.path.exists(vipdoc):
+                return vipdoc
 
         return None
 
@@ -57,11 +62,7 @@ class Reader(object):
         :param symbol:
         :return: pd.dataFrame or None
         '''
-        symbol = self.find_path(symbol, subdir='minline', ext='lc1')
-        symbol = self.find_path(
-            symbol,
-            subdir='minline',
-            ext='1') if not symbol else symbol
+        symbol = self.find_path(symbol, subdir='minline', ext=['lc1', '1'])
         reader = TdxLCMinBarReader()
 
         if symbol is not None:
@@ -76,11 +77,7 @@ class Reader(object):
         :param symbol:
         :return: pd.dataFrame or None
         '''
-        symbol = self.find_path(symbol, subdir='fzline', ext='lc5')
-        symbol = self.find_path(
-            symbol,
-            subdir='fzline',
-            ext='5') if not symbol else symbol
+        symbol = self.find_path(symbol, subdir='fzline', ext=['lc5', '5'])
         reader = TdxLCMinBarReader()
 
         if symbol is not None:
