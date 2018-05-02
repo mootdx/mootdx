@@ -16,6 +16,10 @@ class Quotes(object):
         self.bestip = self.bestip.split(':')
         self.bestip[1] = int(self.bestip[1])
 
+    # 财务数据下载
+    def affairs():
+        pass
+
     # K线
     def bars(self, symbol='000001', category='9', start='0', offset='100'):
         '''
@@ -29,8 +33,6 @@ class Quotes(object):
         :return: pd.dataFrame or None
         '''
         market = get_stock_market(symbol)
-
-        print(market)
 
         with self.client.connect(*self.bestip):
             data = self.client.get_security_bars(
