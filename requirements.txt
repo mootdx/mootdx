@@ -1,5 +1,4 @@
-pytdx
+pytdx==1.67
 click
-pytest
 prettytable
 coloredlogs

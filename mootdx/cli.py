@@ -26,7 +26,8 @@ import click
 import coloredlogs
 from prettytable import PrettyTable
 from mootdx.verify import check
-from mootdx.quotes import LiveBar
+from mootdx.quotes import Quotes
+
 
 @click.group()
 @click.option('-v', '--verbose', count=True)
@@ -40,13 +41,14 @@ def cli(ctx, verbose):
 @click.option('-m', '--method', default='bars', help='操作方法')
 @click.option('-t', '--tofile', default='feed.csv', help='输出文件')
 def quotes(symbol, method, tofile):
-    client = LiveBar()
+    client = Quotes()
     feed = getattr(client, method)(symbol=symbol)
-    
+
     if tofile:
         feed.to_csv(tofile)
-    
+
     print(feed)
+
 
 @cli.command(help='测试行情服务器.')
 @click.option('-l', '--limit', default='5', help='显示最快几个')
@@ -54,6 +56,7 @@ def quotes(symbol, method, tofile):
 @click.option('-v', '--verbose', count=True)
 def verify(limit, verbose, tofile):
     check(limit=int(limit), verbose=verbose, tofile=tofile)
+
 
 def main():
     cli(obj={})

@@ -45,7 +45,7 @@ class Reader(object):
         reader = TdxDailyBarReader()
         vipdoc = self.find_path(symbol=symbol, subdir='lday', ext='day')
 
-        if not vipdoc is None:
+        if vipdoc is not None:
             return reader.get_df(vipdoc)
 
         return None
@@ -58,10 +58,13 @@ class Reader(object):
         :return: pd.dataFrame or None
         '''
         symbol = self.find_path(symbol, subdir='minline', ext='lc1')
-        symbol = self.find_path(symbol, subdir='minline', ext='1') if not symbol else symbol
+        symbol = self.find_path(
+            symbol,
+            subdir='minline',
+            ext='1') if not symbol else symbol
         reader = TdxLCMinBarReader()
 
-        if not symbol is None:
+        if symbol is not None:
             return reader.get_df(symbol)
 
         return None
@@ -74,10 +77,13 @@ class Reader(object):
         :return: pd.dataFrame or None
         '''
         symbol = self.find_path(symbol, subdir='fzline', ext='lc5')
-        symbol = self.find_path(symbol, subdir='fzline', ext='5') if not symbol else symbol
+        symbol = self.find_path(
+            symbol,
+            subdir='fzline',
+            ext='5') if not symbol else symbol
         reader = TdxLCMinBarReader()
 
-        if not symbol is None:
+        if symbol is not None:
             return reader.get_df(symbol)
 
         return None
@@ -93,7 +99,7 @@ class Reader(object):
         reader = BlockReader()
         symbol = os.path.join(self.tdxdir, 'block_zs.dat')
 
-        if not symbol is None:
+        if symbol is not None:
             return reader.get_df(symbol, group)
 
         return None
@@ -109,7 +115,7 @@ class Reader(object):
         reader = BlockReader()
         symbol = os.path.join(self.tdxdir, symbol)
 
-        if not symbol is None:
+        if symbol is not None:
             return reader.get_df(symbol, group)
 
         return None

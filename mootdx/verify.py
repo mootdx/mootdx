@@ -54,7 +54,7 @@ def saveresult(proxy):
 
 # 线程函数
 def verify():
-    while 1:
+    while True:
         proxy = get_hosts()
         # 所有行情均已验证完毕
         if len(proxy) == 0:
@@ -78,7 +78,8 @@ def verify():
 
             saveresult(proxy)
 
-            logger.debug("%s:%s 验证通过，响应时间：%d ms." % (proxy['addr'], proxy['port'], proxy['time']))
+            logger.debug("%s:%s 验证通过，响应时间：%d ms." %
+                         (proxy['addr'], proxy['port'], proxy['time']))
         except Exception as e:
             logger.error("%s,%s 验证失败." % (proxy['addr'], proxy['port']))
 
@@ -118,16 +119,6 @@ def check(limit=10, verbose=False, tofile=''):
 
     for x in result[:int(limit)]:
         t.add_row([x['site'], x['addr'], x['port'], '%.2fms' % x['time']])
-
-    print(t)
-
-    # if tofile:
-    #     import csv
-    #     with open(tofile, 'wb') as csvfile:
-    #         writer = csv.DictWriter(csvfile, fieldnames=result[0].keys())
-    #         writer.writeheader()
-    #         for item in result:
-    #             writer.writerow(item)
 
 if __name__ == '__main__':
     check()

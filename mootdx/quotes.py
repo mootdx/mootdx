@@ -12,7 +12,7 @@ class Quotes(object):
 
     def __init__(self, **kwargs):
         self.client = TdxHq_API(**kwargs)
-        self.bestip = os.environ.setdefault("MOOTDX_SERVER", '202.108.253.130:7709')
+        self.bestip = os.environ.setdefault("MOOTDX_SERVER", '60.28.23.80:7709')
         self.bestip = self.bestip.split(':')
         self.bestip[1] = int(self.bestip[1])
 
@@ -33,7 +33,8 @@ class Quotes(object):
         print(market)
 
         with self.client.connect(*self.bestip):
-            data = self.client.get_security_bars(int(category), int(market), str(symbol), int(start), int(offset))
+            data = self.client.get_security_bars(
+                int(category), int(market), str(symbol), int(start), int(offset))
             return self.client.to_df(data)
 
     # 分时数据
@@ -64,7 +65,8 @@ class Quotes(object):
         market = get_stock_market(symbol)
 
         with self.client.connect(*self.bestip):
-            data = self.client.get_history_minute_time_data(int(market), symbol, datetime)
+            data = self.client.get_history_minute_time_data(
+                int(market), symbol, datetime)
             return self.client.to_df(data)
 
     def trans(self, symbol='', start=0, offset=10):
@@ -80,7 +82,8 @@ class Quotes(object):
         market = get_stock_market(symbol)
 
         with self.client.connect(*self.bestip):
-            data = self.client.get_transaction_data(int(market), symbol, int(start), int(market))
+            data = self.client.get_transaction_data(
+                int(market), symbol, int(start), int(market))
             return self.client.to_df(data)
 
     def trans_his(self, symbol='', start=0, offset=10, date=''):
@@ -97,7 +100,8 @@ class Quotes(object):
         market = get_stock_market(symbol)
 
         with self.client.connect(*self.bestip):
-            data = self.client.get_history_transaction_data(int(market), symbol, int(start), int(offset), date)
+            data = self.client.get_history_transaction_data(
+                int(market), symbol, int(start), int(offset), date)
             return self.client.to_df(data)
 
     def company(self, symbol='', detail='category', *args, **kwargs):
@@ -140,7 +144,8 @@ class Quotes(object):
         market = get_stock_market(symbol)
 
         with self.client.connect(*self.bestip):
-            data = self.client.get_company_info_content(int(market), symbol, file, int(start), int(offset))
+            data = self.client.get_company_info_content(
+                int(market), symbol, file, int(start), int(offset))
             return self.client.to_df(data)
 
     def xdxr(self, symbol=''):
@@ -184,7 +189,13 @@ class Quotes(object):
             data = self.client.get_k_data(symbol, int(start), int(offset))
             return self.client.to_df(data)
 
-    def index(self, symbol='000001', market='sh', category='9', start='0', offset='100'):
+    def index(
+            self,
+            symbol='000001',
+            market='sh',
+            category='9',
+            start='0',
+            offset='100'):
         '''
         获取指数k线
 
@@ -212,7 +223,8 @@ class Quotes(object):
         market = 1 if market == 'sh' else 0
 
         with self.client.connect(*self.bestip):
-            data = self.client.get_index_bars(int(category), int(market), str(symbol), int(start), int(offset))
+            data = self.client.get_index_bars(
+                int(category), int(market), str(symbol), int(start), int(offset))
             return self.client.to_df(data)
 
     def block(self, tofile="block.dat"):
@@ -245,7 +257,13 @@ class ExQuotes(object):
         self.client = TdxExHq_API(**kwargs)
         self.bestip = ('202.108.253.130', 7709)
 
-    def bars(self, symbol='', category='1', market='0', start='0', offset='100'):
+    def bars(
+            self,
+            symbol='',
+            category='1',
+            market='0',
+            start='0',
+            offset='100'):
         '''
         获取实时日K线数据
 
@@ -257,7 +275,8 @@ class ExQuotes(object):
         :return: pd.dataFrame or None
         '''
         with self.client.connect(*self.bestip):
-            data = self.client.get_security_bars(int(category), int(market), str(symbol), int(start), int(offset))
+            data = self.client.get_security_bars(
+                int(category), int(market), str(symbol), int(start), int(offset))
             return self.client.to_df(data)
 
     def markets(self):

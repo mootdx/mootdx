@@ -1,13 +1,9 @@
 =======
-团队荣誉
+开发团队
 =======
 
-Development Lead
-----------------
+开发者列表
+--------
 
-* mootdx <ibopo@126.com>
+* bopo <ibopo@126.com>
 
-Contributors
-------------
-
-None yet. Why not be the first?

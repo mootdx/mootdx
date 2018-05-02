@@ -10,20 +10,24 @@ except ImportError:
 
 from mootdx import __version__
 
+def parse_requirements(filename):
+    lineiter = (line.strip() for line in open(filename))
+    return [line for line in lineiter if line and not line.startswith("#")]
+
 with open('README.rst') as readme_file:
     readme = readme_file.read()
 
 with open('HISTORY.rst') as history_file:
     history = history_file.read()
 
-requirements = ['pytdx', 'click',]
-test_requirements = ['pytdx', 'click', 'pytest', 'prettytable', 'coloredlogs']
-setup_requirements = ['pytdx', 'click', 'prettytable', 'coloredlogs']
+requirements = parse_requirements('requirements.txt')
+test_requirements = requirements
+test_requirements.append('pytest')
 
 setup(
     name='mootdx',
     version=__version__,
-    description="tdx reader",
+    description="tdx quotes code.",
     long_description=readme + '\n\n' + history,
     author="bopo.wang",
     author_email='ibopo@126.com',
@@ -43,16 +47,14 @@ setup(
         'Development Status :: 2 - Pre-Alpha',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: MIT License',
-        'Natural Language :: English',
-        "Programming Language :: Python :: 2",
-        'Programming Language :: Python :: 2.6',
-        'Programming Language :: Python :: 2.7',
+        'Natural Language :: Chinese',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.3',
         'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python :: 3.6',
     ],
     test_suite='tests',
     tests_require=test_requirements,
-    setup_requires=setup_requirements,
+    setup_requires=requirements,
 )
