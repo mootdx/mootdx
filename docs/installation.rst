@@ -5,8 +5,8 @@
 ============
 
 
-Stable release
---------------
+使用 PIP 安装
+-----------------
 
 To install mootdx, run this command in your terminal:
 
@@ -23,7 +23,7 @@ you through the process.
 .. _Python installation guide: http://docs.python-guide.org/en/latest/starting/installation/
 
 
-From sources
+使用源码安装
 ------------
 
 The sources for mootdx can be downloaded from the `Github repo`_.

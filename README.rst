@@ -23,14 +23,15 @@ MooTdx 通达信数据转换程序
 * 在线文档: https://mootdx.readthedocs.io.
 
 
-功能
+功能说明
 --------
 
 * 本程序不在支持 python 2 版本.
 * 通达信客户端文件转换
 * 通达信在线行情下载
 
-Credits
+贡献名单
 ---------
 
+- bopo.wang
 

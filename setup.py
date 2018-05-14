@@ -40,7 +40,7 @@ setup(
     keywords='mootdx',
     entry_points={
         'console_scripts': [
-            'mootdx = mootdx.cli:main',
+            'mootdx = mootdx.cmdline:execute',
         ]
     },
     classifiers=[

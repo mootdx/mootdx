@@ -30,7 +30,7 @@ class Reader(object):
         ext = ext if isinstance(ext, list) else [ext]
         
         for t in ext:
-            vipdoc = 'vipdoc/%s/%s/%s%s.%s' % (market, subdir, market, symbol, t)
+            vipdoc = 'vipdoc/{}/{}/{}{}.{}'.format(market, subdir, market, symbol, t)
             vipdoc = os.path.join(self.tdxdir, vipdoc)
 
             print(vipdoc)
