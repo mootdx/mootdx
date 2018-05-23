@@ -12,7 +12,7 @@ class Quotes(object):
 
     def __init__(self, **kwargs):
         self.client = TdxHq_API(**kwargs)
-        self.bestip = os.environ.setdefault("MOOTDX_SERVER", '60.28.23.80:7709')
+        self.bestip = os.environ.setdefault("MOOTDX_SERVER", '202.108.253.131:7709')
         self.bestip = self.bestip.split(':')
         self.bestip[1] = int(self.bestip[1])
 
@@ -178,18 +178,18 @@ class Quotes(object):
             data = self.client.get_finance_info(int(market), symbol)
             return self.client.to_df(data)
 
-    def k(self, symbol='', start=0, offset=10):
+    def k(self, symbol='', begin=None, end=None):
         '''
         读取k线信息
 
         :param symbol:
-        :param start:
-        :param offset:
+        :param begin:
+        :param end:
         :return: pd.dataFrame or None
         '''
         with self.client.connect(*self.bestip):
-            data = self.client.get_k_data(symbol, int(start), int(offset))
-            return self.client.to_df(data)
+            data = self.client.get_k_data(symbol, begin, end)
+            return data
 
     def index(
             self,
