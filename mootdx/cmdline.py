@@ -24,9 +24,10 @@ import time
 
 import click
 import coloredlogs
-from prettytable import PrettyTable
-from mootdx.verify import check
 from mootdx.quotes import Quotes
+from mootdx.verify import check
+
+from prettytable import PrettyTable
 
 
 @click.group()
@@ -38,7 +39,7 @@ def cli(ctx, verbose):
 
 @cli.command(help='读取股票行情数据.')
 @click.option('-s', '--symbol', default='600001', help='股票代码')
-@click.option('-m', '--method', default='bars', help='操作方法')
+@click.option('-m', '--method', default='bars', help='时间区间')
 @click.option('-t', '--tofile', default='feed.csv', help='输出文件')
 def quotes(symbol, method, tofile):
     client = Quotes()
@@ -54,9 +55,12 @@ def quotes(symbol, method, tofile):
 @click.option('-l', '--limit', default='5', help='显示最快几个')
 @click.option('-t', '--tofile', default=None, help='输出文件')
 @click.option('-v', '--verbose', count=True)
-def verify(limit, verbose, tofile):
+def server(limit, verbose, tofile):
     check(limit=int(limit), verbose=verbose, tofile=tofile)
 
 
 def execute():
     cli(obj={})
+
+if __name__ == "__main__":
+    execute()

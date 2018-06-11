@@ -10,6 +10,7 @@ except ImportError:
 
 from mootdx import __version__
 
+
 def parse_requirements(filename):
     lineiter = (line.strip() for line in open(filename))
     return [line for line in lineiter if line and not line.startswith("#")]

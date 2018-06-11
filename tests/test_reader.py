@@ -2,7 +2,7 @@
 
 import unittest
 
-from mootdx.reader import Reader, ExReader
+from mootdx.reader import ExReader, Reader
 
 
 class TestReader(unittest.TestCase):

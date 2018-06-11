@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
-from pytdx.exhq import TdxExHq_API
-from pytdx.hq import TdxHq_API
+import os
 
 from mootdx.utils import get_stock_market
-
-import os
+from pytdx.exhq import TdxExHq_API
+from pytdx.hq import TdxHq_API
 
 
 class Quotes(object):

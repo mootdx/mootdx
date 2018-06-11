@@ -4,9 +4,11 @@ import io
 import time
 from datetime import datetime, timedelta
 from functools import lru_cache
+from struct import *
+
 from pytdx.config.hosts import hq_hosts as hosts
 from pytdx.hq import TdxHq_API
-from struct import *
+
 
 def get_stock_market(symbol='', string=False):
     """判断股票ID对应的证券市场
@@ -74,4 +76,3 @@ def gpcw(filepath):
         
         print("%s, %s" % (code, str(cw_info)))
         return code, cw_info
-
