@@ -9,6 +9,7 @@ __pycache__/
 *.ipynb
 
 # Distribution / packaging
+.pytest_cache/
 .Python
 env/
 build/
