@@ -15,19 +15,11 @@ Why does this file exist, and why not put this in __main__?
 
   Also see (1) from http://click.pocoo.org/5/setuptools/#setuptools-integration
 """
-import json
-import logging
-import re
-import socket
-import threading
-import time
 
 import click
-import coloredlogs
+
 from mootdx.quotes import Quotes
 from mootdx.verify import check
-
-from prettytable import PrettyTable
 
 
 @click.group()
@@ -38,15 +30,15 @@ def cli(ctx, verbose):
 
 
 @cli.command(help='读取股票行情数据.')
+@click.option('-o', '--output', default='feed.csv', help='输出文件')
 @click.option('-s', '--symbol', default='600001', help='股票代码')
 @click.option('-m', '--method', default='bars', help='时间区间')
-@click.option('-t', '--tofile', default='feed.csv', help='输出文件')
-def quotes(symbol, method, tofile):
+# @click.option('-m', '--market', default='standard', help='证券市场')
+# @click.option('-m', '--market', default='extension', help='证券市场')
+def quotes(symbol, method, output):
     client = Quotes()
     feed = getattr(client, method)(symbol=symbol)
-
-    if tofile:
-        feed.to_csv(tofile)
+    feed.to_csv(output) if output else None
 
     print(feed)
 
@@ -61,6 +53,7 @@ def server(limit, verbose, tofile):
 
 def execute():
     cli(obj={})
+
 
 if __name__ == "__main__":
     execute()

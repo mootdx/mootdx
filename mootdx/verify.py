@@ -5,9 +5,8 @@ import threading
 import time
 
 import coloredlogs
-from pytdx.config.hosts import hq_hosts
-
 from prettytable import PrettyTable
+from pytdx.config.hosts import hq_hosts
 
 logger = logging.getLogger(__name__)
 # coloredlogs.install(fmt='[%(asctime)s] %(levelname)s %(message)s')
@@ -92,7 +91,6 @@ def check(limit=10, verbose=False, tofile=''):
         # coloredlogs.install(level='DEBUG', logger=logger)
         coloredlogs.install(level='DEBUG', logger=logger, fmt='[%(asctime)s] %(levelname)s %(message)s')
 
-
     thread_pool = []
 
     for i in range(20):
@@ -124,6 +122,7 @@ def check(limit=10, verbose=False, tofile=''):
         t.add_row([x['site'], x['addr'], x['port'], '%.2fms' % x['time']])
 
     print(t)
+
 
 if __name__ == '__main__':
     check()

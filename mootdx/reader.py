@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 import os
 
-from mootdx.utils import get_stock_market
 from pytdx.reader import (BlockReader, TdxDailyBarReader,
                           TdxExHqDailyBarReader, TdxLCMinBarReader)
+
+from mootdx.utils import get_stock_market
 
 
 # 股票市场
@@ -27,13 +28,13 @@ class Reader(object):
         '''
         market = get_stock_market(symbol, True)
         ext = ext if isinstance(ext, list) else [ext]
-        
+
         for t in ext:
             vipdoc = 'vipdoc/{}/{}/{}{}.{}'.format(market, subdir, market, symbol, t)
             vipdoc = os.path.join(self.tdxdir, vipdoc)
 
             print(vipdoc)
-            
+
             if os.path.exists(vipdoc):
                 return vipdoc
 

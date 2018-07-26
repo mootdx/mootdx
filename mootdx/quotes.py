@@ -1,14 +1,16 @@
 # -*- coding: utf-8 -*-
 import os
 
-from mootdx.utils import get_stock_market
 from pytdx.exhq import TdxExHq_API
 from pytdx.hq import TdxHq_API
+
+from mootdx.utils import get_stock_market
 
 
 class Quotes(object):
     """股票市场实时行情"""
 
+    # __slots__ =
     def __init__(self, **kwargs):
         self.client = TdxHq_API(**kwargs)
         self.bestip = os.environ.setdefault("MOOTDX_SERVER", '202.108.253.131:7709')
@@ -16,7 +18,7 @@ class Quotes(object):
         self.bestip[1] = int(self.bestip[1])
 
     # 财务数据下载
-    def affairs():
+    def affairs(self):
         pass
 
     # K线
@@ -191,12 +193,12 @@ class Quotes(object):
             return data
 
     def index(
-            self,
-            symbol='000001',
-            market='sh',
-            category='9',
-            start='0',
-            offset='100'):
+        self,
+        symbol='000001',
+        market='sh',
+        category='9',
+        start='0',
+        offset='100'):
         '''
         获取指数k线
 
@@ -259,12 +261,12 @@ class ExQuotes(object):
         self.bestip = ('202.108.253.130', 7709)
 
     def bars(
-            self,
-            symbol='',
-            category='1',
-            market='0',
-            start='0',
-            offset='100'):
+        self,
+        symbol='',
+        category='1',
+        market='0',
+        start='0',
+        offset='100'):
         '''
         获取实时日K线数据
 

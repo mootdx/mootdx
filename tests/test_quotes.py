@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import unittest
 
-from mootdx.quotes import ExQuotes, Quotes
+from mootdx.quotes import Quotes
 
 
 class TestQuotes(unittest.TestCase):
