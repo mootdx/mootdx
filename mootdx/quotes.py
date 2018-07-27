@@ -186,20 +186,6 @@ class StdQuotes(object):
             data = self.client.get_xdxr_info(int(market), symbol)
             return self.client.to_df(data)
 
-    def finance(self, symbol=''):
-        '''
-        读取财务信息
-
-        :param market: 市场代码
-        :param symbol: 股票代码
-        :return: pd.dataFrame or None
-        '''
-        market = get_stock_market(symbol)
-
-        with self.client.connect(*self.bestip):
-            data = self.client.get_finance_info(int(market), symbol)
-            return self.client.to_df(data)
-
     def k(self, symbol='', begin=None, end=None):
         '''
         读取k线信息
@@ -285,28 +271,6 @@ class ExtQuotes(object):
         self.bestip = ('61.152.107.141', 7727)
         # self.bestip[1] = int(self.bestip[1])
 
-    def bars(
-        self,
-        symbol='',
-        category='1',
-        market='0',
-        start='0',
-        offset='100'):
-        '''
-        获取实时日K线数据
-
-        :param symbol:
-        :param category:
-        :param market:
-        :param start:
-        :param offset:
-        :return: pd.dataFrame or None
-        '''
-        with self.client.connect(*self.bestip):
-            data = self.client.get_security_bars(
-                int(category), int(market), str(symbol), int(start), int(offset))
-            return self.client.to_df(data)
-
     def markets(self):
         '''
         获取实时市场列表
@@ -338,7 +302,7 @@ class ExtQuotes(object):
             data = self.client.get_minute_time_data(market, symbol)
             return self.client.to_df(data)
 
-    def symbols(self, start=0, offset=100):
+    def instrument(self, start=0, offset=100):
         '''
         查询代码列表
         :param start:

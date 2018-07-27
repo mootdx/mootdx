@@ -17,6 +17,10 @@ class Affairs(object):
         return result
 
 
+    @staticmethod
+    def files():
+        return Affairs.fetch(filelist=True)
+        
     # 财务数据下载
     @staticmethod
     def fetch(downdir='.', filename=None, filelist=False, **kwargs):
