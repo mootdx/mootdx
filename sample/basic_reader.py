@@ -1,7 +1,10 @@
-from mootdx.reader import Reader
+from mootdx.reader import ExReader, Reader
 
 # 初始化通达信文件读取类
 reader = Reader(tdxdir='./tests/data')
+
+reader = Reader.factory(market='std') # 标准市场
+reader = Reader.factory(market='ext') # 扩展市场
 
 # 读取分钟数据
 minute = reader.minute(symbol='600036')

@@ -57,7 +57,7 @@ class TestQuotes(unittest.TestCase):
         self.assertTrue(data is not None)
 
     def test_k(self):
-        data = self.client.k(symbol='600036', start=0, offset=10)
+        data = self.client.k(symbol='600036', begin=0, end=10)
         self.assertTrue(data is not None)
 
     def test_block(self):

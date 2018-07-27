@@ -10,8 +10,6 @@ def get_stock_market(symbol='', string=False):
     ['5', '6', '9'] 开头的为 sh， 其余为 sz
     :param symbol:股票ID, 若以 'sz', 'sh' 开头直接返回对应类型，否则使用内置规则判断
     :return 'sh' or 'sz'"""
-    print(symbol, type(symbol), isinstance(symbol, str))
-
     assert isinstance(symbol, str), 'stock code need str type'
 
     if symbol.startswith(('sh', 'sz')):
