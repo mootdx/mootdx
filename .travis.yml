@@ -19,10 +19,11 @@ script: tox
 deploy:
   provider: pypi
   distributions: sdist bdist_wheel
-  user: bopo
-  password:
+  user: bopowang
+  password: L?QCPrw7k,2HZvgE
     secure: PLEASE_REPLACE_ME
   on:
     tags: true
     repo: bopo/mootdx
     python: 3.6
+
