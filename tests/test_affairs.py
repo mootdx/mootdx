@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
-import unittest,os
+import os
+import unittest
 
 from mootdx.affairs import Affairs
+
 
 class TestAffairs(unittest.TestCase):
 

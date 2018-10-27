@@ -85,7 +85,7 @@ def verify():
             logger.error("%s,%s 验证失败." % (proxy['addr'], proxy['port']))
 
 
-def check(limit=10, verbose=False, tofile=''):
+def Server(limit=10, verbose=False, tofile=''):
     # init thread_pool
     if verbose:
         # coloredlogs.install(level='DEBUG', logger=logger)
@@ -122,6 +122,7 @@ def check(limit=10, verbose=False, tofile=''):
         t.add_row([x['site'], x['addr'], x['port'], '%.2fms' % x['time']])
 
     print(t)
+    return [(x['addr'], x['port']) for x in result]
 
 
 if __name__ == '__main__':

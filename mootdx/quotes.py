@@ -36,11 +36,21 @@ class StdQuotes(object):
 
     # __slots__ =
     def __init__(self, **kwargs):
+        self.config = None
+
+        try:
+            self.config = json.loads(os.path.join(os.environ['HOME'], '.mootdx/config.josn'))
+        except Exception as e:
+            self.config = None
+        
         self.client = TdxHq_API(**kwargs)
-        self.bestip = os.environ.setdefault("MOOTDX_SERVER", '202.108.253.131:7709')
-        # self.bestip = kwargs.get("bestip", '202.108.253.131:7709')
-        self.bestip = self.bestip.split(':')
-        self.bestip[1] = int(self.bestip[1])
+
+        if not self.config:
+            self.bestip = os.environ.setdefault("MOOTDX_SERVER", '202.108.253.131:7709')
+            self.bestip = self.bestip.split(':')
+            self.bestip[1] = int(self.bestip[1])
+        else:
+            self.bestip = self.config.get('SERVER')
 
     # K线
     def bars(self, symbol='000001', category='9', start='0', offset='100'):
@@ -268,7 +278,7 @@ class ExtQuotes(object):
         # self.bestip = os.environ.setdefault("MOOTDX_SERVER", '61.152.107.141:7727')
         # self.bestip = kwargs.get("bestip", '202.108.253.131:7709')
         # self.bestip = self.bestip.split(':')
-        self.bestip = ('61.152.107.141', 7727)
+        self.bestip = ('202.108.253.131', 7709)
         # self.bestip[1] = int(self.bestip[1])
 
     def markets(self):
@@ -280,6 +290,8 @@ class ExtQuotes(object):
         with self.client.connect(*self.bestip):
             data = self.client.get_markets()
             return self.client.to_df(data)
+
+        return None
 
     def quote5(self, market=47, symbol="IF1709"):
         '''

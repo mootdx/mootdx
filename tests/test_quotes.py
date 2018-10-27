@@ -61,21 +61,21 @@ class TestStdQuotes(unittest.TestCase):
         self.assertTrue(data is not None)
 
 
-class TestExtQuotes(unittest.TestCase):
-    reader = None
+# class TestExtQuotes(unittest.TestCase):
+#     reader = None
 
-    # 初始化工作
-    def setUp(self):
-        self.client = Quotes.factory(market='ext', multithread=True, heartbeat=True) # 标准市场
+#     # 初始化工作
+#     def setUp(self):
+#         self.client = Quotes.factory(market='ext', multithread=True, heartbeat=True) # 标准市场
 
-    # 退出清理工作
-    def tearDown(self):
-        del self.client
+#     # 退出清理工作
+#     def tearDown(self):
+#         del self.client
 
-    # 具体的测试用例，一定要以test开头
-    def test_markets(self):
-        data = self.client.markets()
-        self.assertTrue(data is not None)
+#     # 具体的测试用例，一定要以test开头
+#     def test_markets(self):
+#         data = self.client.markets()
+#         self.assertTrue(data is not None)
 
 if __name__ == '__main__':
     unittest.main()
