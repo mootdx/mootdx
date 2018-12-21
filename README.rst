@@ -41,6 +41,8 @@
 命令行工具
 
 ::
+	
+	mootdx --help
 
 	Usage: mootdx [OPTIONS] COMMAND [ARGS]...
 
