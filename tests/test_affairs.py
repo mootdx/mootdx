@@ -14,6 +14,9 @@ class TestAffairs(unittest.TestCase):
     # def test_parse_one(self):
     #     data = Affairs.parse(downdir='tmp', filename='gpcw19960630.zip')
     #     self.assertTrue(data)
+    def setUp(self):
+        if not os.path.isdir('tmp'):
+            os.mkdir('tmp')
 
     def test_parse_export(self):
         Affairs.parse(downdir='tmp', filename='gpcw19960630.zip').to_csv('gpcw19960630.csv')
