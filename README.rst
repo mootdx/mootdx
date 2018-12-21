@@ -38,6 +38,28 @@
 
 使用说明
 --------
+命令行工具
+
+::
+
+	Usage: mootdx [OPTIONS] COMMAND [ARGS]...
+
+	Options:
+	  -v, --verbose
+	  --help         Show this message and exit.
+
+	Commands:
+	  affair  财务文件下载&解析.
+	  quotes  读取股票行情数据.
+	  server  测试行情服务器.
+
+使用最快的服务器
+
+:: 
+
+	# -w 参数是写入配置文件
+	mootdx server -w 
+
 
 通达信离线数据读取
 
