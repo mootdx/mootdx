@@ -26,6 +26,7 @@
 --------
 
 ::
+
 	# PIP 自动安装方法
 	pip install mootdx
 
@@ -41,6 +42,7 @@
 通达信离线数据读取
 
 ::
+
 	from mootdx.reader import Reader
 
 	# market 参数 std 为标准市场(就是股票), ext 为扩展市场(期货，黄金等)
@@ -54,6 +56,7 @@
 通达信离线行情读取
 
 ::
+
 	from mootdx.quotes import Quotes
 
 	# 标准市场
@@ -72,6 +75,7 @@
 通达信财务数据读取
 
 ::
+
 	from mootdx.affairs import Affairs
 
 	# 远程文件列表
