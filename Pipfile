@@ -1,26 +1,16 @@
 [[source]]
-
-url = "http://mirrors.aliyun.com/pypi/simple/"
-verify_ssl = false
 name = "pypi"
-
+url = "https://pypi.org/simple"
+verify_ssl = true
 
 [dev-packages]
 
-pytest = "*"
-ipython = "*"
-
-
 [packages]
-
-pytdx = "*"
-click = "*"
-prettytable = "*"
-coloredlogs = "*"
-pylama = "*"
-sh = "*"
-
+click = "~=6.7"
+coloredlogs = "~=10.0"
+pandas = "~=0.23.3"
+prettytable = "~=0.7.2"
+pytdx = "~=1.67"
 
 [requires]
-
 python_version = "3.6"

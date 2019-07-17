@@ -2,7 +2,7 @@
 
 import unittest
 
-from mootdx.reader import Reader, ExReader
+from mootdx.reader import Reader
 
 
 class TestReader(unittest.TestCase):
@@ -10,7 +10,7 @@ class TestReader(unittest.TestCase):
 
     # 初始化工作
     def setUp(self):
-        self.reader = Reader(tdxdir='./tests/data')
+        self.reader = Reader.factory(market='std', tdxdir='./tests/data')
 
     # 退出清理工作
     def tearDown(self):
@@ -32,7 +32,7 @@ class TestExReader(unittest.TestCase):
 
     # 初始化工作
     def setUp(self):
-        self.reader = ExReader(tdxdir='./tests/data')
+        self.reader = Reader.factory(market='ext', tdxdir='./tests/data')
 
     # 退出清理工作
     def tearDown(self):

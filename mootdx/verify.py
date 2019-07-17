@@ -2,18 +2,19 @@
 import logging
 import socket
 import threading
-import time
 
 import coloredlogs
+import time
 from prettytable import PrettyTable
 from pytdx.config.hosts import hq_hosts
 
 logger = logging.getLogger(__name__)
+# coloredlogs.install(fmt='[%(asctime)s] %(levelname)s %(message)s')
 
 result = []
 hosts = []
 
-for x in hq_hosts[:-7]:
+for x in hq_hosts:
     hosts.append({'addr': x[1], 'port': x[2], 'time': 0, 'site': x[0]})
 
 # 线程同步锁
@@ -84,10 +85,11 @@ def verify():
             logger.error("%s,%s 验证失败." % (proxy['addr'], proxy['port']))
 
 
-def check(limit=10, verbose=False, tofile=''):
+def Server(limit=10, verbose=False, tofile=''):
     # init thread_pool
     if verbose:
-        coloredlogs.install(level='DEBUG', logger=logger)
+        # coloredlogs.install(level='DEBUG', logger=logger)
+        coloredlogs.install(level='DEBUG', logger=logger, fmt='[%(asctime)s] %(levelname)s %(message)s')
 
     thread_pool = []
 
@@ -104,7 +106,6 @@ def check(limit=10, verbose=False, tofile=''):
         threading.Thread.join(thread)
 
     # 结果按响应时间从小到大排序
-
     # result.sort(lambda x, y: cmp(x['time'], y['time']))
     result.sort(key=lambda x: (x['time']))
 
@@ -119,6 +120,10 @@ def check(limit=10, verbose=False, tofile=''):
 
     for x in result[:int(limit)]:
         t.add_row([x['site'], x['addr'], x['port'], '%.2fms' % x['time']])
+
+    print(t)
+    return [(x['addr'], x['port']) for x in result]
+
 
 if __name__ == '__main__':
     check()

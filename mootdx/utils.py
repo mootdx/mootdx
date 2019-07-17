@@ -1,12 +1,6 @@
 # -*- coding: utf-8 -*-
-import datetime
-import io
-import time
-from datetime import datetime, timedelta
-from functools import lru_cache
-from pytdx.config.hosts import hq_hosts as hosts
-from pytdx.hq import TdxHq_API
 from struct import *
+
 
 def get_stock_market(symbol='', string=False):
     """判断股票ID对应的证券市场
@@ -16,8 +10,6 @@ def get_stock_market(symbol='', string=False):
     ['5', '6', '9'] 开头的为 sh， 其余为 sz
     :param symbol:股票ID, 若以 'sz', 'sh' 开头直接返回对应类型，否则使用内置规则判断
     :return 'sh' or 'sz'"""
-    print(symbol, type(symbol), isinstance(symbol, str))
-
     assert isinstance(symbol, str), 'stock code need str type'
 
     if symbol.startswith(('sh', 'sz')):
@@ -48,6 +40,7 @@ def get_stock_market(symbol='', string=False):
 
     return market
 
+
 def parse_gpcw(filename):
     lineiter = (line.strip() for line in open(filename))
     return [line.split(',') for line in lineiter]
@@ -62,7 +55,7 @@ def gpcw(filepath):
     max_count = stock_header[3]
 
     for stock_idx in range(0, max_count):
-        cw_file.seek(header_size+stock_idx*calcsize("<6s1c1L"))
+        cw_file.seek(header_size + stock_idx * calcsize("<6s1c1L"))
         si = cw_file.read(stock_item_size)
         stock_item = unpack("<6s1c1L", si)
         code = stock_item[0].decode()
@@ -71,7 +64,6 @@ def gpcw(filepath):
         info_data = cw_file.read(calcsize('<264f'))
         data_size = len(info_data)
         cw_info = unpack('<264f', info_data)
-        
+
         print("%s, %s" % (code, str(cw_info)))
         return code, cw_info
-

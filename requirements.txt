@@ -1,4 +1,5 @@
-pytdx
-click
-prettytable
-coloredlogs
+click>=6.7
+coloredlogs>=10.0
+pandas>=0.23.3
+prettytable>=0.7.2
+pytdx>=1.67

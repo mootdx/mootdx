@@ -1,24 +1,58 @@
 # -*- coding: utf-8 -*-
+import os
+
 from pytdx.exhq import TdxExHq_API
 from pytdx.hq import TdxHq_API
 
 from mootdx.utils import get_stock_market
 
-import os
 
-
+# 股票市场
 class Quotes(object):
+    @staticmethod
+    def factory(market='std', **kwargs):
+        if market == 'ext':
+            return ExtQuotes(**kwargs)
+        elif market == 'std':
+            return StdQuotes(**kwargs)
+
+    # 财务数据下载 affairs
+    @staticmethod
+    def financial(downdir='.'):
+        from pytdx.crawler.base_crawler import demo_reporthook
+        from pytdx.crawler.history_financial_crawler import HistoryFinancialCrawler
+        from pytdx.crawler.history_financial_crawler import HistoryFinancialListCrawler
+
+        crawler = HistoryFinancialListCrawler()
+        datacrawler = HistoryFinancialCrawler()
+        list_data = crawler.fetch_and_parse()
+
+        for x in tqdm(list_data):
+            downfile = os.path.join(downdir, x['filename'])
+            result = datacrawler.fetch_and_parse(reporthook=demo_reporthook, filename=x['filename'],
+                                                 path_to_download=downfile)
+
+
+class StdQuotes(object):
     """股票市场实时行情"""
 
+    # __slots__ =
     def __init__(self, **kwargs):
-        self.client = TdxHq_API(**kwargs)
-        self.bestip = os.environ.setdefault("MOOTDX_SERVER", '202.108.253.131:7709')
-        self.bestip = self.bestip.split(':')
-        self.bestip[1] = int(self.bestip[1])
+        self.config = None
 
-    # 财务数据下载
-    def affairs():
-        pass
+        try:
+            self.config = json.loads(os.path.join(os.environ['HOME'], '.mootdx/config.josn'))
+        except Exception as e:
+            self.config = None
+
+        self.client = TdxHq_API(**kwargs)
+
+        if not self.config:
+            self.bestip = os.environ.setdefault("MOOTDX_SERVER", '202.108.253.131:7709')
+            self.bestip = self.bestip.split(':')
+            self.bestip[1] = int(self.bestip[1])
+        else:
+            self.bestip = self.config.get('SERVER')
 
     # K线
     def bars(self, symbol='000001', category='9', start='0', offset='100'):
@@ -164,20 +198,6 @@ class Quotes(object):
             data = self.client.get_xdxr_info(int(market), symbol)
             return self.client.to_df(data)
 
-    def finance(self, symbol=''):
-        '''
-        读取财务信息
-
-        :param market: 市场代码
-        :param symbol: 股票代码
-        :return: pd.dataFrame or None
-        '''
-        market = get_stock_market(symbol)
-
-        with self.client.connect(*self.bestip):
-            data = self.client.get_finance_info(int(market), symbol)
-            return self.client.to_df(data)
-
     def k(self, symbol='', begin=None, end=None):
         '''
         读取k线信息
@@ -192,12 +212,12 @@ class Quotes(object):
             return data
 
     def index(
-            self,
-            symbol='000001',
-            market='sh',
-            category='9',
-            start='0',
-            offset='100'):
+        self,
+        symbol='000001',
+        market='sh',
+        category='9',
+        start='0',
+        offset='100'):
         '''
         获取指数k线
 
@@ -252,34 +272,16 @@ class Quotes(object):
         pass
 
 
-class ExQuotes(object):
+class ExtQuotes(object):
     """扩展市场实时行情"""
 
     def __init__(self, **kwargs):
         self.client = TdxExHq_API(**kwargs)
-        self.bestip = ('202.108.253.130', 7709)
-
-    def bars(
-            self,
-            symbol='',
-            category='1',
-            market='0',
-            start='0',
-            offset='100'):
-        '''
-        获取实时日K线数据
-
-        :param symbol:
-        :param category:
-        :param market:
-        :param start:
-        :param offset:
-        :return: pd.dataFrame or None
-        '''
-        with self.client.connect(*self.bestip):
-            data = self.client.get_security_bars(
-                int(category), int(market), str(symbol), int(start), int(offset))
-            return self.client.to_df(data)
+        # self.bestip = os.environ.setdefault("MOOTDX_SERVER", '61.152.107.141:7727')
+        # self.bestip = kwargs.get("bestip", '202.108.253.131:7709')
+        # self.bestip = self.bestip.split(':')
+        self.bestip = ('202.108.253.131', 7709)
+        # self.bestip[1] = int(self.bestip[1])
 
     def markets(self):
         '''
@@ -291,13 +293,36 @@ class ExQuotes(object):
             data = self.client.get_markets()
             return self.client.to_df(data)
 
+        return None
+
+    def quote5(self, market=47, symbol="IF1709"):
+        '''
+        查询五档行情
+
+        :return: pd.dataFrame or None
+        '''
+        with self.client.connect(*self.bestip):
+            data = self.client.get_instrument_quote(market, symbol)
+            return self.client.to_df(data)
+
+    def minute(self, market=47, symbol="IF1709"):
+        '''
+        查询五档行情
+
+        :return: pd.dataFrame or None
+        '''
+        with self.client.connect(*self.bestip):
+            data = self.client.get_minute_time_data(market, symbol)
+            return self.client.to_df(data)
+
     def instrument(self, start=0, offset=100):
         '''
-
+        查询代码列表
         :param start:
         :param offset:
         :return: pd.dataFrame or None
         '''
         with self.client.connect(*self.bestip):
+            # nums = self.client.get_instrument_count()
             data = self.client.get_instrument_info(int(start), int(offset))
             return self.client.to_df(data)

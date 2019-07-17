@@ -9,12 +9,20 @@ from mootdx.utils import get_stock_market
 
 # 股票市场
 class Reader(object):
+    @staticmethod
+    def factory(market='std', **kwargs):
+        if market == 'ext':
+            return ExtReader(**kwargs)
+        elif market == 'std':
+            return StdReader(**kwargs)
+
+
+class StdReader(object):
     """股票市场"""
 
     tdxdir = r'C:/new_tdx'
 
     def __init__(self, tdxdir=None):
-        super(Reader, self).__init__()
         self.tdxdir = tdxdir
 
     def find_path(self, symbol=None, subdir='lday', ext='day'):
@@ -28,13 +36,11 @@ class Reader(object):
         '''
         market = get_stock_market(symbol, True)
         ext = ext if isinstance(ext, list) else [ext]
-        
+
         for t in ext:
             vipdoc = 'vipdoc/{}/{}/{}{}.{}'.format(market, subdir, market, symbol, t)
             vipdoc = os.path.join(self.tdxdir, vipdoc)
 
-            print(vipdoc)
-            
             if os.path.exists(vipdoc):
                 return vipdoc
 
@@ -118,7 +124,7 @@ class Reader(object):
         return None
 
 
-class ExReader(Reader):
+class ExtReader(StdReader):
     """扩展市场读取"""
 
     def daily(self, symbol=None):

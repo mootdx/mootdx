@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Entrypoint module, in case you use `python -mmootdx`.
+Entrypoint module, in case you use `python -m mootdx`.
 
 
 Why does this file exist, and why __main__? For more info, read:
@@ -9,7 +9,7 @@ Why does this file exist, and why __main__? For more info, read:
 - https://docs.python.org/2/using/cmdline.html#cmdoption-m
 - https://docs.python.org/3/using/cmdline.html#cmdoption-m
 """
-from mootdx.cli import main
+from mootdx.cmdline import execute
 
 if __name__ == "__main__":
-    main()
+    execute()
