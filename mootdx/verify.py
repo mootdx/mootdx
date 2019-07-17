@@ -2,9 +2,9 @@
 import logging
 import socket
 import threading
-import time
 
 import coloredlogs
+import time
 from prettytable import PrettyTable
 from pytdx.config.hosts import hq_hosts
 

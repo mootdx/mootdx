@@ -20,6 +20,7 @@ import json
 import os
 
 import click
+
 from mootdx.quotes import Quotes
 from mootdx.verify import Server
 
@@ -50,7 +51,7 @@ def quotes(symbol, method, output):
 @click.option('-t', '--tofile', default=None, help='输出文件')
 @click.option('-w', '--write', count=True, help='写入配置文件')
 @click.option('-v', '--verbose', count=True)
-def server(limit, verbose, write, tofile):
+def verify(limit, verbose, write, tofile):
     bestip = Server(limit=int(limit), verbose=verbose, tofile=tofile)
     config = os.path.join(os.environ['HOME'], '.mootdx/config.josn')
 
@@ -59,6 +60,7 @@ def server(limit, verbose, write, tofile):
             os.mkdir(os.path.join(os.environ['HOME'], '.mootdx'))
 
         json.dump({'BESTIP': bestip[0]}, open(config, 'w'))
+
 
 @cli.command(help='财务文件下载&解析.')
 @click.option('-p', '--parse', default=None, help='解析文件内容')
@@ -98,6 +100,7 @@ def affair(parse, files, fetch, output, downdir, verbose):
                 Affairs.parse(downdir=downdir, filename=parse.strip('.zip') + '.zip').to_csv(output)
             else:
                 print('file not found.')
+
 
 def execute():
     cli(obj={})

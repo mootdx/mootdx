@@ -7,13 +7,14 @@ from mootdx.affairs import Affairs
 
 class TestAffairs(unittest.TestCase):
 
-    # def test_parse_all(self):
-    #     data = Affairs.parse(downdir='tmp')
-    #     self.assertTrue(data)
+    def test_parse_all(self):
+        data = Affairs.parse(downdir='tmp')
+        self.assertTrue(data)
 
-    # def test_parse_one(self):
-    #     data = Affairs.parse(downdir='tmp', filename='gpcw19960630.zip')
-    #     self.assertTrue(data)
+    def test_parse_one(self):
+        data = Affairs.parse(downdir='tmp', filename='gpcw19960630.zip')
+        self.assertTrue(data)
+    
     def setUp(self):
         if not os.path.isdir('tmp'):
             os.mkdir('tmp')
@@ -26,9 +27,9 @@ class TestAffairs(unittest.TestCase):
         data = Affairs.files()
         self.assertTrue(type(data) is list)
 
-    # def test_fetch_all(self):
-    #     data = Affairs.fetch(downdir='tmp')
-    #     self.assertTrue(data)
+    def test_fetch_all(self):
+        data = Affairs.fetch(downdir='tmp')
+        self.assertTrue(data)
 
     def test_fetch_one(self):
         Affairs.fetch(downdir='tmp', filename='gpcw19960630.zip')

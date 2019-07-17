@@ -1,34 +1,36 @@
 # -*- coding: utf-8 -*-
 import os
 
-from mootdx.utils import get_stock_market
 from pytdx.exhq import TdxExHq_API
 from pytdx.hq import TdxHq_API
+
+from mootdx.utils import get_stock_market
 
 
 # 股票市场
 class Quotes(object):
     @staticmethod
     def factory(market='std', **kwargs):
-        if market=='ext':
+        if market == 'ext':
             return ExtQuotes(**kwargs)
-        elif market=='std':
+        elif market == 'std':
             return StdQuotes(**kwargs)
 
     # 财务数据下载 affairs
     @staticmethod
     def financial(downdir='.'):
         from pytdx.crawler.base_crawler import demo_reporthook
-        from pytdx.crawler.history_financial_crawler import HistoryFinancialCrawler        
+        from pytdx.crawler.history_financial_crawler import HistoryFinancialCrawler
         from pytdx.crawler.history_financial_crawler import HistoryFinancialListCrawler
-        
+
         crawler = HistoryFinancialListCrawler()
         datacrawler = HistoryFinancialCrawler()
         list_data = crawler.fetch_and_parse()
-        
+
         for x in tqdm(list_data):
             downfile = os.path.join(downdir, x['filename'])
-            result = datacrawler.fetch_and_parse(reporthook=demo_reporthook, filename=x['filename'], path_to_download=downfile)
+            result = datacrawler.fetch_and_parse(reporthook=demo_reporthook, filename=x['filename'],
+                                                 path_to_download=downfile)
 
 
 class StdQuotes(object):
@@ -42,7 +44,7 @@ class StdQuotes(object):
             self.config = json.loads(os.path.join(os.environ['HOME'], '.mootdx/config.josn'))
         except Exception as e:
             self.config = None
-        
+
         self.client = TdxHq_API(**kwargs)
 
         if not self.config:
@@ -302,7 +304,6 @@ class ExtQuotes(object):
         with self.client.connect(*self.bestip):
             data = self.client.get_instrument_quote(market, symbol)
             return self.client.to_df(data)
-
 
     def minute(self, market=47, symbol="IF1709"):
         '''
