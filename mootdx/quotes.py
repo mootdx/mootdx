@@ -3,6 +3,7 @@ import math
 import os
 
 from pandas.core.frame import DataFrame
+from tqdm import tqdm
 
 from mootdx.utils import get_stock_market, get_stock_markets
 from pytdx.exhq import TdxExHq_API
@@ -394,11 +395,10 @@ class ExtQuotes(object):
         with self.client.connect(*self.bestip):        
             count = self.client.get_instrument_count()
             pages = math.ceil(count / 100)
-            datas = None
+            datas = []
 
-            for page in range(0, pages):
-                data = self.client.get_instrument_info(page * 100, (page + 1) * 100)
-                print(data)
+            for page in tqdm(range(0, pages)):
+                datas += self.client.get_instrument_info(page * 100, (page + 1) * 100)
 
             return self.client.to_df(datas)
 

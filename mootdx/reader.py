@@ -16,7 +16,7 @@ class Reader(object):
             return StdReader(**kwargs)
 
 
-class StdReader(object):
+class ReaderBase(object):
     """股票市场"""
 
     tdxdir = 'C:/new_tdx'
@@ -44,6 +44,9 @@ class StdReader(object):
                 return vipdoc
 
         return None
+
+class StdReader(ReaderBase):
+    """股票市场"""
 
     def daily(self, symbol=None):
         '''
@@ -82,7 +85,7 @@ class StdReader(object):
         return self.minute(symbol, suffix='5')
 
 
-    def block(self, market='sh', group=False, custom=False):
+    def block(self, category='', market='sh', group=False, custom=False):
         '''
         获取板块数据
 
@@ -91,7 +94,7 @@ class StdReader(object):
         :return: pd.dataFrame or None
         '''
         reader = BlockReader()
-        symbol = os.path.join(self.tdxdir, 'block_zs.dat')
+        symbol = os.path.join(self.tdxdir, 'block_{}.dat'.format(category))
 
         if symbol is not None:
             return reader.get_df(symbol, group)
@@ -115,7 +118,7 @@ class StdReader(object):
         return None
 
 
-class ExtReader(StdReader):
+class ExtReader(ReaderBase):
     """扩展市场读取"""
 
     def daily(self, symbol=None):
