@@ -17,7 +17,7 @@ def cli(ctx, verbose):
 
 
 @cli.command(help='读取股票在线行情数据.')
-@click.option('-o', '--output', default='feed.csv', help='输出文件')
+@click.option('-o', '--output', default=None, help='输出文件')
 @click.option('-s', '--symbol', default='600001', help='股票代码')
 @click.option('-t', '--method', default='bars', help='时间区间')
 @click.option('-k', '--market', default='std', help='证券市场')
