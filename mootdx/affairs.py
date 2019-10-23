@@ -4,7 +4,7 @@ import os
 from pytdx.crawler.base_crawler import demo_reporthook
 from pytdx.crawler.history_financial_crawler import (HistoryFinancialCrawler,
                                                      HistoryFinancialListCrawler)
-from pytdx.reader import HistoryFinancialReader
+from pytdx.reader.history_financial_reader import HistoryFinancialReader
 
 
 # 股票市场

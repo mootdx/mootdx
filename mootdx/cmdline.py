@@ -1,28 +1,12 @@
 # -*- coding: utf-8 -*-
-"""
-Module that contains the command line app.
-
-Why does this file exist, and why not put this in __main__?
-
-  You might be tempted to import things from __main__ later, but that will cause
-  problems: the code will get executed twice:
-
-  - When you run `python -m mootdx` python will execute
-    ``__main__.py`` as a script. That means there won't be any
-    ``mootdx.__main__`` in ``sys.modules``.
-  - When you import __main__ it will get executed again (as a module) because
-    there's no ``mootdx.__main__`` in ``sys.modules``.
-
-  Also see (1) from http://click.pocoo.org/5/setuptools/#setuptools-integration
-"""
-
 import json
 import os
 
 import click
 
 from mootdx.quotes import Quotes
-from mootdx.verify import Server
+from mootdx.reader import Reader
+from mootdx.server import Server
 
 
 @click.group()
@@ -32,26 +16,46 @@ def cli(ctx, verbose):
     ctx.obj["VERBOSE"] = verbose
 
 
-@cli.command(help='读取股票行情数据.')
+@cli.command(help='读取股票在线行情数据.')
 @click.option('-o', '--output', default='feed.csv', help='输出文件')
 @click.option('-s', '--symbol', default='600001', help='股票代码')
-@click.option('-m', '--method', default='bars', help='时间区间')
-# @click.option('-m', '--market', default='standard', help='证券市场')
-# @click.option('-m', '--market', default='extension', help='证券市场')
-def quotes(symbol, method, output):
-    client = Quotes()
-    feed = getattr(client, method)(symbol=symbol)
-    feed.to_csv(output) if output else None
+@click.option('-t', '--method', default='bars', help='时间区间')
+@click.option('-k', '--market', default='std', help='证券市场')
+def quotes(symbol, method, market, output):
+    client = Quotes.factory(market=market, multithread=True, heartbeat=True) # 标准市场
+    try:
+        feed = getattr(client, method)(symbol=symbol)
+        feed.to_csv(output) if output else None
+        print(feed)
+    except Exception as e:
+        raise e
+    else:
+        pass
+    finally:
+        pass
 
-    print(feed)
+@cli.command(help='读取股票本地行情数据.')
+@click.option('-d', '--tdxdir', default='c:\\newtdx', help='通达信数据目录')
+@click.option('-s', '--symbol', default='600001', help='股票代码')
+@click.option('-t', '--method', default='daily', help='时间类型')
+@click.option('-k', '--market', default='std', help='证券市场')
+def reader(symbol, method, market, tdxdir):
+    client = Reader.factory(market=market, tdxdir=tdxdir) # 标准市场
+
+    try:
+        feed = getattr(client, method)(symbol=symbol)
+        print(feed)
+    except Exception as e:
+        raise e
 
 
 @cli.command(help='测试行情服务器.')
-@click.option('-l', '--limit', default='5', help='显示最快几个')
-@click.option('-t', '--tofile', default=None, help='输出文件')
-@click.option('-w', '--write', count=True, help='写入配置文件')
+@click.option('-l', '--limit', default='5', help='显示最快前几个，默认 5.')
+@click.option('-t', '--tofile', default=None, help='将数据输出到文件.')
+@click.option('-w', '--write', count=True, help='将最优服务器IP写入配置文件 ~/.mootdx/config.json.')
 @click.option('-v', '--verbose', count=True)
-def verify(limit, verbose, write, tofile):
+def bestip(limit, verbose, write, tofile):
+    # from pytdx.config import hq_hosts
     bestip = Server(limit=int(limit), verbose=verbose, tofile=tofile)
     config = os.path.join(os.environ['HOME'], '.mootdx/config.josn')
 

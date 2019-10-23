@@ -1,6 +1,18 @@
 # -*- coding: utf-8 -*-
 from struct import *
 
+from zenlog import log
+
+
+def get_stock_markets(symbols=[]):
+    results = []
+
+    assert isinstance(symbols, list), 'stock code need list type'
+    
+    for symbol in symbols:
+        results.append([get_stock_market(symbol, string=False), symbol])
+    
+    return results
 
 def get_stock_market(symbol='', string=False):
     """判断股票ID对应的证券市场
@@ -65,5 +77,5 @@ def gpcw(filepath):
         data_size = len(info_data)
         cw_info = unpack('<264f', info_data)
 
-        print("%s, %s" % (code, str(cw_info)))
+        log.debug("%s, %s" % (code, str(cw_info)))
         return code, cw_info

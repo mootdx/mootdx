@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
 import os
 
+from mootdx.utils import get_stock_market
 from pytdx.reader import (BlockReader, TdxDailyBarReader,
                           TdxExHqDailyBarReader, TdxLCMinBarReader)
-
-from mootdx.utils import get_stock_market
 
 
 # 股票市场
@@ -20,7 +19,7 @@ class Reader(object):
 class StdReader(object):
     """股票市场"""
 
-    tdxdir = r'C:/new_tdx'
+    tdxdir = 'C:/new_tdx'
 
     def __init__(self, tdxdir=None):
         self.tdxdir = tdxdir
@@ -61,37 +60,29 @@ class StdReader(object):
 
         return None
 
-    def minute(self, symbol=None):
+    def minute(self, symbol=None, suffix='1'):
         '''
-        获取1分钟线
+        获取1,5分钟线
 
         :param symbol:
         :return: pd.dataFrame or None
         '''
-        symbol = self.find_path(symbol, subdir='minline', ext=['lc1', '1'])
+        subdir = 'fzline' if str(suffix) == '5' else 'minline'
+        suffix = ['lc5', '5'] if str(suffix) == '5' else ['lc1', '1']
+        symbol = self.find_path(symbol, subdir=subdir, ext=suffix)
         reader = TdxLCMinBarReader()
 
         if symbol is not None:
             return reader.get_df(symbol)
 
         return None
+
 
     def fzline(self, symbol=None):
-        '''
-        获取5分钟线
+        return self.minute(symbol, suffix='5')
 
-        :param symbol:
-        :return: pd.dataFrame or None
-        '''
-        symbol = self.find_path(symbol, subdir='fzline', ext=['lc5', '5'])
-        reader = TdxLCMinBarReader()
 
-        if symbol is not None:
-            return reader.get_df(symbol)
-
-        return None
-
-    def block(self, group=False, custom=False):
+    def block(self, market='sh', group=False, custom=False):
         '''
         获取板块数据
 
