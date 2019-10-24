@@ -66,24 +66,24 @@ from mootdx.crawler.base_crawler import demo_reporthook
 from mootdx.crawler.history_financial_crawler import HistoryFinancialCrawler
 
 datacrawler = HistoryFinancialCrawler()
-pd.set_option(&amp;apos;display.max_columns&amp;apos;, None)
+pd.set_option("display.max_columns", None)
 ### 这里默认已经切换成使用通达信proxy server，如果想切回http方式，需要设置 crawler.mode = "http"
 
 ### 如果使用默认的方式，下面的方法需要传入 filesize=实际文件大小，可以通过前面的接口获取到
-result = datacrawler.fetch_and_parse(reporthook=demo_reporthook, filename=&amp;apos;gpcw19971231.zip&amp;apos;, path_to_download="/tmp/tmpfile.zip")
+result = datacrawler.fetch_and_parse(reporthook=demo_reporthook, filename="gpcw19971231.zip", path_to_download="/tmp/tmpfile.zip")
 print(datacrawler.to_df(data=result))
 
 ```
 
-## 通过reader 读取数据
+## 通过 reader 读取数据
 
 如果您自己管理文件的下载或者本地已经有对应的数据文件，可以使用我们的 `HistoryFinancialReader`来读取本地数据，使用方法和其它的Reader是类似的, 我们的reader同时支持`.zip`和解压后的`.dat`文件
 
 ```
 from mootdx.reader import HistoryFinancialReader
 
-# print(HistoryFinancialReader().get_df(&amp;apos;/tmp/tmpfile.zip&amp;apos;))
-print(HistoryFinancialReader().get_df(&amp;apos;/tmp/gpcw20170930.dat&amp;apos;))
+# print(HistoryFinancialReader().get_df("/tmp/tmpfile.zip"))
+print(HistoryFinancialReader().get_df("/tmp/gpcw20170930.dat"))
 
 ```
 
