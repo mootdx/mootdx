@@ -1,10 +1,10 @@
 # coding=utf-8
 
-#市场
+# 市场
 MARKET_SZ = 0  # 深圳
 MARKET_SH = 1  # 上海
 
-#K线种类
+# K线种类
 # K 线种类
 # 0 -   5 分钟K 线
 # 1 -   15 分钟K 线

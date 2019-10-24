@@ -1,9 +1,13 @@
 # -*- coding: utf-8 -*-
+import logging
 import os
 
-from mootdx.utils import get_stock_market
 from pytdx.reader import (BlockReader, TdxDailyBarReader,
                           TdxExHqDailyBarReader, TdxLCMinBarReader)
+
+from mootdx.utils import get_stock_market
+
+logger = logging.getLogger(__name__)
 
 
 # 股票市场
@@ -22,9 +26,12 @@ class ReaderBase(object):
     tdxdir = 'C:/new_tdx'
 
     def __init__(self, tdxdir=None):
-        self.tdxdir = tdxdir
+        if os.path.isdir(tdxdir):
+            self.tdxdir = tdxdir
+        else:
+            logger.error('tdxdir 目录不存在')
 
-    def find_path(self, symbol=None, subdir='lday', ext='day'):
+    def find_path(self, symbol=None, subdir='lday', ext=None):
         '''
         寻找文件路径，辅助函数
 
@@ -42,8 +49,11 @@ class ReaderBase(object):
 
             if os.path.exists(vipdoc):
                 return vipdoc
+            else:
+                logger.error('未找到所需的文件: {}'.format(vipdoc))
 
         return None
+
 
 class StdReader(ReaderBase):
     """股票市场"""
@@ -80,10 +90,8 @@ class StdReader(ReaderBase):
 
         return None
 
-
     def fzline(self, symbol=None):
         return self.minute(symbol, suffix='5')
-
 
     def block(self, category='', market='sh', group=False, custom=False):
         '''

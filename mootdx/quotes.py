@@ -1,13 +1,16 @@
 # -*- coding: utf-8 -*-
-import math
+import logging
 import os
 
+import math
 from pandas.core.frame import DataFrame
+from pytdx.exhq import TdxExHq_API
+from pytdx.hq import TdxHq_API
 from tqdm import tqdm
 
 from mootdx.utils import get_stock_market, get_stock_markets
-from pytdx.exhq import TdxExHq_API
-from pytdx.hq import TdxHq_API
+
+logger = logging.getLogger(__name__)
 
 
 # 股票市场
@@ -70,18 +73,21 @@ class StdQuotes(object):
         :param symbol: 股票代码
         :return: pd.dataFrame or None
         '''
+
+        logger.debug(type(logger))
+
         if type(symbol) is str:
             symbol = [symbol]
 
         with self.client.connect(*self.bestip):
             symbol = get_stock_markets(symbol)
             result = self.client.get_security_quotes(symbol)
-            
+
             if result:
                 return self.client.to_df(result)
 
         return None
-    
+
     # K线
     def bars(self, symbol='000001', category='9', start='0', offset='100'):
         '''
@@ -98,7 +104,7 @@ class StdQuotes(object):
             market = get_stock_market(symbol)
             result = self.client.get_security_bars(
                 int(category), int(market), str(symbol), int(start), int(offset))
-            
+
             if result:
                 return self.client.to_df(result)
 
@@ -113,10 +119,10 @@ class StdQuotes(object):
         :param symbol: 股票代码
         :return: pd.DataFrame
         '''
-        with self.client.connect(*self.bestip):        
+        with self.client.connect(*self.bestip):
             market = get_stock_market(symbol)
             result = self.client.get_minute_time_data(int(market), symbol)
-            
+
             if result:
                 return self.client.to_df(result)
 
@@ -132,11 +138,11 @@ class StdQuotes(object):
         :param datetime:
         :return: pd.dataFrame or None
         '''
-        with self.client.connect(*self.bestip):        
+        with self.client.connect(*self.bestip):
             market = get_stock_market(symbol)
             result = self.client.get_history_minute_time_data(
                 int(market), symbol, datetime)
-            
+
             if result:
                 return self.client.to_df(result)
 
@@ -152,11 +158,11 @@ class StdQuotes(object):
         :param offset: 请求数量
         :return: pd.dataFrame or None
         '''
-        with self.client.connect(*self.bestip):        
+        with self.client.connect(*self.bestip):
             market = get_stock_market(symbol)
             result = self.client.get_transaction_data(
                 int(market), symbol, int(start), int(market))
-            
+
             if result:
                 return self.client.to_df(result)
 
@@ -175,7 +181,7 @@ class StdQuotes(object):
         :param date: 日期
         :return: pd.dataFrame or None
         '''
-        with self.client.connect(*self.bestip):        
+        with self.client.connect(*self.bestip):
             market = get_stock_market(symbol, string=True)
             market = 0 if market == 'sz' else 1
             result = self.client.get_history_transaction_data(
@@ -209,10 +215,10 @@ class StdQuotes(object):
         :param symbol: 股票代码
         :return: pd.dataFrame or None
         '''
-        with self.client.connect(*self.bestip): 
+        with self.client.connect(*self.bestip):
             market = get_stock_market(symbol)
             result = self.client.get_company_info_category(int(market), symbol)
-            
+
             if result:
                 return self.client.to_df(result)
 
@@ -229,7 +235,7 @@ class StdQuotes(object):
         :param offset: 数量
         :return: pd.dataFrame or None
         '''
-        with self.client.connect(*self.bestip):        
+        with self.client.connect(*self.bestip):
             market = get_stock_market(symbol, string=True)
             market = 0 if market == 'sz' else 1
             result = self.client.get_company_info_content(
@@ -248,15 +254,14 @@ class StdQuotes(object):
         :param symbol: 股票代码
         :return: pd.dataFrame or None
         '''
-        with self.client.connect(*self.bestip):        
+        with self.client.connect(*self.bestip):
             market = get_stock_market(symbol)
             result = self.client.get_xdxr_info(int(market), symbol)
-            
+
             if result:
                 self.client.to_df(result)
 
         return result
-
 
     def k(self, symbol='', begin=None, end=None):
         '''
@@ -273,7 +278,7 @@ class StdQuotes(object):
             if isinstance(result, DataFrame):
                 if len(result):
                     return result
-                
+
                 return self.client.to_df(result)
 
         return None
@@ -309,11 +314,11 @@ class StdQuotes(object):
         :param offset: 每次获取条数
         :return: pd.dataFrame or None
         '''
-        with self.client.connect(*self.bestip):        
+        with self.client.connect(*self.bestip):
             market = 1 if market == 'sz' else 0
             result = self.client.get_index_bars(
                 int(category), int(market), str(symbol), int(start), int(offset))
-            
+
             if result:
                 return self.client.to_df(result)
 
@@ -328,7 +333,7 @@ class StdQuotes(object):
         '''
         with self.client.connect(*self.bestip):
             result = self.client.get_and_parse_block_info(tofile)
-        
+
             if result:
                 return self.client.to_df(result)
 
@@ -348,7 +353,7 @@ class StdQuotes(object):
 
 class ExtQuotes(object):
     """扩展市场实时行情"""
-    
+
     def __del__(self):
         if self.client:
             self.client.disconnect()
@@ -362,9 +367,9 @@ class ExtQuotes(object):
         # self.client = self.client.connect(*self.bestip)
         # self.bestip[1] = int(self.bestip[1])
 
-    def connect(self):
-        if not self.client:
-            self.client = self.connect(*self.bestip)
+    # def connect(self):
+    #     if not self.client:
+    #         self.client = self.connect(*self.bestip)
 
     def markets(self):
         '''
@@ -374,7 +379,7 @@ class ExtQuotes(object):
         '''
         with self.client.connect(*self.bestip) as client:
             data = client.get_markets()
-            
+
             if data:
                 return self.client.to_df(data)
 
@@ -384,15 +389,16 @@ class ExtQuotes(object):
     def instrument(self, begin=0, end=100):
         with self.client.connect(*self.bestip):
             data = self.client.get_instrument_info(0, 100)
-            
+
             if data:
                 return self.client.to_df(data)
 
-        return None            
+        return None
 
-    # 查询市场中商品数量
+        # 查询市场中商品数量
+
     def instruments(self):
-        with self.client.connect(*self.bestip):        
+        with self.client.connect(*self.bestip):
             count = self.client.get_instrument_count()
             pages = math.ceil(count / 100)
             datas = []
@@ -404,7 +410,7 @@ class ExtQuotes(object):
 
     # 查询五档行情
     def quote(self, market='', symbol=''):
-        with self.client.connect(*self.bestip):        
+        with self.client.connect(*self.bestip):
             result = self.client.get_instrument_quote(market, symbol)
 
             if isinstance(result, DataFrame):
@@ -446,7 +452,7 @@ class ExtQuotes(object):
     def bars(self, category='', market='', symbol='', begin='', num=0):
         with self.client.connect(*self.bestip):
             result = self.client.get_instrument_bars(category, market, symbol, begin, num)
-        
+
             if isinstance(result, DataFrame):
                 if len(result):
                     return result
@@ -459,7 +465,7 @@ class ExtQuotes(object):
     def transaction(self, market='', symbol=''):
         with self.client.connect(*self.bestip):
             result = self.client.get_transaction_data(market, symbol)
-        
+
             if isinstance(result, DataFrame):
                 if len(result):
                     return result
@@ -468,14 +474,11 @@ class ExtQuotes(object):
 
         return None
 
-        # return self.client.get_transaction_data(market, symbol)
-        # return self.client.get_history_transaction_data(market, symbol, 20170810, start=1800)
-
     # 查询历史分笔成交
     def transactions(self, market=31, symbol='', date='20170810'):
         with self.client.connect(*self.bestip):
             result = self.client.get_history_transaction_data(market, symbol, date)
-        
+
             if isinstance(result, DataFrame):
                 if len(result):
                     return result

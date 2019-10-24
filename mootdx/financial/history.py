@@ -5,17 +5,8 @@ import shutil
 import tempfile
 from struct import calcsize, unpack
 
-import pandas as pd
-
 from .base import BaseFinancial
 
-
-"""
-https://github.com/rainx/pytdx/issues/133
-
-获取历史财务数据的接口，参考上面issue里面 @datochan 的方案和代码
-
-"""
 
 class Historys(BaseFinancial):
 
@@ -25,7 +16,7 @@ class Historys(BaseFinancial):
     def get_url(self, *args, **kwargs):
         return 'http://down.tdx.com.cn:8001/fin/gpcw.txt'
         # return "https://gitee.com/yutiansut/QADATA/raw/master/financial/content.txt"
-    
+
     def get_content(self, reporthook=None, path_to_download=None, proxies=None, chunksize=1024 * 50, *args, **kwargs):
         from pytdx.hq import TdxHq_API
         api = TdxHq_API()
@@ -39,10 +30,10 @@ class Historys(BaseFinancial):
                 download_file = tempfile.NamedTemporaryFile(delete=True)
             else:
                 download_file = open(path_to_download, 'wb')
-            
-            download_file.write(content)    
+
+            download_file.write(content)
             download_file.seek(0)
-            
+
             return download_file
 
     def parse(self, download_file, *args, **kwargs):
@@ -72,7 +63,6 @@ class History(BaseFinancial):
 
         return "http://data.yutiansut.com/{}".format(filename)
 
-    
     def content(self, reporthook=None, path_to_download=None, proxies=None, chunksize=1024 * 50, *args, **kwargs):
         if 'filename' in kwargs:
             filename = kwargs['filename']
@@ -88,17 +78,17 @@ class History(BaseFinancial):
 
         api = TdxHq_API()
         api.need_setup = False
-        
+
         # calc.tdx.com.cn, calc2.tdx.com.cn
         with api.connect(ip="120.76.152.87"):
             content = api.get_report_file_by_size("tdxfin/" + filename, filesize=filesize, reporthook=reporthook)
-            
+
             if path_to_download is None:
                 download_file = tempfile.NamedTemporaryFile(delete=True)
             else:
                 download_file = open(path_to_download, 'wb')
 
-            download_file.write(content)    
+            download_file.write(content)
             download_file.seek(0)
 
             return download_file
@@ -110,12 +100,12 @@ class History(BaseFinancial):
         if download_file.name.endswith('.zip'):
             tmpdir_root = tempfile.gettempdir()
             subdir_name = "pytdx_" + str(random.randint(0, 1000000))
-            
+
             tmpdir = os.path.join(tmpdir_root, subdir_name)
             shutil.rmtree(tmpdir, ignore_errors=True)
             os.makedirs(tmpdir)
             shutil.unpack_archive(download_file.name, extract_dir=tmpdir)
-            
+
             # only one file endswith .dat should be in zip archives
             datfile = None
 
@@ -132,7 +122,7 @@ class History(BaseFinancial):
         stock_item_size = calcsize("<6s1c1L")
         data_header = datfile.read(header_size)
         stock_header = unpack(header_pack_format, data_header)
-        
+
         max_count = stock_header[2]
 
         report_date = stock_header[1]
@@ -171,7 +161,7 @@ class History(BaseFinancial):
         for i in range(0, length):
             col.append("col" + str(i + 1))
 
-        df =  pd.DataFrame(data=data, columns=col)
+        df = pd.DataFrame(data=data, columns=col)
         df.set_index('code', inplace=True)
 
         return df
@@ -180,8 +170,8 @@ class History(BaseFinancial):
 if __name__ == '__main__':
     import pandas as pd
     from mootdx.financial.base import demo_reporthook
-    
-    history = FinancialHistorys()
+
+    history = Historys()
     results = history.fetch_and_parse(reporthook=demo_reporthook)
     df = pd.DataFrame(data=results)
 
@@ -189,10 +179,10 @@ if __name__ == '__main__':
     print(df["filename"].str.contains("gpcw20190630.zip").any())
 
     # 读取其中一个
-    
+
     # filename = list_data[1]['filename']
     # filesize = list_data[1]["filesize"]
-    
+
     # datacrawler = FinancialHistory()
     # pd.set_option('display.max_columns', None)
 
