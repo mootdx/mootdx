@@ -3,15 +3,14 @@
 
 首先需要引入
 
-```
-from mootdx.exhq import TdxExHq_API
-
+```python
+from mootdx.quotes import Quotes
 ```
 
 然后，创建对象
 
 ```
-api = TdxExHq_API()
+client = Quotes.factory(market='std')
 
 ```
 
@@ -43,8 +42,7 @@ with api.connect(&amp;apos;61.152.107.141&amp;apos;, 7727):
 可以获取该api服务器可以使用的市场列表，类别等信息
 
 ```
-api.get_markets()
-
+client.markets()
 ```
 
 返回结果 `api.to_df(api.get_markets())` 一般某个服务器返回的类型比较固定，该结果可以缓存到本地或者内存中。
@@ -88,7 +86,7 @@ api.get_markets()
 参数， 起始位置， 获取数量
 
 ```
-api.get_instrument_info(0, 100)
+client.instrument(0, 100)
 
 ```
 
@@ -97,7 +95,7 @@ Demo: <img alt="get_list_demo" src="assets/mootdx_exhq-bf0d0.png"/>
 ### 3: 查询市场中商品数量
 
 ```
-api.get_instrument_count()
+client.instruments()
 
 ```
 
@@ -108,7 +106,7 @@ api.get_instrument_count()
 - 市场ID可以通过 `get_markets` 获得
 
 ```
-api.get_instrument_quote(47, "IF1709")
+client.quote(47, "IF1709")
 
 ```
 
@@ -119,7 +117,7 @@ api.get_instrument_quote(47, "IF1709")
 - 市场ID可以通过 `get_markets` 获得
 
 ```
-api.get_minute_time_data(47, "IF1709")
+client.minute(47, "IF1709")
 
 ```
 
@@ -131,7 +129,7 @@ api.get_minute_time_data(47, "IF1709")
 - 日期格式 YYYYMMDD 如 20170811
 
 ```
-api.get_history_minute_time_data(31, "00020", 20170811)
+client.history(31, "00020", 20170811)
 
 ```
 
@@ -142,8 +140,9 @@ api.get_history_minute_time_data(31, "00020", 20170811)
 - K线周期参考 `TDXParams`
 - 市场ID可以通过 `get_markets` 获得
 
-```
-api.get_instrument_bars(TDXParams.KLINE_TYPE_DAILY, 8, "10000843", 0, 100)
+```python
+from mootdx.consts import KLINE_DAILY
+client.bars(KLINE_DAILY, 8, "10000843", 0, 100)
 
 ```
 
@@ -154,8 +153,7 @@ api.get_instrument_bars(TDXParams.KLINE_TYPE_DAILY, 8, "10000843", 0, 100)
 - 市场ID可以通过 `get_markets` 获得
 
 ```
-api.get_transaction_data(31, "00020")
-
+client.transaction(31, "00020")
 ```
 
 注意，这个接口最多返回`1800`条记录, 如果有超过1800条记录的请求，我们有一个start 参数作为便宜量，可以取出超过1800条记录
@@ -163,8 +161,7 @@ api.get_transaction_data(31, "00020")
 如期货的数据：这个接口可以取出1800条之前的记录，数量也是1800条
 
 ```
-api.get_history_transaction_data(47, "IFL0", 20170810, start=1800)
-
+client.transactions(31, "00020", '20170810', offset=1800)
 ```
 
 ### 9: 查询历史分笔成交
@@ -175,7 +172,7 @@ api.get_history_transaction_data(47, "IFL0", 20170810, start=1800)
 - 日期格式 YYYYMMDD 如 20170810
 
 ```
-api.get_history_transaction_data(31, "00020", 20170810)
+client.transactions(31, "00020", 20170810)
 
 ```
 

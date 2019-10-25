@@ -88,14 +88,19 @@ api.get_security_quotes([(0, "000001"), (1, "600300")])
 
 - start -> 指定的范围开始位置;
 
-- count -> 用户要请求的 K 线数目，最大值为 800
+- offset -> 用户要请求的 K 线数目，最大值为 800
 
 ```
 
 如：
 
 ```
-api.get_security_bars(9,0, "000001", 4, 3)
+# api.get_security_bars(9,0, "000001", 4, 3)
+from mootdx.consts import KLINE_RI_K
+client.bars(symbol='600000', category=KLINE_RI_K, offset=10)
+
+client.quotes(symbol='600000')
+
 
 ```
 

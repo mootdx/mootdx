@@ -65,6 +65,10 @@ class StdQuotes(object):
         else:
             self.bestip = self.config.get('SERVER')
 
+    def traffic(self):
+        with self.client.connect(*self.bestip):
+            return self.client.get_traffic_stats()
+
     # quotes
     def quotes(self, symbol=[]):
         '''

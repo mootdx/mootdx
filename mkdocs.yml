@@ -22,8 +22,8 @@ pages:
     - '财务数据': 'cli/affair.md'
 
   - '常见问题':
-    - '同花顺的一个爬虫 可以获取前后复权因子': 'fuquan_factor.md'
-    - '数据的批量完整下载方式代码': 'batch_download_data.md'
+    - '前后复权因子': 'fuquan_factor.md'
+    - '数据批量下载': 'batch_download_data.md'
     - '基金价格问题': 'hq_price.md'
 
 

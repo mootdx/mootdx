@@ -1,7 +1,7 @@
 
 # 历史专业财务数据
 
-## 参考
+## 参考信息
 
 - issue from @datochan [https://github.com/rainx/mootdx/issues/133](https://github.com/rainx/mootdx/issues/133)
 - [通达信专业财务函数文档](http://www.tdx.com.cn/products/helpfile/tdxw/chm/%E7%AC%AC%E4%B8%89%E7%AB%A0%20%20%20%E5%9F%BA%E7%A1%80%E5%8A%9F%E8%83%BD/3-3/3-3-2/3-3-2-15/3-3-2-15.html)
@@ -10,87 +10,75 @@
 
 `crawler` 其实本来想叫做`downloader`或者`fetcher`, 专门来处理http 协议(现在也支持tcp的方式获取）的数据的下载和解析，分为两个阶段，下载阶段我们会使用urllib来下载数据，数据可以下载到临时文件（不传入`path_to_download`参数）或者下载到指定的位置（提供`path_to_download`参数），也支持指定chunk的分段下载进度的提示（使用`reporthook`传入处理函数）， 下面是一个reporthook函数的例子
 
+```python
+def reporthook(downloaded=None, total_size):
+    print("#", end='')
+
 ```
 
-def demo_reporthook(downloaded, total_size):
-    print("Downloaded {}, Total is {}".format(downloaded, total_size))
+## 获取历史数据
 
-```
-
-## 获取历史专业财务数据列表 mootdx.crawler.HistoryFinancialListCrawler
+mootdx.crawler.HistoryFinancialListCrawler
 
 实现了历史财务数据列表的读取，使用方式
 
-```
-from mootdx.crawler.history_financial_crawler import HistoryFinancialListCrawler
-crawler = HistoryFinancialListCrawler()
+```python
+from mootdx.affairs import Affairs
+Affairs.fetch(downdir='output')
 
-### 这里默认已经切换成使用通达信proxy server，如果想切回http方式，需要设置 crawler.mode = "http"
-list_data = crawler.fetch_and_parse()
-print(pd.DataFrame(data=list_data))
+结果:
 
-```
-
-结果
-
-```
-In [8]: print(pd.DataFrame(data=list_data))
-            filename  filesize                              hash
-0   gpcw20171231.zip     49250  0370b2703a0e23b4f9d87587f4a844cf
-1   gpcw20170930.zip   2535402  780bc7c649cdce35567a44dc3700f4ce
-2   gpcw20170630.zip   2739127  5fef91471e01ebf9b5d3628a87d1e73d
-3   gpcw20170331.zip   2325626  a9bcebff37dd1d647f3159596bc2f312
-4   gpcw20161231.zip   2749415  3fb3018c235f6c9d7a1448bdbe72281a
-5   gpcw20160930.zip   2262567  8b629231ee9fad7e7c86f1e683cfb489
-..               ...       ...                               ...
-
-75  gpcw19971231.zip    434680  316ce733f2a4f6b21c7865f94eee01c8
-76  gpcw19970630.zip    196525  6eb5d8e5f43f7b19d756f0a2d91371f5
-77  gpcw19961231.zip    363568  bfd59d42f9b6651861e84c483edb499b
-78  gpcw19960630.zip    122145  18023e9f84565323874e8e1dbdfb2adb
-
-[79 rows x 3 columns]
++------------------+----------+----------------------------------+
+| filename         | filesize | hash                             |
++------------------+----------+----------------------------------+
+| gpcw20191231.zip | 165      | b590fc5fa3a6ec6ab5d881c31e1d71a5 |
+| gpcw20190930.zip | 735606   | e9059088e8031b3407e84bb536be365a |
+| gpcw20190630.zip | 3213061  | 13d2729685d65efebb0d6b47c4c16b40 |
+| gpcw20190331.zip | 2859099  | 95724f55c9a20be3c7bd1cea95919ed8 |
+| gpcw20181231.zip | 3274511  | 585ffa351f4060e6274bdfb9d36de097 |
+| gpcw20180930.zip | 2927452  | 4f463b8536cea8fcaaec90512a562dae |
+| gpcw20180630.zip | 3085199  | a6381831231a782cf193285b6fb4b22d |
+| gpcw20180331.zip | 2722534  | 0835660cce80028fd59131e7c5f5f75e |
+| gpcw20171231.zip | 3188864  | 572f1c558cf48e149d7e065aba5fe787 |
+| gpcw20170930.zip | 2810523  | 1118a83cdcb0c5cfc966aa83b9d0f8dd |
+| gpcw20170630.zip | 2938359  | dff36b6f878a38e7ddc5fffb6e23d98b |
+| gpcw20170331.zip | 2512854  | eb877c7dcedc72eba27cd21610e19bd5 |
+| gpcw20161231.zip | 3092803  | 2d50e15bec7ee813f23160c01e626d98 |
+| gpcw20160930.zip | 2486170  | 97eca7c59b9254e09df0c3efa8b9ff53 |
 
 ```
 
 其中，`filename` 字段为具体的财务数据文件地址， 后面的分别是哈希值和文件大小，在同步到本地时，可以作为是否需要更新本地数据的参考
 
-## 获取历史专业财务数据内容 mootdx.crawler.HistoryFinancialCrawler
+## 获取历史数据内容
+
+mootdx.crawler.HistoryFinancialCrawler
 
 获取历史专业财务数据内容
 
 使用上面返回的`filename`字段作为参数即可
 
-```
-from mootdx.crawler.base_crawler import demo_reporthook
-from mootdx.crawler.history_financial_crawler import HistoryFinancialCrawler
-
-datacrawler = HistoryFinancialCrawler()
-pd.set_option("display.max_columns", None)
-### 这里默认已经切换成使用通达信proxy server，如果想切回http方式，需要设置 crawler.mode = "http"
-
-### 如果使用默认的方式，下面的方法需要传入 filesize=实际文件大小，可以通过前面的接口获取到
-result = datacrawler.fetch_and_parse(reporthook=demo_reporthook, filename="gpcw19971231.zip", path_to_download="/tmp/tmpfile.zip")
-print(datacrawler.to_df(data=result))
+```python
+from mootdx.affairs import Affairs
+Affairs.fetch(downdir='output', filename='gpcw20170930.zip')
 
 ```
 
-## 通过 reader 读取数据
+## 解析本地数据
 
 如果您自己管理文件的下载或者本地已经有对应的数据文件，可以使用我们的 `HistoryFinancialReader`来读取本地数据，使用方法和其它的Reader是类似的, 我们的reader同时支持`.zip`和解压后的`.dat`文件
 
-```
-from mootdx.reader import HistoryFinancialReader
+```python
+from mootdx.affairs import Affairs
 
-# print(HistoryFinancialReader().get_df("/tmp/tmpfile.zip"))
-print(HistoryFinancialReader().get_df("/tmp/gpcw20170930.dat"))
+data = Affairs.parse(downdir='output', filename='gpcw20170930.zip')
 
 ```
 
 ## 通过命令行工具`hq_reader`读取并保存到csv文件
 
 ```
---&gt;rainx@JingdeMacBook-Pro:/tmp$ hqreader -d hf -o /tmp/gpcw20170930.csv /tmp/gpcw20170930.dat
-写入到文件 : /tmp/gpcw20170930.csv
+$ mootdx affair -f gpcw20000930.zip -o gpcw20170930.csv
 
+写入到文件 : gpcw20170930.csv
 ```

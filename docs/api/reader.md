@@ -18,7 +18,6 @@
 
 ```python
 from mootdx.reader import Reader
-
 reader = Reader.factory(market='std', tdxdir='C:/new_tdx')
 
 # 读取日线数据
@@ -55,7 +54,7 @@ from mootdx.reader import Reader
 reader = Reader.factory(market='ext', tdxdir='c:/new_tdx/vipdoc')
 reader.daily(symbol='29#A1801')
 
-Out[4]:
+输出为：
               open    high     low   close  amount  volume  jiesuan
 date
 2017-08-07  3830.0  3936.0  3826.0  3925.0  167038  224516   3881.0
@@ -74,7 +73,7 @@ date
 
 ```python
 from mootdx.reader import Reader
-reader = Reader.factory(market='ext', tdxdir='c:/new_tdx')
+reader = Reader.factory(market='std', tdxdir='c:/new_tdx')
 reader.minute(symbol='000001', suffix='1') # suffix = 1 一分钟，5 五分钟
 
 Out[2]:
@@ -95,7 +94,8 @@ date
 ```python
 from mootdx.reader import Reader
 reader = Reader.factory(market='ext', tdxdir='c:/new_tdx')
-reader.minute(symbol='000001')
+reader.daily(symbol='000001') # suffix = 1 一分钟，5 五分钟
+
 
 open       high        low      close       amount  \
 date                                                                           
@@ -104,9 +104,6 @@ date
 2017-07-26 09:45:00  10.969999  11.050000  10.969999  11.050000   40586544.0   
 2017-07-26 09:50:00  11.050000  11.130000  11.010000  11.120000  100486624.0   
 2017-07-26 09:55:00  11.110000  11.179999  11.099999  11.179999   78094816.0   
-....
-....
-...
 
 ```
 
@@ -119,18 +116,18 @@ date
 ```python
 from mootdx.reader import Reader
 reader = Reader.factory(market='ext', tdxdir='c:/new_tdx')
-reader.block(market='zs', group=BlockReader_TYPE_GROUP)
+reader.block(market='block_zs', group=True)
 
 blockname  block_type  code_index    code
 0        沪深300           2           0  000001
 1        沪深300           2           1  000002
 2        沪深300           2           2  000008
 3        沪深300           2           3  000009
+```
 
-
+```python
 # 分组格式
-df2 = BlockReader().get_df("/Users/rainx/tmp/block_zs.dat", BlockReader_TYPE_GROUP)
-print(df2)
+reader.block(symbol='block_zs', group=True)
 
 blockname  block_type  stock_count  \
 0       重点沪指           2            0   
@@ -154,8 +151,9 @@ code_list
 
 ```python
 # 默认扁平格式
-df = CustomerBlockReader().get_df(&amp;apos;C:/Users/fit/Desktop/TdxBak_20171011/blocknew&amp;apos;)
-print(df)
+from mootdx.reader import Reader
+reader = Reader.factory(market='std', tdxdir='C:/new_tdx')
+reader.block(custom=True)
 
     blockname block_type  code_index     code
 0          领袖         LX           1  1600516
@@ -168,8 +166,7 @@ print(df)
 7          领袖         LX           8  1600874
 
 #分组格式
-df = CustomerBlockReader().get_df(&amp;apos;C:/Users/fit/Desktop/TdxBak_20171011/blocknew&amp;apos;, BlockReader_TYPE_GROUP)
-print(df)
+reader.block(custom=True, group=True)
 
    blockname block_type  stock_count  \
 0         领袖         LX           20   

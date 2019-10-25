@@ -4,7 +4,9 @@ import logging
 import os
 
 import click
+from prettytable import PrettyTable
 
+from mootdx.affairs import Affairs
 from mootdx.quotes import Quotes
 from mootdx.reader import Reader
 from mootdx.server import Server
@@ -70,12 +72,13 @@ def bestip(limit, verbose, write):
 @click.option('-p', '--parse', default=None, help='解析文件内容')
 @click.option('-l', '--files', count=True, help='列出文件列表')
 @click.option('-f', '--fetch', default=None, help='下载全部文件')
-@click.option('-o', '--output', default='', help='输出文件')
-@click.option('-d', '--downdir', default='tmp', help='下载文件目录')
+# @click.option('-o', '--output', default='output.csv', help='下载文件目录')
+@click.option('-d', '--downdir', default='output', help='下载文件目录')
 @click.option('-v', '--verbose', count=True)
-def affair(parse, files, fetch, output, downdir, verbose):
-    from mootdx.affairs import Affairs
-    from prettytable import PrettyTable
+def affair(parse, files, fetch, downdir, verbose):
+    if verbose:
+        logging.basicConfig(level=logging.DEBUG)
+
     affairs = Affairs.files()
 
     if files:
@@ -92,17 +95,17 @@ def affair(parse, files, fetch, output, downdir, verbose):
 
     if fetch:
         if fetch == 'all':
-            for x in affairs:
-                Affairs.fetch(downdir=downdir, filename=x['filename'])
+            Affairs.fetch(downdir=downdir)
         else:
             Affairs.fetch(downdir=downdir, filename=fetch.strip('.zip') + '.zip')
 
     if parse:
-        file_list = [x['filename'] for x in affairs]
+        files = [x['filename'] for x in affairs]
 
-        if parse in file_list:
+        if parse in files:
             if os.path.exists(os.path.join(downdir, parse)):
-                Affairs.parse(downdir=downdir, filename=parse.strip('.zip') + '.zip').to_csv(output)
+                df = Affairs.parse(downdir=downdir, filename=parse.strip('.zip') + '.zip')
+                print(df)
             else:
                 logger.error('file not found.')
 
