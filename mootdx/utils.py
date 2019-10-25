@@ -1,5 +1,20 @@
 # -*- coding: utf-8 -*-
+import logging
 from struct import *
+
+logger = logging.getLogger(__name__)
+
+
+def get_stock_markets(symbols=None):
+    results = []
+
+    assert isinstance(symbols, list), 'stock code need list type'
+
+    if isinstance(symbols, list):
+        for symbol in symbols:
+            results.append([get_stock_market(symbol, string=False), symbol])
+
+    return results
 
 
 def get_stock_market(symbol='', string=False):
@@ -8,9 +23,54 @@ def get_stock_market(symbol='', string=False):
     ['50', '51', '60', '90', '110'] 为 sh
     ['00', '13', '18', '15', '16', '18', '20', '30', '39', '115'] 为 sz
     ['5', '6', '9'] 开头的为 sh， 其余为 sz
+    :param string:
     :param symbol:股票ID, 若以 'sz', 'sh' 开头直接返回对应类型，否则使用内置规则判断
     :return 'sh' or 'sz'"""
     assert isinstance(symbol, str), 'stock code need str type'
+
+    market = None
+
+    if symbol.startswith(('sh', 'sz')):
+        market = symbol[:2]
+
+    if symbol.startswith(('50', '51', '60', '90', '110', '113', '132', '204')):
+        market = 'sh'
+
+    if symbol.startswith(
+        ('00',
+         '13',
+         '18',
+         '15',
+         '16',
+         '18',
+         '20',
+         '30',
+         '39',
+         '115',
+         '1318')):
+        market = 'sz'
+
+    if symbol.startswith(('5', '6', '9', '7')):
+        market = 'sh'
+
+    if string is False:
+        return 0 if market == 'sz' else 1
+
+    return market
+
+
+def get_ext_market(symbol='', string=False):
+    """判断股票ID对应的证券市场
+    匹配规则
+    ['50', '51', '60', '90', '110'] 为 sh
+    ['00', '13', '18', '15', '16', '18', '20', '30', '39', '115'] 为 sz
+    ['5', '6', '9'] 开头的为 sh， 其余为 sz
+    :param string:
+    :param symbol:股票ID, 若以 'sz', 'sh' 开头直接返回对应类型，否则使用内置规则判断
+    :return 'sh' or 'sz'"""
+    assert isinstance(symbol, str), 'stock code need str type'
+
+    market = None
 
     if symbol.startswith(('sh', 'sz')):
         market = symbol[:2]
@@ -62,8 +122,7 @@ def gpcw(filepath):
         foa = stock_item[2]
         cw_file.seek(foa)
         info_data = cw_file.read(calcsize('<264f'))
-        data_size = len(info_data)
         cw_info = unpack('<264f', info_data)
 
-        print("%s, %s" % (code, str(cw_info)))
+        logger.debug("{}, {}".format(code, str(cw_info)))
         return code, cw_info

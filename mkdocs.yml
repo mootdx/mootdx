@@ -1,0 +1,30 @@
+site_name: Mootdx 
+site_description: 基于 pytdx 数据接口的二次封装
+
+theme: readthedocs
+
+pages:
+  - '文档概述': 'index.md'
+  - '快速安装': 'setup.md'
+  - '快速上手': 'quickstart.md'
+
+  - '行情接口':
+    - '标准行情': 'api/quote1.md'
+    - '扩展行情': 'api/quote2.md'
+    - '数据读取': 'api/reader.md'
+    - '财务数据': 'api/affair.md'
+    # - '交易相关': 'api/trader.md'
+    # - '连 接 池': 'api/pool.md'
+
+  - '命令行工具':
+    - '网速测试': 'cli/bestip.md'
+    - '离线数据': 'cli/reader.md'
+    - '行情数据': 'cli/quotes.md'
+    - '财务数据': 'cli/affair.md'
+
+  - '常见问题':
+    - '前后复权因子': 'fuquan_factor.md'
+    - '数据批量下载': 'batch_download_data.md'
+    - '基金价格问题': 'hq_price.md'
+
+

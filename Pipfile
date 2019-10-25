@@ -1,16 +1,16 @@
 [[source]]
 name = "pypi"
-url = "https://pypi.org/simple"
+url = "https://pypi.tuna.tsinghua.edu.cn/simple"
 verify_ssl = true
 
 [dev-packages]
 
 [packages]
-click = "~=6.7"
-coloredlogs = "~=10.0"
-pandas = "~=0.23.3"
-prettytable = "~=0.7.2"
-pytdx = "~=1.67"
+click = ">=6.7"
+coloredlogs = ">=10.0"
+pandas = ">=0.23.3"
+prettytable = ">=0.7.2"
+pytdx = ">=1.67"
 
 [requires]
-python_version = "3.6"
+python_version = "3.7"
