@@ -5,12 +5,13 @@ import threading
 import time
 
 from prettytable import PrettyTable
-from pytdx.config.hosts import hq_hosts
+
+from mootdx.consts import hq_hosts, ex_hosts
 
 logger = logging.getLogger(__name__)
 result = []
 
-hosts = [{'addr': hs[1], 'port': hs[2], 'time': 0, 'site': hs[0]} for hs in hq_hosts]
+hosts = [{'addr': hs[1], 'port': hs[2], 'time': 0, 'site': hs[0]} for hs in hq_hosts + ex_hosts]
 
 # 线程同步锁
 lock = threading.Lock()

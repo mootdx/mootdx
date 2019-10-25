@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 import logging
+import math
 import os
 
-import math
 from pandas.core.frame import DataFrame
 from pytdx.exhq import TdxExHq_API
 from pytdx.hq import TdxHq_API
@@ -207,7 +207,7 @@ class StdQuotes(object):
         '''
         pass
 
-    def company_category(self, symbol=''):
+    def F10C(self, symbol=''):
         '''
         查询公司信息目录
 
@@ -224,7 +224,7 @@ class StdQuotes(object):
 
         return None
 
-    def company_content(self, symbol='', file='', start=0, offset=10):
+    def F10(self, symbol='', file='', start=0, offset=10):
         '''
         读取公司信息详情
 

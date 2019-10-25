@@ -2,8 +2,9 @@
 import logging
 import os
 
-from pytdx.reader import (BlockReader, TdxDailyBarReader,
+from pytdx.reader import (BlockReader, TdxDailyBarReader, CustomerBlockReader,
                           TdxExHqDailyBarReader, TdxLCMinBarReader)
+from pytdx.reader.block_reader import BlockReader_TYPE_GROUP
 
 from mootdx.utils import get_stock_market
 
@@ -14,6 +15,12 @@ logger = logging.getLogger(__name__)
 class Reader(object):
     @staticmethod
     def factory(market='std', **kwargs):
+        '''
+
+        :param market:
+        :param kwargs:
+        :return:
+        '''
         if market == 'ext':
             return ExtReader(**kwargs)
         elif market == 'std':
@@ -23,9 +30,16 @@ class Reader(object):
 class ReaderBase(object):
     """股票市场"""
 
+    # 默认通达信安装目录
     tdxdir = 'C:/new_tdx'
 
     def __init__(self, tdxdir=None):
+        '''
+        构造函数
+
+        :param tdxdir: 通达信安装目录
+        '''
+
         if os.path.isdir(tdxdir):
             self.tdxdir = tdxdir
         else:
@@ -33,18 +47,19 @@ class ReaderBase(object):
 
     def find_path(self, symbol=None, subdir='lday', ext=None):
         '''
-        寻找文件路径，辅助函数
+        自动匹配文件路径，辅助函数
 
         :param symbol:
         :param subdir:
         :param ext:
         :return: pd.dataFrame or None
         '''
-        market = get_stock_market(symbol, True)
+        market = get_stock_market(symbol, True) if len(symbol.split('#')) == 1 else 'ds'
+        prefix = market if len(symbol.split('#')) == 1 else ''
         ext = ext if isinstance(ext, list) else [ext]
 
         for t in ext:
-            vipdoc = 'vipdoc/{}/{}/{}{}.{}'.format(market, subdir, market, symbol, t)
+            vipdoc = 'vipdoc/{}/{}/{}{}.{}'.format(market, subdir, prefix, symbol, t)
             vipdoc = os.path.join(self.tdxdir, vipdoc)
 
             if os.path.exists(vipdoc):
@@ -73,10 +88,11 @@ class StdReader(ReaderBase):
 
         return None
 
-    def minute(self, symbol=None, suffix='1'):
+    def minute(self, symbol=None, suffix=1):
         '''
         获取1,5分钟线
 
+        :param suffix:
         :param symbol:
         :return: pd.dataFrame or None
         '''
@@ -91,37 +107,31 @@ class StdReader(ReaderBase):
         return None
 
     def fzline(self, symbol=None):
-        return self.minute(symbol, suffix='5')
+        return self.minute(symbol, suffix=5)
 
-    def block(self, category='', market='sh', group=False, custom=False):
+    def block(self, symbol='block', custom=False, group=False):
         '''
         获取板块数据
+        参考: http://blog.sina.com.cn/s/blog_623d2d280102vt8y.html
 
-        :param group:
         :param custom:
-        :return: pd.dataFrame or None
-        '''
-        reader = BlockReader()
-        symbol = os.path.join(self.tdxdir, 'block_{}.dat'.format(category))
-
-        if symbol is not None:
-            return reader.get_df(symbol, group)
-
-        return None
-
-    def index(self, symbol='incon.dat', group=False):
-        '''
-        获取指数数据
-
         :param symbol:
         :param group:
         :return: pd.dataFrame or None
         '''
-        reader = BlockReader()
-        symbol = os.path.join(self.tdxdir, symbol)
+        if custom:
+            reader = CustomerBlockReader()
+            vipdoc = os.path.join(self.tdxdir, 'T0002', 'blocknew', '{}.dat'.format(symbol))
+        else:
+            reader = BlockReader()
+            vipdoc = os.path.join(self.tdxdir, 'T0002', 'hq_cache', '{}.dat'.format(symbol))
 
-        if symbol is not None:
-            return reader.get_df(symbol, group)
+        format = BlockReader_TYPE_GROUP if group else None
+
+        if os.path.exists(vipdoc):
+            return reader.get_df(vipdoc, format)
+        else:
+            logger.error('未找到所需的文件: {}'.format(vipdoc))
 
         return None
 
@@ -136,9 +146,9 @@ class ExtReader(ReaderBase):
         :return: pd.dataFrame or None
         '''
         reader = TdxExHqDailyBarReader()
-        symbol = self.find_path(symbol)
+        vipdoc = self.find_path(symbol=symbol, subdir='lday', ext='day')
 
         if symbol is not None:
-            return reader.get_df(symbol)
+            return reader.get_df(vipdoc)
 
         return None

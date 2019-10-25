@@ -10,7 +10,7 @@ class TestExReader(unittest.TestCase):
 
     # 初始化工作
     def setUp(self):
-        self.reader = Reader.factory(market='ext', tdxdir='./tests/data')
+        self.reader = Reader.factory(market='ext', tdxdir='./tests/fixtures')
 
     # 退出清理工作
     def tearDown(self):
@@ -18,10 +18,11 @@ class TestExReader(unittest.TestCase):
 
     # 具体的测试用例，一定要以test开头
     def testDaily(self):
-        self.assertTrue(not self.reader.daily(symbol='29#A1801') is None)
+        data = self.reader.daily(symbol='27#CES100')
+        self.assertTrue(data is not None)
 
-    def testMinbar(self):
-        self.assertTrue(not self.reader.minute(symbol='600036') is None)
+    # def testMinbar(self):
+    #     self.assertTrue(not self.reader.minute(symbol='27#CES100') is None)
 
 
 if __name__ == '__main__':

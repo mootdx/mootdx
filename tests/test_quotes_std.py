@@ -9,7 +9,7 @@ class TestStdQuotes(unittest.TestCase):
 
     # 初始化工作
     def setUp(self):
-        self.client = Quotes.factory(market='std', multithread=True, heartbeat=True) # 标准市场
+        self.client = Quotes.factory(market='std', multithread=True, heartbeat=True)  # 标准市场
 
     # 退出清理工作
     def tearDown(self):
@@ -18,7 +18,7 @@ class TestStdQuotes(unittest.TestCase):
     def test_quotes(self):
         data = self.client.quotes(symbol='600036')
         self.assertTrue(data is not None)
-        
+
         data = self.client.quotes(symbol=['600036', '600016'])
         self.assertTrue(data is not None)
 
@@ -47,13 +47,13 @@ class TestStdQuotes(unittest.TestCase):
         data = self.client.transactions(symbol='000001', start=0, offset=10, date='20170209')
         self.assertTrue(data is not None)
 
-    def test_company_category(self):
-        data = self.client.company_category(symbol='000001')
+    def test_F10C(self):
+        data = self.client.F10C(symbol='000001')
         self.assertTrue(data is not None)
 
-    def test_company_content(self):
-        # api.get_company_info_content(0, '000001', '000001.txt', 0, 100)                                                     # 
-        data = self.client.company_content(symbol='000001', file='000001.txt', start=0, offset=100)
+    def test_F10(self):
+        data = self.client.F10C(symbol='000001')
+        data = self.client.F10(symbol='000001', file='000001.txt', start=0, offset=100)
         self.assertTrue(data is not None)
 
     def test_xdxr(self):
