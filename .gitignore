@@ -60,6 +60,7 @@ docs/_build/
 
 # PyBuilder
 target/
+tests/fixtures
 
 # pyenv python configuration file
 .python-version
