@@ -6,6 +6,7 @@ theme: readthedocs
 pages:
   - '文档概述': 'index.md'
   - '快速安装': 'setup.md'
+  - '快速上手': 'quickstart.md'
 
   - '行情接口':
     - '标准行情': 'api/quote1.md'
