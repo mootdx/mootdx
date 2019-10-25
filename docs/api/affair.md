@@ -1,24 +1,4 @@
-
-# 历史专业财务数据
-
-## 参考信息
-
-- issue from @datochan [https://github.com/rainx/mootdx/issues/133](https://github.com/rainx/mootdx/issues/133)
-- [通达信专业财务函数文档](http://www.tdx.com.cn/products/helpfile/tdxw/chm/%E7%AC%AC%E4%B8%89%E7%AB%A0%20%20%20%E5%9F%BA%E7%A1%80%E5%8A%9F%E8%83%BD/3-3/3-3-2/3-3-2-15/3-3-2-15.html)
-
-## 函数说明
-
-`crawler` 其实本来想叫做`downloader`或者`fetcher`, 专门来处理http 协议(现在也支持tcp的方式获取）的数据的下载和解析，分为两个阶段，下载阶段我们会使用urllib来下载数据，数据可以下载到临时文件（不传入`path_to_download`参数）或者下载到指定的位置（提供`path_to_download`参数），也支持指定chunk的分段下载进度的提示（使用`reporthook`传入处理函数）， 下面是一个reporthook函数的例子
-
-```python
-def reporthook(downloaded=None, total_size):
-    print("#", end='')
-
-```
-
 ## 01. 财务数据列表
-
-mootdx.crawler.HistoryFinancialListCrawler
 
 实现了历史财务数据列表的读取，使用方式
 
@@ -52,8 +32,6 @@ Affairs.fetch(downdir='output')
 
 ## 02. 历史数据内容
 
-mootdx.crawler.HistoryFinancialCrawler
-
 获取历史专业财务数据内容
 
 使用上面返回的`filename`字段作为参数即可
@@ -66,7 +44,8 @@ Affairs.fetch(downdir='output', filename='gpcw20170930.zip')
 
 ## 03. 解析本地数据
 
-如果您自己管理文件的下载或者本地已经有对应的数据文件，可以使用我们的 `HistoryFinancialReader`来读取本地数据，使用方法和其它的Reader是类似的, 我们的reader同时支持`.zip`和解压后的`.dat`文件
+如果您自己管理文件的下载或者本地已经有对应的数据文件，同时支持`.zip`和解压后的`.dat`文件.
+如果扩展名不写，则自动判断存在的文件.
 
 ```python
 from mootdx.affairs import Affairs

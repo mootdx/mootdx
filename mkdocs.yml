@@ -15,7 +15,7 @@ pages:
     - '财务数据': 'api/affair.md'
 
   - 命令行工具:
-    - '网速测试': 'cli/bestip.md'
+    - '线路测试': 'cli/bestip.md'
     - '离线数据': 'cli/reader.md'
     - '行情数据': 'cli/quotes.md'
     - '财务数据': 'cli/affair.md'

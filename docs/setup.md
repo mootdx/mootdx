@@ -5,13 +5,13 @@
 pip install mootdx
 ```
 
-## 升级到最新版本
+## 升级版本
 
 ```bash
 pip install -U mootdx
 ```
 
-## 安装`github`上的最新版本
+## 源码安装
 
 ```bash
 pip install git+https://github.com/rainx/mootdx.git
