@@ -21,7 +21,7 @@ client = Quotes.factory(market='std', heartbeat=True)
 设置心跳包，程序会启动一个心跳包发送线程，在空闲状态下隔一段时间发送一个心跳包，注意，打开`heartbeat=True`选项的同时会自动打开`multithread=True`
 
 
-## 行情服务器列表
+## 服务器列表
 
 为了方便连接服务器，我把一些常用的服务器列表整理到到 `hosts.py` 文件中. 在程序中可以通过
 
