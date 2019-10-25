@@ -3,7 +3,7 @@ site_description: 基于 pytdx 数据接口的二次封装
 
 theme: readthedocs
 
-nav:
+pages:
   - '文档概述': 'index.md'
   - '快速安装': 'setup.md'
   - '快速上手': 'quickstart.md'
