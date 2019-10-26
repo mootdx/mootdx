@@ -1,6 +1,6 @@
-from mootdx.affairs import Affairs
+from mootdx.affair import Affair
 
-Affairs.parse(downdir='tmp') # 解析全部
+Affair.parse(downdir='tmp') # 解析全部
 # Affairs.parse(downdir='tmp', filename='gpcw19960630.zip') # 解析文件
 # Affairs.parse(downdir='tmp', filename='gpcw19960630.zip').to_csv('gpcw19960630.csv') # 转存文件
 

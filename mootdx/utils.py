@@ -126,3 +126,14 @@ def gpcw(filepath):
 
         logger.debug("{}, {}".format(code, str(cw_info)))
         return code, cw_info
+
+
+def md5sum(downfile):
+    import hashlib
+    md5_l = hashlib.md5()
+    with open(downfile, mode="rb") as f:
+        by = f.read()
+
+    md5_l.update(by)
+    ret = md5_l.hexdigest()
+    return ret
