@@ -2,7 +2,6 @@
 import logging
 
 from mootdx.financial.financial import FinancialList, Financial, FinancialReader
-from mootdx.utils import md5sum
 
 logger = logging.getLogger(__name__)
 total = 0
@@ -82,8 +81,6 @@ class Affair(object):
             logger.info('\r下载目录不存在, 进行创建.')
             os.makedirs(downdir)
 
-        list_data = history.fetch_and_parse()
-
         if filename:
             logger.info('\r下载文件 {}.'.format(filename))
             downfile = os.path.join(downdir, filename)
@@ -93,12 +90,13 @@ class Affair(object):
 
             return True
 
+        list_data = history.fetch_and_parse()
+
         for x in list_data:
             downfile = os.path.join(downdir, x['filename'])
 
+            # 判断文件存在并且长度一样，则忽略
             if os.path.exists(downfile):
-                # print(x.get('hash'), md5sum(downfile))
-                # print(x.get('filesize'), os.path.getsize(downfile))
                 if int(x.get('filesize')) == int(os.path.getsize(downfile)):
                     logger.warning('\r文件已经存在: {} 跳过.'.format(x['filename']))
                     continue
