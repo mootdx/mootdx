@@ -26,6 +26,7 @@ class Quotes(object):
 
 class StdQuotes(object):
     """股票市场实时行情"""
+    bestip = ('47.103.48.45', 7709)
 
     def __init__(self, **kwargs):
         self.config = None
