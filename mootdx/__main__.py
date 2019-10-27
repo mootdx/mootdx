@@ -6,6 +6,7 @@ import os
 import click
 from prettytable import PrettyTable
 
+from mootdx import __version__
 from mootdx.affair import Affair
 from mootdx.quotes import Quotes
 from mootdx.reader import Reader
@@ -116,6 +117,11 @@ def affair(parse, files, fetch, downdir, output, verbose):
                 print(feed)
             else:
                 logger.error('file not found.')
+
+
+@cli.command(help='显示版本.')
+def version():
+    print('mootdx v{}'.format(__version__))
 
 
 def execute():

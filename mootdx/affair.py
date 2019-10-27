@@ -78,11 +78,11 @@ class Affair(object):
         crawler = Financial()
 
         if not os.path.isdir(downdir):
-            logger.info('\r下载目录不存在, 进行创建.')
+            logger.info('下载目录不存在, 进行创建.')
             os.makedirs(downdir)
 
         if filename:
-            logger.info('\r下载文件 {}.'.format(filename))
+            logger.info('下载文件 {}.'.format(filename))
             downfile = os.path.join(downdir, filename)
 
             with TqdmUpTo(unit='B', unit_scale=True, miniters=1) as t:
@@ -98,9 +98,9 @@ class Affair(object):
             # 判断文件存在并且长度一样，则忽略
             if os.path.exists(downfile):
                 if int(x.get('filesize')) == int(os.path.getsize(downfile)):
-                    logger.warning('\r文件已经存在: {} 跳过.'.format(x['filename']))
+                    logger.warning('文件已经存在: {} 跳过.'.format(x['filename']))
                     continue
 
             with TqdmUpTo(unit='b', unit_scale=True, miniters=1) as t:
-                logger.debug('\r准备下载多文件 {}.'.format(x['filename']))
+                logger.debug('准备下载多文件 {}.'.format(x['filename']))
                 crawler.fetch_and_parse(reporthook=t.update_to, filename=x['filename'], downdir=downfile)
