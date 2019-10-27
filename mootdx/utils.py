@@ -2,6 +2,11 @@
 import logging
 from struct import *
 
+import pandas as pd
+from pandas import DataFrame
+
+from mootdx.consts import MARKET_SZ, MARKET_SH
+
 logger = logging.getLogger(__name__)
 
 
@@ -54,7 +59,8 @@ def get_stock_market(symbol='', string=False):
         market = 'sh'
 
     if string is False:
-        return 0 if market == 'sz' else 1
+        # return 0 if market == 'sz' else 1
+        market = MARKET_SZ if market == 'sz' else MARKET_SH
 
     return market
 
@@ -137,3 +143,22 @@ def md5sum(downfile):
     md5_l.update(by)
     ret = md5_l.hexdigest()
     return ret
+
+
+def to_data(v):
+
+    if not v:
+        return None
+
+    if isinstance(v, DataFrame):
+        if len(v.columns) == 0:
+            return None
+
+        return v
+
+    if isinstance(v, list):
+        return pd.DataFrame(data=v)
+    elif isinstance(v, dict):
+        return pd.DataFrame(data=[v, ])
+    else:
+        return pd.DataFrame(data=[{'value': v}])

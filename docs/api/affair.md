@@ -3,8 +3,8 @@
 实现了历史财务数据列表的读取，使用方式
 
 ```python
-from mootdx.affairs import Affairs
-Affairs.fetch(downdir='output')
+from mootdx.affair import Affair
+Affair.fetch(downdir='output')
 
 结果:
 
@@ -37,8 +37,8 @@ Affairs.fetch(downdir='output')
 使用上面返回的`filename`字段作为参数即可
 
 ```python
-from mootdx.affairs import Affairs
-Affairs.fetch(downdir='output', filename='gpcw20170930.zip')
+from mootdx.affair import Affair
+Affair.fetch(downdir='output', filename='gpcw20170930.zip')
 
 ```
 
@@ -48,9 +48,9 @@ Affairs.fetch(downdir='output', filename='gpcw20170930.zip')
 如果扩展名不写，则自动判断存在的文件.
 
 ```python
-from mootdx.affairs import Affairs
+from mootdx.affair import Affair
 
-data = Affairs.parse(downdir='output', filename='gpcw20170930.zip')
+data = Affair.parse(downdir='output', filename='gpcw20170930.zip')
 
 ```
 
@@ -59,9 +59,9 @@ data = Affairs.parse(downdir='output', filename='gpcw20170930.zip')
 代码方式
 
 ```python
-from mootdx.affairs import Affairs
+from mootdx.affair import Affair
 
-result = Affairs.parse(downdir='output', filename='gpcw20170930.zip')
+result = Affair.parse(downdir='output', filename='gpcw20170930.zip')
 result.to_csv('gpcw20170930.csv')
 ```
 命令行方式
