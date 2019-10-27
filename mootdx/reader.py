@@ -16,8 +16,9 @@ class Reader(object):
     @staticmethod
     def factory(market='std', **kwargs):
         '''
+        Reader 工厂方法
 
-        :param market:
+        :param market:  std 标准市场, ext 扩展市场
         :param kwargs:
         :return:
         '''

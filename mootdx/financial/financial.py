@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 
 class FinancialReader(BaseReader):
 
-    def get_df(self, filename, **kwargs):
+    def to_data(self, filename, **kwargs):
         """
         读取历史财务数据文件，并返回pandas结果 ， 类似gpcw20171231.zip格式，具体字段含义参考
 
@@ -24,32 +24,51 @@ class FinancialReader(BaseReader):
 
         :param **kwargs:
         :param filename: 数据文件地址， 数据文件类型可以为 .zip 文件，也可以为解压后的 .dat, 可以不写扩展名. 程序自动识别
-        :return: pandas DataFrame格式的历史财务数据
+        :return: pandas DataFrame 格式的历史财务数据
         """
 
         crawler = Financial()
 
-        with open(filename, 'rb') as df:
-            data = crawler.parse(download_file=df)
+        with open(filename, 'rb') as fp:
+            data = crawler.parse(download_file=fp)
 
         return crawler.to_df(data)
 
 
 class FinancialList(BaseFinancial):
+    mode = "content"
 
     def __init__(self):
         super().__init__()
-        self.mode = "content"
 
-    def get_url(self, *args, **kwargs):
-        return 'http://down.tdx.com.cn:8001/fin/gpcw.txt'
+    def url(self, *args, **kwargs):
+        '''
+        获取采集数据的 URL
+
+        :param args:
+        :param kwargs:
+        :return:
+        '''
         # return "https://gitee.com/yutiansut/QADATA/raw/master/financial/content.txt"
+        return 'http://down.tdx.com.cn:8001/fin/gpcw.txt'
 
-    def get_content(self, reporthook=None, downdir=None, proxies=None, chunksize=1024 * 50, *args, **kwargs):
+    def content(self, reporthook=None, downdir=None, proxies=None, chunksize=1024 * 50, *args, **kwargs):
+        '''
+        解析财务文件
+
+        :param reporthook: 钩子回调函数
+        :param downdir: 要解析的文件夹
+        :param proxies:
+        :param chunksize:
+        :param args:
+        :param kwargs:
+        :return:
+        '''
         from pytdx.hq import TdxHq_API
+
         api = TdxHq_API()
         api.need_setup = False
-        # calc.tdx.com.cn, calc2.tdx.com.cn
+
         with api.connect(ip=gp_hosts[0]):
             content = api.get_report_file_by_size("tdxfin/gpcw.txt")
 
@@ -64,6 +83,14 @@ class FinancialList(BaseFinancial):
             return download_file
 
     def parse(self, download_file, *args, **kwargs):
+        '''
+        解析财务文件
+
+        :param download_file:
+        :param args:
+        :param kwargs:
+        :return:
+        '''
         content = download_file.read()
         content = content.decode("utf-8")
 
@@ -78,50 +105,66 @@ class FinancialList(BaseFinancial):
 
 
 class Financial(BaseFinancial):
+    mode = "content"
 
     def __init__(self):
         super().__init__()
-        self.mode = "content"
 
-    def get_url(self, *args, **kwargs):
-        if 'filename' in kwargs:
-            filename = kwargs['filename']
-        else:
+    def url(self, *args, **kwargs):
+        '''
+        获取采集数据的 URL
+
+        :param args:
+        :param kwargs:
+        :return:
+        '''
+        filename = kwargs.get('filename')
+
+        if not filename:
             raise Exception("Param filename is not set")
 
         return "http://data.yutiansut.com/{}".format(filename)
 
-    def get_content(self, reporthook=None, downdir=None, proxies=None, chunksize=1024 * 50, *args, **kwargs):
-        if 'filename' in kwargs:
-            filename = kwargs['filename']
-        else:
-            raise Exception("Param filename is not set")
+    def content(self, reporthook=None, downdir=None, proxies=None, chunksize=1024 * 50, *args, **kwargs):
+        '''
+        解析财务文件
 
-        if "filesize" in kwargs:
-            filesize = kwargs["filesize"]
-        else:
-            filesize = 0
+        :param reporthook: 钩子回调函数
+        :param downdir: 要解析的文件夹
+        :param proxies:
+        :param chunksize:
+        :param args:
+        :param kwargs:
+        :return:
+        '''
+        filename = kwargs.get('filename')
+        filesize = kwargs.get("filesize") if kwargs.get("filesize") else 0
+
+        if not filename:
+            raise Exception("Param filename is not set")
 
         from pytdx.hq import TdxHq_API
 
         api = TdxHq_API()
         api.need_setup = False
 
-        # calc.tdx.com.cn, calc2.tdx.com.cn
         with api.connect(ip=gp_hosts[0]):
             content = api.get_report_file_by_size("tdxfin/" + filename, filesize=filesize, reporthook=reporthook)
-
-            if downdir is None:
-                download_file = tempfile.NamedTemporaryFile(delete=True)
-            else:
-                download_file = open(downdir, 'wb')
-
+            download_file = open(downdir, 'wb') if downdir else tempfile.NamedTemporaryFile(delete=True)
             download_file.write(content)
             download_file.seek(0)
 
             return download_file
 
     def parse(self, download_file, *args, **kwargs):
+        '''
+        解析财务文件
+
+        :param download_file: 要解析的文件
+        :param args:
+        :param kwargs:
+        :return:
+        '''
 
         header_pack_format = '<1hI1H3L'
         tmpdir = tempfile.gettempdir()
@@ -133,6 +176,7 @@ class Financial(BaseFinancial):
             tmpdir = os.path.join(tmpdir_root, subdir_name)
             shutil.rmtree(tmpdir, ignore_errors=True)
             os.makedirs(tmpdir)
+
             shutil.unpack_archive(download_file.name, extract_dir=tmpdir)
 
             # only one file endswith .dat should be in zip archives
@@ -144,8 +188,11 @@ class Financial(BaseFinancial):
 
             if datfile is None:
                 raise Exception("no dat file found in zip archive")
-        else:
+
+        elif download_file.name.endswith('.dat'):
             datfile = download_file
+        else:
+            return None
 
         header_size = calcsize(header_pack_format)
         stock_item_size = calcsize("<6s1c1L")
@@ -180,15 +227,21 @@ class Financial(BaseFinancial):
         return results
 
     def to_df(self, data):
+        '''
+        数据转换为 pandas DataFrame
+
+        :param data:
+        :return:
+        '''
         if len(data) == 0:
             return None
 
-        total_lengh = len(data[0])
+        total = len(data[0])
         col = ['code', 'report_date']
-        length = total_lengh - 2
+        length = total - 2
 
-        for i in range(0, length):
-            col.append("col" + str(i + 1))
+        for i in range(1, length):
+            col.append("col" + str(i))
 
         df = pd.DataFrame(data=data, columns=col)
         df.set_index('code', inplace=True)

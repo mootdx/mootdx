@@ -6,12 +6,15 @@ import time
 
 from prettytable import PrettyTable
 
-from mootdx.consts import hq_hosts, ex_hosts
+from mootdx.consts import hq_hosts, ex_hosts, gp_hosts
 
 logger = logging.getLogger(__name__)
 result = []
-
-hosts = [{'addr': hs[1], 'port': hs[2], 'time': 0, 'site': hs[0]} for hs in hq_hosts + ex_hosts]
+hosts = {
+    'hq': [{'addr': hs[1], 'port': hs[2], 'time': 0, 'site': hs[0]} for hs in hq_hosts],
+    'ex': [{'addr': hs[1], 'port': hs[2], 'time': 0, 'site': hs[0]} for hs in ex_hosts],
+    'gp': [{'addr': hs[1], 'port': hs[2], 'time': 0, 'site': hs[0]} for hs in gp_hosts],
+}
 
 # 线程同步锁
 lock = threading.Lock()
@@ -31,11 +34,11 @@ def synchronous(f):
 
 # 获取一个待验证行情
 @synchronous
-def get_hosts():
+def get_hosts(index):
     global hosts
 
-    if len(hosts) > 0:
-        return hosts.pop()
+    if len(hosts[index]) > 0:
+        return hosts[index].pop()
     else:
         return ''
 
@@ -50,9 +53,10 @@ def saveresult(proxy):
 
 
 # 线程函数
-def verify():
+def verify(index='hq'):
     while True:
-        proxy = get_hosts()
+        proxy = get_hosts(index=index)
+
         # 所有行情均已验证完毕
         if len(proxy) == 0:
             return
@@ -61,34 +65,35 @@ def verify():
         # 创建一个TCP连接套接字
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-        # 设置10超时
+        # 设置5超时
         sock.settimeout(5)
 
         try:
             start = time.clock()
 
             # 连接行情服务器
-            sock.connect((proxy['addr'], int(proxy['port'])))
+            sock.connect((proxy.get('addr'), int(proxy.get('port'))))
             sock.close()
 
             proxy['time'] = (time.clock() - start) * 1000
 
             saveresult(proxy)
 
-            logger.info("%s:%s 验证通过，响应时间：%d ms." %
-                        (proxy['addr'], proxy['port'], proxy['time']))
-        except Exception as e:
-            logger.warning("%s,%s 验证失败." % (proxy['addr'], proxy['port']))
+            logger.info("{}:{} 验证通过，响应时间：{:.2} ms.".format(proxy.get('addr'), proxy.get('port'), proxy.get('time')))
+        except Exception:
+            logger.warning("{},{} 验证失败.".format(proxy.get('addr'), proxy.get('port')))
 
 
-def Server(limit=10, verbose=False):
+def Server(limit=10, market='hq', verbose=False):
     if verbose:
         logging.basicConfig(level='DEBUG')
+
+    print("[!] 开始测试线路...")
 
     thread_pool = []
 
     for i in range(20):
-        th = threading.Thread(target=verify, args=())
+        th = threading.Thread(target=verify(market), args=())
         thread_pool.append(th)
 
     # start threads one by one
@@ -102,7 +107,7 @@ def Server(limit=10, verbose=False):
     # 结果按响应时间从小到大排序
     result.sort(key=lambda item: (item['time']))
 
-    print("最优服务器:")
+    print("[√] 最优服务器:")
 
     t = PrettyTable(["Name", "Addr", "Port", "Time"])
     t.align["Name"] = "l"

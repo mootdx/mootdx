@@ -44,10 +44,8 @@ BLOCK_FG = "block_fg.dat"
 BLOCK_GN = "block_gn.dat"
 BLOCK_DEFAULT = "block.dat"
 
-
-TYPE_FLAT = 0
+TYPE_FLATS = 0
 TYPE_GROUP = 1
-
 
 hq_hosts = [
     ('上海双线主站1', '47.103.48.45', 7709),
@@ -72,5 +70,5 @@ ex_hosts = [
 ]
 
 gp_hosts = [
-    '120.76.152.87'
+    ('默认财务数据线路', '120.76.152.87', 7709)
 ]

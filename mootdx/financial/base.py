@@ -4,8 +4,6 @@ import struct
 import tempfile
 from urllib.request import Request, urlopen
 
-import requests
-
 logger = logging.getLogger(__name__)
 
 
@@ -16,17 +14,31 @@ def reporthook(downloaded, total_size):
 class BaseReader(object):
 
     def unpack(self, format, data):
+        '''
+        解压文件
+
+        :param format:
+        :param data:
+        :return:
+        '''
         record = struct.Struct(format)
         return (record.unpack_from(data, offset) for offset in range(0, len(data), record.size))
 
     def get_df(self, code_or_file, exchange=None):
+        '''
+        转换格式为 pd.DateFrame
+
+        :param code_or_file:
+        :param exchange:
+        :return:
+        '''
         raise NotImplementedError('not yet')
 
 
 class BaseFinancial:
 
     def __init__(self, mode="http"):
-        self.mode = "http"
+        self.mode = mode
 
     def fetch_and_parse(self, reporthook=None, downdir=None, proxies=None, chunksize=1024 * 50, *args,
                         **kwargs):
@@ -40,18 +52,18 @@ class BaseFinancial:
         """
 
         if self.mode == "http":
-            download_file = self.fetch_via_http(reporthook=reporthook, downdir=downdir,
-                                                proxies=proxies, chunksize=chunksize, *args, **kwargs)
+            file = self.fetch_via_http(
+                reporthook=reporthook, downdir=downdir, proxies=proxies, chunksize=chunksize, *args, **kwargs)
         elif self.mode == "content":
-            download_file = self.get_content(reporthook=reporthook, downdir=downdir,
-                                             chunksize=chunksize, *args, **kwargs)
+            file = self.content(
+                reporthook=reporthook, downdir=downdir, chunksize=chunksize, *args, **kwargs)
         else:
             return
 
-        result = self.parse(download_file, *args, **kwargs)
+        result = self.parse(file, *args, **kwargs)
 
         try:
-            download_file.close()
+            file.close()
         except Exception as e:
             raise e
 
@@ -59,12 +71,22 @@ class BaseFinancial:
 
     def fetch_via_http(self, reporthook=None, downdir=None, proxies=None, chunksize=1024 * 50, *args,
                        **kwargs):
+        '''
+
+        :param reporthook:
+        :param downdir:
+        :param proxies:
+        :param chunksize:
+        :param args:
+        :param kwargs:
+        :return:
+        '''
         if downdir is None:
             download_file = tempfile.NamedTemporaryFile(delete=True)
         else:
             download_file = open(downdir, 'wb')
 
-        url = self.get_url(*args, **kwargs)
+        url = self.url(*args, **kwargs)
 
         logger.debug(url)
 
@@ -73,7 +95,7 @@ class BaseFinancial:
             'Referer': url
         }
 
-        res = requests.get(url, headers=headers)
+        # res = requests.get(url, headers=headers)
 
         request = Request(url)
         request.add_header('Referer', url)
@@ -104,10 +126,10 @@ class BaseFinancial:
         download_file.seek(0)
         return download_file
 
-    def get_url(self, *args, **kwargs):
+    def url(self, *args, **kwargs):
         raise NotImplementedError("will impl in subclass")
 
-    def get_content(self, reporthook=None, downdir=None, proxies=None, chunksize=1024 * 50, *args, **kwargs):
+    def content(self, reporthook=None, downdir=None, proxies=None, chunksize=1024 * 50, *args, **kwargs):
         raise NotImplementedError("will impl in subclass")
 
     def parse(self, download_file, *args, **kwargs):

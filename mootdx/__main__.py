@@ -58,18 +58,20 @@ def reader(symbol, action, market, tdxdir, output):
 @cli.command(help='测试行情服务器.')
 @click.option('-l', '--limit', default=5, help='显示最快前几个，默认 5.')
 @click.option('-w', '--write', count=True, help='将最优服务器IP写入配置文件 ~/.mootdx/config.json.')
-@click.option('-m', '--market', default='std', help='证券市场')
+@click.option('-m', '--market', default='', help='服务器类型 hq 行情服务，ex 扩展行情服务，gp 财务行情服务')
 @click.option('-v', '--verbose', count=True)
 def bestip(limit, verbose, market, write):
-    bestip = Server(limit=int(limit), verbose=verbose)
-    config = os.path.join(os.environ['HOME'], '.mootdx/config.josn')
+    for index in ['hq', 'ex', 'gp']:
+        bestip = Server(limit=int(limit), market=index, verbose=verbose)
+        config = os.path.join(os.environ['HOME'], '.mootdx/config.josn')
 
-    if write:
-        if not os.path.exists(config):
-            os.mkdir(os.path.join(os.environ['HOME'], '.mootdx'))
+        if write:
+            if not os.path.exists(config):
+                os.mkdir(os.path.join(os.environ['HOME'], '.mootdx'))
 
-        json.dump({'BESTIP': bestip[0]}, open(config, 'w'))
-        print('[√] 已经将最优服务器IP写入配置文件 {}'.format(config))
+            json.dump({'BESTIP': bestip[0]}, open(config, 'w'))
+
+    print('[√] 已经将最优服务器IP写入配置文件 {}'.format(config))
 
 
 @cli.command(help='财务文件下载&解析.')

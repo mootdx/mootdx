@@ -38,8 +38,8 @@ Affair.fetch(downdir='output')
 
 ```python
 from mootdx.affair import Affair
-Affair.fetch(downdir='output', filename='gpcw20170930.zip')
 
+Affair.fetch(downdir='output', filename='gpcw20170930.zip')
 ```
 
 ## 03. 解析本地数据
@@ -66,8 +66,8 @@ result.to_csv('gpcw20170930.csv')
 ```
 命令行方式
 
-```
-$ mootdx affair -f gpcw20000930.zip -o gpcw20170930.csv
-
 写入到文件 : gpcw20170930.csv
+
+```bash
+$ mootdx affair -f gpcw20000930.zip -o gpcw20170930.csv
 ```

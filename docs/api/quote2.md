@@ -2,6 +2,7 @@
 
 可以获取该api服务器可以使用的市场列表，类别等信息
 
+** 调用方法：**
 ```python
 from mootdx.quotes import Quotes
 
@@ -10,10 +11,18 @@ client.markets()
 
 ```
 
+> 注意点：非股票品种代码，有些获取的价格不是实际价格，比如可转债获取价格为实际价格 x 10。
+> 这是可能是TDX为了防止浮点数错误，报价在传输和存储时实际都保存为整数，然后根据品种进行处理的结果。
+
+
 ## 02. 查询代码列表
 
-参数， 起始位置， 获取数量
+** 参数说明: **
 
+ - start: 起始位置.
+ - offset: 获取数量.
+
+** 调用方法：**
 ```python
 from mootdx.quotes import Quotes
 
@@ -26,6 +35,7 @@ client.instruments()
 
 ## 03. 市场商品数量
 
+** 调用方法：**
 ```python
 from mootdx.quotes import Quotes
 
@@ -36,10 +46,12 @@ client.instrument_count()
 
 ## 04. 查询五档行情
 
-参数 市场ID，证券代码
+** 参数说明: **
 
-- 市场ID可以通过 `markets` 方法获得
+ - market: 市场代码.
+ - symbol: 证券代码.
 
+** 调用方法：**
 ```python
 from mootdx.quotes import Quotes
 
@@ -52,10 +64,12 @@ client.quote(symbol="47#IF1709")
 
 ## 05. 查询分时行情
 
-参数 市场ID，证券代码
+** 参数说明: **
 
-- 市场ID可以通过 `markets` 方法获得
+ - market: 市场代码. 市场代码可以通过 `markets` 方法获得
+ - symbol: 证券代码.
 
+** 调用方法：**
 ```python
 from mootdx.quotes import Quotes
 
@@ -68,11 +82,12 @@ client.minute(symbol="47#IF1709")
 
 ## 06. 历史分时行情
 
-参数 市场ID，证券代码，日期
+** 参数说明: **
 
-- 市场ID可以通过 `markets` 方法获得
-- 日期格式 YYYYMMDD 如 20170811
+ - market: 市场代码. 场ID可以通过 `markets` 方法获得
+ - symbol: 证券代码
 
+** 调用方法：**
 ```python
 from mootdx.quotes import Quotes
 
@@ -85,11 +100,15 @@ client.minutes(symbol="47#IF1709")
 
 ## 07. 查询k线数据
 
-参数： K线周期， 市场ID， 证券代码，起始位置， 数量
+** 参数说明: **
 
-- K线周期参考 `mootdx.consts`
-- 市场ID可以通过 `markets` 方法获得
+ - category: K线周期参考 `mootdx.consts`
+ - market: 市场代码. 场ID可以通过 `markets` 方法获得
+ - symbol: 证券代码
+ - start: 起始位置
+ - offset: 数量
 
+** 调用方法：**
 ```python
 from mootdx.quotes import Quotes
 from mootdx.consts import KLINE_DAILY
@@ -102,10 +121,12 @@ client.bars(category=KLINE_DAILY, symbol="47#IF1709", start=0, offset=100)
 
 ## 08. 查询分笔成交
 
-参数：市场ID，证券代码
+** 参数说明: **
 
-- 市场ID可以通过 `markets` 方法获得
+ - market: 市场代码. 场ID可以通过 `markets` 方法获得
+ - symbol: 证券代码
 
+** 调用方法：**
 ```python
 from mootdx.quotes import Quotes
 
@@ -120,12 +141,12 @@ client.transaction("31#00020")
 
 如期货的数据：这个接口可以取出1800条之前的记录，数量也是1800条
 
+** 调用方法：**
 ```python
 from mootdx.quotes import Quotes
 
 client = Quotes.factory(market='ext') 
 client.transaction(market=31, symbol='00020')
-
 
 # 简写方式
 client.transaction("31#00020")
@@ -133,11 +154,15 @@ client.transaction("31#00020")
 
 ## 09. 历史分笔成交
 
-参数：市场ID，证券代码, 日期
+** 参数说明: **
 
-- 市场ID可以通过 `markets` 方法获得
-- 日期格式 YYYYMMDD 如 20170810
+- market: 市场代码. 场ID可以通过 `markets` 方法获得
+- symbol: 证券代码
+- date: 日期. 日期格式 YYYYMMDD 如 20170811
+- start: 起始位置
+- offset: 数量
 
+** 调用方法：**
 ```python
 from mootdx.quotes import Quotes
 

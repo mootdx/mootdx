@@ -14,6 +14,14 @@ def reporthook(downloaded, total_size):
 class Affair(object):
     @staticmethod
     def parse(downdir='.', filename=None, **kwargs):
+        '''
+        按目录解析文件
+
+        :param downdir:
+        :param filename:
+        :param kwargs:
+        :return:
+        '''
         filepath = os.path.join(downdir, filename)
 
         if os.path.exists(filepath):
@@ -25,14 +33,26 @@ class Affair(object):
 
     @staticmethod
     def files():
+        '''
+        财务文件列表
+
+        :return:
+        '''
         history = FinancialList()
         results = history.fetch_and_parse()
 
         return results
 
-    # 财务数据下载
     @staticmethod
     def fetch(downdir='.', filename=None, **kwargs):
+        '''
+        财务数据下载
+
+        :param downdir:
+        :param filename:
+        :param kwargs:
+        :return:
+        '''
         history = FinancialList()
         crawler = Financial()
 

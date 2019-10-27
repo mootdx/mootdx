@@ -14,10 +14,16 @@ from mootdx.utils import get_stock_market, get_stock_markets, to_data
 logger = logging.getLogger(__name__)
 
 
-# 股票市场
 class Quotes(object):
     @staticmethod
     def factory(market='std', **kwargs):
+        '''
+        股票市场 工厂方法
+
+        :param market: std 标准市场, ext 扩展市场
+        :param kwargs:
+        :return: object
+        '''
         if market == 'ext':
             return ExtQuotes(**kwargs)
         elif market == 'std':

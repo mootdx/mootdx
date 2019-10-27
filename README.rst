@@ -22,6 +22,15 @@
 * 开源协议: MIT license
 * 在线文档: https://mootdx.readthedocs.io.
 
+
+运行环境
+---------
+
+* 操作系统: Windows / MacOS / Linux 都可以运行.
+* Python: 3.5 以及以上版本, 不支持 python2.
+* 依赖库: pytdx>=1.67
+
+
 安装方法
 --------
 
@@ -34,6 +43,7 @@
     git clone https://github.com/bopo/mootdx.git 
     cd mootdx
     python setup.py install
+
 
 
 使用说明
