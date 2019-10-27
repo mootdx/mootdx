@@ -27,13 +27,13 @@
 
 ::
 
-	# PIP 自动安装方法
-	pip install mootdx
+    # PIP 自动安装方法
+    pip install mootdx
 
-	# 手动下载源码安装
-	git clone https://github.com/bopo/mootdx.git 
-	cd mootdx
-	python setup.py install
+    # 手动下载源码安装
+    git clone https://github.com/bopo/mootdx.git 
+    cd mootdx
+    python setup.py install
 
 
 使用说明
@@ -41,75 +41,84 @@
 命令行工具
 
 ::
-	
-	mootdx --help
+    
+    mootdx --help
 
-	Usage: mootdx [OPTIONS] COMMAND [ARGS]...
+    Usage: mootdx [OPTIONS] COMMAND [ARGS]...
 
-	Options:
-	  -v, --verbose
-	  --help         Show this message and exit.
+    Options:
+      -v, --verbose
+      --help         Show this message and exit.
 
-	Commands:
-	  affair  财务文件下载&解析.
-	  quotes  读取股票行情数据.
-	  server  测试行情服务器.
+    Commands:
+      affair  财务文件下载&解析.
+      bestip  测试行情服务器.
+      quotes  读取股票在线行情数据.
+      reader  读取股票本地行情数据.
 
 使用最快的服务器
 
 :: 
 
-	# -w 参数是写入配置文件
-	mootdx server -w 
+    # -w 参数是写入配置文件
+    mootdx bestip -w -v
 
 
 通达信离线数据读取
 
 ::
 
-	from mootdx.reader import Reader
+    from mootdx.reader import Reader
 
-	# market 参数 std 为标准市场(就是股票), ext 为扩展市场(期货，黄金等)
-	# tdxdir 是通达信的数据目录, 根据自己的情况修改
-	reader = Reader.factory(market='std', tdxdir='./tests/data')
-	result = reader.daily(symbol='600036')
-	result = reader.minute(symbol='600036')
-	result = reader.fzline(symbol='600036')
+    # market 参数 std 为标准市场(就是股票), ext 为扩展市场(期货，黄金等)
+    # tdxdir 是通达信的数据目录, 根据自己的情况修改
+
+    reader = Reader.factory(market='std', tdxdir='C:/new_tdx')
+
+    # 读取日线数据
+    reader.daily(symbol='600036')
+
+    # 读取分钟数据
+    reader.minute(symbol='600036')
+
+    # 读取时间线数据
+    reader.fzline(symbol='600036')
 
 
-通达信离线行情读取
+
+通达信线上行情读取
 
 ::
 
-	from mootdx.quotes import Quotes
+    from mootdx.quotes import Quotes
 
-	# 标准市场
-	client = Quotes.factory(market='std', multithread=True, heartbeat=True)
+    # 标准市场
+    client = Quotes.factory(market='std', multithread=True, heartbeat=True)
 
-	# k 线数据
-	client.bars(symbol='600036', category=9, offset=10)
+    # k 线数据
+    client.bars(symbol='600036', category=9, offset=10)
 
-	# 指数
-	client.index(symbol='000001', category=9)
+    # 指数
+    client.index(symbol='000001', category=9)
 
-	# 分钟
-	client.minute(symbol='000001')
+    # 分钟
+    client.minute(symbol='000001')
 
 
 通达信财务数据读取
 
 ::
 
-	from mootdx.affairs import Affairs
+    from mootdx.affair import Affair
 
-	# 远程文件列表
-	files = Affairs.files()
+    # 远程文件列表
+    files = Affair.files()
 
-	# 下载单个
-	Affairs.fetch(downdir='tmp', filename='gpcw19960630.zip')
+    # 下载单个
+    Affair.fetch(downdir='tmp', filename='gpcw19960630.zip')
 
-	# 下载全部
-	Affairs.parse(downdir='tmp')
+    # 下载全部
+    Affair.parse(downdir='tmp')
 
 
 版本更新

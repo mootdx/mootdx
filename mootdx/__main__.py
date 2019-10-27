@@ -10,6 +10,7 @@ from mootdx.affair import Affair
 from mootdx.quotes import Quotes
 from mootdx.reader import Reader
 from mootdx.server import Server
+from mootdx.utils import to_file
 
 logger = logging.getLogger(__name__)
 
@@ -26,37 +27,40 @@ def cli(ctx, verbose):
 @click.option('-s', '--symbol', default='600001', help='股票代码')
 @click.option('-a', '--action', default='bars', help='操作类型')
 @click.option('-m', '--market', default='std', help='证券市场')
-def quotes(symbol, method, market, output):
+def quotes(symbol, action, market, output):
     client = Quotes.factory(market=market, multithread=True, heartbeat=True)  # 标准市场
 
     try:
-        feed = getattr(client, method)(symbol=symbol)
-        feed.to_csv(output) if output else None
+        feed = getattr(client, action)(symbol=symbol)
+        to_file(feed, output) if output else None
         print(feed)
     except Exception as e:
         raise e
 
 
 @cli.command(help='读取股票本地行情数据.')
-@click.option('-d', '--tdxdir', default='c:\\newtdx', help='通达信数据目录')
+@click.option('-d', '--tdxdir', default='C:/new_tdx', help='通达信数据目录')
 @click.option('-s', '--symbol', default='600001', help='股票代码')
 @click.option('-a', '--action', default='daily', help='操作类型')
 @click.option('-m', '--market', default='std', help='证券市场')
-def reader(symbol, method, market, tdxdir):
-    client = Reader.factory(market=market, tdxdir=tdxdir)  # 标准市场
+@click.option('-o', '--output', default=None, help='输出文件')
+def reader(symbol, action, market, tdxdir, output):
+    client = Reader.factory(market=market, tdxdir=tdxdir)
 
     try:
-        feed = getattr(client, method)(symbol=symbol)
+        feed = getattr(client, action)(symbol=symbol)
+        to_file(feed, output) if output else None
         print(feed)
     except Exception as e:
         raise e
 
 
 @cli.command(help='测试行情服务器.')
-@click.option('-l', '--limit', default='5', help='显示最快前几个，默认 5.')
+@click.option('-l', '--limit', default=5, help='显示最快前几个，默认 5.')
 @click.option('-w', '--write', count=True, help='将最优服务器IP写入配置文件 ~/.mootdx/config.json.')
+@click.option('-m', '--market', default='std', help='证券市场')
 @click.option('-v', '--verbose', count=True)
-def bestip(limit, verbose, write):
+def bestip(limit, verbose, market, write):
     bestip = Server(limit=int(limit), verbose=verbose)
     config = os.path.join(os.environ['HOME'], '.mootdx/config.josn')
 
@@ -75,13 +79,12 @@ def bestip(limit, verbose, write):
 @click.option('-o', '--output', default='output.csv', help='下载文件目录')
 @click.option('-d', '--downdir', default='output', help='下载文件目录')
 @click.option('-v', '--verbose', count=True)
-# @click.argument('filename')
 def affair(parse, files, fetch, downdir, output, verbose):
     if verbose:
         logging.basicConfig(level=logging.DEBUG)
 
     affairs = Affair.files()
-    
+
     if files:
         t = PrettyTable(["filename", "filesize", "hash"])
         t.align["filename"] = "l"
@@ -96,7 +99,8 @@ def affair(parse, files, fetch, downdir, output, verbose):
 
     if fetch:
         if fetch == 'all':
-            Affair.fetch(downdir=downdir)
+            feed = Affair.fetch(downdir=downdir)
+            to_file(feed, output) if output else None
         else:
             Affair.fetch(downdir=downdir, filename=fetch.strip('.zip') + '.zip')
 
@@ -105,8 +109,9 @@ def affair(parse, files, fetch, downdir, output, verbose):
 
         if parse in files:
             if os.path.exists(os.path.join(downdir, parse)):
-                df = Affair.parse(downdir=downdir, filename=parse.strip('.zip') + '.zip')
-                print(df)
+                feed = Affair.parse(downdir=downdir, filename=parse.strip('.zip') + '.zip')
+                to_file(feed, output) if output else None
+                print(feed)
             else:
                 logger.error('file not found.')
 

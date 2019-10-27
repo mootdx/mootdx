@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import logging
+import os
 from struct import *
 
 import pandas as pd
@@ -146,7 +147,6 @@ def md5sum(downfile):
 
 
 def to_data(v):
-
     if not v:
         return None
 
@@ -162,3 +162,22 @@ def to_data(v):
         return pd.DataFrame(data=[v, ])
     else:
         return pd.DataFrame(data=[{'value': v}])
+
+
+def to_file(df, filename=None):
+    if filename is None or df is None:
+        return None
+
+    extension = os.path.splitext(filename)
+    extension = extension[1] if len(extension) >= 2 else ''
+
+    if extension == 'csv':
+        return df.to_csv(filename)
+    elif extension == 'xlsx' or extension == 'xls':
+        return df.to_excel(filename)
+    elif extension == 'h5':
+        return df.to_hdf(filename)
+    elif extension == 'json':
+        return df.to_json(filename, orient='records')
+
+    return None

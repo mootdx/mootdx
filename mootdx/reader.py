@@ -4,8 +4,8 @@ import os
 
 from pytdx.reader import (BlockReader, TdxDailyBarReader, CustomerBlockReader,
                           TdxExHqDailyBarReader, TdxLCMinBarReader)
-from pytdx.reader.block_reader import BlockReader_TYPE_GROUP
 
+from mootdx.consts import TYPE_GROUP
 from mootdx.utils import get_stock_market
 
 logger = logging.getLogger(__name__)
@@ -126,7 +126,7 @@ class StdReader(ReaderBase):
             reader = BlockReader()
             vipdoc = os.path.join(self.tdxdir, 'T0002', 'hq_cache', '{}.dat'.format(symbol))
 
-        format = BlockReader_TYPE_GROUP if group else None
+        format = TYPE_GROUP if group else None
 
         if os.path.exists(vipdoc):
             return reader.get_df(vipdoc, format)
