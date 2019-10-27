@@ -10,7 +10,7 @@ class TestReader(unittest.TestCase):
 
     # 初始化工作
     def setUp(self):
-        self.reader = Reader.factory(market='std', tdxdir='./tests/fixtures')
+        self.reader = Reader.factory(market='std', tdxdir='../fixtures')
 
     # 退出清理工作
     def tearDown(self):

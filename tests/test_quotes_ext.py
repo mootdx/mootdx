@@ -22,16 +22,22 @@ class TestExtQuotes(unittest.TestCase):
         data = self.client.instrument(0, 100)
         self.assertIsNotNone(data)
 
-    def test_instruments(self):
-        data = self.client.instruments()
-        self.assertIsNotNone(data)
+    # def test_instruments(self):
+    #     data = self.client.instruments()
+    #     self.assertIsNotNone(data)
 
     def test_quote(self):
-        data = self.client.quote(market=47, symbol='IF1709')
+        data = self.client.quote(market=42, symbol='IMCI')
+        self.assertIsNotNone(data)
+
+        data = self.client.quote(symbol='42#IMCI')
         self.assertIsNotNone(data)
 
     def test_minute(self):
-        data = self.client.minute(market=47, symbol='IF1709')
+        data = self.client.minute(market=42, symbol='IMCI')
+        self.assertIsNotNone(data)
+
+        data = self.client.minute(symbol='42#IMCI')
         self.assertIsNotNone(data)
 
     def test_minutes(self):

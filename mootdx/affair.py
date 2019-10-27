@@ -1,14 +1,33 @@
 # -*- coding: utf-8 -*-
 import logging
-import os
 
 from mootdx.financial.financial import FinancialList, Financial, FinancialReader
 
 logger = logging.getLogger(__name__)
+total = 0
+pbar = None
+
+import os
+from tqdm import tqdm
 
 
-def reporthook(downloaded, total_size):
-    logger.debug("\rDownloaded {}, Total is {}".format(downloaded, total_size))
+class TqdmUpTo(tqdm):
+    """Provides `update_to(n)` which uses `tqdm.update(delta_n)`."""
+
+    def update_to(self, downloaded=0, total_size=None):
+        """
+        b  : int, optional
+            Number of blocks transferred so far [default: 1].
+        bsize  : int, optional
+            Size of each block (in tqdm units) [default: 1].
+        tsize  : int, optional
+            Total size (in tqdm units). If [default: None] remains unchanged.
+        """
+        if total_size is not None:
+            self.total = total_size
+
+        # self.ascii = True
+        self.update(downloaded - self.n)  # will also set self.n = b * bsize
 
 
 class Affair(object):
@@ -24,8 +43,10 @@ class Affair(object):
         '''
         filepath = os.path.join(downdir, filename)
 
+        logger.debug(filepath)
+
         if os.path.exists(filepath):
-            result = FinancialReader().get_df(filepath)
+            result = FinancialReader().to_data(filepath)
             return result
 
         logger.error('文件不存在：{}'.format(filename))
@@ -57,24 +78,29 @@ class Affair(object):
         crawler = Financial()
 
         if not os.path.isdir(downdir):
-            logger.info('\r下载目录不存在, 进行创建.')
+            logger.info('下载目录不存在, 进行创建.')
             os.makedirs(downdir)
+
+        if filename:
+            logger.info('下载文件 {}.'.format(filename))
+            downfile = os.path.join(downdir, filename)
+
+            with TqdmUpTo(unit='B', unit_scale=True, miniters=1) as t:
+                crawler.fetch_and_parse(reporthook=t.update_to, filename=filename, downdir=downfile)
+
+            return True
 
         list_data = history.fetch_and_parse()
 
-        if filename:
-            logger.info('\r下载文件 {}.'.format(filename))
-            downfile = os.path.join(downdir, filename)
-            crawler.fetch_and_parse(reporthook=reporthook, filename=filename, downdir=downfile)
-            return True
-
         for x in list_data:
-            logger.debug('\r下载多文件 {}.'.format(x['filename']))
             downfile = os.path.join(downdir, x['filename'])
 
+            # 判断文件存在并且长度一样，则忽略
             if os.path.exists(downfile):
-                if x.get('filesize') == os.path.getsize(downfile):
-                    logger.warning('\r文件已经存在: {} 跳过.'.format(x['filename']))
+                if int(x.get('filesize')) == int(os.path.getsize(downfile)):
+                    logger.warning('文件已经存在: {} 跳过.'.format(x['filename']))
                     continue
 
-            crawler.fetch_and_parse(reporthook=reporthook, filename=x['filename'], downdir=downfile)
+            with TqdmUpTo(unit='b', unit_scale=True, miniters=1) as t:
+                logger.debug('准备下载多文件 {}.'.format(x['filename']))
+                crawler.fetch_and_parse(reporthook=t.update_to, filename=x['filename'], downdir=downfile)

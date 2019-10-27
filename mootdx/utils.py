@@ -147,17 +147,10 @@ def md5sum(downfile):
 
 
 def to_data(v):
-    if not v:
-        return None
-
     if isinstance(v, DataFrame):
-        if len(v.columns) == 0:
-            return None
-
         return v
-
-    if isinstance(v, list):
-        return pd.DataFrame(data=v)
+    elif isinstance(v, list):
+        return pd.DataFrame(data=v) if len(v) else None
     elif isinstance(v, dict):
         return pd.DataFrame(data=[v, ])
     else:
@@ -165,19 +158,21 @@ def to_data(v):
 
 
 def to_file(df, filename=None):
+    logger.debug(filename)
+
     if filename is None or df is None:
         return None
 
     extension = os.path.splitext(filename)
     extension = extension[1] if len(extension) >= 2 else ''
 
-    if extension == 'csv':
+    if extension == '.csv':
         return df.to_csv(filename)
-    elif extension == 'xlsx' or extension == 'xls':
+    elif extension == '.xlsx' or extension == 'xls':
         return df.to_excel(filename)
-    elif extension == 'h5':
-        return df.to_hdf(filename)
-    elif extension == 'json':
+    elif extension == '.h5':
+        return df.to_hdf(filename, 'df')
+    elif extension == '.json':
         return df.to_json(filename, orient='records')
 
     return None

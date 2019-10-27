@@ -15,6 +15,7 @@ def parse_requirements(filename):
     lineiter = (line.strip() for line in open(filename))
     return [line for line in lineiter if line and not line.startswith("#")]
 
+
 with open('README.rst') as readme_file:
     readme = readme_file.read()
 
@@ -28,13 +29,13 @@ test_requirements.append('pytest')
 setup(
     name='mootdx',
     version=__version__,
-    description="tdx quotes code.",
+    description="通达信数据读取接口.",
     long_description=readme + '\n\n' + history,
     author="bopo.wang",
     author_email='ibopo@126.com',
     url='https://github.com/bopo/mootdx',
-    packages=find_packages(include=['mootdx','mootdx.*']),
-    include_package_data=True,
+    packages=find_packages(include=['mootdx', 'mootdx.*']),
+    # include_package_data=True,
     install_requires=requirements,
     license="MIT license",
     zip_safe=False,

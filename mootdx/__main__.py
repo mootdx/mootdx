@@ -6,6 +6,7 @@ import os
 import click
 from prettytable import PrettyTable
 
+from mootdx import __version__
 from mootdx.affair import Affair
 from mootdx.quotes import Quotes
 from mootdx.reader import Reader
@@ -23,10 +24,10 @@ def cli(ctx, verbose):
 
 
 @cli.command(help='读取股票在线行情数据.')
-@click.option('-o', '--output', default=None, help='输出文件')
-@click.option('-s', '--symbol', default='600001', help='股票代码')
-@click.option('-a', '--action', default='bars', help='操作类型')
-@click.option('-m', '--market', default='std', help='证券市场')
+@click.option('-o', '--output', default=None, help='输出文件, 支持CSV, HDF5, Excel等格式.')
+@click.option('-s', '--symbol', default='600001', help='股票代码.')
+@click.option('-a', '--action', default='bars', help='操作类型 (daily:日线, minute:一分钟线, fzline:五分钟线).')
+@click.option('-m', '--market', default='std', help='证券市场, 默认 std (std: 标准股票市场, ext: 扩展市场).')
 def quotes(symbol, action, market, output):
     client = Quotes.factory(market=market, multithread=True, heartbeat=True)  # 标准市场
 
@@ -39,11 +40,11 @@ def quotes(symbol, action, market, output):
 
 
 @cli.command(help='读取股票本地行情数据.')
-@click.option('-d', '--tdxdir', default='C:/new_tdx', help='通达信数据目录')
-@click.option('-s', '--symbol', default='600001', help='股票代码')
-@click.option('-a', '--action', default='daily', help='操作类型')
-@click.option('-m', '--market', default='std', help='证券市场')
-@click.option('-o', '--output', default=None, help='输出文件')
+@click.option('-d', '--tdxdir', default='C:/new_tdx', help='通达信数据目录.')
+@click.option('-s', '--symbol', default='600001', help='股票代码.')
+@click.option('-a', '--action', default='daily', help='操作类型 (daily:日线, minute:一分钟线, fzline:五分钟线).')
+@click.option('-m', '--market', default='std', help='证券市场, 默认 std (std: 标准股票市场, ext: 扩展市场).')
+@click.option('-o', '--output', default=None, help='输出文件, 支持CSV, HDF5, Excel等格式.')
 def reader(symbol, action, market, tdxdir, output):
     client = Reader.factory(market=market, tdxdir=tdxdir)
 
@@ -58,7 +59,7 @@ def reader(symbol, action, market, tdxdir, output):
 @cli.command(help='测试行情服务器.')
 @click.option('-l', '--limit', default=5, help='显示最快前几个，默认 5.')
 @click.option('-w', '--write', count=True, help='将最优服务器IP写入配置文件 ~/.mootdx/config.json.')
-@click.option('-m', '--market', default='', help='服务器类型 hq 行情服务，ex 扩展行情服务，gp 财务行情服务')
+@click.option('-m', '--market', default='', help='服务器类型 hq 行情服务，ex 扩展行情服务，gp 财务行情服务.')
 @click.option('-v', '--verbose', count=True)
 def bestip(limit, verbose, market, write):
     for index in ['hq', 'ex', 'gp']:
@@ -78,7 +79,7 @@ def bestip(limit, verbose, market, write):
 @click.option('-p', '--parse', default=None, help='解析文件内容')
 @click.option('-l', '--files', count=True, help='列出文件列表')
 @click.option('-f', '--fetch', default=None, help='下载全部文件')
-@click.option('-o', '--output', default='output.csv', help='下载文件目录')
+@click.option('-o', '--output', default='output.csv', help='输出文件, 支持CSV, HDF5, Excel等格式.')
 @click.option('-d', '--downdir', default='output', help='下载文件目录')
 @click.option('-v', '--verbose', count=True)
 def affair(parse, files, fetch, downdir, output, verbose):
@@ -116,6 +117,11 @@ def affair(parse, files, fetch, downdir, output, verbose):
                 print(feed)
             else:
                 logger.error('file not found.')
+
+
+@cli.command(help='显示版本.')
+def version():
+    print('mootdx v{}'.format(__version__))
 
 
 def execute():
