@@ -14,11 +14,11 @@ $ pip install -U mootdx
 ## 源码安装
 
 ```bash
-$ pip install git+https://github.com/rainx/mootdx.git
+$ pip install git+https://github.com/bopo/mootdx.git
 ```
 或
 ```bash
-$ git clone https://github.com/rainx/mootdx.git
+$ git clone https://github.com/bopo/mootdx.git
 $ cd mootdx
 $ python setup.py install
 ```

@@ -6,30 +6,31 @@ MARKET_SH = 1  # 上海
 
 # K线种类
 # K 线种类
-# 0 -   5 分钟K 线
-# 1 -   15 分钟K 线
-# 2 -   30 分钟K 线
-# 3 -   1 小时K 线
-# 4 -   日K 线
-# 5 -   周K 线
-# 6 -   月K 线
-# 7 -   1 分钟
-# 8 -   1 分钟K 线
-# 9 -   日K 线
-# 10 -  季K 线
-# 11 -  年K 线
 
+# 0 -   5 分钟K 线
 KLINE_5MIN = 0
+# 1 -   15 分钟K 线
 KLINE_15MIN = 1
+# 2 -   30 分钟K 线
 KLINE_30MIN = 2
+# 3 -   1 小时K 线
 KLINE_1HOUR = 3
+# 4 -   日K 线
 KLINE_DAILY = 4
+# 5 -   周K 线
 KLINE_WEEKLY = 5
+# 6 -   月K 线
 KLINE_MONTHLY = 6
-KLINE_EXHQ_1MIN = 7
+# 7 -   扩展市场 1 分钟
+
+KLINE_EX_1MIN = 7
+# 8 -   1 分钟K 线
 KLINE_1MIN = 8
+# 9 -   日K 线
 KLINE_RI_K = 9
+# 10 -  季K 线
 KLINE_3MONTH = 10
+# 11 -  年K 线
 KLINE_YEARLY = 11
 
 # 分笔行情最多2000条
