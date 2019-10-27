@@ -10,7 +10,7 @@ class TestExReader(unittest.TestCase):
 
     # 初始化工作
     def setUp(self):
-        self.reader = Reader.factory(market='ext', tdxdir='./tests/fixtures')
+        self.reader = Reader.factory(market='ext', tdxdir='../fixtures')
 
     # 退出清理工作
     def tearDown(self):

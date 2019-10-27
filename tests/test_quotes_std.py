@@ -59,7 +59,7 @@ class TestStdQuotes(unittest.TestCase):
         self.assertIsNotNone(data)
 
     def test_k(self):
-        data = self.client.k(symbol='000001', begin='2017-07-03', end='2017-07-10')
+        data = self.client.k(symbol='000001', begin='2019-07-03', end='2019-07-10')
         self.assertIsNotNone(data)
 
     def test_block(self):

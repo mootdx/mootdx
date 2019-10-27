@@ -280,7 +280,6 @@ class StdQuotes(object):
         '''
         with self.client.connect(*self.bestip):
             result = self.client.get_k_data(symbol, begin, end)
-
             return to_data(result)
 
     def index(
@@ -359,7 +358,6 @@ class ExtQuotes(object):
         if not market:
             raise ValueError('市场参数错误, 市场参数不能为空.')
 
-        print(market, symbol)
         return int(market), symbol
 
     def markets(self):
@@ -436,7 +434,6 @@ class ExtQuotes(object):
         market, symbol = self.validate(market, symbol)
         with self.client.connect(*self.bestip):
             result = self.client.get_minute_time_data(market, symbol)
-
             return to_data(result)
 
     def minutes(self, market=None, symbol='', date=''):

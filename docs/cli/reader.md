@@ -6,26 +6,17 @@
 使用方法如下：
 
 ```
-Usage: mootdx reader [OPTIONS] INPUT
+Usage: mootdx reader [OPTIONS]
 
-  通达信数据文件读取
+  读取股票本地行情数据.
 
 Options:
-  -o, --output TEXT
-  -d, --datatype TEXT  数据文件格式，
-                        - daily 代表日K线
-                        - ex_daily 代表扩展行情的日线
-                        - min
-                       代表5分钟或者1分钟线
-                        - lc 代表lc1, lc5格式的分钟线
-                        - gbbq 股本变迁文件
-                        -
-                       block 读取板块股票列表文件
-                        - customblock 读取自定义板块列表
-                        -
-                       history_financial 或者 hf 历史财务信息 如 gpcw20170930.dat 或者
-                       gpcw20170930.zip
-  --help               Show this message and exit.
+  -d, --tdxdir TEXT  通达信数据目录
+  -s, --symbol TEXT  股票代码
+  -a, --action TEXT  操作类型 (daily:日线, minute:一分钟线, fzline:五分钟线)
+  -m, --market TEXT  证券市场, 默认 std (std: 标准股票市场, ext: 扩展市场)
+  -o, --output TEXT  输出文件, 支持csv, HDF5, Excel等格式.
+  --help             Show this message and exit.
 
 ```
 

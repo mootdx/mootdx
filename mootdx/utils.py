@@ -147,17 +147,10 @@ def md5sum(downfile):
 
 
 def to_data(v):
-    if not v:
-        return None
-
     if isinstance(v, DataFrame):
-        if len(v.columns) == 0:
-            return None
-
         return v
-
-    if isinstance(v, list):
-        return pd.DataFrame(data=v)
+    elif isinstance(v, list):
+        return pd.DataFrame(data=v) if len(v) else None
     elif isinstance(v, dict):
         return pd.DataFrame(data=[v, ])
     else:
