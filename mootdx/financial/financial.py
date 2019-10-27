@@ -32,6 +32,8 @@ class FinancialReader(BaseReader):
         with open(filename, 'rb') as fp:
             data = crawler.parse(download_file=fp)
 
+        # logger.debug(data)
+
         return crawler.to_df(data)
 
 
@@ -123,7 +125,10 @@ class Financial(BaseFinancial):
         if not filename:
             raise Exception("Param filename is not set")
 
-        return "http://data.yutiansut.com/{}".format(filename)
+        logger.debug("http://down.tdx.com.cn:8001/fin/{}".format(filename))
+
+        # return "http://data.yutiansut.com/{}".format(filename)
+        return "http://down.tdx.com.cn:8001/fin/{}".format(filename)
 
     def content(self, reporthook=None, downdir=None, proxies=None, chunksize=1024 * 50, *args, **kwargs):
         '''
@@ -227,18 +232,13 @@ class Financial(BaseFinancial):
         return results
 
     def to_df(self, data):
-        '''
-        数据转换为 pandas DataFrame
-
-        :param data:
-        :return:
-        '''
         if len(data) == 0:
             return None
 
-        total = len(data[0])
+        total_lengh = len(data[0])
         col = ['code', 'report_date']
-        length = total - 2
+
+        length = total_lengh - 1
 
         for i in range(1, length):
             col.append("col" + str(i))
