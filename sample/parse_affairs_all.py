@@ -1,10 +1,20 @@
+import logging
+import os
+from glob import glob
+
 from mootdx.affair import Affair
 
-Affair.parse(downdir='tmp') # 解析全部
-# Affairs.parse(downdir='tmp', filename='gpcw19960630.zip') # 解析文件
-# Affairs.parse(downdir='tmp', filename='gpcw19960630.zip').to_csv('gpcw19960630.csv') # 转存文件
+logging.basicConfig(level=logging.DEBUG)
 
-# Affairs.files() # 显示列表
-# Affairs.fetch(filelist=True) # 显示列表
-# Affairs.fetch(downdir='tmp') # 下载全部
-# Affairs.fetch(downdir='tmp', filename='gpcw19960630.zip') # 下载文件
+Affair.fetch(downdir='tmp')  # 下载全部
+
+for x in glob('tmp/*.zip'):
+    dist = os.path.basename(x).replace('.zip', '.csv')
+    file = os.path.basename(x)
+
+    if not os.path.exists('tmp/{}'.format(dist)):
+        print('文件已存在: {}'.format(dist))
+        continue
+
+    data = Affair.parse(downdir='tmp', filename=file)
+    data.to_csv('csv/{}'.format(dist))

@@ -16,7 +16,7 @@ class Trader(object):
     def __init__(self, endpoint, key, iv):
         self.client = TdxTradeApi(endpoint=endpoint, enc_key=bytes(key), enc_iv=bytes(iv))
 
-    def config(self, *args, **kwargs):
+    def config(self, **kwargs):
         self.client = TdxTradeApi(**kwargs)
 
     def ping(self):
