@@ -1,38 +1,19 @@
 # -*- coding: utf-8 -*-
 import logging
+import os
 
-from mootdx.financial.financial import FinancialList, Financial, FinancialReader
+from mootdx.financial.financial import (Financial, FinancialList,
+                                        FinancialReader)
+from mootdx.utils import TqdmUpTo
 
 logger = logging.getLogger(__name__)
 total = 0
 pbar = None
 
-import os
-from tqdm import tqdm
-
-
-class TqdmUpTo(tqdm):
-    """Provides `update_to(n)` which uses `tqdm.update(delta_n)`."""
-
-    def update_to(self, downloaded=0, total_size=None):
-        """
-        b  : int, optional
-            Number of blocks transferred so far [default: 1].
-        bsize  : int, optional
-            Size of each block (in tqdm units) [default: 1].
-        tsize  : int, optional
-            Total size (in tqdm units). If [default: None] remains unchanged.
-        """
-        if total_size is not None:
-            self.total = total_size
-
-        # self.ascii = True
-        self.update(downloaded - self.n)  # will also set self.n = b * bsize
-
 
 class Affair(object):
     @staticmethod
-    def parse(downdir='.', filename=None, **kwargs):
+    def parse(downdir='.', filename=None, *args, **kwargs):
         '''
         按目录解析文件
 
@@ -65,7 +46,7 @@ class Affair(object):
         return results
 
     @staticmethod
-    def fetch(downdir='.', filename=None, **kwargs):
+    def fetch(downdir='.', filename=None, *args, **kwargs):
         '''
         财务数据下载
 
@@ -101,6 +82,6 @@ class Affair(object):
                     logger.warning('文件已经存在: {} 跳过.'.format(x['filename']))
                     continue
 
-            with TqdmUpTo(unit='b', unit_scale=True, miniters=1) as t:
+            with TqdmUpTo(unit='b', unit_scale=True, miniters=1, ascii=True) as t:
                 logger.debug('准备下载多文件 {}.'.format(x['filename']))
                 crawler.fetch_and_parse(reporthook=t.update_to, filename=x['filename'], downdir=downfile)

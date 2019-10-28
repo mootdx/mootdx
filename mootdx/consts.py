@@ -5,8 +5,6 @@ MARKET_SZ = 0  # 深圳
 MARKET_SH = 1  # 上海
 
 # K线种类
-# K 线种类
-
 # 0 -   5 分钟K 线
 KLINE_5MIN = 0
 # 1 -   15 分钟K 线

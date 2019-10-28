@@ -56,7 +56,6 @@ class StdQuotes(object):
         with self.client.connect(*self.bestip):
             return self.client.get_traffic_stats()
 
-    # quotes
     def quotes(self, symbol=[]):
         '''
         获取实时日行情数据
@@ -76,7 +75,6 @@ class StdQuotes(object):
 
             return to_data(result)
 
-    # K线
     def bars(self, symbol='000001', category='9', start='0', offset='100'):
         '''
         获取实时日K线数据
@@ -239,6 +237,8 @@ class StdQuotes(object):
             for x in category:
                 result[x['name']] = self.client.get_company_info_content(
                     market=market, code=symbol, filename=x['filename'], start=x['start'], length=x['length'])
+            else:
+                pass
 
             return result
 

@@ -6,7 +6,7 @@ import time
 
 from prettytable import PrettyTable
 
-from mootdx.consts import hq_hosts, ex_hosts, gp_hosts
+from mootdx.consts import ex_hosts, gp_hosts, hq_hosts
 
 logger = logging.getLogger(__name__)
 result = []

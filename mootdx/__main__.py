@@ -4,14 +4,13 @@ import logging
 import os
 
 import click
-from prettytable import PrettyTable
-
 from mootdx import __version__
 from mootdx.affair import Affair
 from mootdx.quotes import Quotes
 from mootdx.reader import Reader
 from mootdx.server import Server
 from mootdx.utils import to_file
+from prettytable import PrettyTable
 
 logger = logging.getLogger(__name__)
 

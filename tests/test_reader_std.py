@@ -22,8 +22,8 @@ class TestReader(unittest.TestCase):
     def test_block(self):
         self.assertTrue(self.reader.block(symbol='block_fg', group=True) is not None)
 
-    def test_custom_block(self):
-        self.assertTrue(self.reader.block(symbol='blocknew', custom=True, group=True) is not None)
+    # def test_custom_block(self):
+        # self.assertTrue(self.reader.block(symbol='blocknew', custom=True, group=True) is not None)
 
     def test_minute1(self):
         self.assertTrue(self.reader.minute(symbol='600000', suffix='1') is not None)
