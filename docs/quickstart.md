@@ -1,32 +1,64 @@
-## 多线程支持
 
-由于Python的特性，一般情况下，不太建议使用多线程代码，如果需要并发访问，建议使用多进程来实现，如果要使用多线程版本，请在初始化时设置`multithread`参数为`True`
+## 使用最快的服务器
 
-```python
-from mootdx.quotes import Quotes
+```python 
 
-client = Quotes.factory(market='std', multithread=True, heartbeat=True) 
+# -w 参数是写入配置文件
+mootdx bestip -w -v
 ```
 
-## 心跳包机制
-
-由于长时间不与服务器交互，服务器将关闭连接，所以我们实现了心跳包的机制，可以通过
+## 通达信离线数据读取
 
 ```python
-from mootdx.quotes import Quotes
 
-client = Quotes.factory(market='std', heartbeat=True)
+from mootdx.reader import Reader
+
+# market 参数 std 为标准市场(就是股票), ext 为扩展市场(期货，黄金等)
+# tdxdir 是通达信的数据目录, 根据自己的情况修改
+
+reader = Reader.factory(market='std', tdxdir='C:/new_tdx')
+
+# 读取日线数据
+reader.daily(symbol='600036')
+
+# 读取分钟数据
+reader.minute(symbol='600036')
+
+# 读取时间线数据
+reader.fzline(symbol='600036')
 ```
 
-设置心跳包，程序会启动一个心跳包发送线程，在空闲状态下隔一段时间发送一个心跳包，注意，打开`heartbeat=True`选项的同时会自动打开`multithread=True`
 
-
-## 服务器列表
-
-为了方便连接服务器，我把一些常用的服务器列表整理到到 `hosts.py` 文件中. 在程序中可以通过
+## 通达信线上行情读取
 
 ```python
-from mootdx.consts import hq_hosts, ex_hosts
 
-print(hq_hosts, ex_hosts)
+from mootdx.quotes import Quotes
+
+# 标准市场
+client = Quotes.factory(market='std', multithread=True, heartbeat=True)
+
+# k 线数据
+client.bars(symbol='600036', category=9, offset=10)
+
+# 指数
+client.index(symbol='000001', category=9)
+
+# 分钟
+client.minute(symbol='000001')
+
+
+## 通达信财务数据读取
+
+```python
+from mootdx.affair import Affair
+
+# 远程文件列表
+files = Affair.files()
+
+# 下载单个
+Affair.fetch(downdir='tmp', filename='gpcw19960630.zip')
+
+# 下载全部
+Affair.parse(downdir='tmp')
 ```
