@@ -7,11 +7,10 @@ from mootdx.financial.financial import (Financial, FinancialList,
 from mootdx.utils import TqdmUpTo
 
 logger = logging.getLogger(__name__)
-total = 0
-pbar = None
 
 
 class Affair(object):
+
     @staticmethod
     def parse(downdir='.', filename=None, *args, **kwargs):
         '''

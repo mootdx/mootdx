@@ -4,13 +4,15 @@ import logging
 import os
 
 import click
+import yaml
+from prettytable import PrettyTable
+
 from mootdx import __version__
 from mootdx.affair import Affair
 from mootdx.quotes import Quotes
 from mootdx.reader import Reader
 from mootdx.server import Server
 from mootdx.utils import to_file
-from prettytable import PrettyTable
 
 logger = logging.getLogger(__name__)
 
@@ -58,20 +60,42 @@ def reader(symbol, action, market, tdxdir, output):
 @cli.command(help='测试行情服务器.')
 @click.option('-l', '--limit', default=5, help='显示最快前几个，默认 5.')
 @click.option('-w', '--write', count=True, help='将最优服务器IP写入配置文件 ~/.mootdx/config.json.')
-@click.option('-m', '--market', default='', help='服务器类型 hq 行情服务，ex 扩展行情服务，gp 财务行情服务.')
 @click.option('-v', '--verbose', count=True)
-def bestip(limit, verbose, market, write):
-    for index in ['hq', 'ex', 'gp']:
-        bestip = Server(limit=int(limit), market=index, verbose=verbose)
-        config = os.path.join(os.environ['HOME'], '.mootdx/config.josn')
+def bestip(limit, verbose, write):
+    '''
+    @todo 命令行最优线路配置功能调整
+    :param limit:
+    :param verbose:
+    :param write:
+    :return:
+    '''
+    bestip = {'BESTIP': {}}
+    config = 'config.josn'
 
-        if write:
-            if not os.path.exists(config):
-                os.mkdir(os.path.join(os.environ['HOME'], '.mootdx'))
+    for index in ['HQ', 'EX', 'GP']:
+        result = Server(limit=int(limit), index=index, verbose=verbose)
+        bestip['BESTIP'][index] = '{}:{}'.format(*result[0])
 
-            json.dump({'BESTIP': bestip[0]}, open(config, 'w'))
+    if write:
+        json.dump(bestip, open(config, 'w'), indent=2)
+        yaml.dump(bestip, open('config.yaml', 'w'))
 
     print('[√] 已经将最优服务器IP写入配置文件 {}'.format(config))
+
+
+@cli.command(help='创建配置文件.')
+def gencfg():
+    '''
+    @todo 命令行最优线路配置功能调整
+    :param limit:
+    :param verbose:
+    :param write:
+    :return:
+    '''
+    bestip = {'BESTIP': {}}
+    yaml.dump(bestip, open('config.yaml', 'w'))
+
+    print('[√] 已经将最优服务器IP写入配置文件 config.yaml')
 
 
 @cli.command(help='财务文件下载&解析.')

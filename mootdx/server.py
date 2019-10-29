@@ -6,14 +6,14 @@ import time
 
 from prettytable import PrettyTable
 
-from mootdx.consts import ex_hosts, gp_hosts, hq_hosts
+from mootdx.consts import EX_HOSTS, GP_HOSTS, HQ_HOSTS
 
 logger = logging.getLogger(__name__)
 result = []
 hosts = {
-    'hq': [{'addr': hs[1], 'port': hs[2], 'time': 0, 'site': hs[0]} for hs in hq_hosts],
-    'ex': [{'addr': hs[1], 'port': hs[2], 'time': 0, 'site': hs[0]} for hs in ex_hosts],
-    'gp': [{'addr': hs[1], 'port': hs[2], 'time': 0, 'site': hs[0]} for hs in gp_hosts],
+    'HQ': [{'addr': hs[1], 'port': hs[2], 'time': 0, 'site': hs[0]} for hs in HQ_HOSTS],
+    'EX': [{'addr': hs[1], 'port': hs[2], 'time': 0, 'site': hs[0]} for hs in EX_HOSTS],
+    'GP': [{'addr': hs[1], 'port': hs[2], 'time': 0, 'site': hs[0]} for hs in GP_HOSTS],
 }
 
 # 线程同步锁
@@ -53,7 +53,7 @@ def saveresult(proxy):
 
 
 # 线程函数
-def verify(index='hq'):
+def verify(index=None):
     while True:
         proxy = get_hosts(index=index)
 
@@ -84,7 +84,7 @@ def verify(index='hq'):
             logger.warning("{},{} 验证失败.".format(proxy.get('addr'), proxy.get('port')))
 
 
-def Server(limit=10, market='hq', verbose=False):
+def Server(limit=10, index=None, verbose=False):
     if verbose:
         logging.basicConfig(level='DEBUG')
 
@@ -93,7 +93,7 @@ def Server(limit=10, market='hq', verbose=False):
     thread_pool = []
 
     for i in range(20):
-        th = threading.Thread(target=verify(market), args=())
+        th = threading.Thread(target=verify(index), args=())
         thread_pool.append(th)
 
     # start threads one by one

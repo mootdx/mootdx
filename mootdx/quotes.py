@@ -39,18 +39,12 @@ class StdQuotes(object):
         self.client = None
 
         try:
-            self.config = json.loads(os.path.join(os.environ['HOME'], '.mootdx/config.josn'))
-        except Exception as e:
+            self.config = json.loads('config.josn')
+            self.bestip = self.config.get('hosts').get('hq')
+        except ValueError:
             self.config = None
 
         self.client = TdxHq_API(**kwargs)
-
-        if not self.config:
-            self.bestip = os.environ.setdefault("MOOTDX_SERVER", '202.108.253.131:7709')
-            self.bestip = self.bestip.split(':')
-            self.bestip[1] = int(self.bestip[1])
-        else:
-            self.bestip = self.config.get('SERVER')
 
     def traffic(self):
         with self.client.connect(*self.bestip):
@@ -342,10 +336,10 @@ class ExtQuotes(object):
     def __init__(self, **kwargs):
 
         try:
-            self.config = json.loads(os.path.join(os.environ['HOME'], '.mootdx/config.josn'))
-            self.bestip = self.config.get('SERVER').get('EXT')
+            self.config = json.loads('config.josn')
+            self.bestip = self.config.get('hosts').get('ex')
         except ValueError:
-            pass
+            self.config = None
 
         self.client = TdxExHq_API(**kwargs)
 
