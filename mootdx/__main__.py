@@ -7,7 +7,7 @@ import click
 import yaml
 from prettytable import PrettyTable
 
-from mootdx import __version__
+from mootdx import __version__, CONFIG
 from mootdx.affair import Affair
 from mootdx.quotes import Quotes
 from mootdx.reader import Reader
@@ -59,26 +59,27 @@ def reader(symbol, action, market, tdxdir, output):
 
 @cli.command(help='测试行情服务器.')
 @click.option('-l', '--limit', default=5, help='显示最快前几个，默认 5.')
-@click.option('-w', '--write', count=True, help='将最优服务器IP写入配置文件 ~/.mootdx/config.json.')
+@click.option('-u', '--update', count=True, help='将最优服务器IP写入配置文件 config.yaml.')
 @click.option('-v', '--verbose', count=True)
-def bestip(limit, verbose, write):
+def bestip(limit, verbose, update):
     '''
     @todo 命令行最优线路配置功能调整
-    :param limit:
     :param verbose:
+    :param limit:
     :param write:
     :return:
     '''
-    bestip = {'BESTIP': {}}
-    config = 'config.josn'
+    config = 'config.yaml'
+    default = CONFIG
 
     for index in ['HQ', 'EX', 'GP']:
         result = Server(limit=int(limit), index=index, verbose=verbose)
-        bestip['BESTIP'][index] = '{}:{}'.format(*result[0])
+        default['BESTIP'][index] = '{}:{}'.format(*result[0])
+    else:
+        pass
 
-    if write:
-        json.dump(bestip, open(config, 'w'), indent=2)
-        yaml.dump(bestip, open('config.yaml', 'w'))
+    if update:
+        yaml.dump(default, open(config, 'w'))
 
     print('[√] 已经将最优服务器IP写入配置文件 {}'.format(config))
 
@@ -86,16 +87,12 @@ def bestip(limit, verbose, write):
 @cli.command(help='创建配置文件.')
 def gencfg():
     '''
-    @todo 命令行最优线路配置功能调整
-    :param limit:
-    :param verbose:
-    :param write:
+    创建默认配置文件
     :return:
     '''
-    bestip = {'BESTIP': {}}
-    yaml.dump(bestip, open('config.yaml', 'w'))
-
-    print('[√] 已经将最优服务器IP写入配置文件 config.yaml')
+    json.dump(CONFIG, open('config.json', 'w'), indent=2)
+    yaml.dump(CONFIG, open('config.yaml', 'w'))
+    print('[√] 在当前目录下创建默认配置文件 config.json')
 
 
 @cli.command(help='财务文件下载&解析.')
