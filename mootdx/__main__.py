@@ -4,7 +4,6 @@ import logging
 import os
 
 import click
-import yaml
 from prettytable import PrettyTable
 
 from mootdx import __version__, CONFIG
@@ -43,9 +42,9 @@ def quotes(symbol, action, market, output):
 @cli.command(help='读取股票本地行情数据.')
 @click.option('-d', '--tdxdir', default='C:/new_tdx', help='通达信数据目录.')
 @click.option('-s', '--symbol', default='600001', help='股票代码.')
-@click.option('-a', '--action', default='daily', help='操作类型 (daily:日线, minute:一分钟线, fzline:五分钟线).')
+@click.option('-a', '--action', default='daily', help='操作类型 (daily: 日线, minute: 一分钟线, fzline: 五分钟线).')
 @click.option('-m', '--market', default='std', help='证券市场, 默认 std (std: 标准股票市场, ext: 扩展市场).')
-@click.option('-o', '--output', default=None, help='输出文件, 支持CSV, HDF5, Excel等格式.')
+@click.option('-o', '--output', default=None, help='输出文件, 支持 CSV, HDF5, Excel 等格式.')
 def reader(symbol, action, market, tdxdir, output):
     client = Reader.factory(market=market, tdxdir=tdxdir)
 
@@ -59,14 +58,14 @@ def reader(symbol, action, market, tdxdir, output):
 
 @cli.command(help='测试行情服务器.')
 @click.option('-l', '--limit', default=5, help='显示最快前几个，默认 5.')
-@click.option('-u', '--update', count=True, help='将最优服务器IP写入配置文件 config.yaml.')
+@click.option('-w', '--write', count=True, help='将最优服务器IP写入配置文件 config.yaml.')
 @click.option('-v', '--verbose', count=True)
-def bestip(limit, verbose, update):
+def bestip(limit, write, verbose):
     '''
     @todo 命令行最优线路配置功能调整
-    :param verbose:
     :param limit:
     :param write:
+    :param verbose:
     :return:
     '''
     config = 'config.yaml'
@@ -78,10 +77,9 @@ def bestip(limit, verbose, update):
     else:
         pass
 
-    if update:
-        yaml.dump(default, open(config, 'w'))
-
-    print('[√] 已经将最优服务器IP写入配置文件 {}'.format(config))
+    if write:
+        json.dump(CONFIG, open('config.json', 'w'), indent=2)
+        print('[√] 已经将最优服务器IP写入配置文件 {}'.format(config))
 
 
 @cli.command(help='创建配置文件.')
@@ -91,7 +89,6 @@ def gencfg():
     :return:
     '''
     json.dump(CONFIG, open('config.json', 'w'), indent=2)
-    yaml.dump(CONFIG, open('config.yaml', 'w'))
     print('[√] 在当前目录下创建默认配置文件 config.json')
 
 

@@ -8,3 +8,7 @@ CONFIG = {
     'BESTIP': {'HQ': '', 'EX': '', 'GP': ''},
     'TDXDIR': 'C:/new_tdx',
 }
+
+
+def bestip():
+    return
