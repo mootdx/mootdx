@@ -5,9 +5,12 @@
 """
 import copy
 import json
+import logging
 import os
 
 from mootdx.consts import HQ_HOSTS, EX_HOSTS, GP_HOSTS
+
+logger = logging.getLogger(__name__)
 
 __all__ = ['set', 'get', 'copy', 'update', 'settings']
 
@@ -26,8 +29,12 @@ def setup():
     :return: bool，true 表示数据导入成功。
     """
     global settings
-    options = json.load(open('config.json'))
-    settings.update(options)
+
+    try:
+        options = json.load(open('config.json'))
+        settings.update(options)
+    except Exception:
+        logger.error('未找到配置文件 config.json.')
 
     return True if settings else False
 
