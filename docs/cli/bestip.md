@@ -1,6 +1,6 @@
 ## 01. 查看命令帮助
 
-```shell
+```bash
 $ mootdx bestip --help
 
 Usage: mootdx bestip [OPTIONS]
@@ -20,7 +20,7 @@ Options:
 
 测试最优服务器IP，参数说明
 
-```shell
+```bash
 $ mootdx bestip -v
 
 124.160.88.183,7709 验证失败.
@@ -42,7 +42,7 @@ $ mootdx bestip -v
 
 测试命令结果，建议时常测试并加`-w`参数写入配置文件
 
-```shell
+```bash
 $ mootdx bestip -v -w
 
 124.160.88.183,7709 验证失败.

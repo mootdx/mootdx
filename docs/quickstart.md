@@ -1,10 +1,8 @@
 
 ## 使用最快的服务器
 
-```python 
-
-# -w 参数是写入配置文件
-mootdx bestip -w -v
+```bash 
+$ mootdx bestip -w -v
 ```
 
 ## 通达信离线数据读取
