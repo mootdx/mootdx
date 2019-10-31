@@ -23,11 +23,11 @@ class TestStdQuotes(unittest.TestCase):
         self.assertIsNotNone(data)
 
     def test_bars(self):
-        data = self.client.bars(symbol='600036', category=9, offset=10)
+        data = self.client.bars(symbol='600036', frequency=9, offset=10)
         self.assertIsNotNone(data)
 
     def test_index(self):
-        data = self.client.index(category=9, market='sz', symbol='000001', start=1, offset=2)
+        data = self.client.index(frequency=9, market='sz', symbol='000001', start=1, offset=2)
         self.assertIsNotNone(data)
 
     def test_minute(self):

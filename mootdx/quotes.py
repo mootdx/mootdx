@@ -1,17 +1,17 @@
 # -*- coding: utf-8 -*-
-import json
 import logging
 import math
-import os
 
 from pytdx.exhq import TdxExHq_API
 from pytdx.hq import TdxHq_API
 from tqdm import tqdm
+
 from mootdx import config
 from mootdx.consts import MARKET_SH
 from mootdx.utils import get_stock_market, get_stock_markets, to_data
 
 logger = logging.getLogger(__name__)
+config.setup()
 
 
 class Quotes(object):
@@ -35,12 +35,9 @@ class StdQuotes(object):
     bestip = ('47.103.48.45', 7709)
 
     def __init__(self, **kwargs):
-        self.config = None
-        self.client = config.get('BESTIP').get('HQ')
 
         try:
-            self.config = json.loads('config.josn')
-            self.bestip = self.config.get('hosts').get('hq')
+            self.bestip = config.get('BESTIP').get('HQ')
         except ValueError:
             self.config = None
 
@@ -204,7 +201,7 @@ class StdQuotes(object):
         '''
         with self.client.connect(*self.bestip):
             market = get_stock_market(symbol)
-            result = self.client.get_company_info_frequency(int(market), symbol)
+            result = self.client.get_company_info_category(int(market), symbol)
 
             return result
 
@@ -220,7 +217,7 @@ class StdQuotes(object):
             result = {}
             market = get_stock_market(symbol, string=False)
 
-            frequency = self.client.get_company_info_frequency(int(market), symbol)
+            frequency = self.client.get_company_info_category(int(market), symbol)
 
             if name:
                 for x in frequency:
@@ -334,11 +331,10 @@ class ExtQuotes(object):
     bestip = ('112.74.214.43', 7727)
 
     def __init__(self, **kwargs):
-
         try:
-            self.bestip = config.get('BESTIP').get('EX')
+            bestip = config.get('BESTIP').get('EX')
         except ValueError:
-            self.config = None
+            self.bestip = ('112.74.214.43', 7727)
 
         self.client = TdxExHq_API(**kwargs)
 

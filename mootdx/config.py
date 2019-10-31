@@ -4,6 +4,7 @@
 使用前必须先调用 init() 。
 """
 import copy
+import json
 import os
 
 from mootdx.consts import HQ_HOSTS, EX_HOSTS, GP_HOSTS
@@ -19,13 +20,15 @@ settings = {
 BASE = os.path.dirname(os.path.dirname(__file__))
 
 
-def setup(options):
+def setup():
     """
     将 yaml 里的配置文件导入到 config.py 中
-    :return: bool ，true 表示数据导入成功。
+    :return: bool，true 表示数据导入成功。
     """
     global settings
+    options = json.load(open('config.json'))
     settings.update(options)
+
     return True if settings else False
 
 
@@ -69,7 +72,6 @@ def get(key, default=None):
                 break
 
     return cfg
-    # return settings.get(key, default)
 
 
 def path(key, value=None):
@@ -81,6 +83,7 @@ def path(key, value=None):
     '''
     path = settings.get(key)
     path = os.path.join(BASE, path, value)
+
     return path
 
 
