@@ -175,3 +175,7 @@ class TqdmUpTo(tqdm):
 
         # self.ascii = True
         self.update(downloaded - self.n)  # will also set self.n = b * bsize
+
+
+def bestip():
+    return

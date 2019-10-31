@@ -102,7 +102,7 @@ client.minutes(symbol="47#IF1709")
 
 ** 参数说明: **
 
- - category: K线周期参考 `mootdx.consts`
+ - frequency: K线周期参考 `mootdx.consts`
  - market: 市场代码. 场ID可以通过 `markets` 方法获得
  - symbol: 证券代码
  - start: 起始位置
@@ -113,10 +113,10 @@ client.minutes(symbol="47#IF1709")
 from mootdx.quotes import Quotes
 from mootdx.consts import KLINE_DAILY
 
-client.bars(category=KLINE_DAILY, market=47, symbol="47#IF1709", start=0, offset=100)
+client.bars(frequency=KLINE_DAILY, market=47, symbol="47#IF1709", start=0, offset=100)
 
 # 简写方式
-client.bars(category=KLINE_DAILY, symbol="47#IF1709", start=0, offset=100)
+client.bars(frequency=KLINE_DAILY, symbol="47#IF1709", start=0, offset=100)
 ```
 
 ## 08. 查询分笔成交

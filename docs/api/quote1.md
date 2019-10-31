@@ -41,7 +41,7 @@ client.quotes(symbol=["000001", "600300"])
 ** 调用方法：**
 
 ```python
-- category-> K线种类
+- frequency-> K线种类
 0 5分钟K线 1 15分钟K线 2 30分钟K线 3 1小时K线 4 日K线
 5 周K线
 6 月K线
@@ -59,7 +59,7 @@ client.quotes(symbol=["000001", "600300"])
 from mootdx.quotes import Quotes
 
 client = Quotes.factory(market='std') 
-client.bars(symbol='600036', category=9, offset=10)
+client.bars(symbol='600036', frequency=9, offset=10)
 ```
 
 ## 03. 查询股票数量
@@ -102,12 +102,12 @@ client.stocks(market=consts.MARKET_SH)
 
 ** 参数说明: **
 
- - category: K线种类
+ - frequency: K线种类
  - market: 市场代码. 0 - 深圳， 1 - 上海 (可以使用常量 `MARKET_SZ`, `MARKET_SH` 代替)
  - start: 开始位置
  - offset: 用户要请求的 K 线数目，最大值为 800
 
-> category: K线种类
+> frequency: K线种类
 0 5分钟K线 1 15分钟K线 2 30分钟K线 3 1小时K线 4 日K线
 5 周K线
 6 月K线
@@ -124,7 +124,7 @@ client.stocks(market=consts.MARKET_SH)
 from mootdx.quotes import Quotes
 
 client = Quotes.factory(market='std') 
-client.index(category=9, market='sz', symbol='000001', start=1, offset=2)
+client.index(frequency=9, market='sz', symbol='000001', start=1, offset=2)
 ```
 ## 06. 查询分时行情
 

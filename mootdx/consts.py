@@ -33,7 +33,7 @@ KLINE_YEARLY = 11
 
 # 分笔行情最多2000条
 MAX_TRANSACTION_COUNT = 2000
-# k先数据最多800条
+# K线数据最多800条
 MAX_KLINE_COUNT = 800
 
 # 板块相关参数

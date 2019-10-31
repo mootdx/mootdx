@@ -10,9 +10,9 @@ class Trader(object):
     '''
     通达信自动交易
     '''
-    client = None
     client_id = None
     endpoint = None
+    client = None
     key = None
     iv = None
 
@@ -75,7 +75,7 @@ class Trader(object):
         :param category:
         :return:
         '''
-        self.client.query_data(self.client_id, category)
+        self.client.query_data(client_id=self.client_id, category=category)
 
     # 查询历史信息
     def history(self, category, begin_date, end_date):

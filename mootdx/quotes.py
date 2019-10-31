@@ -1,17 +1,17 @@
 # -*- coding: utf-8 -*-
-import json
 import logging
 import math
-import os
 
 from pytdx.exhq import TdxExHq_API
 from pytdx.hq import TdxHq_API
 from tqdm import tqdm
 
+from mootdx import config
 from mootdx.consts import MARKET_SH
 from mootdx.utils import get_stock_market, get_stock_markets, to_data
 
 logger = logging.getLogger(__name__)
+config.setup()
 
 
 class Quotes(object):
@@ -35,12 +35,9 @@ class StdQuotes(object):
     bestip = ('47.103.48.45', 7709)
 
     def __init__(self, **kwargs):
-        self.config = None
-        self.client = None
 
         try:
-            self.config = json.loads('config.josn')
-            self.bestip = self.config.get('hosts').get('hq')
+            self.bestip = config.get('BESTIP').get('HQ')
         except ValueError:
             self.config = None
 
@@ -69,12 +66,12 @@ class StdQuotes(object):
 
             return to_data(result)
 
-    def bars(self, symbol='000001', category='9', start='0', offset='100'):
+    def bars(self, symbol='000001', frequency='9', start='0', offset='100'):
         '''
         获取实时日K线数据
 
         :param symbol: 股票代码
-        :param category: 数据类别
+        :param frequency: 数据类别
         :param market: 证券市场
         :param start: 开始位置
         :param offset: 每次获取条数
@@ -83,7 +80,7 @@ class StdQuotes(object):
         with self.client.connect(*self.bestip):
             market = get_stock_market(symbol)
             result = self.client.get_security_bars(
-                int(category), int(market), str(symbol), int(start), int(offset))
+                int(frequency), int(market), str(symbol), int(start), int(offset))
 
             return to_data(result)
 
@@ -111,12 +108,12 @@ class StdQuotes(object):
 
             return to_data(result)
 
-    def index_bars(self, symbol='000001', category='9', start='0', offset='100'):
+    def index_bars(self, symbol='000001', frequency='9', start='0', offset='100'):
         '''
         获取指数k线
 
         :param symbol:
-        :param category:
+        :param frequency:
         :param start:
         :param offset:
         :return:
@@ -124,7 +121,7 @@ class StdQuotes(object):
         with self.client.connect(*self.bestip):
             market = get_stock_market(symbol)
             result = self.client.get_index_bars(
-                category=category, market=market, code=symbol, start=start, count=offset)
+                frequency=frequency, market=market, code=symbol, start=start, count=offset)
 
             return to_data(result)
 
@@ -220,15 +217,15 @@ class StdQuotes(object):
             result = {}
             market = get_stock_market(symbol, string=False)
 
-            category = self.client.get_company_info_category(int(market), symbol)
+            frequency = self.client.get_company_info_category(int(market), symbol)
 
             if name:
-                for x in category:
+                for x in frequency:
                     if x['name'] == name:
                         return self.client.get_company_info_content(
                             market=market, code=symbol, filename=x['filename'], start=x['start'], length=x['length'])
 
-            for x in category:
+            for x in frequency:
                 result[x['name']] = self.client.get_company_info_content(
                     market=market, code=symbol, filename=x['filename'], start=x['start'], length=x['length'])
             else:
@@ -280,7 +277,7 @@ class StdQuotes(object):
         self,
         symbol='000001',
         market=MARKET_SH,
-        category='9',
+        frequency='9',
         start=1,
         offset=2):
         '''
@@ -301,7 +298,7 @@ class StdQuotes(object):
         - 11 年K线
 
         :param symbol: 股票代码
-        :param category: 数据类别
+        :param frequency: 数据类别
         :param market: 证券市场
         :param start: 开始位置
         :param offset: 每次获取条数
@@ -310,7 +307,7 @@ class StdQuotes(object):
         with self.client.connect(*self.bestip):
             market = 1 if market == 'sz' else 0
             result = self.client.get_index_bars(
-                int(category), int(market), str(symbol), int(start), int(offset))
+                int(frequency), int(market), str(symbol), int(start), int(offset))
 
             return to_data(result)
 
@@ -334,12 +331,10 @@ class ExtQuotes(object):
     bestip = ('112.74.214.43', 7727)
 
     def __init__(self, **kwargs):
-
         try:
-            self.config = json.loads('config.josn')
-            self.bestip = self.config.get('hosts').get('ex')
+            bestip = config.get('BESTIP').get('EX')
         except ValueError:
-            self.config = None
+            self.bestip = ('112.74.214.43', 7727)
 
         self.client = TdxExHq_API(**kwargs)
 
@@ -444,12 +439,12 @@ class ExtQuotes(object):
             result = self.client.get_history_minute_time_data(market, symbol, date)
             return to_data(result)
 
-    def bars(self, category='', market='', symbol='', start='', offset=0):
+    def bars(self, frequency='', market='', symbol='', start='', offset=0):
         '''
         查询k线数据
         参数： K线周期， 市场ID， 证券代码，起始位置， 数量
 
-        :param category: K线周期
+        :param frequency: K线周期
         :param market: 市场ID
         :param symbol: 证券代码
         :param start: 起始位置
@@ -459,7 +454,7 @@ class ExtQuotes(object):
         market, symbol = self.validate(market, symbol)
         with self.client.connect(*self.bestip):
             result = self.client.get_instrument_bars(
-                category=category, market=market, code=symbol, start=start, count=offset)
+                frequency=frequency, market=market, code=symbol, start=start, count=offset)
             return to_data(result)
 
     def transaction(self, market=None, symbol='', start=0, offset=1800):

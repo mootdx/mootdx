@@ -4,7 +4,7 @@
 
 使用方法如下：
 
-```
+```bash
 $ mootdx quotes --help
 
 Usage: mootdx quotes [OPTIONS]
@@ -21,11 +21,8 @@ Options:
 
 # 读取日线数据
 
-`-o` 参数导出数据
+读取行情并写入到文件: minute.csv
 
 ```bash
-$ mootdx quotes -s 600000 -a bars -o dt.csv
-
-写入到文件 : dt.csv
-
+$ mootdx quotes -s 600000 -a minute -o minute.csv
 ```
