@@ -58,7 +58,7 @@ def reader(symbol, action, market, tdxdir, output):
 
 @cli.command(help='测试行情服务器.')
 @click.option('-l', '--limit', default=5, help='显示最快前几个，默认 5.')
-@click.option('-w', '--write', count=True, help='将最优服务器IP写入配置文件 config.json.')
+@click.option('-w', '--write', count=True, help='将最优服务器IP写入配置文件 ~/.mootdx/config.json.')
 @click.option('-v', '--verbose', count=True)
 def bestip(limit, write, verbose):
     '''
@@ -68,12 +68,15 @@ def bestip(limit, write, verbose):
     :param verbose:
     :return:
     '''
-    config = 'config.json'
+    config = os.path.join(os.environ.get('HOME', '~'), '.mootdx', 'config.json')
     default = CONFIG
 
     for index in ['HQ', 'EX', 'GP']:
         result = Server(index=index, limit=limit, console=True, verbose=verbose)
-        default['BESTIP'][index] = result[0]
+        if result:
+            default['BESTIP'][index] = result[0]
+        else:
+            print(result)
 
     if write:
         json.dump(CONFIG, open(config, 'w'), indent=2)

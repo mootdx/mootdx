@@ -21,6 +21,7 @@ settings = {
 }
 
 BASE = os.path.dirname(os.path.dirname(__file__))
+CONF = os.path.join(os.environ.get('HOME', '~'), '.mootdx', 'config.json')
 
 
 def setup():
@@ -31,7 +32,7 @@ def setup():
     global settings
 
     try:
-        options = json.load(open('config.json'))
+        options = json.load(open(CONF))
         settings.update(options)
     except Exception:
         logger.error('未找到配置文件 config.json.')
