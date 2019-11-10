@@ -7,6 +7,7 @@ from pytdx.hq import TdxHq_API
 from tqdm import tqdm
 
 from mootdx import config
+from mootdx.config import settings
 from mootdx.consts import MARKET_SH
 from mootdx.utils import get_stock_market, get_stock_markets, to_data
 
@@ -37,7 +38,8 @@ class StdQuotes(object):
     def __init__(self, **kwargs):
 
         try:
-            self.bestip = config.get('BESTIP').get('HQ')
+            default = settings.get('SERVER').get('HQ')[0]
+            self.bestip = config.get('BESTIP').get('HQ', default)
         except ValueError:
             self.config = None
 
@@ -332,7 +334,8 @@ class ExtQuotes(object):
 
     def __init__(self, **kwargs):
         try:
-            bestip = config.get('BESTIP').get('EX')
+            default = settings.get('SERVER').get('EX')[0]
+            self.bestip = config.get('BESTIP').get('EX', default)
         except ValueError:
             self.bestip = ('112.74.214.43', 7727)
 

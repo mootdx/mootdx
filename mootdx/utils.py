@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import logging
 import os
+import platform
 from struct import *
 
 import pandas as pd
@@ -143,15 +144,22 @@ def to_file(df, filename=None):
     if filename is None or df is None:
         return None
 
+    path_name = os.path.dirname(filename)
+
+    if not os.path.isdir(path_name):
+        os.makedirs(path_name)
+
     extension = os.path.splitext(filename)
     extension = extension[1] if len(extension) >= 2 else ''
 
     if extension == '.csv':
-        return df.to_csv(filename)
-    elif extension == '.xlsx' or extension == 'xls':
-        return df.to_excel(filename)
+        return df.to_csv(filename, encoding='utf-8', index=False)
+    elif extension == '.xlsx' or extension == '.xls':
+        # openpyxl, xlwt
+        return df.to_excel(filename, index=False)
     elif extension == '.h5':
-        return df.to_hdf(filename, 'df')
+        # tables
+        return df.to_hdf(filename, 'df', index=False)
     elif extension == '.json':
         return df.to_json(filename, orient='records')
 
@@ -177,5 +185,15 @@ class TqdmUpTo(tqdm):
         self.update(downloaded - self.n)  # will also set self.n = b * bsize
 
 
-def bestip():
-    return
+def get_config_path(config='config.json'):
+    if platform.system() == 'Windows':
+        filename = os.path.join(os.path.expanduser('~'), 'mootdx', config)
+    else:
+        filename = os.path.join(os.path.expanduser('~'), '.mootdx', config)
+
+    path_name = os.path.dirname(filename)
+
+    if not os.path.isdir(path_name):
+        os.makedirs(path_name)
+
+    return filename

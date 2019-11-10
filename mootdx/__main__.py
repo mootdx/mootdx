@@ -11,7 +11,7 @@ from mootdx.affair import Affair
 from mootdx.quotes import Quotes
 from mootdx.reader import Reader
 from mootdx.server import Server
-from mootdx.utils import to_file
+from mootdx.utils import to_file, get_config_path
 
 logger = logging.getLogger(__name__)
 
@@ -68,7 +68,7 @@ def bestip(limit, write, verbose):
     :param verbose:
     :return:
     '''
-    config = os.path.join(os.environ.get('HOME', '~'), '.mootdx', 'config.json')
+    config = get_config_path('config.json')
     default = CONFIG
 
     for index in ['HQ', 'EX', 'GP']:
@@ -97,7 +97,7 @@ def gencfg():
 @click.option('-p', '--parse', default=None, help='解析文件内容')
 @click.option('-l', '--files', count=True, help='列出文件列表')
 @click.option('-f', '--fetch', default=None, help='下载全部文件')
-@click.option('-o', '--output', default='output.csv', help='输出文件, 支持CSV, HDF5, Excel等格式.')
+@click.option('-o', '--output', default='output.csv', help='输出文件, 支持 CSV, HDF5, Excel, JSON 等格式.')
 @click.option('-d', '--downdir', default='output', help='下载文件目录')
 @click.option('-v', '--verbose', count=True)
 def affair(parse, files, fetch, downdir, output, verbose):
@@ -140,6 +140,31 @@ def affair(parse, files, fetch, downdir, output, verbose):
 @cli.command(help='显示当前软件版本.')
 def version():
     print('mootdx v{}'.format(__version__))
+
+
+@cli.command(help='批量下载行情数据.')
+@click.option('-o', '--output', default='bundle', help='转存文件目录.')
+@click.option('-s', '--symbol', default='600000', help='股票代码. 多个用,隔开')
+@click.option('-a', '--action', default='bars', help='操作类型 (daily: 日线, minute: 一分钟线, fzline: 五分钟线).')
+@click.option('-m', '--market', default='std', help='证券市场, 默认 std (std: 标准股票市场, ext: 扩展市场).')
+@click.option('-e', '--extension', default='csv', help='转存文件的格式, 支持 CSV, HDF5, Excel, JSON 等格式.')
+def bundle(symbol, action, market, output, extension):
+    '''
+    批量下载行情数据
+    :return:
+    '''
+    client = Quotes.factory(market=market)
+    symbol = symbol.replace('，', ',').strip(',').split(',')
+
+    for code in symbol:
+        try:
+            feed = getattr(client, action)(symbol=code)
+            to_file(feed, os.path.join(output, '{}.{}'.format(code, extension))) if output else None
+            print('下载完成 {}'.format(code))
+        except Exception as e:
+            raise e
+
+    print('[√] 下载文件到 "{}"'.format(os.path.realpath(output)))
 
 
 def execute():
