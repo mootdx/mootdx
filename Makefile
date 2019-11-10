@@ -78,6 +78,9 @@ release: clean ## package and upload a release
 	python setup.py sdist upload
 # 	python setup.py bdist_wheel upload
 
+archive: clean
+	git archive --format zip --output ../mootdx-master.zip master
+
 dist: clean ## builds source and wheel package
 	python setup.py sdist
 	python setup.py bdist_wheel
