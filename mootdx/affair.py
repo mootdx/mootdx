@@ -65,7 +65,7 @@ class Affair(object):
             logger.info('下载文件 {}.'.format(filename))
             downfile = os.path.join(downdir, filename)
 
-            with TqdmUpTo(unit='B', unit_scale=True, miniters=1) as t:
+            with TqdmUpTo(unit='B', unit_scale=True, miniters=1, ascii=True) as t:
                 crawler.fetch_and_parse(reporthook=t.update_to, filename=filename, downdir=downfile)
 
             return True

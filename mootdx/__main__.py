@@ -97,7 +97,7 @@ def gencfg():
 @click.option('-p', '--parse', default=None, help='解析文件内容')
 @click.option('-l', '--files', count=True, help='列出文件列表')
 @click.option('-f', '--fetch', default=None, help='下载全部文件')
-@click.option('-o', '--output', default='output.csv', help='输出文件, 支持 CSV, HDF5, Excel, JSON 等格式.')
+@click.option('-o', '--output', default=None, help='输出文件, 支持 CSV, HDF5, Excel, JSON 等格式.')
 @click.option('-d', '--downdir', default='output', help='下载文件目录')
 @click.option('-v', '--verbose', count=True)
 def affair(parse, files, fetch, downdir, output, verbose):
@@ -131,8 +131,10 @@ def affair(parse, files, fetch, downdir, output, verbose):
         if parse in files:
             if os.path.exists(os.path.join(downdir, parse)):
                 feed = Affair.parse(downdir=downdir, filename=parse.strip('.zip') + '.zip')
-                to_file(feed, output) if output else None
-                print(feed)
+                if output:
+                    to_file(feed, output)
+                else:
+                    print(feed)
             else:
                 logger.error('file not found.')
 

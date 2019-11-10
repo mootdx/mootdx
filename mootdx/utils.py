@@ -146,7 +146,7 @@ def to_file(df, filename=None):
 
     path_name = os.path.dirname(filename)
 
-    if not os.path.isdir(path_name):
+    if path_name and not os.path.isdir(path_name):
         os.makedirs(path_name)
 
     extension = os.path.splitext(filename)
