@@ -9,6 +9,7 @@ import logging
 import os
 
 from mootdx.consts import HQ_HOSTS, EX_HOSTS, GP_HOSTS
+from mootdx.utils import get_config_path
 
 logger = logging.getLogger(__name__)
 
@@ -21,7 +22,7 @@ settings = {
 }
 
 BASE = os.path.dirname(os.path.dirname(__file__))
-CONF = os.path.join(os.environ.get('HOME', '~'), '.mootdx', 'config.json')
+CONF = get_config_path('config.json')
 
 
 def setup():
