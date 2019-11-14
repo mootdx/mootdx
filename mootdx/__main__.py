@@ -83,20 +83,20 @@ def bestip(limit, write, verbose):
         print('[√] 已经将最优服务器IP写入配置文件 {}'.format(config))
 
 
-@cli.command(help='创建配置文件.')
-def gencfg():
-    '''
-    创建默认配置文件
-    :return:
-    '''
-    json.dump(CONFIG, open('config.json', 'w'), indent=2)
-    print('[√] 在当前目录下创建默认配置文件 config.json')
+# @cli.command(help='创建配置文件.')
+# def gencfg():
+#     '''
+#     创建默认配置文件
+#     :return:
+#     '''
+#     json.dump(CONFIG, open('config.json', 'w'), indent=2)
+#     print('[√] 在当前目录下创建默认配置文件 config.json')
 
 
 @cli.command(help='财务文件下载&解析.')
-@click.option('-p', '--parse', default=None, help='解析文件内容')
-@click.option('-l', '--files', count=True, help='列出文件列表')
-@click.option('-f', '--fetch', default=None, help='下载全部文件')
+@click.option('-p', '--parse', default=None, help='要解析文件名')
+@click.option('-l', '--files', count=True, default=True, help='列出文件列表')
+@click.option('-f', '--fetch', default=None, help='下载财务文件的文件名, all 下载全部文件')
 @click.option('-o', '--output', default=None, help='输出文件, 支持 CSV, HDF5, Excel, JSON 等格式.')
 @click.option('-d', '--downdir', default='output', help='下载文件目录')
 @click.option('-v', '--verbose', count=True)
@@ -106,7 +106,7 @@ def affair(parse, files, fetch, downdir, output, verbose):
 
     result = Affair.files()
 
-    if files:
+    if not fetch and not parse:
         t = PrettyTable(["filename", "filesize", "hash"])
         t.align["filename"] = "l"
         t.align["filesize"] = "l"
@@ -129,14 +129,18 @@ def affair(parse, files, fetch, downdir, output, verbose):
         files = [x['filename'] for x in result]
 
         if parse in files:
-            if os.path.exists(os.path.join(downdir, parse)):
-                feed = Affair.parse(downdir=downdir, filename=parse.strip('.zip') + '.zip')
-                if output:
-                    to_file(feed, output)
-                else:
-                    print(feed)
+            if not os.path.exists(os.path.join(downdir, parse)):
+                Affair.fetch(downdir=downdir, filename=parse.strip('.zip') + '.zip')
+
+            feed = Affair.parse(downdir=downdir, filename=parse.strip('.zip') + '.zip')
+
+            if output:
+                to_file(feed, output)
             else:
-                logger.error('file not found.')
+                print(feed)
+        else:
+            logger.erro('cannot find file.')
+
 
 
 @cli.command(help='显示当前软件版本.')

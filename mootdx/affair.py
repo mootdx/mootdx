@@ -2,8 +2,7 @@
 import logging
 import os
 
-from mootdx.financial.financial import (Financial, FinancialList,
-                                        FinancialReader)
+from mootdx.financial import financial
 from mootdx.utils import TqdmUpTo
 
 logger = logging.getLogger(__name__)
@@ -26,7 +25,7 @@ class Affair(object):
         logger.debug(filepath)
 
         if os.path.exists(filepath):
-            result = FinancialReader().to_data(filepath)
+            result = financial.FinancialReader().to_data(filepath)
             return result
 
         logger.error('文件不存在：{}'.format(filename))
@@ -39,7 +38,7 @@ class Affair(object):
 
         :return:
         '''
-        history = FinancialList()
+        history = financial.FinancialList()
         results = history.fetch_and_parse()
 
         return results
@@ -54,8 +53,8 @@ class Affair(object):
         :param kwargs:
         :return:
         '''
-        history = FinancialList()
-        crawler = Financial()
+        history = financial.FinancialList()
+        crawler = financial.Financial()
 
         if not os.path.isdir(downdir):
             logger.info('下载目录不存在, 进行创建.')
@@ -78,9 +77,10 @@ class Affair(object):
             # 判断文件存在并且长度一样，则忽略
             if os.path.exists(downfile):
                 if int(x.get('filesize')) == int(os.path.getsize(downfile)):
-                    logger.warning('文件已经存在: {} 跳过.'.format(x['filename']))
+                    logger.warning('[!] 文件已经存在: {} 跳过.'.format(x['filename']))
                     continue
 
             with TqdmUpTo(unit='b', unit_scale=True, miniters=1, ascii=True) as t:
-                logger.debug('准备下载多文件 {}.'.format(x['filename']))
+                logger.warning('\r[+] 准备下载文件 {}.'.format(x['filename']))
                 crawler.fetch_and_parse(reporthook=t.update_to, filename=x['filename'], downdir=downfile)
+
