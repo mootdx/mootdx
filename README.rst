@@ -143,8 +143,16 @@
 * 通达信客户端文件转换.
 * 通达信在线行情下载.
 
-贡献名单
+欢迎赞助
 ---------
 
-- bopo.wang
+.. image:: docs/img/IMG_2458.JPG
+        :alt: 微信支付
+        :width: 180 px
+        :align: left
+
+.. image:: docs/img/IMG_2459.JPG
+        :alt: 支付宝
+        :width: 180 px
+        :align: left
 
