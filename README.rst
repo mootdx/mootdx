@@ -154,5 +154,5 @@
 .. image:: docs/img/IMG_2459.JPG
         :alt: 支付宝
         :width: 180 px
-        :align: left
+        :align: right
 
