@@ -32,7 +32,17 @@ def quotes(symbol, action, market, output):
     client = Quotes.factory(market=market, multithread=True, heartbeat=True)  # 标准市场
 
     try:
-        feed = getattr(client, action)(symbol=symbol)
+        action = 'bars' if 'daily' else action
+        if action == 'daily':
+            frequency = 9 
+        elif action == 'minute':
+            frequency = 8
+        elif action == 'fzline':
+            frequency = 0
+        else:
+            frequency = 9 
+
+        feed = getattr(client, 'bars')(symbol=symbol, frequency=frequency)
         to_file(feed, output) if output else None
         print(feed)
     except Exception as e:
@@ -164,7 +174,16 @@ def bundle(symbol, action, market, output, extension):
 
     for code in symbol:
         try:
-            feed = getattr(client, action)(symbol=code)
+            if action == 'daily':
+                frequency = 9 
+            elif action == 'minute':
+                frequency = 8
+            elif action == 'fzline':
+                frequency = 0
+            else:
+                frequency = 9 
+
+            feed = getattr(client, 'bars')(symbol=code, frequency=frequency)
             to_file(feed, os.path.join(output, '{}.{}'.format(code, extension))) if output else None
             print('下载完成 {}'.format(code))
         except Exception as e:
