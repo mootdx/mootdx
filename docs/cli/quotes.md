@@ -14,7 +14,7 @@ Usage: mootdx quotes [OPTIONS]
 Options:
   -o, --output TEXT  输出文件, 支持CSV, HDF5, Excel等格式.
   -s, --symbol TEXT  股票代码.
-  -a, --action TEXT  操作类型 (bars:日线, minute:一分钟线, fzline:五分钟线).
+  -a, --action TEXT  操作类型 (daily:日线, minute:一分钟线, fzline:五分钟线).
   -m, --market TEXT  证券市场, 默认 std (std: 标准股票市场, ext: 扩展市场).
   --help             Show this message and exit.
 ```
