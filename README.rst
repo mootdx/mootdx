@@ -2,9 +2,8 @@
 通达信数据读取接口
 ==============================
 
-
-.. image:: https://img.shields.io/pypi/v/mootdx.svg
-        :target: https://pypi.python.org/pypi/mootdx
+.. image:: https://badge.fury.io/py/mootdx.svg
+   :target: http://badge.fury.io/py/mootdx
 
 .. image:: https://img.shields.io/travis/bopo/mootdx.svg
         :target: https://travis-ci.org/bopo/mootdx
