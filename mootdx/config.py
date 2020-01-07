@@ -8,7 +8,7 @@ import json
 import logging
 import os
 
-from mootdx.consts import HQ_HOSTS, EX_HOSTS, GP_HOSTS
+from mootdx.consts import EX_HOSTS, GP_HOSTS, HQ_HOSTS
 from mootdx.utils import get_config_path
 
 logger = logging.getLogger(__name__)

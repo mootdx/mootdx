@@ -5,10 +5,9 @@ import platform
 from struct import *
 
 import pandas as pd
+from mootdx.consts import MARKET_SH, MARKET_SZ
 from pandas import DataFrame
 from tqdm import tqdm
-
-from mootdx.consts import MARKET_SH, MARKET_SZ
 
 logger = logging.getLogger(__name__)
 

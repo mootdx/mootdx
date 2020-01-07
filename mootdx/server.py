@@ -3,9 +3,8 @@ import logging
 import socket
 import time
 
-from prettytable import PrettyTable
-
 from mootdx.consts import EX_HOSTS, GP_HOSTS, HQ_HOSTS
+from prettytable import PrettyTable
 
 logger = logging.getLogger(__name__)
 result = []

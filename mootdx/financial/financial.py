@@ -8,8 +8,8 @@ import tempfile
 from struct import calcsize, unpack
 
 import pandas as pd
-
 from mootdx.consts import GP_HOSTS
+
 from .base import BaseFinancial, BaseReader
 
 logger = logging.getLogger(__name__)

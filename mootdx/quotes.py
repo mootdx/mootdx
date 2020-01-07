@@ -2,14 +2,13 @@
 import logging
 import math
 
-from pytdx.exhq import TdxExHq_API
-from pytdx.hq import TdxHq_API
-from tqdm import tqdm
-
 from mootdx import config
 from mootdx.config import settings
 from mootdx.consts import MARKET_SH
 from mootdx.utils import get_stock_market, get_stock_markets, to_data
+from pytdx.exhq import TdxExHq_API
+from pytdx.hq import TdxHq_API
+from tqdm import tqdm
 
 logger = logging.getLogger(__name__)
 config.setup()

@@ -83,4 +83,3 @@ class Affair(object):
             with TqdmUpTo(unit='b', unit_scale=True, miniters=1, ascii=True) as t:
                 logger.warning('\r[+] 准备下载文件 {}.'.format(x['filename']))
                 crawler.fetch_and_parse(reporthook=t.update_to, filename=x['filename'], downdir=downfile)
-

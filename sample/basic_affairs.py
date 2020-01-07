@@ -1,6 +1,5 @@
-from prettytable import PrettyTable
-
 from mootdx.affair import Affair
+from prettytable import PrettyTable
 
 df = Affair.files()
 t = PrettyTable(["filename", "filesize", "hash"])
