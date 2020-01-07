@@ -67,3 +67,4 @@ tests/fixtures
 
 .idea
 .github
+.DS_Store
