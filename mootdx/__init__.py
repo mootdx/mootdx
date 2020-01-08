@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from mootdx.consts import HQ_HOSTS, EX_HOSTS, GP_HOSTS
 
-__version__ = '0.3.12'
+__version__ = '0.3.13'
 
 CONFIG = {
     'SERVER': {
