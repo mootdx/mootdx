@@ -90,13 +90,6 @@ class BaseFinancial:
 
         logger.debug(url)
 
-        headers = {
-            'User-Agent': "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.100 Safari/537.36",
-            'Referer': url
-        }
-
-        # res = requests.get(url, headers=headers)
-
         request = Request(url)
         request.add_header('Referer', url)
         request.add_header('User-Agent',

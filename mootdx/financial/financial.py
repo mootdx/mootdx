@@ -39,10 +39,10 @@ class FinancialReader(BaseReader):
 
 
 class FinancialList(BaseFinancial):
-    mode = "content"
+    # mode = "content"
 
-    def __init__(self):
-        super().__init__()
+    # def __init__(self, *args, **kwargs):
+    #     super().__init__(*args, **kwargs)
 
     def url(self, *args, **kwargs):
         '''
@@ -52,8 +52,8 @@ class FinancialList(BaseFinancial):
         :param kwargs:
         :return:
         '''
-        # return "https://gitee.com/yutiansut/QADATA/raw/master/financial/content.txt"
-        return 'http://down.tdx.com.cn:8001/fin/gpcw.txt'
+        return "https://gitee.com/yutiansut/QADATA/raw/master/financial/content.txt"
+        # return 'http://down.tdx.com.cn:8001/fin/gpcw.txt'
 
     def content(self, reporthook=None, downdir=None, proxies=None, chunksize=1024 * 50, *args, **kwargs):
         '''
@@ -128,8 +128,8 @@ class Financial(BaseFinancial):
 
         logger.debug("http://down.tdx.com.cn:8001/fin/{}".format(filename))
 
-        # return "http://data.yutiansut.com/{}".format(filename)
-        return "http://down.tdx.com.cn:8001/fin/{}".format(filename)
+        return "http://data.yutiansut.com/{}".format(filename)
+        # return "http://down.tdx.com.cn:8001/fin/{}".format(filename)
 
     def content(self, reporthook=None, downdir=None, proxies=None, chunksize=1024 * 50, *args, **kwargs):
         '''
