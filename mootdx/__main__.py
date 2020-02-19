@@ -105,11 +105,12 @@ def bestip(limit, write, verbose):
 @cli.command(help='财务文件下载&解析.')
 @click.option('-p', '--parse', default=None, help='要解析文件名')
 @click.option('-l', '--files', count=True, default=True, help='列出文件列表')
-@click.option('-f', '--fetch', default=None, help='下载财务文件的文件名, all 下载全部文件')
+@click.option('-f', '--fetch', default=None, help='下载财务文件的文件名')
+@click.option('-a', '--downall', count=True, help='下载全部文件')
 @click.option('-o', '--output', default=None, help='输出文件, 支持 CSV, HDF5, Excel, JSON 等格式.')
 @click.option('-d', '--downdir', default='output', help='下载文件目录')
 @click.option('-v', '--verbose', count=True)
-def affair(parse, files, fetch, downdir, output, verbose):
+def affair(parse, files, fetch, downdir, output, downall, verbose):
     if verbose:
         logging.basicConfig(level=logging.DEBUG)
 
@@ -127,12 +128,11 @@ def affair(parse, files, fetch, downdir, output, verbose):
 
         print(t)
 
-    if fetch:
-        if fetch == 'all':
-            feed = Affair.fetch(downdir=downdir)
-            to_file(feed, output) if output else None
-        else:
-            Affair.fetch(downdir=downdir, filename=fetch.strip('.zip') + '.zip')
+    if downall or fetch == 'all':
+        feed = Affair.fetch(downdir=downdir)
+        to_file(feed, output) if output else None
+    elif fetch:
+        Affair.fetch(downdir=downdir, filename=fetch.strip('.zip') + '.zip')
 
     if parse:
         files = [x['filename'] for x in result]

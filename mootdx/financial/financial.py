@@ -52,8 +52,9 @@ class FinancialList(BaseFinancial):
         :param kwargs:
         :return:
         '''
-        return "https://gitee.com/yutiansut/QADATA/raw/master/financial/content.txt"
+        # return "https://gitee.com/yutiansut/QADATA/raw/master/financial/content.txt"
         # return 'http://down.tdx.com.cn:8001/fin/gpcw.txt'
+        return 'http://data.yutiansut.com/content.txt'
 
     def content(self, reporthook=None, downdir=None, proxies=None, chunksize=1024 * 50, *args, **kwargs):
         '''
