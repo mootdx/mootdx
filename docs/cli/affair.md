@@ -11,10 +11,11 @@ Usage: mootdx affair [OPTIONS]
   财务文件下载&解析.
 
 Options:
-  -p, --parse TEXT    解析文件内容
+  -p, --parse TEXT    要解析文件名
   -l, --files         列出文件列表
-  -f, --fetch TEXT    下载全部文件
-  -o, --output TEXT   输出文件
+  -f, --fetch TEXT    下载财务文件的文件名
+  -a, --downall       下载全部文件
+  -o, --output TEXT   输出文件, 支持 CSV, HDF5, Excel, JSON 等格式.
   -d, --downdir TEXT  下载文件目录
   -v, --verbose
   --help              Show this message and exit.
@@ -50,6 +51,8 @@ Downloaded 165, Total is 0
 ```
 
 ## 03. 批量下载全部文件
+
+> 增加快捷方式 `mootdx affair -a`
 
 ```bash
 $ mootdx affair -f all
