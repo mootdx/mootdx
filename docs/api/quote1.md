@@ -90,7 +90,7 @@ from mootdx.quotes import Quotes
 from mootdx import consts
 
 client = Quotes.factory(market='std') 
-client.stocks(market=consts.MARKET_SH)
+symbol = client.stocks(market=consts.MARKET_SH)
 ```
 
 ## 05. 指数K线行情
@@ -117,9 +117,10 @@ client.stocks(market=consts.MARKET_SH)
 
 ```python
 from mootdx.quotes import Quotes
+from mootdx.consts import MARKET_SH
 
 client = Quotes.factory(market='std') 
-client.index(frequency=9, market='sz', symbol='000001', start=1, offset=2)
+client.index(frequency=9, market=MARKET_SH, symbol='000001', start=1, offset=2)
 ```
 ## 06. 查询分时行情
 
