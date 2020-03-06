@@ -280,13 +280,7 @@ class StdQuotes(object):
             result = self.client.get_k_data(symbol, begin, end)
             return to_data(result)
 
-    def index(
-        self,
-        symbol='000001',
-        market=MARKET_SH,
-        frequency='9',
-        start=1,
-        offset=2):
+    def index(self, symbol='000001', market=MARKET_SH, frequency='9', start=1, offset=2):
         '''
         获取指数k线
 
@@ -312,10 +306,7 @@ class StdQuotes(object):
         :return: pd.dataFrame or None
         '''
         with self.client.connect(*self.bestip):
-            market = 1 if market == 'sz' else 0
-            result = self.client.get_index_bars(
-                int(frequency), int(market), str(symbol), int(start), int(offset))
-
+            result = self.client.get_index_bars(int(frequency), int(market), str(symbol), int(start), int(offset))
             return to_data(result)
 
     def block(self, tofile="block.dat"):

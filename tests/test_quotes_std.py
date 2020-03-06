@@ -2,6 +2,7 @@
 import unittest
 
 from mootdx.quotes import Quotes
+from mootdx.consts import MARKET_SH
 
 
 class TestStdQuotes(unittest.TestCase):
@@ -27,7 +28,7 @@ class TestStdQuotes(unittest.TestCase):
         self.assertIsNotNone(data)
 
     def test_index(self):
-        data = self.client.index(frequency=9, market='sz', symbol='000001', start=1, offset=2)
+        data = self.client.index(frequency=9, market=MARKET_SH, symbol='000001', start=1, offset=2)
         self.assertIsNotNone(data)
 
     def test_minute(self):
