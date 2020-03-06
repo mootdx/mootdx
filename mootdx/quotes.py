@@ -2,13 +2,15 @@
 import logging
 import math
 
+import pandas
+from pytdx.exhq import TdxExHq_API
+from pytdx.hq import TdxHq_API
+from tqdm import tqdm
+
 from mootdx import config
 from mootdx.config import settings
 from mootdx.consts import MARKET_SH
 from mootdx.utils import get_stock_market, get_stock_markets, to_data
-from pytdx.exhq import TdxExHq_API
-from pytdx.hq import TdxHq_API
-from tqdm import tqdm
 
 logger = logging.getLogger(__name__)
 config.setup()
@@ -96,18 +98,22 @@ class StdQuotes(object):
             result = self.client.get_security_count(market=market)
             return result
 
-    def stocks(self, market=MARKET_SH, start=0):
+    def stocks(self, market=MARKET_SH):
         '''
         获取股票列表
 
-        :param start:
         :param market:
         :return:
         '''
         with self.client.connect(*self.bestip):
-            result = self.client.get_security_list(market=market, start=start)
+            counts = self.client.get_security_count(market=market)
+            stocks = None
 
-            return to_data(result)
+            for start in tqdm(range(0, counts, 1000)):
+                result = self.client.get_security_list(market=market, start=start)
+                stocks = pandas.concat([stocks, to_data(result)], ignore_index=True) if start > 1 else to_data(result)
+
+            return stocks
 
     def index_bars(self, symbol='000001', frequency='9', start='0', offset='100'):
         '''
