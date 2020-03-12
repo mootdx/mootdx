@@ -34,7 +34,7 @@ reader.fzline(symbol='600036')
 
 from mootdx.reader import Reader
 
-reader = Reader.factory(market='ext', tdxdir='c:/new_tdx/vipdoc')
+reader = Reader.factory(market='ext', tdxdir='c:/new_tdx')
 reader.daily(symbol='29#A1801')
 ```
 
@@ -42,7 +42,8 @@ reader.daily(symbol='29#A1801')
 
 > 读取通达信的分钟K线（目前支持1，5分钟k线）
 
-分钟线有两种格式，第一种是`.1` `.5` 为后缀的
+分钟线有两种格式，第一种是`.1` `.5` 为后缀的, 还有一种为 `.lc1` `.lc5` 后缀的.
+不过不用考虑，接口会自动判断
 
 ```python
 from mootdx.reader import Reader
@@ -50,12 +51,12 @@ reader = Reader.factory(market='std', tdxdir='c:/new_tdx')
 reader.minute(symbol='000001', suffix='1') # suffix = 1 一分钟，5 五分钟
 ```
 
-还有一种为 `.lc1` `.lc5` 后缀的
+扩展数据接口读取方式
 
 ```python
 from mootdx.reader import Reader
 reader = Reader.factory(market='ext', tdxdir='c:/new_tdx')
-reader.daily(symbol='000001') # suffix = 1 一分钟，5 五分钟
+reader.minute(symbol='000001', suffix = '1') # suffix = 1 一分钟，5 五分钟
 ```
 
 ## 04. 读取板块信息
@@ -67,7 +68,7 @@ reader.daily(symbol='000001') # suffix = 1 一分钟，5 五分钟
 ```python
 from mootdx.reader import Reader
 reader = Reader.factory(market='ext', tdxdir='c:/new_tdx')
-reader.block(market='block_zs', group=True)
+reader.block(symbol='block_zs', group=True)
 ```
 
 ```python
@@ -85,8 +86,8 @@ reader.block(symbol='block_zs', group=True)
 # 默认扁平格式
 from mootdx.reader import Reader
 reader = Reader.factory(market='std', tdxdir='C:/new_tdx')
-reader.block(custom=True)
+reader.block(symbol='block_zs', custom=True)
 
 #分组格式
-reader.block(custom=True, group=True)
+reader.block(symbol='block_zs', custom=True, group=True)
 ```

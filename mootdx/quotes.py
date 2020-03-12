@@ -142,8 +142,8 @@ class StdQuotes(object):
         '''
         with self.client.connect(*self.bestip):
             market = get_stock_market(symbol)
-            result = self.client.get_minute_time_data(market=market, code=symbol)
-
+            result = self.client.get_minute_time_data(
+                market=market, code=symbol)
             return to_data(result)
 
     def minutes(self, symbol='', date='20191023'):

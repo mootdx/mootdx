@@ -125,7 +125,7 @@ class StdReader(ReaderBase):
         else:
             reader = BlockReader()
             vipdoc = os.path.join(self.tdxdir, 'T0002', 'hq_cache', '{}.dat'.format(symbol))
-
+            
         format = TYPE_GROUP if group else None
 
         if os.path.exists(vipdoc):
