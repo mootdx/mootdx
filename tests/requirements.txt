@@ -1,2 +1,2 @@
-pytest==5.3.5
+pytest==5.4.1
 httmock==1.3.0
