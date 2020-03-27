@@ -8,7 +8,7 @@ try:
 except ImportError:
     from distutils.core import setup, find_packages
 
-from mootdx import 'version='version='version='version='0.3.17'''''
+from mootdx import __version__
 
 
 def parse_requirements(filename):
@@ -28,7 +28,7 @@ test_requirements.append('pytest')
 
 setup(
     name='mootdx',
-    version='version='version='version='version='0.3.17''''',
+    version=__version__,
     description="通达信数据读取接口.",
     long_description=readme + '\n\n' + history,
     author="bopo.wang",
