@@ -21,7 +21,7 @@ for x in glob('tmp/*.zip'):
         continue
 
     data = Affair.parse(downdir='tmp', filename=file)
-    
+
     if data is not None:
         data.to_csv('tmp/{}'.format(dist))
         logger.info('文件已导出: {}'.format(dist))
