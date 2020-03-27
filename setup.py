@@ -8,7 +8,7 @@ try:
 except ImportError:
     from distutils.core import setup, find_packages
 
-# from mootdx import 'version='version='version='0.3.17''''
+# from mootdx import 'version='version='version='version='0.3.17'''''
 
 
 def parse_requirements(filename):
