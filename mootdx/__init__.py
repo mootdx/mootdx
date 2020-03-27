@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from mootdx.consts import HQ_HOSTS, EX_HOSTS, GP_HOSTS
 
-__version__ = "2.0.0"
+__version__ = "3.0.0"
 __author__ = "bopo.wang"
 
 CONFIG = {
