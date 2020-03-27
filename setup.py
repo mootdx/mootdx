@@ -8,8 +8,6 @@ try:
 except ImportError:
     from distutils.core import setup, find_packages
 
-# from mootdx import 'version='version='version='0.3.19''''
-
 
 def parse_requirements(filename):
     lineiter = (line.strip() for line in open(filename))
