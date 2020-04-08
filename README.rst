@@ -119,10 +119,10 @@
     client = Quotes.factory(market='std', multithread=True, heartbeat=True)
 
     # k 线数据
-    client.bars(symbol='600036', category=9, offset=10)
+    client.bars(symbol='600036', frequency=9, offset=10)
 
     # 指数
-    client.index(symbol='000001', category=9)
+    client.index(symbol='000001', frequency=9)
 
     # 分钟
     client.minute(symbol='000001')
