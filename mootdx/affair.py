@@ -57,7 +57,7 @@ class Affair(object):
         crawler = financial.Financial()
 
         if not os.path.isdir(downdir):
-            logger.info('下载目录不存在, 进行创建.')
+            logger.warning('下载目录不存在, 进行创建.')
             os.makedirs(downdir)
 
         if filename:

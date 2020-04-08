@@ -19,6 +19,7 @@ class TestExReader(unittest.TestCase):
     # 具体的测试用例，一定要以test开头
     def testDaily(self):
         data = self.reader.daily(symbol='27#CES100')
+        print(data)
         self.assertTrue(data is not None)
 
     # def testMinbar(self):

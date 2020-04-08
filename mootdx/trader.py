@@ -22,7 +22,7 @@ class Trader(object):
     def config(self, **kwargs):
         self.client = TdxTradeApi(**kwargs)
 
-    def ping(self):
+    def status(self):
         '''
         服务器连通测试
 

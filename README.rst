@@ -54,10 +54,9 @@
     pip install mootdx
 
     # 手动下载源码安装
-    git clone https://github.com/bopo/mootdx.git 
+    git clone --depth=1 https://github.com/bopo/mootdx.git 
     cd mootdx
     python setup.py install
-
 
 
 使用说明
@@ -120,10 +119,10 @@
     client = Quotes.factory(market='std', multithread=True, heartbeat=True)
 
     # k 线数据
-    client.bars(symbol='600036', category=9, offset=10)
+    client.bars(symbol='600036', frequency=9, offset=10)
 
     # 指数
-    client.index(symbol='000001', category=9)
+    client.index(symbol='000001', frequency=9)
 
     # 分钟
     client.minute(symbol='000001')
