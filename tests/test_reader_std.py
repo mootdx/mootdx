@@ -23,13 +23,15 @@ class TestReader(unittest.TestCase):
     #     self.assertTrue(self.reader.block(symbol='block_fg', group=True) is not None)
 
     # def test_custom_block(self):
-        # self.assertTrue(self.reader.block(symbol='blocknew', custom=True, group=True) is not None)
+    # self.assertTrue(self.reader.block(symbol='blocknew', custom=True, group=True) is not None)
 
     def test_minute1(self):
-        self.assertTrue(self.reader.minute(symbol='600000', suffix='1') is not None)
+        self.assertTrue(
+            self.reader.minute(symbol='600000', suffix='1') is not None)
 
     def test_minute5(self):
-        self.assertTrue(self.reader.minute(symbol='600000', suffix='5') is not None)
+        self.assertTrue(
+            self.reader.minute(symbol='600000', suffix='5') is not None)
 
     def test_block(self):
         result = self.reader.block(symbol='block_zs', group=True)
@@ -37,9 +39,10 @@ class TestReader(unittest.TestCase):
         self.assertTrue(result is not None)
 
     def test_block_custom(self):
-        result = self.reader.block(symbol='block_zs',custom=True)
+        result = self.reader.block(symbol='block_zs', custom=True)
         print(result)
         self.assertTrue(result is not None)
+
 
 if __name__ == '__main__':
     unittest.main()

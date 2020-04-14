@@ -56,7 +56,13 @@ class FinancialList(BaseFinancial):
         # return 'http://down.tdx.com.cn:8001/fin/gpcw.txt'
         return 'http://data.yutiansut.com/content.txt'
 
-    def content(self, reporthook=None, downdir=None, proxies=None, chunksize=1024 * 50, *args, **kwargs):
+    def content(self,
+                reporthook=None,
+                downdir=None,
+                proxies=None,
+                chunksize=1024 * 50,
+                *args,
+                **kwargs):
         '''
         解析财务文件
 
@@ -102,7 +108,12 @@ class FinancialList(BaseFinancial):
             return {'filename': l[0], 'hash': l[1], 'filesize': int(l[2])}
 
         if content:
-            result = [list_to_dict(l) for l in [line.strip().split(",") for line in content.strip().split('\n')]]
+            result = [
+                list_to_dict(l) for l in [
+                    line.strip().split(",")
+                    for line in content.strip().split('\n')
+                ]
+            ]
             return result
 
         return None
@@ -132,7 +143,13 @@ class Financial(BaseFinancial):
         return "http://data.yutiansut.com/{}".format(filename)
         # return "http://down.tdx.com.cn:8001/fin/{}".format(filename)
 
-    def content(self, reporthook=None, downdir=None, proxies=None, chunksize=1024 * 50, *args, **kwargs):
+    def content(self,
+                reporthook=None,
+                downdir=None,
+                proxies=None,
+                chunksize=1024 * 50,
+                *args,
+                **kwargs):
         '''
         解析财务文件
 
@@ -162,8 +179,12 @@ class Financial(BaseFinancial):
             raise e
 
         with api.connect(*bestip):
-            content = api.get_report_file_by_size("tdxfin/" + filename, filesize=filesize, reporthook=reporthook)
-            download_file = open(downdir, 'wb') if downdir else tempfile.NamedTemporaryFile(delete=True)
+            content = api.get_report_file_by_size("tdxfin/" + filename,
+                                                  filesize=filesize,
+                                                  reporthook=reporthook)
+            download_file = open(
+                downdir, 'wb') if downdir else tempfile.NamedTemporaryFile(
+                    delete=True)
             download_file.write(content)
             download_file.seek(0)
 

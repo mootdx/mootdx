@@ -12,6 +12,7 @@ logger = logging.getLogger(__name__)
 
 # 股票市场
 class Reader(object):
+
     @staticmethod
     def factory(market='std', **kwargs):
         '''
@@ -54,12 +55,14 @@ class ReaderBase(object):
         :param ext:
         :return: pd.dataFrame or None
         '''
-        market = get_stock_market(symbol, True) if len(symbol.split('#')) == 1 else 'ds'
+        market = get_stock_market(symbol, True) if len(
+            symbol.split('#')) == 1 else 'ds'
         prefix = market if len(symbol.split('#')) == 1 else ''
         ext = ext if isinstance(ext, list) else [ext]
 
         for t in ext:
-            vipdoc = 'vipdoc/{}/{}/{}{}.{}'.format(market, subdir, prefix, symbol, t)
+            vipdoc = 'vipdoc/{}/{}/{}{}.{}'.format(market, subdir, prefix,
+                                                   symbol, t)
             vipdoc = os.path.join(self.tdxdir, vipdoc)
 
             if os.path.exists(vipdoc):
@@ -121,11 +124,13 @@ class StdReader(ReaderBase):
         '''
         if custom:
             reader = CustomerBlockReader()
-            vipdoc = os.path.join(self.tdxdir, 'T0002', 'blocknew', '{}'.format(symbol))
+            vipdoc = os.path.join(self.tdxdir, 'T0002', 'blocknew',
+                                  '{}'.format(symbol))
         else:
             reader = BlockReader()
-            vipdoc = os.path.join(self.tdxdir, 'T0002', 'hq_cache', '{}.dat'.format(symbol))
-            
+            vipdoc = os.path.join(self.tdxdir, 'T0002', 'hq_cache',
+                                  '{}.dat'.format(symbol))
+
         format = TYPE_GROUP if group else None
 
         if os.path.exists(vipdoc):

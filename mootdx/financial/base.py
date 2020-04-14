@@ -22,7 +22,8 @@ class BaseReader(object):
         :return:
         '''
         record = struct.Struct(format)
-        return (record.unpack_from(data, offset) for offset in range(0, len(data), record.size))
+        return (record.unpack_from(data, offset)
+                for offset in range(0, len(data), record.size))
 
     def get_df(self, code_or_file, exchange=None):
         '''
@@ -40,7 +41,12 @@ class BaseFinancial:
     def __init__(self, mode="http"):
         self.mode = mode
 
-    def fetch_and_parse(self, reporthook=None, downdir=None, proxies=None, chunksize=1024 * 50, *args,
+    def fetch_and_parse(self,
+                        reporthook=None,
+                        downdir=None,
+                        proxies=None,
+                        chunksize=1024 * 50,
+                        *args,
                         **kwargs):
         """
         function to get data ,
@@ -52,11 +58,18 @@ class BaseFinancial:
         """
 
         if self.mode == "http":
-            file = self.fetch_via_http(
-                reporthook=reporthook, downdir=downdir, proxies=proxies, chunksize=chunksize, *args, **kwargs)
+            file = self.fetch_via_http(reporthook=reporthook,
+                                       downdir=downdir,
+                                       proxies=proxies,
+                                       chunksize=chunksize,
+                                       *args,
+                                       **kwargs)
         elif self.mode == "content":
-            file = self.content(
-                reporthook=reporthook, downdir=downdir, chunksize=chunksize, *args, **kwargs)
+            file = self.content(reporthook=reporthook,
+                                downdir=downdir,
+                                chunksize=chunksize,
+                                *args,
+                                **kwargs)
         else:
             return
 
@@ -69,7 +82,12 @@ class BaseFinancial:
 
         return result
 
-    def fetch_via_http(self, reporthook=None, downdir=None, proxies=None, chunksize=1024 * 50, *args,
+    def fetch_via_http(self,
+                       reporthook=None,
+                       downdir=None,
+                       proxies=None,
+                       chunksize=1024 * 50,
+                       *args,
                        **kwargs):
         '''
 
@@ -92,8 +110,10 @@ class BaseFinancial:
 
         request = Request(url)
         request.add_header('Referer', url)
-        request.add_header('User-Agent',
-                           "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.100 Safari/537.36")
+        request.add_header(
+            'User-Agent',
+            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.100 Safari/537.36"
+        )
 
         res = urlopen(request)
 
@@ -122,7 +142,13 @@ class BaseFinancial:
     def url(self, *args, **kwargs):
         raise NotImplementedError("will impl in subclass")
 
-    def content(self, reporthook=None, downdir=None, proxies=None, chunksize=1024 * 50, *args, **kwargs):
+    def content(self,
+                reporthook=None,
+                downdir=None,
+                proxies=None,
+                chunksize=1024 * 50,
+                *args,
+                **kwargs):
         raise NotImplementedError("will impl in subclass")
 
     def parse(self, download_file, *args, **kwargs):

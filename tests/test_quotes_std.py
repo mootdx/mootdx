@@ -28,7 +28,11 @@ class TestStdQuotes(unittest.TestCase):
         self.assertIsNotNone(data)
 
     def test_index(self):
-        data = self.client.index(frequency=9, market=MARKET_SH, symbol='000001', start=1, offset=2)
+        data = self.client.index(frequency=9,
+                                 market=MARKET_SH,
+                                 symbol='000001',
+                                 start=1,
+                                 offset=2)
         self.assertIsNotNone(data)
 
     def test_minute(self):
@@ -44,7 +48,10 @@ class TestStdQuotes(unittest.TestCase):
         self.assertIsNotNone(data)
 
     def test_transactions(self):
-        data = self.client.transactions(symbol='000001', start=0, offset=10, date='20170209')
+        data = self.client.transactions(symbol='000001',
+                                        start=0,
+                                        offset=10,
+                                        date='20170209')
         self.assertIsNotNone(data)
 
     def test_F10C(self):
@@ -60,7 +67,9 @@ class TestStdQuotes(unittest.TestCase):
         self.assertIsNotNone(data)
 
     def test_k(self):
-        data = self.client.k(symbol='000001', begin='2019-07-03', end='2019-07-10')
+        data = self.client.k(symbol='000001',
+                             begin='2019-07-03',
+                             end='2019-07-10')
         self.assertIsNotNone(data)
 
     def test_block(self):
