@@ -44,17 +44,7 @@ def get_stock_market(symbol='', string=False):
         market = 'sh'
 
     if symbol.startswith(
-        ('00',
-         '13',
-         '18',
-         '15',
-         '16',
-         '18',
-         '20',
-         '30',
-         '39',
-         '115',
-         '1318')):
+        ('00', '13', '18', '15', '16', '18', '20', '30', '39', '115', '1318')):
         market = 'sz'
 
     if symbol.startswith(('5', '6', '9', '7')):
@@ -125,7 +115,9 @@ def to_data(v):
     elif isinstance(v, list):
         return pd.DataFrame(data=v) if len(v) else None
     elif isinstance(v, dict):
-        return pd.DataFrame(data=[v, ])
+        return pd.DataFrame(data=[
+            v,
+        ])
     else:
         return pd.DataFrame(data=[{'value': v}])
 

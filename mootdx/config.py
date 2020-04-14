@@ -16,8 +16,16 @@ logger = logging.getLogger(__name__)
 __all__ = ['set', 'get', 'copy', 'update', 'settings']
 
 settings = {
-    'SERVER': {'HQ': HQ_HOSTS, 'EX': EX_HOSTS, 'GP': GP_HOSTS},
-    'BESTIP': {'HQ': '', 'EX': '', 'GP': ''},
+    'SERVER': {
+        'HQ': HQ_HOSTS,
+        'EX': EX_HOSTS,
+        'GP': GP_HOSTS
+    },
+    'BESTIP': {
+        'HQ': '',
+        'EX': '',
+        'GP': ''
+    },
     'TDXDIR': 'C:/new_tdx',
 }
 
