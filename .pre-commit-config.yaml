@@ -6,3 +6,9 @@ repos:
     entry: changelog filenames must end in .rst
     language: fail
     files: 'changelog/.*(?<!\.rst)$'
+
+  - id: pylint
+    name: pylint
+    entry: yapf -vv --style=google -i
+    language: system
+    types: [python]   
