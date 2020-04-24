@@ -6,7 +6,7 @@
 ```python
 from mootdx.quotes import Quotes
 
-client = Quotes.factory(market='ext') 
+client = Quotes.factory(market='ext')
 client.markets()
 
 ```
@@ -26,7 +26,7 @@ client.markets()
 ```python
 from mootdx.quotes import Quotes
 
-client = Quotes.factory(market='ext') 
+client = Quotes.factory(market='ext')
 client.instrument(start=0, offset=100)
 
 # 获取全部
@@ -39,7 +39,7 @@ client.instruments()
 ```python
 from mootdx.quotes import Quotes
 
-client = Quotes.factory(market='ext') 
+client = Quotes.factory(market='ext')
 client.instrument_count()
 
 ```
@@ -55,7 +55,7 @@ client.instrument_count()
 ```python
 from mootdx.quotes import Quotes
 
-client = Quotes.factory(market='ext') 
+client = Quotes.factory(market='ext')
 client.quote(market=47, symbol="IF1709")
 
 # 简写方式
@@ -73,7 +73,7 @@ client.quote(symbol="47#IF1709")
 ```python
 from mootdx.quotes import Quotes
 
-client = Quotes.factory(market='ext') 
+client = Quotes.factory(market='ext')
 client.minute(market=47, symbol='IF1709')
 
 # 简写方式
@@ -91,7 +91,7 @@ client.minute(symbol="47#IF1709")
 ```python
 from mootdx.quotes import Quotes
 
-client = Quotes.factory(market='ext') 
+client = Quotes.factory(market='ext')
 client.minutes(market=47, symbol='IF1709')
 
 # 简写方式
@@ -130,7 +130,7 @@ client.bars(frequency=KLINE_DAILY, symbol="47#IF1709", start=0, offset=100)
 ```python
 from mootdx.quotes import Quotes
 
-client = Quotes.factory(market='ext') 
+client = Quotes.factory(market='ext')
 client.transaction(31, "00020")
 
 # 简写方式
@@ -145,7 +145,7 @@ client.transaction("31#00020")
 ```python
 from mootdx.quotes import Quotes
 
-client = Quotes.factory(market='ext') 
+client = Quotes.factory(market='ext')
 client.transaction(market=31, symbol='00020')
 
 # 简写方式
@@ -166,7 +166,7 @@ client.transaction("31#00020")
 ```python
 from mootdx.quotes import Quotes
 
-client = Quotes.factory(market='ext') 
+client = Quotes.factory(market='ext')
 client.transactions(market=47, symbol='IFL0', date='20170810', start=1800)
 
 # 简写方式

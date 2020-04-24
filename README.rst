@@ -29,7 +29,7 @@
 * 修复财务数据无法下载问题.
 * 更新了详细的文档.
 * 多种线路配置方案. (配置文件, 环境变量等).
-* 重写了专业财务数据接口. 
+* 重写了专业财务数据接口.
 * 更新了最佳服务器选择问题.
 * 修改了 PIP 安装程序问题.
 * 本程序全面支持 python3.
@@ -54,7 +54,7 @@
     pip install mootdx
 
     # 手动下载源码安装
-    git clone --depth=1 https://github.com/bopo/mootdx.git 
+    git clone --depth=1 https://github.com/bopo/mootdx.git
     cd mootdx
     python setup.py install
 
@@ -64,7 +64,7 @@
 命令行工具
 
 ::
-    
+
     mootdx --help
 
     Usage: mootdx [OPTIONS] COMMAND [ARGS]...
@@ -81,7 +81,7 @@
 
 使用最快的服务器
 
-:: 
+::
 
     # -w 参数是写入配置文件
     mootdx bestip -w -v

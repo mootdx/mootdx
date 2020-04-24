@@ -5,14 +5,14 @@
 
 ** 参数说明: **
 
- * market: 对应市场。 (std 标准股票市场，ext 扩展市场) 
+ * market: 对应市场。 (std 标准股票市场，ext 扩展市场)
 
 ** 调用方法：**
 
 ```python
 from mootdx.quotes import Quotes
 
-client = Quotes.factory(market='std') 
+client = Quotes.factory(market='std')
 ```
 
 ## 01. 查询实时行情
@@ -24,15 +24,15 @@ client = Quotes.factory(market='std')
  - symbol: 多个股票号码。 `["000001", "600300"]` 格式
 
 返回值：
- 
+
  - Quotes{}
- 
+
 ** 调用方法：**
 
 ```python
 from mootdx.quotes import Quotes
 
-client = Quotes.factory(market='std') 
+client = Quotes.factory(market='std')
 client.quotes(symbol=["000001", "600300"])
 ```
 
@@ -53,7 +53,7 @@ frequency -> K线种类
 ```python
 from mootdx.quotes import Quotes
 
-client = Quotes.factory(market='std') 
+client = Quotes.factory(market='std')
 client.bars(symbol='600036', frequency=9, offset=10)
 ```
 
@@ -69,7 +69,7 @@ client.bars(symbol='600036', frequency=9, offset=10)
 from mootdx.quotes import Quotes
 from mootdx import consts
 
-client = Quotes.factory(market='std') 
+client = Quotes.factory(market='std')
 client.stock_count(market=consts.MARKET_SH)
 ```
 
@@ -80,7 +80,7 @@ client.stock_count(market=consts.MARKET_SH)
 
  - market: 市场代码. 0 - 深圳， 1 - 上海 (可以使用常量 `MARKET_SZ`, `MARKET_SH` 代替)
 
-> 注意，在引入 consts 之后， （`from mootdx import consts`） 
+> 注意，在引入 consts 之后， （`from mootdx import consts`）
 > 我们可以使用 consts.MARKET_SH , consts.MARKET_SZ 常量来代替 1 和 0 作为参数
 
 ** 调用方法：**
@@ -89,7 +89,7 @@ client.stock_count(market=consts.MARKET_SH)
 from mootdx.quotes import Quotes
 from mootdx import consts
 
-client = Quotes.factory(market='std') 
+client = Quotes.factory(market='std')
 symbol = client.stocks(market=consts.MARKET_SH)
 ```
 
@@ -119,7 +119,7 @@ symbol = client.stocks(market=consts.MARKET_SH)
 from mootdx.quotes import Quotes
 from mootdx.consts import MARKET_SH
 
-client = Quotes.factory(market='std') 
+client = Quotes.factory(market='std')
 client.index(frequency=9, market=MARKET_SH, symbol='000001', start=1, offset=2)
 ```
 ## 06. 查询分时行情
@@ -133,7 +133,7 @@ client.index(frequency=9, market=MARKET_SH, symbol='000001', start=1, offset=2)
 ```python
 from mootdx.quotes import Quotes
 
-client = Quotes.factory(market='std') 
+client = Quotes.factory(market='std')
 client.minute(symbol='000001')
 ```
 
@@ -150,7 +150,7 @@ client.minute(symbol='000001')
 ```python
 from mootdx.quotes import Quotes
 
-client = Quotes.factory(market='std') 
+client = Quotes.factory(market='std')
 client.minutes(symbol='000001', date='20171010')
 ```
 
@@ -169,7 +169,7 @@ client.minutes(symbol='000001', date='20171010')
 ```python
 from mootdx.quotes import Quotes
 
-client = Quotes.factory(market='std') 
+client = Quotes.factory(market='std')
 client.transaction(symbol='600036', start=0, offset=10)
 ```
 
