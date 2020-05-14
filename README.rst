@@ -20,6 +20,7 @@
 
 * 开源协议: MIT license
 * 在线文档: https://mootdx.readthedocs.io.
+* 中国镜像: https://gitee.com/ibopo/mootdx
 
 版本更新
 --------
