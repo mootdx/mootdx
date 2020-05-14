@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from mootdx.quotes import Quotes
 
 client = Quotes.factory(market='std')  # 标准市场

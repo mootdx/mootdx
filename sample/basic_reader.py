@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from mootdx.reader import Reader
 
 # 初始化通达信文件读取类

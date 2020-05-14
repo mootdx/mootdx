@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from mootdx.affair import Affair
 from prettytable import PrettyTable
 

@@ -66,6 +66,7 @@ class StdQuotes(object):
 
         with self.client.connect(*self.bestip):
             symbol = get_stock_markets(symbol)
+            print(symbol)
             result = self.client.get_security_quotes(symbol)
 
             return to_data(result)

@@ -1,7 +1,7 @@
 
 ## 使用最快的服务器
 
-```bash 
+```bash
 $ mootdx bestip -w -v
 ```
 

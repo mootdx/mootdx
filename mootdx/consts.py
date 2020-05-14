@@ -1,4 +1,4 @@
-# coding=utf-8
+# -*- coding: utf-8 -*-
 
 # 市场
 MARKET_SZ = 0  # 深圳
