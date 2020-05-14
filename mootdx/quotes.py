@@ -188,7 +188,7 @@ class StdQuotes(object):
         with self.client.connect(*self.bestip):
             market = get_stock_market(symbol)
             result = self.client.get_transaction_data(int(market), symbol,
-                                                      int(start), int(market))
+                                                      int(start), int(offset))
 
             return to_data(result)
 
