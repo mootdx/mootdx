@@ -20,10 +20,12 @@
 
 * 开源协议: MIT license
 * 在线文档: https://mootdx.readthedocs.io.
+* 中国镜像: https://gitee.com/ibopo/mootdx
 
 版本更新
 --------
 
+* 修正转债数据无法获取问题
 * 修改获取股票数据接口(自动全部获取).
 * 修改指数数据接口，市场参数错误。
 * 修复财务数据无法下载问题.
