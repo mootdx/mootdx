@@ -148,18 +148,6 @@
 ----------
 
 .. image:: docs/img/IMG_2851.JPG
-        :width: 180 px
+        :width: 130 px
         :align: left
 
-欢迎赞助
----------
-
-.. image:: docs/img/IMG_2458.JPG
-        :alt: 微信支付
-        :width: 180 px
-        :align: left
-
-.. image:: docs/img/IMG_2459.JPG
-        :alt: 支付宝
-        :width: 180 px
-        :align: left
