@@ -16,13 +16,11 @@
      :target: https://pyup.io/repos/github/bopo/mootdx/
      :alt: Updates
 
-
-
 * 开源协议: MIT license
 * 在线文档: https://mootdx.readthedocs.io.
 
 版本更新
---------
+-------
 
 * 修改获取股票数据接口(自动全部获取).
 * 修改指数数据接口，市场参数错误。
@@ -38,7 +36,7 @@
 
 
 运行环境
----------
+-------
 
 * 操作系统: Windows / MacOS / Linux 都可以运行.
 * Python: 3.5 以及以上版本, 不支持 python2.
@@ -46,7 +44,7 @@
 
 
 安装方法
---------
+-------
 
 ::
 
@@ -60,7 +58,8 @@
 
 
 使用说明
---------
+-------
+
 命令行工具
 
 ::
@@ -145,7 +144,7 @@
 
 
 加微信交流
-----------
+---------
 
 .. image:: docs/img/IMG_2851.JPG
         :width: 130 px
