@@ -149,4 +149,3 @@
 .. image:: docs/img/IMG_2851.JPG
         :width: 130 px
         :align: left
-
