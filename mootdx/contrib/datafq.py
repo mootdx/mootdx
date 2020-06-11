@@ -1,4 +1,4 @@
-# coding:utf-8
+# -*- coding: utf-8 -*-
 import pandas as pd
 
 # def QA_data_make_qfq(bfq_data, xdxr_data):

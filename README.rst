@@ -16,14 +16,12 @@
      :target: https://pyup.io/repos/github/bopo/mootdx/
      :alt: Updates
 
-
-
 * 开源协议: MIT license
 * 在线文档: https://mootdx.readthedocs.io.
 * 中国镜像: https://gitee.com/ibopo/mootdx
 
 版本更新
---------
+-------
 
 * 修正转债数据无法获取问题
 * 修改获取股票数据接口(自动全部获取).
@@ -40,7 +38,7 @@
 
 
 运行环境
----------
+-------
 
 * 操作系统: Windows / MacOS / Linux 都可以运行.
 * Python: 3.5 以及以上版本, 不支持 python2.
@@ -48,7 +46,7 @@
 
 
 安装方法
---------
+-------
 
 ::
 
@@ -62,7 +60,8 @@
 
 
 使用说明
---------
+-------
+
 命令行工具
 
 ::
@@ -147,23 +146,8 @@
 
 
 加微信交流
-----------
-
-.. image:: docs/img/IMG_2851.JPG
-        :width: 180 px
-        :align: left
-
-欢迎赞助
 ---------
 
-.. image:: docs/img/IMG_2458.JPG
-        :alt: 微信支付
-        :width: 180 px
+.. image:: docs/img/IMG_2851.JPG
+        :width: 130 px
         :align: left
-
-.. image:: docs/img/IMG_2459.JPG
-        :alt: 支付宝
-        :width: 180 px
-        :align: left
-
-

@@ -1,0 +1,28 @@
+repos:
+- repo: local
+  hooks:
+  - id: pylint
+    name: pylint
+    entry: yapf -vv --style=google -i
+    language: system
+    types: [python]
+
+- repo: https://github.com/pre-commit/pre-commit-hooks
+  rev: v2.5.0  # Use the ref you want to point at
+  hooks:
+  - id: trailing-whitespace
+  - id: end-of-file-fixer
+  - id: debug-statements
+  - id: mixed-line-ending
+    name: Mixed line ending
+    description: Replaces or checks mixed line ending
+    entry: mixed-line-ending
+    language: python
+    types: [text]
+  - id: check-ast
+    name: Check python ast
+    description: Simply check whether the files parse as valid python.
+    entry: check-ast
+    language: python
+    types: [python]
+  - id: check-merge-conflict

@@ -131,7 +131,7 @@ class StdReader(ReaderBase):
             vipdoc = os.path.join(self.tdxdir, 'T0002', 'hq_cache',
                                   '{}.dat'.format(symbol))
 
-        format = TYPE_GROUP if group else None
+        fmt = TYPE_GROUP if group else None
 
         if os.path.exists(vipdoc):
             return reader.get_df(vipdoc, format)

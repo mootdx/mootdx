@@ -25,7 +25,7 @@ test_requirements.append('pytest')
 
 setup(
     name='mootdx',
-    version='0.3.18',
+    version='0.3.21',
     description="通达信数据读取接口.",
     long_description=readme + '\n\n' + history,
     author="bopo.wang",
@@ -47,6 +47,7 @@ setup(
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.8',
     ],
     test_suite='tests',
     tests_require=test_requirements,

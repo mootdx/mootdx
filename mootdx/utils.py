@@ -5,9 +5,10 @@ import platform
 from struct import *
 
 import pandas as pd
-from mootdx.consts import MARKET_SH, MARKET_SZ
 from pandas import DataFrame
 from tqdm import tqdm
+
+from mootdx.consts import MARKET_SH, MARKET_SZ
 
 logger = logging.getLogger(__name__)
 
@@ -19,7 +20,10 @@ def get_stock_markets(symbols=None):
 
     if isinstance(symbols, list):
         for symbol in symbols:
-            results.append([get_stock_market(symbol, string=False), symbol])
+            results.append([
+                get_stock_market(symbol, string=False),
+                symbol.strip('sh').strip('sz')
+            ])
 
     return results
 
@@ -28,7 +32,7 @@ def get_stock_market(symbol='', string=False):
     """判断股票ID对应的证券市场
     匹配规则
     ['50', '51', '60', '90', '110'] 为 sh
-    ['00', '13', '18', '15', '16', '18', '20', '30', '39', '115'] 为 sz
+    ['00', '12'，'13', '18', '15', '16', '18', '20', '30', '39', '115'] 为 sz
     ['5', '6', '9'] 开头的为 sh， 其余为 sz
     :param string:
     :param symbol:股票ID, 若以 'sz', 'sh' 开头直接返回对应类型，否则使用内置规则判断
@@ -40,18 +44,18 @@ def get_stock_market(symbol='', string=False):
     if symbol.startswith(('sh', 'sz')):
         market = symbol[:2]
 
-    if symbol.startswith(('50', '51', '60', '90', '110', '113', '132', '204')):
+    elif symbol.startswith(
+        ('50', '51', '60', '90', '110', '113', '132', '204')):
         market = 'sh'
 
-    if symbol.startswith(
-        ('00', '13', '18', '15', '16', '18', '20', '30', '39', '115', '1318')):
+    elif symbol.startswith(('00', '12', '13', '18', '15', '16', '18', '20',
+                            '30', '39', '115', '1318')):
         market = 'sz'
 
-    if symbol.startswith(('5', '6', '9', '7')):
+    elif symbol.startswith(('5', '6', '9', '7')):
         market = 'sh'
 
     if string is False:
-        # return 0 if market == 'sz' else 1
         market = MARKET_SZ if market == 'sz' else MARKET_SH
 
     return market
