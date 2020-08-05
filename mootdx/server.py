@@ -51,15 +51,15 @@ def Server(index=None, limit=5, console=False, verbose=False):
         sock.settimeout(5)
 
         try:
-            start = time.clock()
+            start = time.perf_counter()
 
             sock.connect((proxy.get('addr'), int(proxy.get('port'))))
             sock.close()
 
-            proxy['time'] = (time.clock() - start) * 1000
+            proxy['time'] = (time.perf_counter() - start) * 1000
 
             server.append(proxy)
-            logger.info("{}:{} 验证通过，响应时间：{:.2} ms.".format(
+            logger.info("{}:{} 验证通过，响应时间：{:5.2f} ms.".format(
                 proxy.get('addr'), proxy.get('port'), proxy.get('time')))
         except Exception:
             logger.warning("{},{} 验证失败.".format(proxy.get('addr'),
@@ -81,7 +81,7 @@ def Server(index=None, limit=5, console=False, verbose=False):
         for host in server[:int(limit)]:
             t.add_row([
                 host['site'], host['addr'], host['port'],
-                '{:.2} ms'.format(host['time'])
+                '{:5.2f} ms'.format(host['time'])
             ])
 
         print(t)
