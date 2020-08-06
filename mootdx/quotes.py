@@ -51,15 +51,15 @@ class StdQuotes(object):
         with self.client.connect(*self.bestip):
             return self.client.get_traffic_stats()
 
-    def quotes(self, symbol=[]):
+    def quotes(self, symbol=None):
         '''
         获取实时日行情数据
 
         :param symbol: 股票代码
         :return: pd.dataFrame or None
         '''
-
-        logger.debug(type(logger))
+        if not symbol:
+            return None
 
         if type(symbol) is str:
             symbol = [symbol]
