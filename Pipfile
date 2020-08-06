@@ -11,6 +11,7 @@ coloredlogs = ">=10.0"
 pandas = ">=0.23.3"
 prettytable = ">=0.7.2"
 pytdx = ">=1.67"
+requests = "*"
 
 [requires]
 python_version = "3.7"
