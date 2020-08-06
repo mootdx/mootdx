@@ -27,7 +27,7 @@ setup(
     name='mootdx',
     version='0.6.2',
     description="通达信数据读取接口.",
-    long_description=readme + '\n\n' + history,
+    long_description=readme,
     author="bopo.wang",
     author_email='ibopo@126.com',
     url='https://github.com/bopo/mootdx',
