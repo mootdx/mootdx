@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "mootdx"
-version = "0.6.3"
+version = "0.6.4"
 description = ""
 authors = ["bopo <ibopo@126.com>"]
 
