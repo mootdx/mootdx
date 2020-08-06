@@ -3,8 +3,8 @@ import logging
 import math
 
 import pandas
-from pytdx.exhq import TdxExHq_API
-from pytdx.hq import TdxHq_API
+from .contrib.pytdx.exhq import TdxExHq_API
+from .contrib.pytdx.hq import TdxHq_API
 from tqdm import tqdm
 
 from mootdx import config
@@ -51,15 +51,15 @@ class StdQuotes(object):
         with self.client.connect(*self.bestip):
             return self.client.get_traffic_stats()
 
-    def quotes(self, symbol=[]):
+    def quotes(self, symbol=None):
         '''
         获取实时日行情数据
 
         :param symbol: 股票代码
         :return: pd.dataFrame or None
         '''
-
-        logger.debug(type(logger))
+        if not symbol:
+            return None
 
         if type(symbol) is str:
             symbol = [symbol]
@@ -188,7 +188,7 @@ class StdQuotes(object):
         with self.client.connect(*self.bestip):
             market = get_stock_market(symbol)
             result = self.client.get_transaction_data(int(market), symbol,
-                                                      int(start), int(offset))
+                                                      int(start), int(market))
 
             return to_data(result)
 

@@ -44,7 +44,8 @@ def setup():
         options = json.load(open(CONF))
         settings.update(options)
     except Exception:
-        logger.error('未找到配置文件 config.json.')
+        logger.error(
+            '未找到配置文件 config.json. 请在命令行运行 "mootdx bestip -w -v" 生成配置文件')
 
     return True if settings else False
 

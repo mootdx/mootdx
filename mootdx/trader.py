@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import logging
 
-from pytdx.trade import TdxTradeApi
+from .contrib.pytdx.trade import TdxTradeApi
 
 logger = logging.getLogger(__name__)
 
