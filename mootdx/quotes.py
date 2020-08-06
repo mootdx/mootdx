@@ -3,8 +3,8 @@ import logging
 import math
 
 import pandas
-from pytdx.exhq import TdxExHq_API
-from pytdx.hq import TdxHq_API
+from .contrib.pytdx.exhq import TdxExHq_API
+from .contrib.pytdx.hq import TdxHq_API
 from tqdm import tqdm
 
 from mootdx import config
