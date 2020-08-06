@@ -29,6 +29,12 @@ help:
 clean: clean-build clean-pyc clean-test ## remove all build, test, coverage and Python artifacts
 
 
+unix:
+	find . "*.txt" | xargs dos2unix
+	find . "*.md" | xargs dos2unix
+	find . "*.py" | xargs dos2unix
+	dos2unix Makefile
+
 clean-build: ## remove build artifacts
 	rm -fr build/
 	rm -fr dist/
