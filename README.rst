@@ -9,7 +9,7 @@
         :target: https://travis-ci.org/bopo/mootdx
 
 .. image:: https://readthedocs.org/projects/mootdx/badge/?version=latest
-        :target: https://mootdx.readthedocs.io/en/latest/?badge=latest
+        :target: https://mootdx.readthedocs.io/zh/latest/?badge=latest
         :alt: Documentation Status
 
 .. image:: https://pyup.io/repos/github/bopo/mootdx/shield.svg
