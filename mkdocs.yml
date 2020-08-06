@@ -1,7 +1,7 @@
 site_name: Mootdx
 site_description: 基于 pytdx 数据接口的二次封装
 
-theme: material
+theme: readthedocs
 
 pages:
   - 快速开始:
