@@ -1,28 +1,78 @@
 repos:
-- repo: local
-  hooks:
-  - id: pylint
-    name: pylint
-    entry: yapf -vv --style=google -i
-    language: system
-    types: [python]
+ #- repo: local
+ #  hooks:
+ #  - id: dos2unix
+ #    name: dos2unix
+ #    entry: dos2unix
+ #    language: system
 
 - repo: https://github.com/pre-commit/pre-commit-hooks
-  rev: v2.5.0  # Use the ref you want to point at
+  rev: v2.5.0
   hooks:
   - id: trailing-whitespace
   - id: end-of-file-fixer
+    exclude: >
+      (?x)^(
+          .bumpversion.cfg
+      )$
   - id: debug-statements
   - id: mixed-line-ending
-    name: Mixed line ending
-    description: Replaces or checks mixed line ending
-    entry: mixed-line-ending
-    language: python
-    types: [text]
+  - id: check-xml
+  - id: check-yaml
+    exclude: >
+      (?x)^(
+          config/alarm/config.yaml|
+          config/alarm/debug.yaml|
+          config/config.yaml
+      )$
   - id: check-ast
     name: Check python ast
     description: Simply check whether the files parse as valid python.
     entry: check-ast
     language: python
     types: [python]
+    exclude: >
+      (?x)^(
+          setup.py
+      )$
   - id: check-merge-conflict
+  - id: check-case-conflict
+
+- repo: https://github.com/macisamuele/language-formatters-pre-commit-hooks
+  rev: v1.5.0
+  hooks:
+  - id: pretty-format-java
+    args: [--autofix]
+  - id: pretty-format-kotlin
+    args: [--autofix]
+  - id: pretty-format-yaml
+    args: [--autofix, --indent, '2']
+    exclude: >
+      (?x)^(
+          config/alarm/config.yaml|
+          config/alarm/debug.yaml|
+          config/config.yaml
+      )$
+
+- repo: https://github.com/radix-ai/auto-smart-commit
+  rev: v1.0.2
+  hooks:
+  - id: auto-smart-commit
+
+- repo: https://github.com/pre-commit/mirrors-yapf
+  rev: v0.30.0
+  hooks:
+  - id: yapf
+
+- repo: https://gitee.com/ibopo/pre-commit-hooks
+  rev: v2.1.0
+  hooks:
+  - id: forbid-crlf
+  - id: remove-crlf
+  - id: forbid-tabs
+  - id: remove-tabs
+
+- repo: https://github.com/shellcheck-py/shellcheck-py
+  rev: v0.7.1.1
+  hooks:
+  - id: shellcheck

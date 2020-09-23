@@ -8,8 +8,8 @@ import tempfile
 from struct import calcsize, unpack
 
 import pandas as pd
-from mootdx.consts import GP_HOSTS
 
+from mootdx.consts import GP_HOSTS
 from .base import BaseFinancial, BaseReader
 
 logger = logging.getLogger(__name__)
@@ -184,7 +184,7 @@ class Financial(BaseFinancial):
                                                   reporthook=reporthook)
             download_file = open(
                 downdir, 'wb') if downdir else tempfile.NamedTemporaryFile(
-                    delete=True)
+                delete=True)
             download_file.write(content)
             download_file.seek(0)
 
@@ -261,6 +261,11 @@ class Financial(BaseFinancial):
         return results
 
     def to_df(self, data):
+        '''
+        转换数据为 pandas DataFrame 格式
+        :param data: 要转换的数据
+        :return: DataFrame
+        '''
         if len(data) == 0:
             return None
 
