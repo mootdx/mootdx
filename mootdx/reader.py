@@ -13,7 +13,6 @@ logger = logging.getLogger(__name__)
 
 # 股票市场
 class Reader(object):
-
     @staticmethod
     def factory(market='std', **kwargs):
         '''
@@ -76,7 +75,6 @@ class ReaderBase(object):
 
 class StdReader(ReaderBase):
     """股票市场"""
-
     def daily(self, symbol=None):
         '''
         获取日线数据
@@ -144,7 +142,6 @@ class StdReader(ReaderBase):
 
 class ExtReader(ReaderBase):
     """扩展市场读取"""
-
     def daily(self, symbol=None):
         '''
         获取日线数据

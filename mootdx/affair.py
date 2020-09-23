@@ -9,7 +9,6 @@ logger = logging.getLogger(__name__)
 
 
 class Affair(object):
-
     @staticmethod
     def parse(downdir='.', filename=None, *args, **kwargs):
         '''

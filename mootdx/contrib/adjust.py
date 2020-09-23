@@ -11,9 +11,8 @@ import requests
 def get_k_adjust_year(symbol=None, year=None, recover='00'):
     headers = {
         'User-Agent':
-            'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.135 Safari/537.36',
-        'Upgrade-Insecure-Requests':
-            '1'
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.135 Safari/537.36',
+        'Upgrade-Insecure-Requests': '1'
     }
 
     url = f'http://d.10jqka.com.cn/v2/line/hs_{symbol}/{recover}/{year}.js'
@@ -28,8 +27,12 @@ def get_k_adjust_year(symbol=None, year=None, recover='00'):
     data = text['data'].split(';')
     data = [item.split(',')[:8] for item in data]
 
-    columns = ['date', 'open', 'high', 'low', 'close', 'volume', 'amount', 'factor']
-    return pd.DataFrame(data, index=list(np.asarray(data).T[0]), columns=columns)
+    columns = [
+        'date', 'open', 'high', 'low', 'close', 'volume', 'amount', 'factor'
+    ]
+    return pd.DataFrame(data,
+                        index=list(np.asarray(data).T[0]),
+                        columns=columns)
 
 
 if __name__ == '__main__':

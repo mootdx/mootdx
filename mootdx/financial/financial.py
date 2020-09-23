@@ -16,7 +16,6 @@ logger = logging.getLogger(__name__)
 
 
 class FinancialReader(BaseReader):
-
     def to_data(self, filename, **kwargs):
         """
         读取历史财务数据文件，并返回pandas结果 ， 类似gpcw20171231.zip格式，具体字段含义参考
@@ -184,7 +183,7 @@ class Financial(BaseFinancial):
                                                   reporthook=reporthook)
             download_file = open(
                 downdir, 'wb') if downdir else tempfile.NamedTemporaryFile(
-                delete=True)
+                    delete=True)
             download_file.write(content)
             download_file.seek(0)
 

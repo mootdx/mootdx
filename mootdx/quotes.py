@@ -17,7 +17,6 @@ config.setup()
 
 
 class Quotes(object):
-
     @staticmethod
     def factory(market='std', **kwargs):
         '''

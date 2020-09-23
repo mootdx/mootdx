@@ -37,7 +37,9 @@ setup(
     license="MIT license",
     zip_safe=False,
     keywords='mootdx',
-    entry_points={'console_scripts': ['mootdx = mootdx.__main__:execute',]},
+    entry_points={'console_scripts': [
+        'mootdx = mootdx.__main__:execute',
+    ]},
     classifiers=[
         'Development Status :: 2 - Pre-Alpha',
         'Intended Audience :: Developers',

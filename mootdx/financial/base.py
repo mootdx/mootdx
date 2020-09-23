@@ -12,7 +12,6 @@ def reporthook(downloaded, total_size):
 
 
 class BaseReader(object):
-
     def unpack(self, format, data):
         '''
         解压文件
@@ -37,7 +36,6 @@ class BaseReader(object):
 
 
 class BaseFinancial:
-
     def __init__(self, mode="http"):
         self.mode = mode
 

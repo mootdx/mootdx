@@ -103,7 +103,10 @@ def bestip(limit, write, verbose):
     default = CONFIG
 
     for index in ['HQ', 'EX', 'GP']:
-        result = Server(index=index, limit=limit, console=True, verbose=verbose)
+        result = Server(index=index,
+                        limit=limit,
+                        console=True,
+                        verbose=verbose)
         if result:
             default['BESTIP'][index] = result[0]
         else:

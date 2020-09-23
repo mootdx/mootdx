@@ -163,7 +163,6 @@ def to_file(df, filename=None):
 
 class TqdmUpTo(tqdm):
     """Provides `update_to(n)` which uses `tqdm.update(delta_n)`."""
-
     def update_to(self, downloaded=0, total_size=None):
         """
         b  : int, optional
