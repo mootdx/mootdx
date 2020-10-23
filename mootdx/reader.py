@@ -4,9 +4,8 @@ import os
 
 from mootdx.consts import TYPE_GROUP
 from mootdx.utils import get_stock_market
-from .contrib.pytdx.reader import (BlockReader, CustomerBlockReader,
-                                   TdxDailyBarReader, TdxExHqDailyBarReader,
-                                   TdxLCMinBarReader)
+from pytdx.reader import (BlockReader, CustomerBlockReader, TdxDailyBarReader,
+                          TdxExHqDailyBarReader, TdxLCMinBarReader)
 
 logger = logging.getLogger(__name__)
 
