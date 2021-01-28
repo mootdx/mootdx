@@ -137,10 +137,10 @@ class Financial(BaseFinancial):
         if not filename:
             raise Exception("Param filename is not set")
 
-        logger.debug("http://down.tdx.com.cn:8001/fin/{}".format(filename))
+        logger.debug(f"http://down.tdx.com.cn:8001/fin/{filename}")
 
-        return "http://data.yutiansut.com/{}".format(filename)
-        # return "http://down.tdx.com.cn:8001/fin/{}".format(filename)
+        # return "http://data.yutiansut.com/{}".format(filename)
+        return "http://down.tdx.com.cn:8001/fin/{}".format(filename)
 
     def content(self,
                 reporthook=None,

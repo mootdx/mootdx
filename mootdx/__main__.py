@@ -37,8 +37,7 @@ def cli(ctx, verbose):
               default='std',
               help='证券市场, 默认 std (std: 标准股票市场, ext: 扩展市场).')
 def quotes(symbol, action, market, output):
-    client = Quotes.factory(market=market, multithread=True,
-                            heartbeat=True)  # 标准市场
+    client = Quotes.factory(market=market, multithread=True, heartbeat=True)
 
     try:
         action = 'bars' if 'daily' else action
@@ -107,6 +106,7 @@ def bestip(limit, write, verbose):
                         limit=limit,
                         console=True,
                         verbose=verbose)
+
         if result:
             default['BESTIP'][index] = result[0]
         else:
@@ -230,9 +230,9 @@ def bundle(symbol, action, market, output, extension):
     print('[√] 下载文件到 "{}"'.format(os.path.realpath(output)))
 
 
-def execute():
+def entry():
     cli(obj={})
 
 
 if __name__ == "__main__":
-    execute()
+    entry()
