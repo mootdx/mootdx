@@ -59,11 +59,10 @@ def Server(index=None, limit=5, console=False, verbose=False):
             proxy['time'] = (time.perf_counter() - start) * 1000
 
             server.append(proxy)
-            logger.info("{}:{} 验证通过，响应时间：{:5.2f} ms.".format(
-                proxy.get('addr'), proxy.get('port'), proxy.get('time')))
+            logger.info(
+                "{addr}:{port} 验证通过，响应时间：{time:5.2f} ms.".format(**proxy))
         except Exception:
-            logger.warning("{},{} 验证失败.".format(proxy.get('addr'),
-                                                proxy.get('port')))
+            logger.warning("{addr},{port} 验证失败.".format(**proxy))
 
     # 结果按响应时间从小到大排序
     server.sort(key=lambda item: item['time'])

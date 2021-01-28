@@ -38,7 +38,7 @@ setup(
     zip_safe=False,
     keywords='mootdx',
     entry_points={'console_scripts': [
-        'mootdx = mootdx.__main__:execute',
+        'mootdx=mootdx.__main__:entry',
     ]},
     classifiers=[
         'Development Status :: 2 - Pre-Alpha',
