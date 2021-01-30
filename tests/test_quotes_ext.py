@@ -52,6 +52,7 @@ class TestExtQuotes(unittest.TestCase):
 
     def test_transaction(self):
         data = self.client.transaction(market=47, symbol='IFL0')
+        # data = self.client.transaction(market=31, symbol='00020')
         self.assertIsNotNone(data)
 
     def test_transactions(self):

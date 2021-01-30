@@ -425,8 +425,7 @@ class ExtQuotes(object):
             result = []
 
             for page in tqdm(range(0, pages)):
-                result += self.client.get_instrument_info(
-                    page * 100, (page + 1) * 100)
+                result += self.client.get_instrument_info(page * 100, 100)
 
             return to_data(result)
 
@@ -471,7 +470,7 @@ class ExtQuotes(object):
                 market, symbol, date)
             return to_data(result)
 
-    def bars(self, frequency='', market='', symbol='', start='', offset=0):
+    def bars(self, frequency='', market='', symbol='', start=0, offset=100):
         '''
         查询k线数据
         参数： K线周期， 市场ID， 证券代码，起始位置， 数量
@@ -485,11 +484,13 @@ class ExtQuotes(object):
         '''
         market, symbol = self.validate(market, symbol)
         with self.client.connect(*self.bestip):
-            result = self.client.get_instrument_bars(frequency=frequency,
+            result = self.client.get_instrument_bars(category=frequency,
                                                      market=market,
                                                      code=symbol,
                                                      start=start,
                                                      count=offset)
+
+            # get_instrument_bars(self, category, market, code, start=0, count=700):
             return to_data(result)
 
     def transaction(self, market=None, symbol='', start=0, offset=1800):
