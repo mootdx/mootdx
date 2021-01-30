@@ -41,19 +41,29 @@ class TestExtQuotes(unittest.TestCase):
         self.assertIsNotNone(data)
 
     def test_minutes(self):
-        data = self.client.minutes(market=47, symbol='IF1709')
+        data = self.client.minutes(market=74, symbol='AAPL', date=20190811)
         self.assertIsNotNone(data)
+
+        data = self.client.minutes(market=47, symbol='IF9')
+        self.assertIsNone(data)
 
     def test_bars(self):
         data = self.client.bars(market=31,
                                 frequency=KLINE_DAILY,
                                 symbol='00020')
+        self.assertIsNone(data)
+
+        data = self.client.bars(market=31,
+                                frequency=KLINE_DAILY,
+                                symbol='00001')
         self.assertIsNotNone(data)
 
     def test_transaction(self):
         data = self.client.transaction(market=47, symbol='IFL0')
-        # data = self.client.transaction(market=31, symbol='00020')
         self.assertIsNotNone(data)
+
+        data = self.client.transaction(market=31, symbol='00020')
+        self.assertIsNone(data)
 
     def test_transactions(self):
         data = self.client.transactions(market=47,
