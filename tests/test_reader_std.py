@@ -38,10 +38,10 @@ class TestReader(unittest.TestCase):
         print(result)
         self.assertTrue(result is not None)
 
-    def test_block_custom(self):
-        result = self.reader.block(symbol='block_zs', custom=True)
-        print(result)
-        self.assertTrue(result is not None)
+    # def test_block_custom(self):
+    #     result = self.reader.block(symbol='block_zs', custom=True)
+    #     print(result)
+    #     self.assertTrue(result is not None)
 
 
 if __name__ == '__main__':

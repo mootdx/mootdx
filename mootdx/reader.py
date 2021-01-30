@@ -123,16 +123,16 @@ class StdReader(ReaderBase):
         if custom:
             reader = CustomerBlockReader()
             vipdoc = os.path.join(self.tdxdir, 'T0002', 'blocknew',
-                                  '{}'.format(symbol))
+                                  f'{symbol}.dat')
         else:
             reader = BlockReader()
             vipdoc = os.path.join(self.tdxdir, 'T0002', 'hq_cache',
-                                  '{}.dat'.format(symbol))
+                                  f'{symbol}.dat')
 
         fmt = TYPE_GROUP if group else None
 
         if os.path.exists(vipdoc):
-            return reader.get_df(vipdoc, format)
+            return reader.get_df(vipdoc, fmt)
         else:
             logger.error('未找到所需的文件: {}'.format(vipdoc))
 
