@@ -11,6 +11,8 @@ import pandas as pd
 
 from mootdx.consts import GP_HOSTS
 from .base import BaseFinancial, BaseReader
+from mootdx import config
+from mootdx.config import settings
 
 logger = logging.getLogger(__name__)
 
@@ -75,10 +77,16 @@ class FinancialList(BaseFinancial):
         '''
         from pytdx.hq import TdxHq_API
 
-        api = TdxHq_API()
+        api = TdxHq_API(**kwargs)
         api.need_setup = False
 
-        with api.connect(ip=GP_HOSTS[0]):
+        try:
+            default = settings.get('SERVER').get('GP')[0][1:]
+            bestip = config.get('BESTIP').get('GP', default)
+        except ValueError:
+            bestip = ("106.14.95.149", 7727)
+
+        with api.connect(*bestip):
             content = api.get_report_file_by_size("tdxfin/gpcw.txt")
 
             if downdir is None:
@@ -172,13 +180,13 @@ class Financial(BaseFinancial):
         api.need_setup = False
 
         try:
-            config = json.loads('config.josn')
-            bestip = config.get('hosts').get('gp')
-        except ValueError as e:
-            raise e
+            default = settings.get('SERVER').get('GP')[0][1:]
+            bestip = config.get('BESTIP').get('GP', default)
+        except ValueError:
+            bestip = ("106.14.95.149", 7727)
 
         with api.connect(*bestip):
-            content = api.get_report_file_by_size("tdxfin/" + filename,
+            content = api.get_report_file_by_size(f"tdxfin/{filename}",
                                                   filesize=filesize,
                                                   reporthook=reporthook)
             download_file = open(

@@ -36,7 +36,7 @@ class BaseReader(object):
 
 
 class BaseFinancial:
-    def __init__(self, mode="http"):
+    def __init__(self, mode="content"):
         self.mode = mode
 
     def fetch_and_parse(self,
