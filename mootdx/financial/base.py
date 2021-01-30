@@ -113,7 +113,15 @@ class BaseFinancial:
             "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.100 Safari/537.36"
         )
 
-        res = urlopen(request)
+        print(url)
+        try:
+            res = urlopen(request)
+        except Exception as e:
+            raise e
+        else:
+            pass
+        finally:
+            pass
 
         if res.getheader('Content-Length') is not None:
             total_size = int(res.getheader('Content-Length').strip())

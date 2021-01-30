@@ -51,9 +51,9 @@ class FinancialList(BaseFinancial):
         :param kwargs:
         :return:
         '''
-        # return "https://gitee.com/yutiansut/QADATA/raw/master/financial/content.txt"
+        return "https://gitee.com/yutiansut/QADATA/raw/master/financial/content.txt"
         # return 'http://down.tdx.com.cn:8001/fin/gpcw.txt'
-        return 'http://data.yutiansut.com/content.txt'
+        # return 'http://data.yutiansut.com/content.txt'
 
     def content(self,
                 reporthook=None,
@@ -137,7 +137,7 @@ class Financial(BaseFinancial):
         if not filename:
             raise Exception("Param filename is not set")
 
-        logger.debug(f"http://down.tdx.com.cn:8001/fin/{filename}")
+        # logger.debug(f"http://down.tdx.com.cn:8001/fin/{filename}")
 
         # return "http://data.yutiansut.com/{}".format(filename)
         return "http://down.tdx.com.cn:8001/fin/{}".format(filename)
