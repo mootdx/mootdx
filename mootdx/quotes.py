@@ -203,13 +203,14 @@ class StdQuotes(object):
         :param date: 日期
         :return: pd.dataFrame or None
         '''
+        # get_history_transaction_data(self, market, code, start, count, date):
         with self.client.connect(*self.bestip):
             market = get_stock_market(symbol, string=False)
             result = self.client.get_history_transaction_data(market=market,
                                                               code=symbol,
                                                               start=start,
                                                               count=offset,
-                                                              date=date)
+                                                              date=int(date))
 
             return to_data(result)
 
@@ -302,7 +303,7 @@ class StdQuotes(object):
         '''
         with self.client.connect(*self.bestip):
             result = self.client.get_k_data(symbol, begin, end)
-            return to_data(result)
+            return result
 
     def index(self,
               symbol='000001',
@@ -531,7 +532,7 @@ class ExtQuotes(object):
         with self.client.connect(*self.bestip):
             result = self.client.get_history_transaction_data(market=market,
                                                               code=symbol,
-                                                              date=date,
+                                                              date=int(date),
                                                               start=start,
                                                               count=offset)
             return to_data(result)
