@@ -114,6 +114,9 @@ def to_data(v):
     :param v: mixed
     :return: pd.DataFrame
     '''
+    if not v:
+        return None
+
     if isinstance(v, DataFrame):
         return v
     elif isinstance(v, list):

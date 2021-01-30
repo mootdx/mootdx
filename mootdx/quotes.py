@@ -464,6 +464,7 @@ class ExtQuotes(object):
         :param date:
         :return:
         '''
+        # get_history_minute_time_data(self, market, code, date):
         market, symbol = self.validate(market, symbol)
         with self.client.connect(*self.bestip):
             result = self.client.get_history_minute_time_data(
@@ -490,7 +491,6 @@ class ExtQuotes(object):
                                                      start=start,
                                                      count=offset)
 
-            # get_instrument_bars(self, category, market, code, start=0, count=700):
             return to_data(result)
 
     def transaction(self, market=None, symbol='', start=0, offset=1800):
