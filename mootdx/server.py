@@ -2,9 +2,9 @@
 import logging
 import socket
 import time
+from prettytable import PrettyTable
 
 from mootdx.consts import EX_HOSTS, GP_HOSTS, HQ_HOSTS
-from prettytable import PrettyTable
 
 logger = logging.getLogger(__name__)
 result = []
@@ -61,9 +61,9 @@ def Server(index=None, limit=5, console=False, verbose=False):
             server.append(proxy)
             logger.info("{}:{} 验证通过，响应时间：{:5.2f} ms.".format(
                 proxy.get('addr'), proxy.get('port'), proxy.get('time')))
-        except Exception:
-            logger.warning("{},{} 验证失败.".format(proxy.get('addr'),
-                                                proxy.get('port')))
+        except Exception as e:
+            logger.debug(e)
+            logger.warning("{},{} 验证失败.".format(proxy.get('addr'), proxy.get('port')))
 
     # 结果按响应时间从小到大排序
     server.sort(key=lambda item: item['time'])

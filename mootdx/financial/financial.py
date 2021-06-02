@@ -1,30 +1,26 @@
 # -*- coding: utf-8 -*-
-import json
-import logging
 import os
 import random
 import shutil
 import tempfile
+from abc import ABC
 from struct import calcsize, unpack
 
 import pandas as pd
 
-from mootdx.consts import GP_HOSTS
-from .base import BaseFinancial, BaseReader
 from mootdx import config
 from mootdx.config import settings
+from .base import BaseFinancial, BaseReader
 
-logger = logging.getLogger(__name__)
 
-
-class FinancialReader(BaseReader):
-    def to_data(self, filename, **kwargs):
+class FinancialReader(BaseReader, ABC):
+    @staticmethod
+    def to_data(filename):
         """
         读取历史财务数据文件，并返回pandas结果 ， 类似gpcw20171231.zip格式，具体字段含义参考
 
         https://github.com/rainx/pytdx/issues/133
 
-        :param **kwargs:
         :param filename: 数据文件地址， 数据文件类型可以为 .zip 文件，也可以为解压后的 .dat, 可以不写扩展名. 程序自动识别
         :return: pandas DataFrame 格式的历史财务数据
         """
@@ -33,8 +29,6 @@ class FinancialReader(BaseReader):
 
         with open(filename, 'rb') as fp:
             data = crawler.parse(download_file=fp)
-
-        # logger.debug(data)
 
         return crawler.to_df(data)
 
@@ -46,35 +40,35 @@ class FinancialList(BaseFinancial):
     #     super().__init__(*args, **kwargs)
 
     def url(self, *args, **kwargs):
-        '''
+        """
         获取采集数据的 URL
 
         :param args:
         :param kwargs:
         :return:
-        '''
+        """
         return "https://gitee.com/yutiansut/QADATA/raw/master/financial/content.txt"
         # return 'http://down.tdx.com.cn:8001/fin/gpcw.txt'
         # return 'http://data.yutiansut.com/content.txt'
 
     def content(self,
-                reporthook=None,
+                report_hook=None,
                 downdir=None,
                 proxies=None,
-                chunksize=1024 * 50,
+                chunk_size=1024 * 50,
                 *args,
                 **kwargs):
-        '''
+        """
         解析财务文件
 
-        :param reporthook: 钩子回调函数
+        :param report_hook: 钩子回调函数
         :param downdir: 要解析的文件夹
         :param proxies:
-        :param chunksize:
+        :param chunk_size:
         :param args:
         :param kwargs:
         :return:
-        '''
+        """
         from pytdx.hq import TdxHq_API
 
         api = TdxHq_API(**kwargs)
@@ -100,14 +94,14 @@ class FinancialList(BaseFinancial):
             return download_file
 
     def parse(self, download_file, *args, **kwargs):
-        '''
+        """
         解析财务文件
 
         :param download_file:
         :param args:
         :param kwargs:
         :return:
-        '''
+        """
         content = download_file.read()
         content = content.decode("utf-8")
 
@@ -133,41 +127,41 @@ class Financial(BaseFinancial):
         super().__init__()
 
     def url(self, *args, **kwargs):
-        '''
+        """
         获取采集数据的 URL
 
         :param args:
         :param kwargs:
         :return:
-        '''
+        """
         filename = kwargs.get('filename')
 
         if not filename:
             raise Exception("Param filename is not set")
 
-        # logger.debug(f"http://down.tdx.com.cn:8001/fin/{filename}")
+        # log.debug(f"http://down.tdx.com.cn:8001/fin/{filename}")
 
         # return "http://data.yutiansut.com/{}".format(filename)
         return "http://down.tdx.com.cn:8001/fin/{}".format(filename)
 
     def content(self,
-                reporthook=None,
+                report_hook=None,
                 downdir=None,
                 proxies=None,
-                chunksize=1024 * 50,
+                chunk_size=1024 * 50,
                 *args,
                 **kwargs):
-        '''
+        """
         解析财务文件
 
-        :param reporthook: 钩子回调函数
+        :param report_hook: 钩子回调函数
         :param downdir: 要解析的文件夹
         :param proxies:
-        :param chunksize:
+        :param chunk_size:
         :param args:
         :param kwargs:
         :return:
-        '''
+        """
         filename = kwargs.get('filename')
         filesize = kwargs.get("filesize") if kwargs.get("filesize") else 0
 
@@ -188,24 +182,24 @@ class Financial(BaseFinancial):
         with api.connect(*bestip):
             content = api.get_report_file_by_size(f"tdxfin/{filename}",
                                                   filesize=filesize,
-                                                  reporthook=reporthook)
+                                                  reporthook=report_hook)
             download_file = open(
                 downdir, 'wb') if downdir else tempfile.NamedTemporaryFile(
-                    delete=True)
+                delete=True)
             download_file.write(content)
             download_file.seek(0)
 
             return download_file
 
     def parse(self, download_file, *args, **kwargs):
-        '''
+        """
         解析财务文件
 
         :param download_file: 要解析的文件
         :param args:
         :param kwargs:
         :return:
-        '''
+        """
 
         header_pack_format = '<1hI1H3L'
         tmpdir = tempfile.gettempdir()
@@ -268,11 +262,11 @@ class Financial(BaseFinancial):
         return results
 
     def to_df(self, data):
-        '''
+        """
         转换数据为 pandas DataFrame 格式
         :param data: 要转换的数据
         :return: DataFrame
-        '''
+        """
         if len(data) == 0:
             return None
 

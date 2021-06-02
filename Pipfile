@@ -16,6 +16,7 @@ coloredlogs = ">=10.0"
 pandas = ">=0.23.3"
 pytdx = ">=1.67"
 requests = "*"
+loguru = "*"
 httpx = "*"
 click = ">=6.7"
 
