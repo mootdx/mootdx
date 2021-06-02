@@ -17,32 +17,33 @@ class TestReader(unittest.TestCase):
         self.reader = None
 
     def test_daily(self):
-        self.assertTrue(self.reader.daily(symbol='600000') is not None)
+        self.assertFalse(self.reader.daily(symbol='600000').empty)
 
     # def test_block(self):
-    #     self.assertTrue(self.reader.block(symbol='block_fg', group=True) is not None)
+    #     self.assertFalse(self.reader.block(symbol='block_fg', group=True).empty)
 
     # def test_custom_block(self):
-    # self.assertTrue(self.reader.block(symbol='blocknew', custom=True, group=True) is not None)
+    # self.assertFalse(self.reader.block(symbol='blocknew', custom=True, group=True).empty)
 
     def test_minute1(self):
-        self.assertTrue(
-            self.reader.minute(symbol='600000', suffix='1') is not None)
+        result = self.reader.minute(symbol='600000', suffix='1')
+        print(result)
+        self.assertFalse(result.empty)
 
     def test_minute5(self):
         result = self.reader.minute(symbol='600000', suffix='5')
         print(result)
-        self.assertTrue(result is not None)
+        self.assertFalse(result.empty)
 
     def test_block(self):
         result = self.reader.block(symbol='block_zs', group=True)
         print(result)
-        self.assertTrue(result is not None)
+        self.assertFalse(result.empty)
 
     # def test_block_custom(self):
     #     result = self.reader.block(symbol='block_zs', custom=True)
     #     print(result)
-    #     self.assertTrue(result is not None)
+    #     self.assertFalse(result.empty)
 
 
 if __name__ == '__main__':

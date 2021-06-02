@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-import unittest,logging
+import logging
+import unittest
 
 from mootdx.consts import KLINE_DAILY
 from mootdx.quotes import Quotes
@@ -50,9 +51,7 @@ class TestExtQuotes(unittest.TestCase):
         self.assertIsNone(data)
 
     def test_bars(self):
-        data = self.client.bars(market=31,
-                                frequency=KLINE_DAILY,
-                                symbol='00020')
+        data = self.client.bars(market=31, frequency=KLINE_DAILY, symbol='00020')
         self.assertFalse(data.empty)
 
     def test_transaction(self):
@@ -63,10 +62,7 @@ class TestExtQuotes(unittest.TestCase):
         self.assertIsNone(data)
 
     def test_transactions(self):
-        data = self.client.transactions(market=47,
-                                        symbol='IFL0',
-                                        date='20170810',
-                                        start=1800)
+        data = self.client.transactions(market=47, symbol='IFL0', date='20170810', start=1800)
         self.assertFalse(data.empty)
 
 
