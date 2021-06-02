@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
-import unittest
+import unittest,logging
 
 from mootdx.consts import KLINE_DAILY
 from mootdx.quotes import Quotes
+
+logging.basicConfig(level=logging.DEBUG)
 
 
 class TestExtQuotes(unittest.TestCase):
@@ -16,50 +18,50 @@ class TestExtQuotes(unittest.TestCase):
 
     def test_markets(self):
         data = self.client.markets()
-        self.assertIsNotNone(data)
+        self.assertFalse(data.empty)
 
     def test_instrument(self):
         data = self.client.instrument(0, 100)
-        self.assertIsNotNone(data)
+        self.assertFalse(data.empty)
 
     # def test_instruments(self):
     #     data = self.client.instruments()
-    #     self.assertIsNotNone(data)
+    #     self.assertFalse(data.empty)
 
     def test_quote(self):
         data = self.client.quote(market=42, symbol='IMCI')
-        self.assertIsNotNone(data)
+        self.assertFalse(data.empty)
 
         data = self.client.quote(symbol='42#IMCI')
-        self.assertIsNotNone(data)
+        self.assertFalse(data.empty)
 
     def test_minute(self):
         data = self.client.minute(market=42, symbol='IMCI')
-        self.assertIsNotNone(data)
+        self.assertFalse(data.empty)
 
         data = self.client.minute(symbol='42#IMCI')
-        self.assertIsNotNone(data)
+        self.assertFalse(data.empty)
 
     def test_minutes(self):
         data = self.client.minutes(market=47, symbol='IF1709')
-        self.assertIsNotNone(data)
+        self.assertFalse(data.empty)
 
     def test_bars(self):
         data = self.client.bars(market=31,
                                 frequency=KLINE_DAILY,
                                 symbol='00020')
-        self.assertIsNotNone(data)
+        self.assertFalse(data.empty)
 
     def test_transaction(self):
         data = self.client.transaction(market=47, symbol='IFL0')
-        self.assertIsNotNone(data)
+        self.assertFalse(data.empty)
 
     def test_transactions(self):
         data = self.client.transactions(market=47,
                                         symbol='IFL0',
                                         date='20170810',
                                         start=1800)
-        self.assertIsNotNone(data)
+        self.assertFalse(data.empty)
 
 
 if __name__ == '__main__':
