@@ -1,17 +1,22 @@
 [[source]]
 name = "pypi"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
+url = "https://mirrors.aliyun.com/pypi/simple/"
 verify_ssl = true
 
 [dev-packages]
+pipenv_to_requirements = "*"
+gitchangelog = "*"
+bumpversion = "*"
+pytest = "*"
+pystache = "*"
 
 [packages]
-click = ">=6.7"
+prettytable = ">=0.7.2"
 coloredlogs = ">=10.0"
 pandas = ">=0.23.3"
-prettytable = ">=0.7.2"
 pytdx = ">=1.67"
 requests = "*"
+click = ">=6.7"
 
 [requires]
 python_version = "3.8"
