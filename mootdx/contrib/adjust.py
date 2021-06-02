@@ -27,9 +27,8 @@ def get_k_adjust_year(symbol=None, year=None, recover='00'):
     data = text['data'].split(';')
     data = [item.split(',')[:8] for item in data]
 
-    columns = [
-        'date', 'open', 'high', 'low', 'close', 'volume', 'amount', 'factor'
-    ]
+    columns = [ 'date', 'open', 'high', 'low', 'close', 'volume', 'amount', 'factor' ]
+    
     return pd.DataFrame(data,
                         index=list(np.asarray(data).T[0]),
                         columns=columns)
