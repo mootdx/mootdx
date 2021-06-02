@@ -197,13 +197,14 @@ class StdQuotes(object):
         :param date: 日期
         :return: pd.dataFrame or None
         '''
+        # get_history_transaction_data(self, market, code, start, count, date):
         with self.client.connect(*self.bestip):
             market = get_stock_market(symbol, string=False)
             result = self.client.get_history_transaction_data(market=market,
                                                               code=symbol,
                                                               start=start,
                                                               count=offset,
-                                                              date=date)
+                                                              date=int(date))
 
             return to_data(result)
 
@@ -296,7 +297,7 @@ class StdQuotes(object):
         '''
         with self.client.connect(*self.bestip):
             result = self.client.get_k_data(symbol, begin, end)
-            return to_data(result)
+            return result
 
     def index(self,
               symbol='000001',
@@ -419,8 +420,7 @@ class ExtQuotes(object):
             result = []
 
             for page in tqdm(range(0, pages)):
-                result += self.client.get_instrument_info(
-                    page * 100, (page + 1) * 100)
+                result += self.client.get_instrument_info(page * 100, 100)
 
             return to_data(result)
 
@@ -459,13 +459,14 @@ class ExtQuotes(object):
         :param date:
         :return:
         '''
+        # get_history_minute_time_data(self, market, code, date):
         market, symbol = self.validate(market, symbol)
         with self.client.connect(*self.bestip):
             result = self.client.get_history_minute_time_data(
                 market, symbol, date)
             return to_data(result)
 
-    def bars(self, frequency='', market='', symbol='', start='', offset=0):
+    def bars(self, frequency='', market='', symbol='', start=0, offset=100):
         '''
         查询k线数据
         参数： K线周期， 市场ID， 证券代码，起始位置， 数量
@@ -479,11 +480,12 @@ class ExtQuotes(object):
         '''
         market, symbol = self.validate(market, symbol)
         with self.client.connect(*self.bestip):
-            result = self.client.get_instrument_bars(frequency=frequency,
+            result = self.client.get_instrument_bars(category=frequency,
                                                      market=market,
                                                      code=symbol,
                                                      start=start,
                                                      count=offset)
+
             return to_data(result)
 
     def transaction(self, market=None, symbol='', start=0, offset=1800):
@@ -524,7 +526,7 @@ class ExtQuotes(object):
         with self.client.connect(*self.bestip):
             result = self.client.get_history_transaction_data(market=market,
                                                               code=symbol,
-                                                              date=date,
+                                                              date=int(date),
                                                               start=start,
                                                               count=offset)
             return to_data(result)

@@ -129,7 +129,7 @@ class StdReader(ReaderBase):
         fmt = TYPE_GROUP if group else None
 
         if os.path.exists(vipdoc):
-            return reader.get_df(vipdoc, format)
+            return reader.get_df(vipdoc, fmt)
         else:
             logger.error('未找到所需的文件: {}'.format(vipdoc))
 
