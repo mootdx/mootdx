@@ -112,6 +112,8 @@ def to_data(v):
     :param v: mixed
     :return: pd.DataFrame
     """
+    logger.info(v)
+
     if not v:
         return None
 

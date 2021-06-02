@@ -165,7 +165,7 @@ class StdQuotes(object):
 
             return to_data(result)
 
-    def transaction(self, symbol='', start=0):
+    def transaction(self, symbol='', start=0, *args, **kwargs):
         """
         查询分笔成交
 
