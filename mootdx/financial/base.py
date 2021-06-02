@@ -140,13 +140,7 @@ class BaseFinancial:
     def url(self, *args, **kwargs):
         raise NotImplementedError("will impl in subclass")
 
-    def content(self,
-                reporthook=None,
-                downdir=None,
-                proxies=None,
-                chunksize=1024 * 50,
-                *args,
-                **kwargs):
+    def content(self, reporthook=None, downdir=None, proxies=None, chunksize=1024 * 50, *args, **kwargs):
         raise NotImplementedError("will impl in subclass")
 
     def parse(self, download_file, *args, **kwargs):
