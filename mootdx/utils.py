@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 import logging
 import os
-import platform
 from struct import *
+from unipath import Path
 
 import pandas as pd
 from pandas import DataFrame
@@ -20,20 +20,19 @@ def get_stock_markets(symbols=None):
 
     if isinstance(symbols, list):
         for symbol in symbols:
-            results.append([
-                get_stock_market(symbol, string=False),
-                symbol.strip('sh').strip('sz')
-            ])
+            results.append([get_stock_market(symbol, string=False), symbol.strip('sh').strip('sz')])
 
     return results
 
 
 def get_stock_market(symbol='', string=False):
-    """判断股票ID对应的证券市场
-    匹配规则
+    """
+    判断股票ID对应的证券市场匹配规则
+
     ['50', '51', '60', '90', '110'] 为 sh
     ['00', '12'，'13', '18', '15', '16', '18', '20', '30', '39', '115'] 为 sz
     ['5', '6', '9'] 开头的为 sh， 其余为 sz
+    
     :param string:
     :param symbol:股票ID, 若以 'sz', 'sh' 开头直接返回对应类型，否则使用内置规则判断
     :return 'sh' or 'sz'"""
@@ -44,12 +43,10 @@ def get_stock_market(symbol='', string=False):
     if symbol.startswith(('sh', 'sz')):
         market = symbol[:2]
 
-    elif symbol.startswith(
-            ('50', '51', '60', '90', '110', '113', '132', '204')):
+    elif symbol.startswith(('50', '51', '60', '90', '110', '113', '132', '204')):
         market = 'sh'
 
-    elif symbol.startswith(('00', '12', '13', '18', '15', '16', '18', '20',
-                            '30', '39', '115', '1318')):
+    elif symbol.startswith(('00', '12', '13', '18', '15', '16', '18', '20', '30', '39', '115', '1318')):
         market = 'sz'
 
     elif symbol.startswith(('5', '6', '9', '7')):
@@ -98,8 +95,10 @@ def md5sum(downfile):
     import hashlib
     md5_l = hashlib.md5()
 
-    with open(downfile, mode="rb") as fp:
-        by = fp.read()
+    # with open(downfile, mode="rb") as fp:
+    #     by = fp.read()
+
+    by = Path(downfile, 'rb').read_file()
 
     md5_l.update(by)
     ret = md5_l.hexdigest()
@@ -121,7 +120,7 @@ def to_data(v):
     elif isinstance(v, dict):
         return pd.DataFrame(data=[v])
     elif v is None:
-        return None
+        return pd.DataFrame(data=[])
     else:
         return pd.DataFrame(data=[{'value': v}])
 
@@ -176,19 +175,12 @@ class TqdmUpTo(tqdm):
         if total_size is not None:
             self.total = total_size
 
-        # self.ascii = True
         self.update(downloaded - self.n)  # will also set self.n = b * bsize
 
 
 def get_config_path(config='config.json'):
-    if platform.system() == 'Windows':
-        filename = os.path.join(os.path.expanduser('~'), 'mootdx', config)
-    else:
-        filename = os.path.join(os.path.expanduser('~'), '.mootdx', config)
+    filename = os.path.join(os.path.expanduser('~'), '.mootdx', config)
+    pathname = os.path.dirname(filename)
 
-    path_name = os.path.dirname(filename)
-
-    if not os.path.isdir(path_name):
-        os.makedirs(path_name)
-
+    Path(pathname).mkdir(parents=True)
     return filename

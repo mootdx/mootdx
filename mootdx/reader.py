@@ -54,8 +54,7 @@ class ReaderBase(object):
         :param ext:
         :return: pd.dataFrame or None
         '''
-        market = get_stock_market(symbol, True) if len(
-            symbol.split('#')) == 1 else 'ds'
+        market = get_stock_market(symbol, True) if len(symbol.split('#')) == 1 else 'ds'
         prefix = market if len(symbol.split('#')) == 1 else ''
         ext = ext if isinstance(ext, list) else [ext]
 
@@ -122,12 +121,10 @@ class StdReader(ReaderBase):
         '''
         if custom:
             reader = CustomerBlockReader()
-            vipdoc = os.path.join(self.tdxdir, 'T0002', 'blocknew',
-                                  '{}'.format(symbol))
+            vipdoc = os.path.join(self.tdxdir, 'T0002', 'blocknew', '{}'.format(symbol))
         else:
             reader = BlockReader()
-            vipdoc = os.path.join(self.tdxdir, 'T0002', 'hq_cache',
-                                  '{}.dat'.format(symbol))
+            vipdoc = os.path.join(self.tdxdir, 'T0002', 'hq_cache', '{}.dat'.format(symbol))
 
         fmt = TYPE_GROUP if group else None
 
