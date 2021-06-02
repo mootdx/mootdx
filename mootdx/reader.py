@@ -98,8 +98,7 @@ class ReaderBase(object):
         ext = ext if isinstance(ext, list) else [ext]
 
         for t in ext:
-            vipdoc = 'vipdoc/{}/{}/{}{}.{}'.format(market, subdir, prefix,
-                                                   symbol, t)
+            vipdoc = 'vipdoc/{}/{}/{}{}.{}'.format(market, subdir, prefix, symbol, t)
             vipdoc = os.path.join(self.tdxdir, vipdoc)
 
             if os.path.exists(vipdoc):

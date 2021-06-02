@@ -59,8 +59,7 @@ def Server(index=None, limit=5, console=False, verbose=False):
             proxy['time'] = (time.perf_counter() - start) * 1000
 
             server.append(proxy)
-            logger.info("{}:{} 验证通过，响应时间：{:5.2f} ms.".format(
-                proxy.get('addr'), proxy.get('port'), proxy.get('time')))
+            logger.info("{}:{} 验证通过，响应时间：{:5.2f} ms.".format(proxy.get('addr'), proxy.get('port'), proxy.get('time')))
         except Exception as e:
             logger.debug(e)
             logger.warning("{},{} 验证失败.".format(proxy.get('addr'), proxy.get('port')))
