@@ -51,33 +51,33 @@ def setup():
 
 
 def has(key, value):
-    '''
+    """
     通过 key 设置某一项值
 
     :param key:
     :param value:
     :return:
-    '''
+    """
     return value in settings[key]
 
 
 def set(key, value):
-    '''
+    """
     通过 key 设置某一项值
     :param key:
     :param value:
     :return:
-    '''
+    """
     settings[key] = value
 
 
 def get(key, default=None):
-    '''
+    """
     通过 key 获取值
     :param key:
     :param default:
     :return:
-    '''
+    """
     key = key.split('.')
     cfg = settings.get(key[0])
 
@@ -93,12 +93,12 @@ def get(key, default=None):
 
 
 def path(key, value=None):
-    '''
+    """
     通过 key 构建路径
     :param key:
     :param value:
     :return:
-    '''
+    """
     path = settings.get(key)
     path = os.path.join(BASE, path, value)
 
@@ -106,17 +106,17 @@ def path(key, value=None):
 
 
 def clone():
-    '''
+    """
     复制配置
     :return:
-    '''
+    """
     return copy.deepcopy(settings)
 
 
 def update(options):
-    '''
+    """ß
     全部替换配置
     :param options:
     :return:
-    '''
+    """
     settings.update(options)
