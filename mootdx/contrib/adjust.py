@@ -26,11 +26,10 @@ def get_adjust_year(symbol=None, year='2021', factor='00'):
         factor = '00'
 
     url = f'http://d.10jqka.com.cn/v2/line/hs_{symbol}/{factor}/{year}.js'
-
     res = httpx.get(url, headers=headers)
 
     if res.status_code != 200:
-        return None
+        return pd.DataFrame(data=[None])
 
     text = re.findall(r'\((.*)\)', res.text)[0]
     text = json.loads(text)
