@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
-import logging
 import struct
 import tempfile
 from urllib.request import Request, urlopen
 
-logger = logging.getLogger(__name__)
+from mootdx.logger import log
 
 
 def reporthook(downloaded, total_size):
@@ -12,26 +11,28 @@ def reporthook(downloaded, total_size):
 
 
 class BaseReader(object):
-    def unpack(self, format, data):
-        '''
+    @staticmethod
+    def unpack(fmt, data):
+        """
         解压文件
 
-        :param format:
+        :param fmt:
         :param data:
         :return:
-        '''
-        record = struct.Struct(format)
+        """
+        record = struct.Struct(fmt)
+
         return (record.unpack_from(data, offset)
                 for offset in range(0, len(data), record.size))
 
     def get_df(self, code_or_file, exchange=None):
-        '''
+        """
         转换格式为 pd.DateFrame
 
         :param code_or_file:
         :param exchange:
         :return:
-        '''
+        """
         raise NotImplementedError('not yet')
 
 
@@ -40,15 +41,15 @@ class BaseFinancial:
         self.mode = mode
 
     def fetch_and_parse(self,
-                        reporthook=None,
+                        report_hook=None,
                         downdir=None,
                         proxies=None,
-                        chunksize=1024 * 50,
+                        chunk_size=1024 * 50,
                         *args,
                         **kwargs):
         """
         function to get data ,
-        :param reporthook 使用urllib.request 的report_hook 来汇报下载进度 \
+        :param report_hook 使用urllib.request 的report_hook 来汇报下载进度 \
                     参考 https://docs.python.org/3/library/urllib.request.html#module-urllib.request
         :param downdir 数据文件下载的地址，如果没有提供，则下载到临时文件中，并在解析之后删除
         :param proxies urllib格式的代理服务器设置
@@ -56,16 +57,16 @@ class BaseFinancial:
         """
 
         if self.mode == "http":
-            file = self.fetch_via_http(reporthook=reporthook,
+            file = self.fetch_via_http(report_hook=report_hook,
                                        downdir=downdir,
                                        proxies=proxies,
-                                       chunksize=chunksize,
+                                       chunk_size=chunk_size,
                                        *args,
                                        **kwargs)
         elif self.mode == "content":
-            file = self.content(reporthook=reporthook,
+            file = self.content(report_hook=report_hook,
                                 downdir=downdir,
-                                chunksize=chunksize,
+                                chunk_size=chunk_size,
                                 *args,
                                 **kwargs)
         else:
@@ -81,22 +82,22 @@ class BaseFinancial:
         return result
 
     def fetch_via_http(self,
-                       reporthook=None,
+                       report_hook=None,
                        downdir=None,
                        proxies=None,
-                       chunksize=1024 * 50,
+                       chunk_size=1024 * 50,
                        *args,
                        **kwargs):
-        '''
+        """
 
-        :param reporthook:
+        :param report_hook:
         :param downdir:
         :param proxies:
-        :param chunksize:
+        :param chunk_size:
         :param args:
         :param kwargs:
         :return:
-        '''
+        """
         if downdir is None:
             download_file = tempfile.NamedTemporaryFile(delete=True)
         else:
@@ -104,13 +105,14 @@ class BaseFinancial:
 
         url = self.url(*args, **kwargs)
 
-        logger.debug(url)
+        log.debug(url)
 
         request = Request(url)
         request.add_header('Referer', url)
         request.add_header(
-            'User-Agent',
-            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.100 Safari/537.36"
+            "User-Agent",
+            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_0) AppleWebKit/537.36 (KHTML, like Gecko) "
+            "Chrome/76.0.3809.100 Safari/537.36 "
         )
 
         print(url)
@@ -128,11 +130,11 @@ class BaseFinancial:
             downloaded = 0
 
             while True:
-                chunk = res.read(chunksize)
+                chunk = res.read(chunk_size)
                 downloaded += len(chunk)
 
-                if reporthook is not None:
-                    reporthook(downloaded, total_size)
+                if report_hook is not None:
+                    report_hook(downloaded, total_size)
 
                 if not chunk:
                     break
@@ -148,7 +150,7 @@ class BaseFinancial:
     def url(self, *args, **kwargs):
         raise NotImplementedError("will impl in subclass")
 
-    def content(self, reporthook=None, downdir=None, proxies=None, chunksize=1024 * 50, *args, **kwargs):
+    def content(self, report_hook=None, downdir=None, proxies=None, chunk_size=1024 * 50, *args, **kwargs):
         raise NotImplementedError("will impl in subclass")
 
     def parse(self, download_file, *args, **kwargs):

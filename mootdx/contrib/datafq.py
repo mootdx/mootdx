@@ -10,27 +10,27 @@ def QA_data_make_qfq(bfq_data, xdxr_data):
     if len(info) > 0:
         data = pd.concat([
             bfq_data, info.loc[bfq_data.index[0]:bfq_data.index[-1],
-                               ['category']]
+                      ['category']]
         ],
-                         axis=1)
+            axis=1)
         data['if_trade'].fillna(value=0, inplace=True)
         data = data.fillna(method='ffill')
         data = pd.concat([
             data, info.loc[bfq_data.index[0]:bfq_data.index[-1],
-                           ['fenhong', 'peigu', 'peigujia', 'songzhuangu']]
+                  ['fenhong', 'peigu', 'peigujia', 'songzhuangu']]
         ],
-                         axis=1)
+            axis=1)
     else:
         data = pd.concat([
             bfq_data, info.
-            loc[:, ['category', 'fenhong', 'peigu', 'peigujia', 'songzhuangu']]
+                          loc[:, ['category', 'fenhong', 'peigu', 'peigujia', 'songzhuangu']]
         ],
-                         axis=1)
+            axis=1)
 
     data = data.fillna(0)
     data['preclose'] = (data['close'].shift(1) * 10 - data['fenhong'] +
                         data['peigu'] * data['peigujia']) / (
-                            10 + data['peigu'] + data['songzhuangu'])
+                           10 + data['peigu'] + data['songzhuangu'])
     data['adj'] = (data['preclose'].shift(-1) /
                    data['close']).fillna(1)[::-1].cumprod()
     data['open'] = data['open'] * data['adj']
@@ -50,7 +50,7 @@ def QA_data_make_qfq(bfq_data, xdxr_data):
     return data.query('if_trade==1 and open != 0').drop([
         'fenhong', 'peigu', 'peigujia', 'songzhuangu', 'if_trade', 'category'
     ],
-                                                        axis=1)
+        axis=1)
 
 
 def QA_data_make_hfq(bfq_data, xdxr_data):
@@ -61,28 +61,28 @@ def QA_data_make_hfq(bfq_data, xdxr_data):
     if len(info) > 0:
         data = pd.concat([
             bfq_data, info.loc[bfq_data.index[0]:bfq_data.index[-1],
-                               ['category']]
+                      ['category']]
         ],
-                         axis=1)
+            axis=1)
 
         data['if_trade'].fillna(value=0, inplace=True)
         data = data.fillna(method='ffill')
 
         data = pd.concat([
             data, info.loc[bfq_data.index[0]:bfq_data.index[-1],
-                           ['fenhong', 'peigu', 'peigujia', 'songzhuangu']]
+                  ['fenhong', 'peigu', 'peigujia', 'songzhuangu']]
         ],
-                         axis=1)
+            axis=1)
     else:
         data = pd.concat([
             bfq_data, info.
-            loc[:, ['category', 'fenhong', 'peigu', 'peigujia', 'songzhuangu']]
+                          loc[:, ['category', 'fenhong', 'peigu', 'peigujia', 'songzhuangu']]
         ],
-                         axis=1)
+            axis=1)
     data = data.fillna(0)
     data['preclose'] = (data['close'].shift(1) * 10 - data['fenhong'] +
                         data['peigu'] * data['peigujia']) / (
-                            10 + data['peigu'] + data['songzhuangu'])
+                           10 + data['peigu'] + data['songzhuangu'])
     data['adj'] = (data['close'] /
                    data['preclose'].shift(-1)).cumprod().shift(1).fillna(1)
     data['open'] = data['open'] * data['adj']
@@ -110,28 +110,28 @@ def _QA_data_stock_to_fq(bfq_data, xdxr_data, fqtype):
     if len(info) > 0:
         data = pd.concat([
             bfq_data, info.loc[bfq_data.index[0]:bfq_data.index[-1],
-                               ['category']]
+                      ['category']]
         ],
-                         axis=1)
+            axis=1)
 
         data['if_trade'].fillna(value=0, inplace=True)
         data = data.fillna(method='ffill')
         data = pd.concat([
             data, info.loc[bfq_data.index[0]:bfq_data.index[-1],
-                           ['fenhong', 'peigu', 'peigujia', 'songzhuangu']]
+                  ['fenhong', 'peigu', 'peigujia', 'songzhuangu']]
         ],
-                         axis=1)
+            axis=1)
     else:
         data = pd.concat([
             bfq_data, info.
-            loc[:, ['category', 'fenhong', 'peigu', 'peigujia', 'songzhuangu']]
+                          loc[:, ['category', 'fenhong', 'peigu', 'peigujia', 'songzhuangu']]
         ],
-                         axis=1)
+            axis=1)
 
     data = data.fillna(0)
     data['preclose'] = (data['close'].shift(1) * 10 - data['fenhong'] +
                         data['peigu'] * data['peigujia']) / (
-                            10 + data['peigu'] + data['songzhuangu'])
+                           10 + data['peigu'] + data['songzhuangu'])
 
     if fqtype in ['01', 'qfq']:
         data['adj'] = (data['preclose'].shift(-1) /

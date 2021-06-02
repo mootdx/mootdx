@@ -1,12 +1,11 @@
 # -*- coding: utf-8 -*-
 import logging
 import os
-from struct import *
-from unipath import Path
-
 import pandas as pd
 from pandas import DataFrame
+from struct import *
 from tqdm import tqdm
+from unipath import Path
 
 from mootdx.consts import MARKET_SH, MARKET_SZ
 
@@ -32,7 +31,7 @@ def get_stock_market(symbol='', string=False):
     ['50', '51', '60', '90', '110'] 为 sh
     ['00', '12'，'13', '18', '15', '16', '18', '20', '30', '39', '115'] 为 sz
     ['5', '6', '9'] 开头的为 sh， 其余为 sz
-    
+
     :param string:
     :param symbol:股票ID, 若以 'sz', 'sh' 开头直接返回对应类型，否则使用内置规则判断
     :return 'sh' or 'sz'"""
@@ -86,12 +85,12 @@ def gpcw(filepath):
 
 
 def md5sum(downfile):
-    '''
+    """
     文件的 md5 哈希值
 
     :param downfile:
     :return:
-    '''
+    """
     import hashlib
     md5_l = hashlib.md5()
 
@@ -107,12 +106,12 @@ def md5sum(downfile):
 
 
 def to_data(v):
-    '''
+    """
     数值转换为 pd.DataFrame
 
     :param v: mixed
     :return: pd.DataFrame
-    '''
+    """
     if not v:
         return None
 
@@ -129,13 +128,13 @@ def to_data(v):
 
 
 def to_file(df, filename=None):
-    '''
+    """
     根据扩展名输出文件
 
     :param df: pd.DataFrame
     :param filename: 要输出的文件
     :return: bool
-    '''
+    """
     logger.debug(filename)
 
     if filename is None or df is None:
@@ -165,6 +164,7 @@ def to_file(df, filename=None):
 
 class TqdmUpTo(tqdm):
     """Provides `update_to(n)` which uses `tqdm.update(delta_n)`."""
+    total: object = 0
 
     def update_to(self, downloaded=0, total_size=None):
         """
