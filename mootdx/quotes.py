@@ -82,10 +82,7 @@ class StdQuotes(object):
         '''
         with self.client.connect(*self.bestip):
             market = get_stock_market(symbol)
-            result = self.client.get_security_bars(int(frequency), int(market),
-                                                   str(symbol), int(start),
-                                                   int(offset))
-
+            result = self.client.get_security_bars(int(frequency), int(market), str(symbol), int(start), int(offset))
             return to_data(result)
 
     def stock_count(self, market=MARKET_SH):
@@ -111,11 +108,8 @@ class StdQuotes(object):
             stocks = None
 
             for start in tqdm(range(0, counts, 1000)):
-                result = self.client.get_security_list(market=market,
-                                                       start=start)
-                stocks = pandas.concat(
-                    [stocks, to_data(result)],
-                    ignore_index=True) if start > 1 else to_data(result)
+                result = self.client.get_security_list(market=market, start=start)
+                stocks = pandas.concat([stocks, to_data(result)],ignore_index=True) if start > 1 else to_data(result)
 
             return stocks
 
