@@ -18,8 +18,6 @@ class Affair(object):
         """
         filepath = os.path.join(downdir, filename)
 
-        log.debug(filepath)
-
         if os.path.exists(filepath):
             return financial.FinancialReader().to_data(filepath)
 
