@@ -160,10 +160,10 @@ class StdReader(ReaderBase):
         """
         if custom:
             reader = CustomerBlockReader()
-            vipdoc = os.path.join(self.tdxdir, 'T0002', 'blocknew', '{}'.format(symbol))
+            vipdoc = os.path.join(self.tdxdir, 'T0002', 'blocknew', f'{symbol}')
         else:
             reader = BlockReader()
-            vipdoc = os.path.join(self.tdxdir, 'T0002', 'hq_cache', '{}.dat'.format(symbol))
+            vipdoc = os.path.join(self.tdxdir, 'T0002', 'hq_cache', f'{symbol}.dat')
 
         fmt = TYPE_GROUP if group else None
 
