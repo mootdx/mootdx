@@ -45,7 +45,7 @@ def get_stock_market(symbol='', string=False):
         market = symbol[:2]
 
     elif symbol.startswith(
-        ('50', '51', '60', '90', '110', '113', '132', '204')):
+            ('50', '51', '60', '90', '110', '113', '132', '204')):
         market = 'sh'
 
     elif symbol.startswith(('00', '12', '13', '18', '15', '16', '18', '20',
@@ -119,9 +119,9 @@ def to_data(v):
     elif isinstance(v, list):
         return pd.DataFrame(data=v) if len(v) else None
     elif isinstance(v, dict):
-        return pd.DataFrame(data=[
-            v,
-        ])
+        return pd.DataFrame(data=[v])
+    elif v is None:
+        return None
     else:
         return pd.DataFrame(data=[{'value': v}])
 
@@ -163,6 +163,7 @@ def to_file(df, filename=None):
 
 class TqdmUpTo(tqdm):
     """Provides `update_to(n)` which uses `tqdm.update(delta_n)`."""
+
     def update_to(self, downloaded=0, total_size=None):
         """
         b  : int, optional

@@ -45,7 +45,9 @@ class TestExtQuotes(unittest.TestCase):
         self.assertIsNotNone(data)
 
     def test_bars(self):
-        data = self.client.bars(market=31, frequency=KLINE_DAILY, symbol='00020')
+        data = self.client.bars(market=31,
+                                frequency=KLINE_DAILY,
+                                symbol='00020')
         self.assertIsNotNone(data)
 
     def test_transaction(self):
@@ -53,7 +55,10 @@ class TestExtQuotes(unittest.TestCase):
         self.assertIsNotNone(data)
 
     def test_transactions(self):
-        data = self.client.transactions(market=47, symbol='IFL0', date='20170810', start=1800)
+        data = self.client.transactions(market=47,
+                                        symbol='IFL0',
+                                        date='20170810',
+                                        start=1800)
         self.assertIsNotNone(data)
 
 
