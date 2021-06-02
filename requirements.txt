@@ -3,5 +3,6 @@ pandas>=0.23.3
 prettytable>=0.7.2
 tqdm>=4.37.0
 requests
-git+https://gitee.com/ibopo/pytdx
+pytdx
 unipath
+loguru

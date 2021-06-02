@@ -1,5 +1,6 @@
 import json
 import re
+from mootdx.logger import log
 
 import numpy as np
 import pandas as pd
@@ -23,12 +24,16 @@ def get_adjust_year(symbol=None, year='2021', factor='00'):
     elif factor == 'after':
         factor = '02'
     else:
-        factor = '00'
+        factor = factor
+
+    if factor not in ['01','02']:
+        return pd.DataFrame(data=[None])
 
     url = f'http://d.10jqka.com.cn/v2/line/hs_{symbol}/{factor}/{year}.js'
     res = httpx.get(url, headers=headers)
 
     if res.status_code != 200:
+        log.debug(res.content)
         return pd.DataFrame(data=[None])
 
     text = re.findall(r'\((.*)\)', res.text)[0]
