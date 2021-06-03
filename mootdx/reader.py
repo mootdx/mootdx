@@ -1,52 +1,12 @@
 # -*- coding: utf-8 -*-
-import os
 
-from pytdx.reader import (BlockReader, CustomerBlockReader, TdxDailyBarReader,
-                          TdxExHqDailyBarReader, TdxLCMinBarReader)
+from pytdx.reader import (BlockReader, CustomerBlockReader, TdxExHqDailyBarReader, TdxLCMinBarReader)
+from unipath import Path
 
 from mootdx.consts import TYPE_GROUP
+from mootdx.contrib.compat import MooTdxDailyBarReader
 from mootdx.logger import log
 from mootdx.utils import get_stock_market
-
-
-class MooTdxDailyBarReader(TdxDailyBarReader):
-    SECURITY_TYPE = ["SH_A_STOCK", "SH_B_STOCK", "SH_STAR_STOCK", "SH_INDEX", "SH_FUND", "SH_BOND", "SZ_A_STOCK", "SZ_B_STOCK", "SZ_INDEX", "SZ_FUND", "SZ_BOND"]
-    SECURITY_COEFFICIENT = {"SH_A_STOCK": [0.01, 0.01], "SH_B_STOCK": [0.001, 0.01], "SH_STAR_STOCK": [0.01, 0.01], "SH_INDEX": [0.01, 1.0], "SH_FUND": [0.001, 1.0],
-                            "SH_BOND": [0.001, 1.0], "SZ_A_STOCK": [0.01, 0.01], "SZ_B_STOCK": [0.01, 0.01], "SZ_INDEX": [0.01, 1.0], "SZ_FUND": [0.001, 0.01],
-                            "SZ_BOND": [0.001, 0.01]}
-
-    def get_security_type(self, fname):
-
-        exchange = str(fname[-12:-10]).lower()
-        code_head = fname[-10:-8]
-
-        if exchange == self.SECURITY_EXCHANGE[0]:
-            if code_head in ["00", "30"]:
-                return "SZ_A_STOCK"
-            elif code_head in ["20"]:
-                return "SZ_B_STOCK"
-            elif code_head in ["39"]:
-                return "SZ_INDEX"
-            elif code_head in ["15", "16"]:
-                return "SZ_FUND"
-            elif code_head in ["10", "11", "12", "13", "14"]:
-                return "SZ_BOND"
-        elif exchange == self.SECURITY_EXCHANGE[1]:
-            if code_head in ["60"]:
-                return "SH_A_STOCK"
-            elif code_head in ["90"]:
-                return "SH_B_STOCK"
-            elif code_head in ["68"]:
-                return "SH_STAR_STOCK"
-            elif code_head in ["00", "88", "99"]:
-                return "SH_INDEX"
-            elif code_head in ["50", "51"]:
-                return "SH_FUND"
-            elif code_head in ["01", "10", "11", "12", "13", "14"]:
-                return "SH_BOND"
-        else:
-            print("Unknown security exchange !\n")
-            raise NotImplementedError
 
 
 # 股票市场
@@ -79,7 +39,7 @@ class ReaderBase(object):
         :param tdxdir: 通达信安装目录
         """
 
-        if os.path.isdir(tdxdir):
+        if Path(tdxdir).isdir():
             self.tdxdir = tdxdir
         else:
             log.error('tdxdir 目录不存在')
@@ -97,14 +57,13 @@ class ReaderBase(object):
         prefix = market if len(symbol.split('#')) == 1 else ''
         ext = ext if isinstance(ext, list) else [ext]
 
-        for t in ext:
-            vipdoc = 'vipdoc/{}/{}/{}{}.{}'.format(market, subdir, prefix, symbol, t)
-            vipdoc = os.path.join(self.tdxdir, vipdoc)
+        for ex_ in ext:
+            vipdoc = Path(self.tdxdir, market, subdir, prefix, symbol, ex_)
 
-            if os.path.exists(vipdoc):
+            if not Path(vipdoc).exists():
                 return vipdoc
             else:
-                log.error('未找到所需的文件: {}'.format(vipdoc))
+                log.debug('未找到所需的文件: {}'.format(vipdoc))
 
         return None
 
@@ -160,14 +119,14 @@ class StdReader(ReaderBase):
         """
         if custom:
             reader = CustomerBlockReader()
-            vipdoc = os.path.join(self.tdxdir, 'T0002', 'blocknew', f'{symbol}')
+            vipdoc = Path(self.tdxdir, 'T0002', 'blocknew', f'{symbol}')
         else:
             reader = BlockReader()
-            vipdoc = os.path.join(self.tdxdir, 'T0002', 'hq_cache', f'{symbol}.dat')
+            vipdoc = Path(self.tdxdir, 'T0002', 'hq_cache', f'{symbol}.dat')
 
         fmt = TYPE_GROUP if group else None
 
-        if os.path.exists(vipdoc):
+        if Path(vipdoc).exists():
             return reader.get_df(vipdoc, fmt)
         else:
             log.error('未找到所需的文件: {}'.format(vipdoc))
