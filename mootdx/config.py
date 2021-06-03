@@ -6,7 +6,8 @@
 import copy
 import json
 import logging
-import os
+
+from unipath import Path
 
 from mootdx.consts import EX_HOSTS, GP_HOSTS, HQ_HOSTS
 from mootdx.utils import get_config_path
@@ -29,7 +30,8 @@ settings = {
     'TDXDIR': 'C:/new_tdx',
 }
 
-BASE = os.path.dirname(os.path.dirname(__file__))
+# BASE = os.path.dirname(os.path.dirname(__file__))
+BASE = Path(__file__).parent.parent
 CONF = get_config_path('config.json')
 
 
@@ -43,9 +45,9 @@ def setup():
     try:
         options = json.load(open(CONF))
         settings.update(options)
-    except Exception:
-        logger.error(
-            '未找到配置文件 config.json. 请在命令行运行 "mootdx bestip -w -v" 生成配置文件')
+    except Exception as e:
+        logger.debug(e)
+        logger.error('未找到配置文件 config.json. 请在命令行运行 "mootdx bestip -w -v" 生成配置文件')
 
     return True if settings else False
 
@@ -64,6 +66,7 @@ def has(key, value):
 def set(key, value):
     """
     通过 key 设置某一项值
+
     :param key:
     :param value:
     :return:
@@ -74,6 +77,7 @@ def set(key, value):
 def get(key, default=None):
     """
     通过 key 获取值
+
     :param key:
     :param default:
     :return:
@@ -95,27 +99,27 @@ def get(key, default=None):
 def path(key, value=None):
     """
     通过 key 构建路径
+
     :param key:
     :param value:
     :return:
     """
-    path = settings.get(key)
-    path = os.path.join(BASE, path, value)
-
-    return path
+    return Path(BASE, settings.get(key), value)
 
 
 def clone():
     """
     复制配置
+
     :return:
     """
     return copy.deepcopy(settings)
 
 
 def update(options):
-    """ß
+    """
     全部替换配置
+
     :param options:
     :return:
     """
