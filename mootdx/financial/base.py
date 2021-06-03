@@ -22,8 +22,7 @@ class BaseReader(object):
         """
         record = struct.Struct(fmt)
 
-        return (record.unpack_from(data, offset)
-                for offset in range(0, len(data), record.size))
+        return (record.unpack_from(data, offset) for offset in range(0, len(data), record.size))
 
     def get_df(self, code_or_file, exchange=None):
         """
@@ -40,35 +39,20 @@ class BaseFinancial:
     def __init__(self, mode="content"):
         self.mode = mode
 
-    def fetch_and_parse(self,
-                        report_hook=None,
-                        downdir=None,
-                        proxies=None,
-                        chunk_size=1024 * 50,
-                        *args,
-                        **kwargs):
+    def fetch_and_parse(self, report_hook=None, downdir=None, proxies=None, chunk_size=51200, *args, **kwargs):
         """
         function to get data ,
-        :param report_hook 使用urllib.request 的report_hook 来汇报下载进度 \
-                    参考 https://docs.python.org/3/library/urllib.request.html#module-urllib.request
+        :param report_hook 使用urllib.request 的report_hook 来汇报下载进度
+            参考 https://docs.python.org/3/library/urllib.request.html#module-urllib.request
         :param downdir 数据文件下载的地址，如果没有提供，则下载到临时文件中，并在解析之后删除
         :param proxies urllib格式的代理服务器设置
         :return: 解析之后的数据结果
         """
 
         if self.mode == "http":
-            file = self.fetch_via_http(report_hook=report_hook,
-                                       downdir=downdir,
-                                       proxies=proxies,
-                                       chunk_size=chunk_size,
-                                       *args,
-                                       **kwargs)
+            file = self.fetch_via_http(report_hook=report_hook, downdir=downdir, proxies=proxies, chunk_size=chunk_size, *args, **kwargs)
         elif self.mode == "content":
-            file = self.content(report_hook=report_hook,
-                                downdir=downdir,
-                                chunk_size=chunk_size,
-                                *args,
-                                **kwargs)
+            file = self.content(report_hook=report_hook, downdir=downdir, chunk_size=chunk_size, *args, **kwargs)
         else:
             return
 
@@ -81,13 +65,7 @@ class BaseFinancial:
 
         return result
 
-    def fetch_via_http(self,
-                       report_hook=None,
-                       downdir=None,
-                       proxies=None,
-                       chunk_size=1024 * 50,
-                       *args,
-                       **kwargs):
+    def fetch_via_http(self, report_hook=None, downdir=None, proxies=None, chunk_size=1024 * 50, *args, **kwargs):
         """
 
         :param report_hook:
@@ -115,7 +93,6 @@ class BaseFinancial:
             "Chrome/76.0.3809.100 Safari/537.36 "
         )
 
-        print(url)
         try:
             res = urlopen(request)
         except Exception as e:

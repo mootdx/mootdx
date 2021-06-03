@@ -1,15 +1,14 @@
 # -*- coding: utf-8 -*-
-import logging
 import os
+from struct import *
+
 import pandas as pd
 from pandas import DataFrame
-from struct import *
 from tqdm import tqdm
 from unipath import Path
 
 from mootdx.consts import MARKET_SH, MARKET_SZ
-
-logger = logging.getLogger(__name__)
+from mootdx.logger import log
 
 
 def get_stock_markets(symbols=None):
@@ -80,7 +79,7 @@ def gpcw(filepath):
         info_data = cw_file.read(calcsize('<264f'))
         cw_info = unpack('<264f', info_data)
 
-        logger.debug("{}, {}".format(code, str(cw_info)))
+        log.debug("{}, {}".format(code, str(cw_info)))
         return code, cw_info
 
 
@@ -112,7 +111,7 @@ def to_data(v):
     :param v: mixed
     :return: pd.DataFrame
     """
-    logger.info(v)
+    log.info(v)
 
     if not v:
         return None
@@ -137,7 +136,7 @@ def to_file(df, filename=None):
     :param filename: 要输出的文件
     :return: bool
     """
-    logger.debug(filename)
+    log.debug(filename)
 
     if filename is None or df is None:
         return None

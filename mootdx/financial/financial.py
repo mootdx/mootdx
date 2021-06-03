@@ -17,7 +17,7 @@ class FinancialReader(BaseReader, ABC):
     @staticmethod
     def to_data(filename):
         """
-        读取历史财务数据文件，并返回pandas结果 ， 类似gpcw20171231.zip格式，具体字段含义参考
+        读取历史财务数据文件，并返回pandas结果 ， 类似 `gpcw20171231.zip` 格式，具体字段含义参考
 
         https://github.com/rainx/pytdx/issues/133
 
@@ -51,13 +51,7 @@ class FinancialList(BaseFinancial):
         # return 'http://down.tdx.com.cn:8001/fin/gpcw.txt'
         # return 'http://data.yutiansut.com/content.txt'
 
-    def content(self,
-                report_hook=None,
-                downdir=None,
-                proxies=None,
-                chunk_size=1024 * 50,
-                *args,
-                **kwargs):
+    def content(self, report_hook=None, downdir=None, proxies=None, chunk_size=1024 * 50, *args, **kwargs):
         """
         解析财务文件
 
@@ -105,17 +99,11 @@ class FinancialList(BaseFinancial):
         content = download_file.read()
         content = content.decode("utf-8")
 
-        def list_to_dict(l):
-            return {'filename': l[0], 'hash': l[1], 'filesize': int(l[2])}
+        def list_to_dict(i):
+            return {'filename': i[0], 'hash': i[1], 'filesize': int(i[2])}
 
         if content:
-            result = [
-                list_to_dict(l) for l in [
-                    line.strip().split(",")
-                    for line in content.strip().split('\n')
-                ]
-            ]
-            return result
+            return [list_to_dict(i) for i in [line.strip().split(",") for line in content.strip().split('\n')]]
 
         return None
 
@@ -144,13 +132,7 @@ class Financial(BaseFinancial):
         # return "http://data.yutiansut.com/{}".format(filename)
         return "http://down.tdx.com.cn:8001/fin/{}".format(filename)
 
-    def content(self,
-                report_hook=None,
-                downdir=None,
-                proxies=None,
-                chunk_size=1024 * 50,
-                *args,
-                **kwargs):
+    def content(self, report_hook=None, downdir=None, proxies=None, chunk_size=1024 * 50, *args, **kwargs):
         """
         解析财务文件
 
@@ -180,12 +162,8 @@ class Financial(BaseFinancial):
             bestip = ("106.14.95.149", 7727)
 
         with api.connect(*bestip):
-            content = api.get_report_file_by_size(f"tdxfin/{filename}",
-                                                  filesize=filesize,
-                                                  reporthook=report_hook)
-            download_file = open(
-                downdir, 'wb') if downdir else tempfile.NamedTemporaryFile(
-                delete=True)
+            content = api.get_report_file_by_size(f"tdxfin/{filename}", filesize=filesize, reporthook=report_hook)
+            download_file = open(downdir, 'wb') if downdir else tempfile.NamedTemporaryFile(delete=True)
             download_file.write(content)
             download_file.seek(0)
 
