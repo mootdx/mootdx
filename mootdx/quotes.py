@@ -69,7 +69,7 @@ class StdQuotes(object):
 
             return to_data(result)
 
-    def bars(self, symbol='000001', frequency='9', start='0', offset='100'):
+    def bars(self, symbol='000001', frequency='9', start='0', offset='100', *args, **kwargs):
         """
         获取实时日K线数据
 
@@ -84,7 +84,7 @@ class StdQuotes(object):
             result = self.client.get_security_bars(int(frequency), int(market), str(symbol), int(start), int(offset))
             return to_data(result)
 
-    def stock_count(self, market=MARKET_SH):
+    def stock_count(self, market=MARKET_SH, *args, **kwargs):
         """
         获取市场股票数量
 
@@ -95,7 +95,7 @@ class StdQuotes(object):
             result = self.client.get_security_count(market=market)
             return result
 
-    def stocks(self, market=MARKET_SH):
+    def stocks(self, market=MARKET_SH, *args, **kwargs):
         """
         获取股票列表
 
@@ -112,11 +112,7 @@ class StdQuotes(object):
 
             return stocks
 
-    def index_bars(self,
-                   symbol='000001',
-                   frequency='9',
-                   start='0',
-                   offset='100'):
+    def index_bars(self, symbol='000001', frequency='9', start='0', offset='100', *args, **kwargs):
         """
         获取指数k线
 
@@ -144,7 +140,7 @@ class StdQuotes(object):
             result = self.client.get_minute_time_data(market=market, code=symbol)
             return to_data(result)
 
-    def minutes(self, symbol='', date='20191023'):
+    def minutes(self, symbol='', date='20191023', *args, **kwargs):
         """
         分时历史数据
 

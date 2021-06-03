@@ -19,6 +19,8 @@ requests = "*"
 loguru = "*"
 httpx = "*"
 click = ">=6.7"
+unipath = "*"
+tqdm = "*"
 
 [requires]
 python_version = "3.8"
