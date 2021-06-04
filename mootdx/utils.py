@@ -111,7 +111,6 @@ def to_data(v):
     :param v: mixed
     :return: pd.DataFrame
     """
-    log.info(v)
 
     if not v:
         return None
@@ -136,8 +135,6 @@ def to_file(df, filename=None):
     :param filename: 要输出的文件
     :return: bool
     """
-    log.debug(filename)
-
     if filename is None or df is None:
         return None
 
