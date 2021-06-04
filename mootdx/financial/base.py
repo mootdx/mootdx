@@ -3,8 +3,6 @@ import struct
 import tempfile
 from urllib.request import Request, urlopen
 
-from mootdx.logger import log
-
 
 def reporthook(downloaded, total_size):
     print("Downloaded {}, Total is {}".format(downloaded, total_size))
@@ -21,7 +19,6 @@ class BaseReader(object):
         :return:
         """
         record = struct.Struct(fmt)
-
         return (record.unpack_from(data, offset) for offset in range(0, len(data), record.size))
 
     def get_df(self, code_or_file, exchange=None):
@@ -41,9 +38,9 @@ class BaseFinancial:
 
     def fetch_and_parse(self, report_hook=None, downdir=None, proxies=None, chunk_size=51200, *args, **kwargs):
         """
-        function to get data ,
+        function to get data , 参考 https://docs.python.org/3/library/urllib.request.html#module-urllib.request
+
         :param report_hook 使用urllib.request 的report_hook 来汇报下载进度
-            参考 https://docs.python.org/3/library/urllib.request.html#module-urllib.request
         :param downdir 数据文件下载的地址，如果没有提供，则下载到临时文件中，并在解析之后删除
         :param proxies urllib格式的代理服务器设置
         :return: 解析之后的数据结果
@@ -76,14 +73,10 @@ class BaseFinancial:
         :param kwargs:
         :return:
         """
-        if downdir is None:
-            download_file = tempfile.NamedTemporaryFile(delete=True)
-        else:
-            download_file = open(downdir, 'wb')
 
-        url = self.url(*args, **kwargs)
+        download_file = open(downdir, 'wb') if downdir else tempfile.NamedTemporaryFile(delete=True)
 
-        log.debug(url)
+        url = self.build_url(*args, **kwargs)
 
         request = Request(url)
         request.add_header('Referer', url)
@@ -97,10 +90,6 @@ class BaseFinancial:
             res = urlopen(request)
         except Exception as e:
             raise e
-        else:
-            pass
-        finally:
-            pass
 
         if res.getheader('Content-Length') is not None:
             total_size = int(res.getheader('Content-Length').strip())
@@ -124,7 +113,7 @@ class BaseFinancial:
         download_file.seek(0)
         return download_file
 
-    def url(self, *args, **kwargs):
+    def build_url(self, *args, **kwargs):
         raise NotImplementedError("will impl in subclass")
 
     def content(self, report_hook=None, downdir=None, proxies=None, chunk_size=1024 * 50, *args, **kwargs):
