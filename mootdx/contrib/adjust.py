@@ -23,8 +23,6 @@ def get_adjust_year(symbol=None, year='2021', factor='00'):
         factor = '01'
     elif factor == 'after':
         factor = '02'
-    else:
-        factor = factor
 
     if factor not in ['01', '02']:
         return pd.DataFrame(data=[None])
