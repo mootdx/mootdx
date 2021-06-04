@@ -14,6 +14,8 @@ from mootdx.reader import Reader
 from mootdx.server import Server
 from mootdx.utils import get_config_path, to_file
 
+logging.basicConfig(level=logging.NOTSET)
+
 
 @click.group()
 @click.option('-v', '--verbose', count=True)
