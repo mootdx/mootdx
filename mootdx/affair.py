@@ -75,5 +75,5 @@ class Affair(object):
                     continue
 
             with TqdmUpTo(unit='b', unit_scale=True, miniters=1, ascii=True) as t:
-                log.warning('\r[+] 准备下载文件 {}.'.format(x['filename']))
+                print('\r[+] 准备下载文件 {}.'.format(x['filename']))
                 crawler.fetch_and_parse(report_hook=t.update_to, filename=x['filename'], downdir=downfile)

@@ -7,6 +7,8 @@ from abc import ABC
 from struct import calcsize, unpack
 
 import pandas as pd
+from pytdx.hq import TdxHq_API
+from unipath import Path
 
 from mootdx import config
 from mootdx.config import settings
@@ -39,7 +41,7 @@ class FinancialList(BaseFinancial):
     # def __init__(self, *args, **kwargs):
     #     super().__init__(*args, **kwargs)
 
-    def url(self, *args, **kwargs):
+    def build_url(self, *args, **kwargs):
         """
         获取采集数据的 URL
 
@@ -114,7 +116,7 @@ class Financial(BaseFinancial):
     def __init__(self):
         super().__init__()
 
-    def url(self, *args, **kwargs):
+    def build_url(self, *args, **kwargs):
         """
         获取采集数据的 URL
 
@@ -128,8 +130,8 @@ class Financial(BaseFinancial):
             raise Exception("Param filename is not set")
 
         # log.debug(f"http://down.tdx.com.cn:8001/fin/{filename}")
-
         # return "http://data.yutiansut.com/{}".format(filename)
+
         return "http://down.tdx.com.cn:8001/fin/{}".format(filename)
 
     def content(self, report_hook=None, downdir=None, proxies=None, chunk_size=1024 * 50, *args, **kwargs):
@@ -149,8 +151,6 @@ class Financial(BaseFinancial):
 
         if not filename:
             raise Exception("Param filename is not set")
-
-        from pytdx.hq import TdxHq_API
 
         api = TdxHq_API()
         api.need_setup = False
@@ -186,7 +186,7 @@ class Financial(BaseFinancial):
             tmpdir_root = tempfile.gettempdir()
             subdir_name = "mootdx_{}".format(str(random.randint(0, 1000000)))
 
-            tmpdir = os.path.join(tmpdir_root, subdir_name)
+            tmpdir = Path(tmpdir_root, subdir_name)
             shutil.rmtree(tmpdir, ignore_errors=True)
             os.makedirs(tmpdir)
 
@@ -197,7 +197,7 @@ class Financial(BaseFinancial):
 
             for _file in os.listdir(tmpdir):
                 if _file.endswith(".dat"):
-                    datfile = open(os.path.join(tmpdir, _file), "rb")
+                    datfile = open(Path(tmpdir, _file), "rb")
 
             if datfile is None:
                 raise Exception("no dat file found in zip archive")
@@ -248,15 +248,10 @@ class Financial(BaseFinancial):
         if len(data) == 0:
             return None
 
-        total_lengh = len(data[0])
-        col = ['code', 'report_date']
-
-        length = total_lengh - 1
+        column = ['code', 'report_date']
+        length = len(data[0]) - 1
 
         for i in range(1, length):
-            col.append("col" + str(i))
+            column.append("col" + str(i))
 
-        df = pd.DataFrame(data=data, columns=col)
-        df.set_index('code', inplace=True)
-
-        return df
+        return pd.DataFrame(data=data, columns=column).set_index('code', inplace=True)
