@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import os
 from struct import *
-
+import platform
 import pandas as pd
 from pandas import DataFrame
 from tqdm import tqdm
@@ -180,7 +180,8 @@ class TqdmUpTo(tqdm):
 
 
 def get_config_path(config='config.json'):
-    filename = os.path.join(os.path.expanduser('~'), '.mootdx', config)
+    subpaths = 'mootdx' if platform.system() == 'Windows' else '.mootdx'
+    filename = os.path.join(os.path.expanduser('~'), subpaths, config)
     pathname = os.path.dirname(filename)
 
     Path(pathname).mkdir(parents=True)
