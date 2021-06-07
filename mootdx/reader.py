@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from pytdx.reader import (BlockReader, CustomerBlockReader, TdxExHqDailyBarReader, TdxLCMinBarReader)
+from pytdx.reader import (BlockReader, CustomerBlockReader,
+                          TdxExHqDailyBarReader, TdxLCMinBarReader)
 from unipath import Path
 
 from mootdx.consts import TYPE_GROUP
