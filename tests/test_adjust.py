@@ -1,5 +1,6 @@
-from mootdx.contrib.adjust import get_adjust_year
 import unittest
+
+from mootdx.contrib.adjust import get_adjust_year
 
 
 class TestAdjust(unittest.TestCase):

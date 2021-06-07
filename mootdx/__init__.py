@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from mootdx.consts import HQ_HOSTS, EX_HOSTS, GP_HOSTS
+from mootdx.consts import EX_HOSTS, GP_HOSTS, HQ_HOSTS
 
 __version__ = "0.6.10"
 __author__ = "bopo.wang<ibopo@126.com>"
