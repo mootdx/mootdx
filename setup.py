@@ -3,9 +3,9 @@
 """The setup script."""
 
 try:
-    from setuptools import setup, find_packages
+    from setuptools import find_packages, setup
 except ImportError:
-    from distutils.core import setup, find_packages
+    from distutils.core import find_packages, setup
 
 
 def parse_requirements(filename):

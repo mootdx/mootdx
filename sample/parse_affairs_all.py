@@ -2,6 +2,7 @@
 import logging
 import os
 from glob import glob
+
 import pandas as pd
 
 from mootdx.affair import Affair
