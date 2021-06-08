@@ -1,9 +1,16 @@
 import unittest
 
 import mock
-from numpy import empty
 
+from mootdx.reader import ReaderBase
 from mootdx.utils import get_config_path, md5sum, to_data
+
+
+class TestReaderBase(unittest.TestCase):
+    def test_find_path(self):
+        reader = ReaderBase('tests/vipdoc')
+        result = reader.find_path(symbol='688001', subdir='minline', suffix=['lc1', '1'])
+        print(result)
 
 
 class TestMd5sum(unittest.TestCase):
@@ -31,7 +38,7 @@ class TestToData(unittest.TestCase):
         self.assertTrue(to_data(123).empty)
 
 
-class Test_get_config_path(unittest.TestCase):
+class TestConfigPath(unittest.TestCase):
 
     @mock.patch('unipath.Path.mkdir')
     @mock.patch('platform.system')
