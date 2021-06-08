@@ -1,16 +1,28 @@
 import unittest
 
 import mock
+import pytest
 
+from mootdx.consts import MARKET_SH, MARKET_SZ
 from mootdx.reader import ReaderBase
-from mootdx.utils import get_config_path, md5sum, to_data
+from mootdx.utils import get_config_path, md5sum, to_data, get_stock_market
+
+data = [
+    ('600036', MARKET_SH),
+    ('000001', MARKET_SZ),
+]
+
+
+@pytest.mark.parametrize('symbol,market', data)
+def test_stock_market(symbol, market):
+    assert get_stock_market(symbol) == market
 
 
 class TestReaderBase(unittest.TestCase):
     def test_find_path(self):
         reader = ReaderBase('tests/vipdoc')
         result = reader.find_path(symbol='688001', subdir='minline', suffix=['lc1', '1'])
-        print(result)
+        self.assertIsNotNone(result)
 
 
 class TestMd5sum(unittest.TestCase):
@@ -19,7 +31,7 @@ class TestMd5sum(unittest.TestCase):
         self.assertIsNone(md5sum('/ad/sd/sd'))
 
     def test_md5sum_success(self):
-        print(md5sum('/vagrant/mootdx/setup.cfg'))
+        self.assertIsNotNone(md5sum('/vagrant/mootdx/setup.cfg'))
 
 
 class TestToData(unittest.TestCase):
