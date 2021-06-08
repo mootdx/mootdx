@@ -19,8 +19,8 @@ class TestReader(unittest.TestCase):
     def test_daily(self):
         self.assertFalse(self.reader.daily(symbol='000001').empty)
 
-    # def test_block(self):
-    #     self.assertFalse(self.reader.block(symbol='block_fg', group=True).empty)
+    def test_block(self):
+        self.assertFalse(self.reader.block(symbol='block_fg', group=True).empty)
 
     # def test_custom_block(self):
     # self.assertFalse(self.reader.block(symbol='blocknew', custom=True, group=True).empty)
