@@ -13,7 +13,6 @@ from unipath import Path
 from mootdx import config
 from mootdx.config import settings
 from .base import BaseFinancial, BaseReader
-from ..utils import to_data
 
 
 class FinancialReader(BaseReader, ABC):
@@ -244,15 +243,15 @@ class Financial(BaseFinancial):
         """
 
         if len(data) == 0:
-            return to_data(None)
+            return None
 
         column = ['code', 'report_date']
         length = len(data[0]) - 1
 
-        for i in enumerate(data[0]):
-            column.append("col" + str(i))
-
         for i in range(1, length):
             column.append("col" + str(i))
 
-        return pd.DataFrame(data=data, columns=column).set_index('code', inplace=True)
+        df = pd.DataFrame(data=data, columns=column)
+        df.set_index('code', inplace=True)
+
+        return df

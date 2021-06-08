@@ -3,8 +3,6 @@ import struct
 import tempfile
 from urllib.request import Request, urlopen
 
-import pytdx
-
 
 def reporthook(downloaded, total_size):
     print("Downloaded {}, Total is {}".format(downloaded, total_size))
@@ -47,6 +45,7 @@ class BaseFinancial:
         :param report_hook 使用urllib.request 的report_hook 来汇报下载进度
         :param downdir 数据文件下载的地址，如果没有提供，则下载到临时文件中，并在解析之后删除
         :param proxies urllib格式的代理服务器设置
+        :param chunk_size chunk_size
         :return: 解析之后的数据结果
         """
 
