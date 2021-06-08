@@ -44,21 +44,21 @@ class ReaderBase(object):
         else:
             log.error('tdxdir 目录不存在')
 
-    def find_path(self, symbol=None, subdir='lday', ext=None):
+    def find_path(self, symbol=None, subdir='lday', suffix=None):
         """
         自动匹配文件路径，辅助函数
 
         :param symbol:
         :param subdir:
-        :param ext:
+        :param suffix:
         :return: pd.dataFrame or None
         """
         market = get_stock_market(symbol, True) if len(symbol.split('#')) == 1 else 'ds'
         prefix = market if len(symbol.split('#')) == 1 else ''
-        ext = ext if isinstance(ext, list) else [ext]
+        suffix = suffix if isinstance(suffix, list) else [suffix]
 
-        for ex_ in ext:
-            vipdoc = Path(self.tdxdir, market, subdir, prefix, symbol, ex_)
+        for ex_ in suffix:
+            vipdoc = Path(self.tdxdir, market, subdir, f'{prefix}{symbol}.{ex_}')
 
             if not Path(vipdoc).exists():
                 return vipdoc
@@ -79,7 +79,7 @@ class StdReader(ReaderBase):
         :return: pd.dataFrame or None
         """
         reader = MooTdxDailyBarReader()
-        vipdoc = self.find_path(symbol=symbol, subdir='lday', ext='day')
+        vipdoc = self.find_path(symbol=symbol, subdir='lday', suffix='day')
 
         if vipdoc is not None:
             return reader.get_df(vipdoc)
@@ -96,7 +96,7 @@ class StdReader(ReaderBase):
         """
         subdir = 'fzline' if str(suffix) == '5' else 'minline'
         suffix = ['lc5', '5'] if str(suffix) == '5' else ['lc1', '1']
-        symbol = self.find_path(symbol, subdir=subdir, ext=suffix)
+        symbol = self.find_path(symbol, subdir=subdir, suffix=suffix)
         reader = TdxLCMinBarReader()
 
         if symbol is not None:
@@ -144,7 +144,7 @@ class ExtReader(ReaderBase):
         :return: pd.dataFrame or None
         """
         reader = TdxExHqDailyBarReader()
-        vipdoc = self.find_path(symbol=symbol, subdir='lday', ext='day')
+        vipdoc = self.find_path(symbol=symbol, subdir='lday', suffix='day')
 
         if symbol is not None:
             return reader.get_df(vipdoc)
