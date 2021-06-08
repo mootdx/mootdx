@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
-
-from pytdx.reader import (BlockReader, CustomerBlockReader,
-                          TdxExHqDailyBarReader, TdxLCMinBarReader)
+from pytdx.reader import (BlockReader, CustomerBlockReader, TdxExHqDailyBarReader, TdxLCMinBarReader)
 from unipath import Path
 
 from mootdx.consts import TYPE_GROUP
@@ -60,6 +58,7 @@ class ReaderBase(object):
         suffix = suffix if isinstance(suffix, list) else [suffix]
 
         for ex_ in suffix:
+            ex_ = ex_.strip('.')
             vipdoc = Path(self.tdxdir, market, subdir, f'{prefix}{symbol}.{ex_}')
 
             if Path(vipdoc).exists():

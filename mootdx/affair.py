@@ -16,6 +16,7 @@ class Affair(object):
         :param filename:
         :return:
         """
+
         filepath = os.path.join(downdir, filename)
 
         if os.path.exists(filepath):
@@ -32,6 +33,7 @@ class Affair(object):
 
         :return:
         """
+
         history = financial.FinancialList()
         results = history.fetch_and_parse()
 
@@ -47,6 +49,7 @@ class Affair(object):
         :param kwargs:
         :return:
         """
+
         history = financial.FinancialList()
         crawler = financial.Financial()
 
