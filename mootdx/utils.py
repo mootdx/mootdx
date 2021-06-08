@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
+import hashlib
 import os
+import platform
 from struct import *
 
 import pandas as pd
@@ -63,10 +65,13 @@ def parse_gpcw(filename):
 
 def gpcw(filepath):
     cw_file = open(filepath, 'rb')
+    
     header_size = calcsize("<3h1H3L")
     stock_item_size = calcsize("<6s1c1L")
+
     data_header = cw_file.read(header_size)
     stock_header = unpack("<3h1H3L", data_header)
+
     max_count = stock_header[3]
 
     for idx in range(0, max_count):
@@ -90,18 +95,14 @@ def md5sum(downfile):
     :param downfile:
     :return:
     """
-    import hashlib
-    md5_l = hashlib.md5()
-
-    # with open(downfile, mode="rb") as fp:
-    #     by = fp.read()
-
-    by = Path(downfile, 'rb').read_file()
-
-    md5_l.update(by)
-    ret = md5_l.hexdigest()
-
-    return ret
+    
+    try:
+        md5_l = hashlib.md5()
+        md5_l.update(Path(downfile).read_file('rb'))
+        return md5_l.hexdigest()
+    except (IOError, FileNotFoundError) as e:
+        log.error(f'无法读取文件: {downfile}')
+        return None
 
 
 def to_data(v):
@@ -113,7 +114,7 @@ def to_data(v):
     """
 
     if not v:
-        return None
+        return pd.DataFrame(data=[])
 
     if isinstance(v, DataFrame):
         return v
@@ -121,10 +122,8 @@ def to_data(v):
         return pd.DataFrame(data=v) if len(v) else None
     elif isinstance(v, dict):
         return pd.DataFrame(data=[v])
-    elif v is None:
-        return pd.DataFrame(data=[])
     else:
-        return pd.DataFrame(data=[{'value': v}])
+        return pd.DataFrame(data=[])
 
 
 def to_file(df, filename=None):
@@ -180,7 +179,8 @@ class TqdmUpTo(tqdm):
 
 
 def get_config_path(config='config.json'):
-    filename = os.path.join(os.path.expanduser('~'), '.mootdx', config)
+    subpaths = 'mootdx' if platform.system() == 'Windows' else '.mootdx'
+    filename = os.path.join(os.path.expanduser('~'), subpaths, config)
     pathname = os.path.dirname(filename)
 
     Path(pathname).mkdir(parents=True)

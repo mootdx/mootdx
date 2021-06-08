@@ -3,9 +3,9 @@
 """The setup script."""
 
 try:
-    from setuptools import setup, find_packages
+    from setuptools import find_packages, setup
 except ImportError:
-    from distutils.core import setup, find_packages
+    from distutils.core import find_packages, setup
 
 
 def parse_requirements(filename):
@@ -25,7 +25,7 @@ test_requirements.append('pytest')
 
 setup(
     name='mootdx',
-    version='0.6.9',
+    version='0.6.10',
     description="通达信数据读取接口.",
     long_description=readme,
     author="bopo.wang",
