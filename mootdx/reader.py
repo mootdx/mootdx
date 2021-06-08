@@ -44,6 +44,7 @@ class ReaderBase(object):
             self.tdxdir = tdxdir
         else:
             log.error('tdxdir 目录不存在')
+            raise Exception('tdxdir 目录不存在')
 
     def find_path(self, symbol=None, subdir='lday', suffix=None):
         """
@@ -61,10 +62,11 @@ class ReaderBase(object):
         for ex_ in suffix:
             vipdoc = Path(self.tdxdir, market, subdir, f'{prefix}{symbol}.{ex_}')
 
-            if not Path(vipdoc).exists():
+            if Path(vipdoc).exists():
+                log.debug(f"所需的文件: {vipdoc}")
                 return vipdoc
             else:
-                log.debug('未找到所需的文件: {}'.format(vipdoc))
+                log.debug(f'未找到所需的文件: {vipdoc}')
 
         return None
 
@@ -140,12 +142,40 @@ class ExtReader(ReaderBase):
 
     def daily(self, symbol=None):
         """
-        获取日线数据
+        获取扩展市场日线数据
 
         :return: pd.dataFrame or None
         """
         reader = TdxExHqDailyBarReader()
         vipdoc = self.find_path(symbol=symbol, subdir='lday', suffix='day')
+
+        if symbol is not None:
+            return reader.get_df(vipdoc)
+
+        return None
+
+    def minute(self, symbol=None):
+        """
+        获取扩展市场分钟线数据
+
+        :return: pd.dataFrame or None
+        """
+        reader = TdxExHqDailyBarReader()
+        vipdoc = self.find_path(symbol=symbol, subdir='minline', suffix='lc1')
+
+        if symbol is not None:
+            return reader.get_df(vipdoc)
+
+        return None
+
+    def fzline(self, symbol=None):
+        """
+        获取日线数据
+
+        :return: pd.dataFrame or None
+        """
+        reader = TdxExHqDailyBarReader()
+        vipdoc = self.find_path(symbol=symbol, subdir='fzline', suffix='lc5')
 
         if symbol is not None:
             return reader.get_df(vipdoc)
