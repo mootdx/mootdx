@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from pytdx.reader import (BlockReader, CustomerBlockReader, TdxExHqDailyBarReader, TdxLCMinBarReader)
-from unipath import Path
+from pathlib import Path
 
 from mootdx.consts import TYPE_GROUP
 from mootdx.contrib.compat import MooTdxDailyBarReader
@@ -39,7 +39,7 @@ class ReaderBase(object):
         :param tdxdir: 通达信安装目录
         """
 
-        if Path(tdxdir).isdir():
+        if Path(tdxdir).is_dir():
             self.tdxdir = tdxdir
         else:
             log.error('tdxdir 目录不存在')
@@ -58,9 +58,9 @@ class ReaderBase(object):
         ext = ext if isinstance(ext, list) else [ext]
 
         for ex_ in ext:
-            vipdoc = Path(self.tdxdir, market, subdir, prefix, symbol, ex_)
+            vipdoc = Path(self.tdxdir, 'vipdoc', market, subdir, f'{prefix}{symbol}').with_suffix(ex_)
 
-            if not Path(vipdoc).exists():
+            if vipdoc.exists():
                 return vipdoc
             else:
                 log.debug('未找到所需的文件: {}'.format(vipdoc))
@@ -95,7 +95,7 @@ class StdReader(ReaderBase):
         :return: pd.dataFrame or None
         """
         subdir = 'fzline' if str(suffix) == '5' else 'minline'
-        suffix = ['lc5', '5'] if str(suffix) == '5' else ['lc1', '1']
+        suffix = ['.lc5', '.5'] if str(suffix) == '5' else ['.lc1', '.1']
         symbol = self.find_path(symbol, subdir=subdir, ext=suffix)
         reader = TdxLCMinBarReader()
 
