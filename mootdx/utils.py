@@ -54,7 +54,6 @@ def get_stock_market(symbol='', string=False):
 
     if string is False:
         market = MARKET_SZ if market == 'sz' else MARKET_SH
-
     return market
 
 
@@ -65,7 +64,7 @@ def parse_gpcw(filename):
 
 def gpcw(filepath):
     cw_file = open(filepath, 'rb')
-    
+
     header_size = calcsize("<3h1H3L")
     stock_item_size = calcsize("<6s1c1L")
 
@@ -95,7 +94,7 @@ def md5sum(downfile):
     :param downfile:
     :return:
     """
-    
+
     try:
         md5_l = hashlib.md5()
         md5_l.update(Path(downfile).read_file('rb'))

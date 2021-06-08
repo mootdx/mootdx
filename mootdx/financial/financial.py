@@ -12,8 +12,8 @@ from unipath import Path
 
 from mootdx import config
 from mootdx.config import settings
-
 from .base import BaseFinancial, BaseReader
+from ..utils import to_data
 
 
 class FinancialReader(BaseReader, ABC):
@@ -37,10 +37,6 @@ class FinancialReader(BaseReader, ABC):
 
 
 class FinancialList(BaseFinancial):
-    # mode = "content"
-
-    # def __init__(self, *args, **kwargs):
-    #     super().__init__(*args, **kwargs)
 
     def build_url(self, *args, **kwargs):
         """
@@ -51,8 +47,6 @@ class FinancialList(BaseFinancial):
         :return:
         """
         return "https://gitee.com/yutiansut/QADATA/raw/master/financial/content.txt"
-        # return 'http://down.tdx.com.cn:8001/fin/gpcw.txt'
-        # return 'http://data.yutiansut.com/content.txt'
 
     def content(self, report_hook=None, downdir=None, proxies=None, chunk_size=1024 * 50, *args, **kwargs):
         """
@@ -99,6 +93,7 @@ class FinancialList(BaseFinancial):
         :param kwargs:
         :return:
         """
+
         content = download_file.read()
         content = content.decode("utf-8")
 
@@ -130,10 +125,7 @@ class Financial(BaseFinancial):
         if not filename:
             raise Exception("Param filename is not set")
 
-        # log.debug(f"http://down.tdx.com.cn:8001/fin/{filename}")
-        # return "http://data.yutiansut.com/{}".format(filename)
-
-        return "http://down.tdx.com.cn:8001/fin/{}".format(filename)
+        return f"http://down.tdx.com.cn:8001/fin/{filename}"
 
     def content(self, report_hook=None, downdir=None, proxies=None, chunk_size=1024 * 50, *args, **kwargs):
         """
@@ -185,7 +177,8 @@ class Financial(BaseFinancial):
 
         if download_file.name.endswith('.zip'):
             tmpdir_root = tempfile.gettempdir()
-            subdir_name = "mootdx_{}".format(str(random.randint(0, 1000000)))
+            random_sums = str(random.randint(0, 1000000))
+            subdir_name = f"mootdx_{random_sums}"
 
             tmpdir = Path(tmpdir_root, subdir_name)
             shutil.rmtree(tmpdir, ignore_errors=True)
@@ -217,8 +210,10 @@ class Financial(BaseFinancial):
 
         report_date = stock_header[1]
         report_size = stock_header[4]
+
         report_fields_count = int(report_size / 4)
         report_pack_format = '<{}f'.format(report_fields_count)
+
         results = []
 
         for stock_idx in range(0, max_count):
@@ -240,17 +235,22 @@ class Financial(BaseFinancial):
 
         return results
 
-    def to_df(self, data):
+    @staticmethod
+    def to_df(data):
         """
         转换数据为 pandas DataFrame 格式
         :param data: 要转换的数据
         :return: DataFrame
         """
+
         if len(data) == 0:
-            return None
+            return to_data(None)
 
         column = ['code', 'report_date']
         length = len(data[0]) - 1
+
+        for i in enumerate(data[0]):
+            column.append("col" + str(i))
 
         for i in range(1, length):
             column.append("col" + str(i))
