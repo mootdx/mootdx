@@ -28,7 +28,6 @@ settings = {
     'TDXDIR': 'C:/new_tdx',
 }
 
-# BASE = os.path.dirname(os.path.dirname(__file__))
 BASE = Path(__file__).parent.parent
 CONF = get_config_path('config.json')
 
@@ -58,6 +57,7 @@ def has(key, value):
     :param value:
     :return:
     """
+
     return value in settings[key]
 
 
@@ -69,6 +69,7 @@ def set(key, value):
     :param value:
     :return:
     """
+
     settings[key] = value
 
 
@@ -80,6 +81,7 @@ def get(key, default=None):
     :param default:
     :return:
     """
+
     key = key.split('.')
     cfg = settings.get(key[0])
 
@@ -102,6 +104,7 @@ def path(key, value=None):
     :param value:
     :return:
     """
+
     return Path(BASE, settings.get(key), value)
 
 
@@ -111,6 +114,7 @@ def clone():
 
     :return:
     """
+
     return copy.deepcopy(settings)
 
 
@@ -121,4 +125,5 @@ def update(options):
     :param options:
     :return:
     """
+
     settings.update(options)

@@ -3,6 +3,8 @@ import struct
 import tempfile
 from urllib.request import Request, urlopen
 
+import pytdx
+
 
 def reporthook(downloaded, total_size):
     print("Downloaded {}, Total is {}".format(downloaded, total_size))
@@ -18,6 +20,7 @@ class BaseReader(object):
         :param data:
         :return:
         """
+
         record = struct.Struct(fmt)
         return (record.unpack_from(data, offset) for offset in range(0, len(data), record.size))
 
@@ -29,6 +32,7 @@ class BaseReader(object):
         :param exchange:
         :return:
         """
+
         raise NotImplementedError('not yet')
 
 
