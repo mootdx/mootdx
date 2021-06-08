@@ -10,14 +10,14 @@ class TestReader(unittest.TestCase):
 
     # 初始化工作
     def setUp(self):
-        self.reader = Reader.factory(market='std', tdxdir='../fixtures')
+        self.reader = Reader.factory(market='std', tdxdir='tests/vipdoc')
 
     # 退出清理工作
     def tearDown(self):
         self.reader = None
 
     def test_daily(self):
-        self.assertFalse(self.reader.daily(symbol='600000').empty)
+        self.assertFalse(self.reader.daily(symbol='000001').empty)
 
     # def test_block(self):
     #     self.assertFalse(self.reader.block(symbol='block_fg', group=True).empty)
@@ -26,12 +26,12 @@ class TestReader(unittest.TestCase):
     # self.assertFalse(self.reader.block(symbol='blocknew', custom=True, group=True).empty)
 
     def test_minute1(self):
-        result = self.reader.minute(symbol='600000', suffix='1')
+        result = self.reader.minute(symbol='688001', suffix='1')
         print(result)
         self.assertFalse(result.empty)
 
     def test_minute5(self):
-        result = self.reader.minute(symbol='600000', suffix='5')
+        result = self.reader.minute(symbol='688001', suffix='5')
         print(result)
         self.assertFalse(result.empty)
 
