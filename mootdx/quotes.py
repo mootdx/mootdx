@@ -105,6 +105,9 @@ class StdQuotes(BaseQuotes):
         self.reconnect()
 
         symbol = get_stock_markets(symbol)
+
+        log.debug(symbol)
+
         result = self.client.get_security_quotes(symbol)
 
         return to_data(result)
@@ -123,7 +126,7 @@ class StdQuotes(BaseQuotes):
 
         market = get_stock_market(symbol)
         result = self.client.get_security_bars(int(frequency), int(market), str(symbol), int(start), int(offset))
-        
+
         return to_data(result)
 
     def stock_count(self, market=MARKET_SH, *args, **kwargs):

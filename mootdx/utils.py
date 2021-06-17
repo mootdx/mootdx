@@ -43,7 +43,7 @@ def get_stock_market(symbol='', string=False):
     if symbol.startswith(('sh', 'sz')):
         market = symbol[:2]
 
-    elif symbol.startswith(('50', '51', '60', '90', '110', '113', '132', '204')):
+    elif symbol.startswith(('50', '51', '60', '68', '90', '110', '113', '132', '204')):
         market = 'sh'
 
     elif symbol.startswith(('00', '12', '13', '18', '15', '16', '18', '20', '30', '39', '115', '1318')):
@@ -54,6 +54,7 @@ def get_stock_market(symbol='', string=False):
 
     if string is False:
         market = MARKET_SZ if market == 'sz' else MARKET_SH
+
     return market
 
 
@@ -111,6 +112,8 @@ def to_data(v):
     :param v: mixed
     :return: pd.DataFrame
     """
+
+    log.debug(v)
 
     if not v:
         return pd.DataFrame(data=[])
