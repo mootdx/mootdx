@@ -2,7 +2,7 @@
 
 import unittest
 
-from mootdx.reader import Reader
+from mootdx.reader import Reader, ReaderBase
 
 
 class TestReader(unittest.TestCase):
@@ -10,7 +10,7 @@ class TestReader(unittest.TestCase):
 
     # 初始化工作
     def setUp(self):
-        self.reader = Reader.factory(market='std', tdxdir='tests/vipdoc')
+        self.reader = Reader.factory(market='std', tdxdir='tests/fixtures')
 
     # 退出清理工作
     def tearDown(self):
@@ -35,7 +35,7 @@ class TestReader(unittest.TestCase):
         print(result)
         self.assertFalse(result.empty)
 
-    def test_block(self):
+    def test_blocks(self):
         result = self.reader.block(symbol='block_zs', group=True)
         print(result)
         self.assertFalse(result.empty)
@@ -44,6 +44,13 @@ class TestReader(unittest.TestCase):
     #     result = self.reader.block(symbol='block_zs', custom=True)
     #     print(result)
     #     self.assertFalse(result.empty)
+
+
+class TestReaderBase(unittest.TestCase):
+    def test_find_path(self):
+        reader = ReaderBase('tests/fixtures')
+        result = reader.find_path(symbol='688001', subdir='minline', suffix=['lc1', '1'])
+        self.assertIsNotNone(result)
 
 
 if __name__ == '__main__':

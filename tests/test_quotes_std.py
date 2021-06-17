@@ -70,3 +70,5 @@ class TestStdQuotes(unittest.TestCase):
     def test_finance(self):
         data = self.client.finance(symbol='000001')
         self.assertIsNotNone(data)
+
+

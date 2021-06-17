@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from mootdx import config
 from mootdx.consts import EX_HOSTS, GP_HOSTS, HQ_HOSTS
 
 __version__ = "0.6.10"
@@ -21,3 +22,5 @@ CONFIG = {
 
 def bestip():
     return
+
+config.setup()

@@ -4,7 +4,6 @@ import mock
 import pytest
 
 from mootdx.consts import MARKET_SH, MARKET_SZ
-from mootdx.reader import ReaderBase
 from mootdx.utils import get_config_path, md5sum, to_data, get_stock_market
 
 data = [
@@ -18,13 +17,6 @@ def test_stock_market(symbol, market):
     assert get_stock_market(symbol) == market
 
 
-class TestReaderBase(unittest.TestCase):
-    def test_find_path(self):
-        reader = ReaderBase('tests/vipdoc')
-        result = reader.find_path(symbol='688001', subdir='minline', suffix=['lc1', '1'])
-        self.assertIsNotNone(result)
-
-
 class TestMd5sum(unittest.TestCase):
 
     def test_md5sum_error(self):
@@ -36,13 +28,13 @@ class TestMd5sum(unittest.TestCase):
 
 class TestToData(unittest.TestCase):
 
-    def test_todata_list(self):
+    def test_to_data_list(self):
         self.assertTrue(not to_data([{'aa': 'aa'}]).empty)
 
-    def test_todata_dict(self):
+    def test_to_data_dict(self):
         self.assertTrue(not to_data({'abc': 123}).empty)
 
-    def test_todata_empty(self):
+    def test_to_data_empty(self):
         self.assertTrue(to_data(None).empty)
         self.assertTrue(to_data({}).empty)
         self.assertTrue(to_data([]).empty)
