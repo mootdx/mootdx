@@ -33,14 +33,12 @@ class BaseQuotes(object):
     client = None
     bestip = None
     timeout = 15
-    connected = False
 
     @contextlib.contextmanager
     def connect(self):
-        if not self.connected:
-            log.debug('not connected')
-            self.client.connect(time_out=self.timeout, *self.bestip)
-            self.connected = True
+        if self.closed:
+            log.debug('服务器连接已断开，正进行重新连接...')
+            self.reconnect()
 
         yield
 
@@ -50,10 +48,21 @@ class BaseQuotes(object):
         log.debug('__del__')
         self.close()
 
+    def reconnect(self):
+        if self.closed:
+            log.debug('服务器连接已断开，正进行重新连接...')
+            self.client.connect(time_out=self.timeout, *self.bestip)
+
     def close(self):
         log.debug('close')
-        self.connected = False
         self.client.close()
+
+    @property
+    def closed(self):
+        if hasattr(self.client.client, '_closed') and not getattr(self.client.client, '_closed'):
+            return False
+
+        return True
 
 
 class StdQuotes(BaseQuotes):
@@ -70,12 +79,13 @@ class StdQuotes(BaseQuotes):
         except ValueError:
             self.bestip = ('47.103.48.45', 7709)
 
+        log.debug(self.bestip)
+
         self.client = TdxHq_API(**kwargs)
         self.client.connect(*self.bestip)
-        self.connected = True
 
     def traffic(self):
-
+        self.reconnect()
         return self.client.get_traffic_stats()
 
     def quotes(self, symbol=None):
@@ -92,6 +102,8 @@ class StdQuotes(BaseQuotes):
         if type(symbol) is str:
             symbol = [symbol]
 
+        self.reconnect()
+
         symbol = get_stock_markets(symbol)
         result = self.client.get_security_quotes(symbol)
 
@@ -107,9 +119,11 @@ class StdQuotes(BaseQuotes):
         :param offset: 每次获取条数
         :return: pd.dataFrame or None
         """
+        self.reconnect()
 
         market = get_stock_market(symbol)
         result = self.client.get_security_bars(int(frequency), int(market), str(symbol), int(start), int(offset))
+        
         return to_data(result)
 
     def stock_count(self, market=MARKET_SH, *args, **kwargs):
@@ -119,8 +133,10 @@ class StdQuotes(BaseQuotes):
         :param market: 股票市场代码 sh 上海， sz 深圳
         :return: pd.dataFrame or None
         """
+        self.reconnect()
 
         result = self.client.get_security_count(market=market)
+
         return result
 
     def stocks(self, market=MARKET_SH, *args, **kwargs):
@@ -130,6 +146,7 @@ class StdQuotes(BaseQuotes):
         :param market: 股票市场
         :return:
         """
+        self.reconnect()
 
         counts = self.client.get_security_count(market=market)
         stocks = None
@@ -150,6 +167,7 @@ class StdQuotes(BaseQuotes):
         :param offset:
         :return:
         """
+        self.reconnect()
 
         market = get_stock_market(symbol)
         result = self.client.get_index_bars(frequency=frequency, market=market, code=symbol, start=start, count=offset)
@@ -163,9 +181,11 @@ class StdQuotes(BaseQuotes):
         :param symbol: 股票代码
         :return: pd.DataFrame
         """
+        self.reconnect()
 
         market = get_stock_market(symbol)
         result = self.client.get_minute_time_data(market=market, code=symbol)
+
         return to_data(result)
 
     def minutes(self, symbol='', date='20191023', *args, **kwargs):
@@ -176,6 +196,7 @@ class StdQuotes(BaseQuotes):
         :param date:
         :return: pd.dataFrame or None
         """
+        self.reconnect()
 
         market = get_stock_market(symbol)
         result = self.client.get_history_minute_time_data(market=market, code=symbol, date=date)
@@ -190,6 +211,7 @@ class StdQuotes(BaseQuotes):
         :param start: 起始位置
         :return: pd.dataFrame or None
         """
+        self.reconnect()
 
         market = get_stock_market(symbol)
         result = self.client.get_transaction_data(int(market), symbol, int(start), int(market))
@@ -207,10 +229,10 @@ class StdQuotes(BaseQuotes):
         :param date: 日期
         :return: pd.dataFrame or None
         """
+        self.reconnect()
 
         market = get_stock_market(symbol, string=False)
-        result = self.client.get_history_transaction_data(
-            market=market, code=symbol, start=start, count=offset, date=int(date))
+        result = self.client.get_history_transaction_data(market=market, code=symbol, start=start, count=offset, date=int(date))
 
         return to_data(result)
 
@@ -221,6 +243,7 @@ class StdQuotes(BaseQuotes):
         :param symbol: 股票代码
         :return: pd.dataFrame or None
         """
+        self.reconnect()
 
         market = int(get_stock_market(symbol))
         result = self.client.get_company_info_category(market, symbol)
@@ -235,6 +258,7 @@ class StdQuotes(BaseQuotes):
         :param symbol: 股票代码
         :return: pd.dataFrame or None
         """
+        self.reconnect()
 
         result = {}
         market = int(get_stock_market(symbol, string=False))
@@ -259,6 +283,7 @@ class StdQuotes(BaseQuotes):
         :param symbol: 股票代码
         :return: pd.dataFrame or None
         """
+        self.reconnect()
 
         market = get_stock_market(symbol)
         result = self.client.get_xdxr_info(int(market), symbol)
@@ -272,6 +297,7 @@ class StdQuotes(BaseQuotes):
         :param symbol: 股票代码
         :return:
         """
+        self.reconnect()
 
         market = get_stock_market(symbol)
         result = self.client.get_finance_info(market=market, code=symbol)
@@ -287,6 +313,7 @@ class StdQuotes(BaseQuotes):
         :param end: 截止日期
         :return: pd.dataFrame or None
         """
+        self.reconnect()
 
         result = self.client.get_k_data(symbol, begin, end)
         return result
@@ -316,6 +343,7 @@ class StdQuotes(BaseQuotes):
         :param offset: 每次获取条数
         :return: pd.dataFrame or None
         """
+        self.reconnect()
 
         result = self.client.get_index_bars(int(frequency), int(market), str(symbol), int(start), int(offset))
         return to_data(result)
@@ -327,6 +355,7 @@ class StdQuotes(BaseQuotes):
         :param tofile:
         :return: pd.dataFrame or None
         """
+        self.reconnect()
 
         result = self.client.get_and_parse_block_info(tofile)
         return to_data(result)
@@ -346,9 +375,10 @@ class ExtQuotes(BaseQuotes):
         except ValueError:
             self.bestip = ('112.74.214.43', 7727)
 
+        log.debug(self.bestip)
+
         self.client = TdxExHq_API(**kwargs)
         self.client.connect(*self.bestip)
-        self.connected = True
 
     @staticmethod
     def validate(market, symbol):
@@ -368,6 +398,7 @@ class ExtQuotes(BaseQuotes):
 
         :return: pd.dataFrame or None
         """
+        self.reconnect()
 
         result = self.client.get_markets()
         return to_data(result)
@@ -380,6 +411,7 @@ class ExtQuotes(BaseQuotes):
         :param start:
         :return:
         """
+        self.reconnect()
 
         result = self.client.get_instrument_info(start=start, count=offset)
         return to_data(result)
@@ -390,6 +422,7 @@ class ExtQuotes(BaseQuotes):
 
         :return:
         """
+        self.reconnect()
 
         result = self.client.get_instrument_count()
 
@@ -401,10 +434,12 @@ class ExtQuotes(BaseQuotes):
 
         :return:
         """
+        self.reconnect()
+
+        result = []
 
         count = self.client.get_instrument_count()
         pages = math.ceil(count / 100)
-        result = []
 
         for page in tqdm(range(0, pages)):
             result += self.client.get_instrument_info(page * 100, 100)
@@ -419,10 +454,11 @@ class ExtQuotes(BaseQuotes):
         :param symbol: 证券代码
         :return:
         """
+        self.reconnect()
 
         market, symbol = self.validate(market, symbol)
-
         result = self.client.get_instrument_quote(market, symbol)
+
         return to_data(result)
 
     def minute(self, market='', symbol=''):
@@ -433,10 +469,11 @@ class ExtQuotes(BaseQuotes):
         :param symbol: 证券代码
         :return:
         """
+        self.reconnect()
 
         market, symbol = self.validate(market, symbol)
-
         result = self.client.get_minute_time_data(market, symbol)
+
         return to_data(result)
 
     def minutes(self, market=None, symbol='', date=''):
@@ -448,10 +485,11 @@ class ExtQuotes(BaseQuotes):
         :param date:
         :return:
         """
+        self.reconnect()
 
         market, symbol = self.validate(market, symbol)
-
         result = self.client.get_history_minute_time_data(market, symbol, date)
+
         return to_data(result)
 
     def bars(self, frequency='', market='', symbol='', start=0, offset=100):
@@ -466,11 +504,11 @@ class ExtQuotes(BaseQuotes):
         :param offset: 数量
         :return:
         """
+        self.reconnect()
 
         market, symbol = self.validate(market, symbol)
+        result = self.client.get_instrument_bars(category=frequency, market=market, code=symbol, start=start, count=offset)
 
-        result = self.client.get_instrument_bars(
-            category=frequency, market=market, code=symbol, start=start, count=offset)
         return to_data(result)
 
     def transaction(self, market=None, symbol='', start=0, offset=1800):
@@ -483,10 +521,11 @@ class ExtQuotes(BaseQuotes):
         :param offset:
         :return:
         """
+        self.reconnect()
 
         market, symbol = self.validate(market, symbol)
-
         result = self.client.get_transaction_data(market=market, code=symbol, start=start, count=offset)
+
         return to_data(result)
 
     def transactions(self, market=None, symbol='', date='', start=0, offset=1800):
@@ -500,9 +539,9 @@ class ExtQuotes(BaseQuotes):
         :param offset:
         :return:
         """
+        self.reconnect()
 
         market, symbol = self.validate(market, symbol)
+        result = self.client.get_history_transaction_data(market=market, code=symbol, date=int(date), start=start, count=offset)
 
-        result = self.client.get_history_transaction_data(
-            market=market, code=symbol, date=int(date), start=start, count=offset)
         return to_data(result)
