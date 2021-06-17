@@ -59,7 +59,7 @@ class ReaderBase(object):
 
         for ex_ in suffix:
             ex_ = ex_.strip('.')
-            vipdoc = Path(self.tdxdir, market, subdir, f'{prefix}{symbol}.{ex_}')
+            vipdoc = Path(self.tdxdir, 'vipdoc', market, subdir, f'{prefix}{symbol}.{ex_}')
 
             if Path(vipdoc).exists():
                 log.debug(f"所需的文件: {vipdoc}")
