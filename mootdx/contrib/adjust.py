@@ -14,6 +14,23 @@ headers = {
 }
 
 
+class Adjust(object):
+    years = None
+    symbol = None
+
+    def __init__(self, data, *args, **kwargs) -> None:
+
+        if isinstance(data, pd.DataFrame):
+            self.years = data.datetime
+
+    def factor(self, factor='01'):
+        if self.years:
+            data = [get_adjust_year(symbol=self.symbol, year=year, factor=factor) for year in self.years]
+
+        # price x factor
+        return data
+
+
 def get_adjust_year(symbol=None, year='2021', factor='00'):
     # 00 不复权 01前复权 02后复权
     # factor = before after
