@@ -20,10 +20,14 @@ class TestReader(unittest.TestCase):
         self.assertFalse(self.reader.daily(symbol='000001').empty)
 
     def test_block(self):
+        # self.assertFalse(self.reader.block(symbol='block', group=True).empty)
         self.assertFalse(self.reader.block(symbol='block_fg', group=True).empty)
+        self.assertFalse(self.reader.block(symbol='block_gn', group=True).empty)
+        self.assertFalse(self.reader.block(symbol='block_zs', group=True).empty)
+        # self.assertFalse(self.reader.block(symbol='tdxhy.cfg', group=True).empty)
 
-    # def test_custom_block(self):
-    # self.assertFalse(self.reader.block(symbol='blocknew', custom=True, group=True).empty)
+    def test_custom_block(self):
+        self.assertFalse(self.reader.block( custom=True, group=True).empty)
 
     def test_minute1(self):
         result = self.reader.minute(symbol='688001', suffix='1')

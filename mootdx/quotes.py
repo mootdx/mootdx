@@ -328,7 +328,7 @@ class StdQuotes(BaseQuotes):
         - 4 日K线
         - 5 周K线
         - 6 月K线
-        
+
         - 7 1分钟
         - 8 1分钟K线
         - 9 日K线
