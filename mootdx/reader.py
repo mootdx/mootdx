@@ -112,7 +112,21 @@ class StdReader(ReaderBase):
     def fzline(self, symbol=None):
         return self.minute(symbol, suffix=5)
 
-    def block(self, symbol='block', custom=False, group=False):
+    def block_new(self, group=False):
+        reader = CustomerBlockReader()
+        vipdoc = Path(self.tdxdir, 'T0002', 'blocknew')
+
+        fmt = TYPE_GROUP if group else None
+
+        if Path(vipdoc).exists():
+            log.error(f'找到所需的文件: {vipdoc}')
+            return reader.get_df(vipdoc, fmt)
+
+        log.error(f'未找到所需的文件: {vipdoc}')
+
+        return None
+
+    def block(self, symbol='', custom=False, group=False):
         """
         获取板块数据
         参考: http://blog.sina.com.cn/s/blog_623d2d280102vt8y.html
@@ -122,12 +136,13 @@ class StdReader(ReaderBase):
         :param group:
         :return: pd.dataFrame or None
         """
-        if custom:
-            reader = CustomerBlockReader()
-            vipdoc = Path(self.tdxdir, 'T0002', 'blocknew', f'{symbol}')
-        else:
-            reader = BlockReader()
-            vipdoc = Path(self.tdxdir, 'T0002', 'hq_cache', f'{symbol}.dat')
+        # suffix = symbol.split('.')
+        # suffix = suffix[-1] if len(suffix) > 1 else 'dat'
+        suffix = 'dat'
+        # symbol = suffix[0]
+
+        reader = BlockReader()
+        vipdoc = Path(self.tdxdir, 'T0002', 'hq_cache', f'{symbol}.{suffix}')
 
         fmt = TYPE_GROUP if group else None
 
