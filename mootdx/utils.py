@@ -33,9 +33,11 @@ def get_stock_market(symbol='', string=False):
     ['00', '12'，'13', '18', '15', '16', '18', '20', '30', '39', '115'] 为 sz
     ['5', '6', '9'] 开头的为 sh， 其余为 sz
 
-    :param string:
-    :param symbol:股票ID, 若以 'sz', 'sh' 开头直接返回对应类型，否则使用内置规则判断
-    :return 'sh' or 'sz'"""
+    :param string: False 返回市场ID，否则市场缩写名称
+    :param symbol: 股票ID, 若以 'sz', 'sh' 开头直接返回对应类型，否则使用内置规则判断
+    :return 'sh' or 'sz'
+    """
+
     assert isinstance(symbol, str), 'stock code need str type'
 
     market = None
@@ -56,11 +58,6 @@ def get_stock_market(symbol='', string=False):
         market = MARKET_SZ if market == 'sz' else MARKET_SH
 
     return market
-
-
-def parse_gpcw(filename):
-    lineiter = (line.strip() for line in open(filename))
-    return [line.split(',') for line in lineiter]
 
 
 def gpcw(filepath):
@@ -113,8 +110,6 @@ def to_data(v):
     :return: pd.DataFrame
     """
 
-    log.debug(v)
-
     if not v:
         return pd.DataFrame(data=[])
 
@@ -124,8 +119,8 @@ def to_data(v):
         return pd.DataFrame(data=v) if len(v) else None
     elif isinstance(v, dict):
         return pd.DataFrame(data=[v])
-    else:
-        return pd.DataFrame(data=[])
+
+    return pd.DataFrame(data=[])
 
 
 def to_file(df, filename=None):
@@ -133,7 +128,7 @@ def to_file(df, filename=None):
     根据扩展名输出文件
 
     :param df: pd.DataFrame
-    :param filename: 要输出的文件
+    :param filename: 要输出的文件，支持 csv, xlsx, xls, json, h5
     :return: bool
     """
     if filename is None or df is None:

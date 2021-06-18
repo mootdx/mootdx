@@ -1,6 +1,6 @@
 ## 项目概述
 
-Mootdx 是一款纯Python语言开发的类似TradeX的行情数据接口的实现。
+Mootdx 是一款纯 Python 语言开发的类似 TradeX 的行情数据接口的实现。
 
 ## 项目特点
 

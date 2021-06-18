@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+from abc import ABC
+
 from pytdx.reader import (BlockReader, CustomerBlockReader, TdxExHqDailyBarReader, TdxLCMinBarReader)
 from unipath import Path
 
@@ -25,7 +27,7 @@ class Reader(object):
             return StdReader(**kwargs)
 
 
-class ReaderBase(object):
+class ReaderBase(ABC):
     """股票市场"""
 
     # 默认通达信安装目录
@@ -61,11 +63,12 @@ class ReaderBase(object):
             ex_ = ex_.strip('.')
             vipdoc = Path(self.tdxdir, 'vipdoc', market, subdir, f'{prefix}{symbol}.{ex_}')
 
-            if Path(vipdoc).exists():
-                log.debug(f"所需的文件: {vipdoc}")
-                return vipdoc
-            else:
+            if not Path(vipdoc).exists():
                 log.debug(f'未找到所需的文件: {vipdoc}')
+                continue
+
+            log.debug(f"找到所需的文件: {vipdoc}")
+            return vipdoc
 
         return None
 
@@ -130,8 +133,8 @@ class StdReader(ReaderBase):
 
         if Path(vipdoc).exists():
             return reader.get_df(vipdoc, fmt)
-        else:
-            log.error('未找到所需的文件: {}'.format(vipdoc))
+
+        log.error(f'未找到所需的文件: {vipdoc}')
 
         return None
 
@@ -139,17 +142,20 @@ class StdReader(ReaderBase):
 class ExtReader(ReaderBase):
     """扩展市场读取"""
 
+    def __init__(self, tdxdir=None):
+        super(ExtReader, self).__init__(tdxdir)
+        self.reader = TdxExHqDailyBarReader()
+
     def daily(self, symbol=None):
         """
         获取扩展市场日线数据
 
         :return: pd.dataFrame or None
         """
-        reader = TdxExHqDailyBarReader()
         vipdoc = self.find_path(symbol=symbol, subdir='lday', suffix='day')
 
         if symbol is not None:
-            return reader.get_df(vipdoc)
+            return self.reader.get_df(vipdoc)
 
         return None
 
@@ -159,11 +165,10 @@ class ExtReader(ReaderBase):
 
         :return: pd.dataFrame or None
         """
-        reader = TdxExHqDailyBarReader()
         vipdoc = self.find_path(symbol=symbol, subdir='minline', suffix='lc1')
 
         if symbol is not None:
-            return reader.get_df(vipdoc)
+            return self.reader.get_df(vipdoc)
 
         return None
 
@@ -173,10 +178,9 @@ class ExtReader(ReaderBase):
 
         :return: pd.dataFrame or None
         """
-        reader = TdxExHqDailyBarReader()
         vipdoc = self.find_path(symbol=symbol, subdir='fzline', suffix='lc5')
 
         if symbol is not None:
-            return reader.get_df(vipdoc)
+            return self.reader.get_df(vipdoc)
 
         return None
