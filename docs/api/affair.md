@@ -48,7 +48,7 @@ data = Affair.parse(downdir='output', filename='gpcw20170930.zip')
 
 ```
 
-## 04. 保存到csv文件
+## 04. 保存到文件
 
 代码方式
 
@@ -56,7 +56,11 @@ data = Affair.parse(downdir='output', filename='gpcw20170930.zip')
 from mootdx.affair import Affair
 
 result = Affair.parse(downdir='output', filename='gpcw20170930.zip')
+# 保存 csv 文件
 result.to_csv('gpcw20170930.csv')
+
+# 保存 Excel 文件
+result.to_csv('gpcw20170930.xls')
 ```
 命令行方式
 
