@@ -79,8 +79,6 @@ class StdQuotes(BaseQuotes):
         except ValueError:
             self.bestip = ('47.103.48.45', 7709)
 
-        log.debug(self.bestip)
-
         self.client = TdxHq_API(**kwargs)
         self.client.connect(*self.bestip)
 
@@ -105,9 +103,6 @@ class StdQuotes(BaseQuotes):
         self.reconnect()
 
         symbol = get_stock_markets(symbol)
-
-        log.debug(symbol)
-
         result = self.client.get_security_quotes(symbol)
 
         return to_data(result)
@@ -333,6 +328,7 @@ class StdQuotes(BaseQuotes):
         - 4 日K线
         - 5 周K线
         - 6 月K线
+        
         - 7 1分钟
         - 8 1分钟K线
         - 9 日K线
