@@ -8,13 +8,12 @@ from mootdx.affair import Affair
 class TestAffair(unittest.TestCase):
 
     def test_parse_all(self):
-        file = Affair.files()
         data = Affair.parse(downdir='tmp')
-        self.assertTrue(data)
+        self.assertIsNone(data)
 
     def test_parse_one(self):
         data = Affair.parse(downdir='tmp', filename='gpcw19960630.zip')
-        self.assertTrue(data)
+        self.assertIsNotNone(data)
 
     def setUp(self):
         if not os.path.isdir('tmp'):

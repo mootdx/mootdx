@@ -139,8 +139,8 @@ class StdReader(ReaderBase):
 
         fmt = TYPE_GROUP if group else None
 
-        if Path(vipdoc).exists():
-            log.error(f'找到所需的文件: {vipdoc}')
+        if Path(vipdoc).isdir():
+            log.debug(f'找到所需的文件: {vipdoc}')
             return reader.get_df(vipdoc, fmt)
 
         log.error(f'未找到所需的文件: {vipdoc}')
