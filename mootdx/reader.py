@@ -4,6 +4,7 @@ from abc import ABC
 from pytdx.reader import (BlockReader, CustomerBlockReader, TdxExHqDailyBarReader, TdxLCMinBarReader)
 from unipath import Path
 
+from mootdx import utils
 from mootdx.consts import TYPE_GROUP
 from mootdx.contrib.compat import MooTdxDailyBarReader
 from mootdx.logger import log
@@ -93,7 +94,7 @@ class StdReader(ReaderBase):
 
     def minute(self, symbol=None, suffix=1):
         """
-        获取1,5分钟线
+        获取1, 5分钟线
 
         :param suffix:
         :param symbol:
@@ -110,9 +111,29 @@ class StdReader(ReaderBase):
         return None
 
     def fzline(self, symbol=None):
+        """
+        分钟线数据
+
+        :param symbol: 自定义板块股票列表, 类型 list
+        :return: pd.dataFrame or Bool
+        """
         return self.minute(symbol, suffix=5)
 
-    def block_new(self, group=False):
+    def block_new(self, name: str = None, symbol: list = None, group=False):
+        """
+        自定义板块数据操作
+        提示: name 和 symbol 全为空则为读取，否则写入操作
+        参考: http://blog.sina.com.cn/s/blog_623d2d280102vt8y.html
+
+        :param name: 自定义板块名称
+        :param symbol: 自定义板块股票列表, 类型 list
+        :param group:
+        :return: pd.dataFrame or Bool
+        """
+
+        if name or symbol:
+            return utils.block_new(self.tdxdir, name=name, symbol=symbol)
+
         reader = CustomerBlockReader()
         vipdoc = Path(self.tdxdir, 'T0002', 'blocknew')
 
@@ -136,6 +157,7 @@ class StdReader(ReaderBase):
         :param group:
         :return: pd.dataFrame or None
         """
+
         # suffix = symbol.split('.')
         # suffix = suffix[-1] if len(suffix) > 1 else 'dat'
         suffix = 'dat'
