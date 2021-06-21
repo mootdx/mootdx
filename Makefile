@@ -54,8 +54,7 @@ clean-test: ## remove test and coverage artifacts
 	rm -fr htmlcov/
 
 lint: ## check style with flake8
-	flake8 mootdx
-	#yapf -i -r . -vv --style=google
+	flake8 --max-line-length=200
 
 test: ## run tests quickly with the default Python
 	py.test tests

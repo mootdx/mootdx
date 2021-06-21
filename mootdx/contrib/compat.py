@@ -77,7 +77,7 @@ class MooBaseSocketClient(BaseSocketClient):
 
             self.client.connect((ip, port))
         except socket.timeout as e:
-            # print(str(e))
+            log.debug(e)
             log.debug("connection expired")
 
             if self.raise_exception:
@@ -85,6 +85,7 @@ class MooBaseSocketClient(BaseSocketClient):
 
             return False
         except Exception as e:
+            log.debug(e)
             if self.raise_exception:
                 raise TdxConnectionError("other errors")
 
