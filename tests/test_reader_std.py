@@ -27,7 +27,7 @@ class TestReader(unittest.TestCase):
         # self.assertFalse(self.reader.block(symbol='tdxhy.cfg', group=True).empty)
 
     def test_custom_block(self):
-        self.assertFalse(self.reader.block( custom=True, group=True).empty)
+        self.assertFalse(self.reader.block_new(group=True).empty)
 
     def test_minute1(self):
         result = self.reader.minute(symbol='688001', suffix='1')
