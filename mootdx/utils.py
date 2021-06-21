@@ -186,7 +186,7 @@ def get_config_path(config='config.json'):
     return filename
 
 
-def block_new(tdxdir=None, name: str = None, symbol=None):
+def block_new(tdxdir=None, name: str = None, symbol: list = None):
     if not tdxdir:
         return False
 
@@ -199,7 +199,7 @@ def block_new(tdxdir=None, name: str = None, symbol=None):
     log.debug(name)
 
     vipdoc = Path(tdxdir, 'T0002', 'blocknew')
-    symbol = [symbol] if symbol is str else symbol
+    symbol = list(set(symbol))
 
     if not Path(vipdoc).isdir():
         log.error(f'自定义板块目录错误: {vipdoc}')
