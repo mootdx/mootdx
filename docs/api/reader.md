@@ -80,14 +80,19 @@ reader.block(symbol='block_zs', group=True)
 
 > 读取通达信的自定义板块信息文件夹
 
-在通达信客户端备份自定义板块数据，设置-->数据维护工具-->数据备份，备份后会生出类似TdxBak_20171011/blocknew的文件夹，然后使用如下代码读取：
-
 ```python
 # 默认扁平格式
 from mootdx.reader import Reader
 reader = Reader.factory(market='std', tdxdir='C:/new_tdx')
-reader.block(symbol='block_zs', custom=True)
+result = reader.block_new()
 
-#分组格式
-reader.block(symbol='block_zs', custom=True, group=True)
+# 分组格式
+result = reader.block_new(group=True)
+```
+
+写入新板块
+
+```python
+# 写入新板块
+reader.block_new(name='最优盈利板块', symbol=['600001','600002','600003','600004',])
 ```
