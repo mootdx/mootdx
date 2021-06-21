@@ -21,6 +21,8 @@ httpx = "*"
 click = ">=6.7"
 unipath = "*"
 tqdm = "*"
+mock = "*"
+useragent = "*"
 
 [requires]
 python_version = "3.8"

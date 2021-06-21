@@ -8,7 +8,6 @@ $ mootdx bestip -w -v
 ## 通达信离线数据读取
 
 ```python
-
 from mootdx.reader import Reader
 
 # market 参数 std 为标准市场(就是股票), ext 为扩展市场(期货，黄金等)
@@ -48,7 +47,7 @@ client.minute(symbol='000001')
 
 ## 通达信财务数据读取
 
-```python
+​```python
 from mootdx.affair import Affair
 
 # 远程文件列表

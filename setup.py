@@ -9,8 +9,8 @@ except ImportError:
 
 
 def parse_requirements(filename):
-    lineiter = (line.strip() for line in open(filename))
-    return [line for line in lineiter if line and not line.startswith("#")]
+    line_iter = (line.strip() for line in open(filename))
+    return [line for line in line_iter if line and not line.startswith("#")]
 
 
 with open('README.rst', encoding='utf-8') as readme_file:
@@ -25,7 +25,7 @@ test_requirements.append('pytest')
 
 setup(
     name='mootdx',
-    version='0.6.10',
+    version='0.7.1',
     description="通达信数据读取接口.",
     long_description=readme,
     author="bopo.wang",
