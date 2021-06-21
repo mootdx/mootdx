@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 import os
 
+from unipath import Path
+
 from mootdx.financial import financial
 from mootdx.logger import log
 from mootdx.utils import TqdmUpTo
@@ -16,10 +18,13 @@ class Affair(object):
         :param filename:
         :return:
         """
+        if not filename:
+            log.critical('文件名不能为空!')
+            return None
 
-        filepath = os.path.join(downdir, filename)
+        filepath = Path(downdir, filename)
 
-        if os.path.exists(filepath):
+        if Path(filepath).exists():
             return financial.FinancialReader().to_data(filepath)
 
         log.error('文件不存在：{}'.format(filename))
