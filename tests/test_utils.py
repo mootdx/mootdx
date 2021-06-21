@@ -4,8 +4,7 @@ import mock
 import pytest
 
 from mootdx.consts import MARKET_SH, MARKET_SZ
-from mootdx.reader import ReaderBase
-from mootdx.utils import get_config_path, md5sum, to_data, get_stock_market
+from mootdx.utils import get_config_path, md5sum, to_data, get_stock_market, block_new
 
 data = [
     ('600036', MARKET_SH),
@@ -16,13 +15,6 @@ data = [
 @pytest.mark.parametrize('symbol,market', data)
 def test_stock_market(symbol, market):
     assert get_stock_market(symbol) == market
-
-
-class TestReaderBase(unittest.TestCase):
-    def test_find_path(self):
-        reader = ReaderBase('tests/vipdoc')
-        result = reader.find_path(symbol='688001', subdir='minline', suffix=['lc1', '1'])
-        self.assertIsNotNone(result)
 
 
 class TestMd5sum(unittest.TestCase):
@@ -36,13 +28,13 @@ class TestMd5sum(unittest.TestCase):
 
 class TestToData(unittest.TestCase):
 
-    def test_todata_list(self):
+    def test_to_data_list(self):
         self.assertTrue(not to_data([{'aa': 'aa'}]).empty)
 
-    def test_todata_dict(self):
+    def test_to_data_dict(self):
         self.assertTrue(not to_data({'abc': 123}).empty)
 
-    def test_todata_empty(self):
+    def test_to_data_empty(self):
         self.assertTrue(to_data(None).empty)
         self.assertTrue(to_data({}).empty)
         self.assertTrue(to_data([]).empty)
@@ -72,6 +64,13 @@ class TestConfigPath(unittest.TestCase):
         platform_system.return_value = 'Darwin'
         config = get_config_path(config='config.json')
         self.assertTrue('/.mootdx/' in config)
+
+
+class TestBlockNew(unittest.TestCase):
+
+    def test_block_new(self):
+        self.assertTrue(block_new(tdxdir='tests/fixtures', name='龙虎榜', symbol=['600036']))
+        self.assertTrue(block_new(tdxdir='tests/fixtures', name='优质股', symbol='600036'))
 
 
 if __name__ == '__main__':

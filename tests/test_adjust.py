@@ -13,7 +13,7 @@ class TestAdjust(unittest.TestCase):
         self.assertFalse(data.empty)
 
         data = get_adjust_year(symbol='600000', year='2018', factor='aa')
-        self.assertFalse(data.empty)
+        self.assertTrue(data.empty)
 
     def test_adjust_after(self):
         data = get_adjust_year(symbol='600000', year='2018', factor='after')

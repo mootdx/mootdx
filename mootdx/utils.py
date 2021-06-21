@@ -2,7 +2,8 @@
 import hashlib
 import os
 import platform
-from struct import *
+from datetime import datetime
+from struct import calcsize, unpack
 
 import pandas as pd
 from pandas import DataFrame
@@ -33,9 +34,11 @@ def get_stock_market(symbol='', string=False):
     ['00', '12'，'13', '18', '15', '16', '18', '20', '30', '39', '115'] 为 sz
     ['5', '6', '9'] 开头的为 sh， 其余为 sz
 
-    :param string:
-    :param symbol:股票ID, 若以 'sz', 'sh' 开头直接返回对应类型，否则使用内置规则判断
-    :return 'sh' or 'sz'"""
+    :param string: False 返回市场ID，否则市场缩写名称
+    :param symbol: 股票ID, 若以 'sz', 'sh' 开头直接返回对应类型，否则使用内置规则判断
+    :return 'sh' or 'sz'
+    """
+
     assert isinstance(symbol, str), 'stock code need str type'
 
     market = None
@@ -43,7 +46,7 @@ def get_stock_market(symbol='', string=False):
     if symbol.startswith(('sh', 'sz')):
         market = symbol[:2]
 
-    elif symbol.startswith(('50', '51', '60', '90', '110', '113', '132', '204')):
+    elif symbol.startswith(('50', '51', '60', '68', '90', '110', '113', '132', '204')):
         market = 'sh'
 
     elif symbol.startswith(('00', '12', '13', '18', '15', '16', '18', '20', '30', '39', '115', '1318')):
@@ -54,12 +57,8 @@ def get_stock_market(symbol='', string=False):
 
     if string is False:
         market = MARKET_SZ if market == 'sz' else MARKET_SH
+
     return market
-
-
-def parse_gpcw(filename):
-    lineiter = (line.strip() for line in open(filename))
-    return [line.split(',') for line in lineiter]
 
 
 def gpcw(filepath):
@@ -101,6 +100,7 @@ def md5sum(downfile):
         return md5_l.hexdigest()
     except (IOError, FileNotFoundError) as e:
         log.error(f'无法读取文件: {downfile}')
+        log.debug(e)
         return None
 
 
@@ -121,8 +121,8 @@ def to_data(v):
         return pd.DataFrame(data=v) if len(v) else None
     elif isinstance(v, dict):
         return pd.DataFrame(data=[v])
-    else:
-        return pd.DataFrame(data=[])
+
+    return pd.DataFrame(data=[])
 
 
 def to_file(df, filename=None):
@@ -130,7 +130,7 @@ def to_file(df, filename=None):
     根据扩展名输出文件
 
     :param df: pd.DataFrame
-    :param filename: 要输出的文件
+    :param filename: 要输出的文件，支持 csv, xlsx, xls, json, h5
     :return: bool
     """
     if filename is None or df is None:
@@ -184,3 +184,31 @@ def get_config_path(config='config.json'):
 
     Path(pathname).mkdir(parents=True)
     return filename
+
+
+def block_new(tdxdir=None, name: str = None, symbol=None):
+    if not tdxdir:
+        return False
+
+    if not name:
+        name = datetime.now().strftime('%Y%m%d%H%M%S')
+
+    file = datetime.now().strftime('%Y%m%d%H%M%S')
+
+    vipdoc = Path(tdxdir, 'T0002', 'blocknew')
+    symbol = [symbol] if symbol is str else symbol
+
+    if not Path(vipdoc).isdir():
+        log.error(f'自定义板块目录错误: {vipdoc}')
+        return False
+
+    with open(f'{vipdoc}/{file}.blk', 'w') as fp:
+        fp.write('\n'.join(symbol))
+
+    with open(f'{vipdoc}/blocknew.cfg', 'ab') as fp:
+        data = name + ((50 - len(name)) * "\x00")
+        data += file + ((120 - len(file)) * "\x00")
+        data = bytes(data.encode('gbk', 'ignore'))
+        fp.write(data)
+
+    return True
