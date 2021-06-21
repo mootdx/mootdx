@@ -2,6 +2,7 @@
 import hashlib
 import os
 import platform
+from datetime import datetime
 from struct import *
 
 import pandas as pd
@@ -182,3 +183,31 @@ def get_config_path(config='config.json'):
 
     Path(pathname).mkdir(parents=True)
     return filename
+
+
+def block_new(tdxdir=None, name: str = None, symbol=None):
+    if not tdxdir:
+        return False
+
+    if not name:
+        name = datetime.now().strftime('%Y%m%d%H%M%S')
+
+    file = datetime.now().strftime('%Y%m%d%H%M%S')
+
+    vipdoc = Path(tdxdir, 'T0002', 'blocknew')
+    symbol = [symbol] if symbol is str else symbol
+
+    if not Path(vipdoc).isdir():
+        log.error(f'自定义板块目录错误: {vipdoc}')
+        return False
+
+    with open(f'{vipdoc}/{file}.blk', 'w') as fp:
+        fp.write('\n'.join(symbol))
+
+    with open(f'{vipdoc}/blocknew.cfg', 'ab') as fp:
+        data = name + ((50 - len(name)) * "\x00")
+        data += file + ((120 - len(file)) * "\x00")
+        data = bytes(data.encode('gbk', 'ignore'))
+        fp.write(data)
+
+    return True

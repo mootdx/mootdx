@@ -4,7 +4,7 @@ import mock
 import pytest
 
 from mootdx.consts import MARKET_SH, MARKET_SZ
-from mootdx.utils import get_config_path, md5sum, to_data, get_stock_market
+from mootdx.utils import get_config_path, md5sum, to_data, get_stock_market, block_new
 
 data = [
     ('600036', MARKET_SH),
@@ -64,6 +64,13 @@ class TestConfigPath(unittest.TestCase):
         platform_system.return_value = 'Darwin'
         config = get_config_path(config='config.json')
         self.assertTrue('/.mootdx/' in config)
+
+
+class TestBlockNew(unittest.TestCase):
+
+    def test_block_new(self):
+        self.assertTrue(block_new(tdxdir='tests/fixtures', name='龙虎榜', symbol=['600036']))
+        self.assertTrue(block_new(tdxdir='tests/fixtures', name='优质股', symbol='600036'))
 
 
 if __name__ == '__main__':
