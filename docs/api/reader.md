@@ -20,8 +20,10 @@ reader = Reader.factory(market='std', tdxdir='C:/new_tdx')
 
 # 读取日线数据
 reader.daily(symbol='600036')
+
 # 读取1分钟数据
 reader.minute(symbol='600036')
+
 # 读取5分钟数据
 reader.fzline(symbol='600036')
 ```
@@ -47,6 +49,7 @@ reader.daily(symbol='29#A1801')
 
 ```python
 from mootdx.reader import Reader
+
 reader = Reader.factory(market='std', tdxdir='c:/new_tdx')
 reader.minute(symbol='000001', suffix='1') # suffix = 1 一分钟，5 五分钟
 ```
@@ -55,6 +58,7 @@ reader.minute(symbol='000001', suffix='1') # suffix = 1 一分钟，5 五分钟
 
 ```python
 from mootdx.reader import Reader
+
 reader = Reader.factory(market='ext', tdxdir='c:/new_tdx')
 reader.minute(symbol='000001', suffix = '1') # suffix = 1 一分钟，5 五分钟
 ```
@@ -67,8 +71,9 @@ reader.minute(symbol='000001', suffix = '1') # suffix = 1 一分钟，5 五分�
 
 ```python
 from mootdx.reader import Reader
+
 reader = Reader.factory(market='ext', tdxdir='c:/new_tdx')
-reader.block(symbol='block_zs', group=True)
+reader.block(symbol='block_zs', group=False)
 ```
 
 ```python
@@ -81,9 +86,11 @@ reader.block(symbol='block_zs', group=True)
 > 读取通达信的自定义板块信息文件夹
 
 ```python
-# 默认扁平格式
 from mootdx.reader import Reader
+
 reader = Reader.factory(market='std', tdxdir='C:/new_tdx')
+
+# 默认扁平格式
 result = reader.block_new()
 
 # 分组格式
