@@ -55,5 +55,6 @@ def get_adjust_year(symbol=None, year='2021', factor='00'):
         log.warning('网络连接失败，请重试...')
     except IndexError as e:
         log.warning('数据解析错误，请求太频繁，请稍后重试...')
+        log.debug(e)
 
     return pd.DataFrame(data=None)

@@ -3,7 +3,7 @@ import hashlib
 import os
 import platform
 from datetime import datetime
-from struct import *
+from struct import calcsize, unpack
 
 import pandas as pd
 from pandas import DataFrame
@@ -100,6 +100,7 @@ def md5sum(downfile):
         return md5_l.hexdigest()
     except (IOError, FileNotFoundError) as e:
         log.error(f'无法读取文件: {downfile}')
+        log.debug(e)
         return None
 
 
