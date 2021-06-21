@@ -195,6 +195,9 @@ def block_new(tdxdir=None, name: str = None, symbol=None):
 
     file = datetime.now().strftime('%Y%m%d%H%M%S')
 
+    log.debug(file)
+    log.debug(name)
+
     vipdoc = Path(tdxdir, 'T0002', 'blocknew')
     symbol = [symbol] if symbol is str else symbol
 
@@ -206,8 +209,9 @@ def block_new(tdxdir=None, name: str = None, symbol=None):
         fp.write('\n'.join(symbol))
 
     with open(f'{vipdoc}/blocknew.cfg', 'ab') as fp:
-        data = name + ((50 - len(name)) * "\x00")
-        data += file + ((120 - len(file)) * "\x00")
+        data = name + ((50 - len(name.encode('gbk', 'ignore'))) * "\x00")
+        data += file + ((70 - len(file.encode('gbk', 'ignore'))) * "\x00")
+        log.debug(len(data))
         data = bytes(data.encode('gbk', 'ignore'))
         fp.write(data)
 
