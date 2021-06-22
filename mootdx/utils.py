@@ -195,9 +195,6 @@ def block_new(tdxdir=None, name: str = None, symbol: list = None):
 
     file = datetime.now().strftime('%Y%m%d%H%M%S')
 
-    log.debug(file)
-    log.debug(name)
-
     vipdoc = Path(tdxdir, 'T0002', 'blocknew')
     symbol = list(set(symbol))
 
@@ -205,13 +202,25 @@ def block_new(tdxdir=None, name: str = None, symbol: list = None):
         log.error(f'自定义板块目录错误: {vipdoc}')
         return False
 
+    if not Path(f'{vipdoc}/blocknew.cfg').exists():
+        Path(f'{vipdoc}/blocknew.cfg').write_file('')
+
+    with open(f'{vipdoc}/blocknew.cfg', 'rb') as fp:
+        names = fp.read().decode('gbk', 'ignore')
+        names = names.split("\x00")
+        names = [x for x in names if x != '']
+        names = [v for i, v in enumerate(names) if i % 2 == 0]
+
+        if name in names:
+            log.error('自定义板块名称重复.')
+            raise Exception('自定义板块名称重复.')
+
     with open(f'{vipdoc}/{file}.blk', 'w') as fp:
         fp.write('\n'.join(symbol))
 
     with open(f'{vipdoc}/blocknew.cfg', 'ab') as fp:
         data = name + ((50 - len(name.encode('gbk', 'ignore'))) * "\x00")
         data += file + ((70 - len(file.encode('gbk', 'ignore'))) * "\x00")
-        log.debug(len(data))
         data = bytes(data.encode('gbk', 'ignore'))
         fp.write(data)
 
