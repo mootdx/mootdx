@@ -1,11 +1,11 @@
 
-# 00. 行情接口说明
+# 标准行情接口
 
 下面是如何在程序里面调用本接口
 
-** 参数说明: **
+**参数说明:**
 
- * market: 对应市场。 (std 标准股票市场，ext 扩展市场)
+- market: 对应市场。 (std 标准股票市场，ext 扩展市场)
 
 ** 调用方法：**
 
@@ -13,13 +13,20 @@
 from mootdx.quotes import Quotes
 
 client = Quotes.factory(market='std')
+
+# 其他参数
+client = Quotes.factory(market='std', multithread=True, heartbeat=True, bestip=True, timeout=15)
+# multithread 多线程
+# heartbeat 开启心跳包
+# bestip 重新测试最快服务器
+# timeout 设置超时时间
 ```
 
 ## 01. 查询实时行情
 
 可以获取**多**只股票的行情信息
 
-** 参数说明: **
+**参数说明: **
 
  - symbol: 多个股票号码。 `["000001", "600300"]` 格式
 
@@ -27,7 +34,7 @@ client = Quotes.factory(market='std')
 
  - Quotes{}
 
-** 调用方法：**
+**调用方法：**
 
 ```python
 from mootdx.quotes import Quotes
@@ -38,17 +45,16 @@ client.quotes(symbol=["000001", "600300"])
 
 ## 02. 获取k线数据
 
-** 调用方法：**
+**调用方法：**
 
-```python
-frequency -> K线种类
+> frequency -> K线种类
 > 0 5分钟K线 1 15分钟K线 2 30分钟K线 3 1小时K线 4 日K线 5 周K线 6 月K线
 > 7 1分钟K线 8 1分钟K线 9 日K线 10 季K线 11 年K线
-```
+
 
 如：
 
-** 调用方法：**
+**调用方法：**
 
 ```python
 from mootdx.quotes import Quotes
@@ -216,7 +222,7 @@ client.F10C(symbol='000001')
  - symbol: 股票代码.
  - name: 公司详情标题. 可使用`F10C`获取
 
-** 调用方法：**
+**调用方法：**
 
 ```python
 from mootdx.quotes import Quotes
@@ -229,7 +235,7 @@ client.F10(symbol='000001', name='最新提示')
 
 ## 12. 除权除息信息
 
-** 参数说明: **
+**参数说明: **
 
  - symbol: 股票代码.
 
@@ -244,12 +250,11 @@ client.xdxr(symbol='600036')
 
 ## 13. 读取财务信息
 
-
-** 参数说明: **
+**参数说明: **
 
  - symbol: 股票代码.
 
-** 调用方法：**
+**调用方法：**
 
 ```python
 from mootdx.quotes import Quotes
@@ -260,13 +265,13 @@ client.finance(symbol="600300")
 
 ## 14. 读取k线信息
 
-** 参数说明: **
+**参数说明: **
 
  - symbol: 股票代码.
  - begin: 开始时间.
  - end: 结束时间.
 
-** 调用方法：**
+**调用方法：**
 
 ```python
 from mootdx.quotes import Quotes

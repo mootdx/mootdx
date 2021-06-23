@@ -17,8 +17,8 @@ Mootdx 是一款纯 Python 语言开发的类似 TradeX 的行情数据接口的
 
 ## 快速安装
 
-```bash
-$ pip install -U mootdx
+```shell
+pip install -U mootdx
 ```
 
 ## 多种运行
