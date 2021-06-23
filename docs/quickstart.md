@@ -1,8 +1,9 @@
+# 快速上手
 
 ## 使用最快的服务器
 
-```bash
-$ mootdx bestip -w -v
+```shell
+python -m mootdx bestip -w
 ```
 
 ## 通达信离线数据读取
@@ -25,7 +26,6 @@ reader.minute(symbol='600036')
 reader.fzline(symbol='600036')
 ```
 
-
 ## 通达信线上行情读取
 
 ```python
@@ -33,7 +33,7 @@ reader.fzline(symbol='600036')
 from mootdx.quotes import Quotes
 
 # 标准市场
-client = Quotes.factory(market='std', multithread=True, heartbeat=True)
+client = Quotes.factory(market='std', multithread=True, heartbeat=True, bestip=True, timeout=15)
 
 # k 线数据
 client.bars(symbol='600036', frequency=9, offset=10)
@@ -44,10 +44,12 @@ client.index(symbol='000001', frequency=9)
 # 分钟
 client.minute(symbol='000001')
 
+```
 
 ## 通达信财务数据读取
 
-​```python
+```python
+
 from mootdx.affair import Affair
 
 # 远程文件列表
