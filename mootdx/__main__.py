@@ -6,7 +6,7 @@ import os
 import click
 from prettytable import PrettyTable
 
-from mootdx import CONFIG, __version__, command
+from mootdx import CONFIG, __version__
 from mootdx.affair import Affair
 from mootdx.logger import log
 from mootdx.quotes import Quotes
@@ -15,17 +15,18 @@ from mootdx.server import Server
 from mootdx.utils import get_config_path, to_file
 
 
-
-
 @click.group()
-@click.option('-v', '--verbose', count=True)
+@click.option('--debug/--no-debug', default=False)
 @click.pass_context
-def cli(ctx, verbose):
-    ctx.obj["VERBOSE"] = verbose
+def cli(ctx, debug):
+    ctx.obj["DEBUG"] = debug
+    click.echo(f"Debug mode is {'on' if debug else 'off'}")
+
+    if debug:
+        logging.basicConfig(level=logging.DEBUG)
 
 
 @cli.command(help='读取股票在线行情数据.')
-@command.version_option()
 @click.option('-o', '--output', default=None, help='输出文件, 支持CSV, HDF5, Excel等格式.')
 @click.option('-s', '--symbol', default='600000', help='股票代码.')
 @click.option('-a', '--action', default='bars', help='操作类型 (daily: 日线, minute: 一分钟线, fzline: 五分钟线).')
@@ -52,7 +53,6 @@ def quotes(symbol, action, market, output):
 
 
 @cli.command(help='读取股票本地行情数据.')
-@command.version_option()
 @click.option('-d', '--tdxdir', default='C:/new_tdx', help='通达信数据目录.')
 @click.option('-s', '--symbol', default='600000', help='股票代码.')
 @click.option('-a', '--action', default='daily', help='操作类型 (daily: 日线, minute: 一分钟线, fzline: 五分钟线).')
@@ -70,7 +70,6 @@ def reader(symbol, action, market, tdxdir, output):
 
 
 @cli.command(help='测试行情服务器.')
-@command.version_option()
 @click.option('-l', '--limit', default=5, help='显示最快前几个，默认 5.')
 @click.option('-w', '--write', count=True, help='将最优服务器IP写入配置文件 ~/.mootdx/config.json.')
 @click.option('-v', '--verbose', count=True)
@@ -98,18 +97,7 @@ def bestip(limit, write, verbose):
         print('[√] 已经将最优服务器IP写入配置文件 {}'.format(config))
 
 
-# @cli.command(help='创建配置文件.')
-# def gencfg():
-#     '''
-#     创建默认配置文件
-#     :return:
-#     '''
-#     json.dump(CONFIG, open('config.json', 'w'), indent=2)
-#     print('[√] 在当前目录下创建默认配置文件 config.json')
-
-
 @cli.command(help='财务文件下载&解析.')
-@command.version_option()
 @click.option('-p', '--parse', default=None, help='要解析文件名')
 @click.option('-l', '--files', count=True, default=True, help='列出文件列表')
 @click.option('-f', '--fetch', default=None, help='下载财务文件的文件名')
@@ -164,7 +152,6 @@ def version():
 
 
 @cli.command(help='批量下载行情数据.')
-@command.version_option()
 @click.option('-o', '--output', default='bundle', help='转存文件目录.')
 @click.option('-s', '--symbol', default='600000', help='股票代码. 多个用,隔开')
 @click.option('-a', '--action', default='bars', help='操作类型 (daily: 日线, minute: 一分钟线, fzline: 五分钟线).')
