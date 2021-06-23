@@ -1,0 +1,11 @@
+click>=6.7
+pandas>=0.23.3
+prettytable>=0.7.2
+tqdm>=4.37.0
+requests
+pytdx~=1.72
+unipath~=1.1
+loguru~=0.5.3
+httpx~=0.18.1
+numpy~=1.20.3
+setuptools~=56.1.0
