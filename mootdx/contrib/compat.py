@@ -1,7 +1,8 @@
 import socket
 import threading
 
-from pytdx.base_socket_client import BaseSocketClient, CONNECT_TIMEOUT, TrafficStatSocket
+from pytdx.base_socket_client import (CONNECT_TIMEOUT, BaseSocketClient,
+                                      TrafficStatSocket)
 from pytdx.errors import TdxConnectionError
 from pytdx.heartbeat import HqHeartBeatThread
 from pytdx.reader import TdxDailyBarReader

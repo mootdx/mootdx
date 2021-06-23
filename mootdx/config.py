@@ -129,3 +129,4 @@ def update(options):
     """
 
     settings.update(options)
+
