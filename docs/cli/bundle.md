@@ -4,8 +4,8 @@
 
 使用方法如下：
 
-```bash
-$ mootdx bundle --help
+```shell
+mootdx bundle --help
 
 Usage: mootdx bundle [OPTIONS]
 
@@ -24,6 +24,6 @@ Options:
 
 读取行情并写入到文件: minute.csv
 
-```bash
-$ mootdx bundle -s 600000 -a minute -o minute.csv
+```shell
+mootdx bundle -s 600000 -a minute -o minute.csv
 ```
