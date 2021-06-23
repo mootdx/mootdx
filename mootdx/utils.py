@@ -82,7 +82,7 @@ def gpcw(filepath):
         info_data = cw_file.read(calcsize('<264f'))
         cw_info = unpack('<264f', info_data)
 
-        log.debug("{}, {}".format(code, str(cw_info)))
+        log.debug(f"{code}, {cw_info}")
         return code, cw_info
 
 
@@ -178,8 +178,8 @@ class TqdmUpTo(tqdm):
 
 
 def get_config_path(config='config.json'):
-    subpaths = 'mootdx' if platform.system() == 'Windows' else '.mootdx'
-    filename = os.path.join(os.path.expanduser('~'), subpaths, config)
+    sub_path = 'mootdx' if platform.system() == 'Windows' else '.mootdx'
+    filename = os.path.join(os.path.expanduser('~'), sub_path, config)
     pathname = os.path.dirname(filename)
 
     Path(pathname).mkdir(parents=True)
@@ -202,10 +202,12 @@ def block_new(tdxdir=None, name: str = None, symbol: list = None):
         log.error(f'自定义板块目录错误: {vipdoc}')
         return False
 
-    if not Path(f'{vipdoc}/blocknew.cfg').exists():
-        Path(f'{vipdoc}/blocknew.cfg').write_file('')
+    block_file = Path(vipdoc, 'blocknew.cfg')
 
-    with open(f'{vipdoc}/blocknew.cfg', 'rb') as fp:
+    if not block_file.exists():
+        block_file.write_file('')
+
+    with open(block_file, 'rb') as fp:
         names = fp.read().decode('gbk', 'ignore')
         names = names.split("\x00")
         names = [x for x in names if x != '']
@@ -218,7 +220,7 @@ def block_new(tdxdir=None, name: str = None, symbol: list = None):
     with open(f'{vipdoc}/{file}.blk', 'w') as fp:
         fp.write('\n'.join(symbol))
 
-    with open(f'{vipdoc}/blocknew.cfg', 'ab') as fp:
+    with open(block_file, 'ab') as fp:
         data = name + ((50 - len(name.encode('gbk', 'ignore'))) * "\x00")
         data += file + ((70 - len(file.encode('gbk', 'ignore'))) * "\x00")
         data = bytes(data.encode('gbk', 'ignore'))
