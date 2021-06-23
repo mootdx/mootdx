@@ -1,12 +1,16 @@
 # -*- coding: utf-8 -*-
+import json
 import logging
 import socket
 import time
 
 from prettytable import PrettyTable
+from unipath import Path
 
+from mootdx.consts import CONFIG
 from mootdx.consts import EX_HOSTS, GP_HOSTS, HQ_HOSTS
 from mootdx.logger import log
+from mootdx.utils import get_config_path
 
 result = []
 
@@ -87,3 +91,18 @@ def Server(index=None, limit=5, console=False, verbose=False):
         print(t)
 
     return [(item['addr'], item['port']) for item in server]
+
+
+def bestip():
+    config_ = get_config_path('config.json')
+    default = dict(CONFIG)
+
+    if bestip or not Path(config_).exists():
+
+        for index in ['HQ', 'EX', 'GP']:
+            result = Server(index=index)
+
+            if result:
+                default['BESTIP'][index] = result[0]
+
+        json.dump(default, open(config_, 'w'), indent=2)
