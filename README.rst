@@ -17,12 +17,16 @@
      :alt: Updates
 
 * 开源协议: MIT license
-* 在线文档: https://mootdx.readthedocs.io.
-* 中国镜像: https://gitee.com/ibopo/mootdx
+* 在线文档: https://mootdx.readthedocs.io
+* 国内镜像: https://gitee.com/ibopo/mootdx
 
 版本更新(倒序)
 --------------
 
+* 更新部分文档
+* 优化行情服务器连接，性能更好更快
+* 修改测试最快服务器方式，之后不需要命令行直接可以使用
+* 增加自定义板块的添加数据功能
 * 增加一个获取复权因子接口
 * 修复科创板行情数据无法下载问题
 * 修复本地数据读取路径错误问题
