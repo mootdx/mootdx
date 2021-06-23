@@ -10,10 +10,10 @@ from tqdm import tqdm
 from unipath import Path
 
 from mootdx import config
-from mootdx.consts import MARKET_SH, CONFIG
+from mootdx.consts import CONFIG, MARKET_SH
 from mootdx.logger import log
 from mootdx.server import Server
-from mootdx.utils import get_stock_market, get_stock_markets, to_data, get_config_path
+from mootdx.utils import (get_config_path, get_stock_market, get_stock_markets, to_data)
 
 
 class Quotes(object):
