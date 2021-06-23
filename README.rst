@@ -12,8 +12,8 @@
         :target: https://mootdx.readthedocs.io/zh/latest/?badge=latest
         :alt: Documentation Status
 
-.. image:: https://pyup.io/repos/github/bopo/mootdx/shield.svg
-     :target: https://pyup.io/repos/github/bopo/mootdx/
+.. image:: https://pyup.io/repos/github/mootdx/mootdx/shield.svg
+     :target: https://pyup.io/repos/github/mootdx/mootdx/
      :alt: Updates
 
 * 开源协议: MIT license
