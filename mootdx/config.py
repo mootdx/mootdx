@@ -10,6 +10,7 @@ from unipath import Path
 
 from mootdx.consts import EX_HOSTS, GP_HOSTS, HQ_HOSTS
 from mootdx.logger import log
+from mootdx.server import bestip
 from mootdx.utils import get_config_path
 
 __all__ = ['set', 'get', 'copy', 'update', 'settings']
@@ -44,7 +45,8 @@ def setup():
         settings.update(options)
     except Exception as e:
         log.error(e)
-        log.error('未找到配置文件 config.json. 请在命令行运行 "mootdx bestip -w -v" 生成配置文件')
+        log.error('未找到配置文件 config.json. 正在生成配置文件')
+        bestip()
 
     return True if settings else False
 

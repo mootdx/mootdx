@@ -1,16 +1,19 @@
 # -*- coding: utf-8 -*-
 import contextlib
+import json
 import math
 
 import pandas
 from pytdx.exhq import TdxExHq_API
 from pytdx.hq import TdxHq_API
 from tqdm import tqdm
+from unipath import Path
 
 from mootdx import config
-from mootdx.consts import MARKET_SH
+from mootdx.consts import MARKET_SH, CONFIG
 from mootdx.logger import log
-from mootdx.utils import get_stock_market, get_stock_markets, to_data
+from mootdx.server import Server
+from mootdx.utils import get_stock_market, get_stock_markets, to_data, get_config_path
 
 
 class Quotes(object):
@@ -33,6 +36,22 @@ class BaseQuotes(object):
     client = None
     bestip = None
     timeout = 15
+
+    def __init__(self, bestip=False, **kwargs):
+        log.debug(f'bestip=>{bestip}')
+
+        config_ = get_config_path('config.json')
+        default = dict(CONFIG)
+
+        if bestip or not Path(config_).exists():
+
+            for index in ['HQ', 'EX', 'GP']:
+                result = Server(index=index)
+
+                if result:
+                    default['BESTIP'][index] = result[0]
+
+            json.dump(default, open(config_, 'w'), indent=2)
 
     @contextlib.contextmanager
     def connect(self):
@@ -71,7 +90,8 @@ class StdQuotes(BaseQuotes):
     """
     bestip = ('47.103.48.45', 7709)
 
-    def __init__(self, **kwargs):
+    def __init__(self, bestip=False, **kwargs):
+        super(StdQuotes, self).__init__(bestip=bestip, **kwargs)
 
         try:
             default = config.get('SERVER').get('HQ')[0]
@@ -367,7 +387,9 @@ class ExtQuotes(BaseQuotes):
 
     bestip = ('112.74.214.43', 7727)
 
-    def __init__(self, **kwargs):
+    def __init__(self, bestip=False, **kwargs):
+        super(ExtQuotes, self).__init__(bestip=bestip, **kwargs)
+
         try:
             default = config.get('SERVER').get('EX')[0]
             self.bestip = config.get('BESTIP').get('EX', default)

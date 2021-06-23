@@ -1,27 +1,15 @@
 # -*- coding: utf-8 -*-
+
 from mootdx import config
 from mootdx.consts import EX_HOSTS, GP_HOSTS, HQ_HOSTS
 
 __version__ = '0.7.2'
 __author__ = "bopo.wang<ibopo@126.com>"
 
-CONFIG = {
-    'SERVER': {
-        'HQ': HQ_HOSTS,
-        'EX': EX_HOSTS,
-        'GP': GP_HOSTS
-    },
-    'BESTIP': {
-        'HQ': '',
-        'EX': '',
-        'GP': ''
-    },
-    'TDXDIR': 'C:/new_tdx',
-}
+from mootdx.server import Server
 
+from mootdx.utils import get_config_path
 
-def bestip():
-    return
 
 
 config.setup()
