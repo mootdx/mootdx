@@ -46,7 +46,7 @@ class MooTdxDailyBarReader(TdxDailyBarReader):
             elif code_head in ["01", "10", "11", "12", "13", "14"]:
                 return "SH_BOND"
         else:
-            print("Unknown security exchange !\n")
+            log.error("Unknown security exchange !\n")
             raise NotImplementedError
 
 

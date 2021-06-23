@@ -108,9 +108,6 @@ class FinancialList(BaseFinancial):
 class Financial(BaseFinancial):
     mode = "content"
 
-    def __init__(self):
-        super().__init__()
-
     def build_url(self, *args, **kwargs):
         """
         获取采集数据的 URL
