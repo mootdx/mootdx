@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import contextlib
-import json
 import math
 
 import pandas
@@ -9,10 +8,9 @@ from pytdx.hq import TdxHq_API
 from tqdm import tqdm
 from unipath import Path
 
-from mootdx import config
-from mootdx.consts import CONFIG, MARKET_SH
+from mootdx import config, server
+from mootdx.consts import MARKET_SH
 from mootdx.logger import log
-from mootdx.server import Server
 from mootdx.utils import (get_config_path, get_stock_market, get_stock_markets, to_data)
 
 
@@ -42,17 +40,9 @@ class BaseQuotes(object):
         self.timeout = timeout
 
         config_ = get_config_path('config.json')
-        default = dict(CONFIG)
 
         if bestip or not Path(config_).exists():
-
-            for index in ['HQ', 'EX', 'GP']:
-                result = Server(index=index)
-
-                if result:
-                    default['BESTIP'][index] = result[0]
-
-            json.dump(default, open(config_, 'w'), indent=2)
+            server.bestip()
 
     @contextlib.contextmanager
     def connect(self):

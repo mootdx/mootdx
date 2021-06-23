@@ -45,7 +45,7 @@ def setup():
         settings.update(options)
     except Exception as e:
         log.error(e)
-        log.error('未找到配置文件 config.json. 正在生成配置文件')
+        log.error(f'未找到配置文件 {CONF}, 正在生成配置文件.')
         bestip()
 
     return True if settings else False
