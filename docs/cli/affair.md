@@ -1,10 +1,9 @@
-
+# 命令行工具说明
 
 ## 00. 命令行的帮助选项
 
-
-```bash
-$ mootdx affair --help
+```shell
+mootdx affair --help
 
 Usage: mootdx affair [OPTIONS]
 
@@ -23,8 +22,8 @@ Options:
 
 ## 01. 列出所有财务文件
 
-```bash
-$ mootdx affair -l
+```shell
+mootdx affair -l
 
 +------------------+----------+----------------------------------+
 | filename         | filesize | hash                             |
@@ -40,12 +39,13 @@ $ mootdx affair -l
 | gpcw20171231.zip | 3188864  | 572f1c558cf48e149d7e065aba5fe787 |
 
 ```
+
 ## 02. 按文件名下载文件
 
 > 文件名由上面方法获取
 
-```bash
-$ mootdx affair -f gpcw20191231.zip
+```shell
+mootdx affair -f gpcw20191231.zip
 
 Downloaded 165, Total is 0
 ```
@@ -54,8 +54,8 @@ Downloaded 165, Total is 0
 
 > 增加快捷方式 `mootdx affair -a`
 
-```bash
-$ mootdx affair -f all
+```shell
+mootdx affair -f all
 
 Downloaded 165, Total is 0
 Downloaded 30000, Total is 0
@@ -70,8 +70,8 @@ Downloaded 90000, Total is 0
 
 > 文件名由列表方法获取
 
-```bash
-$ mootdx affair -p gpcw20000930.zip
+```shell
+mootdx affair -p gpcw20000930.zip
 
         report_date  col1  col2  ...        col313   col314        col315
 code                             ...

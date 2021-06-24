@@ -1,7 +1,8 @@
 import socket
 import threading
 
-from pytdx.base_socket_client import BaseSocketClient, CONNECT_TIMEOUT, TrafficStatSocket
+from pytdx.base_socket_client import (CONNECT_TIMEOUT, BaseSocketClient,
+                                      TrafficStatSocket)
 from pytdx.errors import TdxConnectionError
 from pytdx.heartbeat import HqHeartBeatThread
 from pytdx.reader import TdxDailyBarReader
@@ -46,7 +47,7 @@ class MooTdxDailyBarReader(TdxDailyBarReader):
             elif code_head in ["01", "10", "11", "12", "13", "14"]:
                 return "SH_BOND"
         else:
-            print("Unknown security exchange !\n")
+            log.error("Unknown security exchange !\n")
             raise NotImplementedError
 
 
