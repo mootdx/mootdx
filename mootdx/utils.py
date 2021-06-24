@@ -82,7 +82,7 @@ def gpcw(filepath):
         info_data = cw_file.read(calcsize('<264f'))
         cw_info = unpack('<264f', info_data)
 
-        log.debug("{}, {}".format(code, str(cw_info)))
+        log.debug(f"{code}, {cw_info}")
         return code, cw_info
 
 
@@ -90,8 +90,8 @@ def md5sum(downfile):
     """
     文件的 md5 哈希值
 
-    :param downfile:
-    :return:
+    :param downfile: 文件路径
+    :return: mixed
     """
 
     try:
@@ -159,7 +159,11 @@ def to_file(df, filename=None):
 
 
 class TqdmUpTo(tqdm):
-    """Provides `update_to(n)` which uses `tqdm.update(delta_n)`."""
+    """
+    Provides `update_to(n)` which uses `tqdm.update(delta_n)`.
+
+    """
+
     total: object = 0
 
     def update_to(self, downloaded=0, total_size=None):
@@ -178,34 +182,58 @@ class TqdmUpTo(tqdm):
 
 
 def get_config_path(config='config.json'):
-    subpaths = 'mootdx' if platform.system() == 'Windows' else '.mootdx'
-    filename = os.path.join(os.path.expanduser('~'), subpaths, config)
+    """
+    获取配置文件路径
+
+    :param config: 配置文件名称
+    :return: filename
+    """
+
+    sub_path = 'mootdx' if platform.system() == 'Windows' else '.mootdx'
+    filename = os.path.join(os.path.expanduser('~'), sub_path, config)
     pathname = os.path.dirname(filename)
 
     Path(pathname).mkdir(parents=True)
+
     return filename
 
 
 def block_new(tdxdir=None, name: str = None, symbol: list = None):
+    """
+    自定义模块写入函数
+
+    :param tdxdir: tdx 路径
+    :param name: 自定义板块名称
+    :param symbol: 自定义板块股票代码集合
+    :return: bool
+    """
+
     if not tdxdir:
         return False
 
+    # 自定义板块名称未传入则自动按时间生成名称
     if not name:
         name = datetime.now().strftime('%Y%m%d%H%M%S')
 
+    # 按时间生成 blk 文件名
     file = datetime.now().strftime('%Y%m%d%H%M%S')
 
     vipdoc = Path(tdxdir, 'T0002', 'blocknew')
     symbol = list(set(symbol))
 
+    # 判断目录是否存在
     if not Path(vipdoc).isdir():
         log.error(f'自定义板块目录错误: {vipdoc}')
         return False
 
-    if not Path(f'{vipdoc}/blocknew.cfg').exists():
-        Path(f'{vipdoc}/blocknew.cfg').write_file('')
+    block_file = Path(vipdoc, 'blocknew.cfg')
 
-    with open(f'{vipdoc}/blocknew.cfg', 'rb') as fp:
+    # 文件不存在就创建
+    if not block_file.exists():
+        block_file.write_file('')
+
+    # 判断名字是否重名
+    with open(block_file, 'rb') as fp:
         names = fp.read().decode('gbk', 'ignore')
         names = names.split("\x00")
         names = [x for x in names if x != '']
@@ -215,10 +243,12 @@ def block_new(tdxdir=None, name: str = None, symbol: list = None):
             log.error('自定义板块名称重复.')
             raise Exception('自定义板块名称重复.')
 
+    # 写 blk 文件
     with open(f'{vipdoc}/{file}.blk', 'w') as fp:
         fp.write('\n'.join(symbol))
 
-    with open(f'{vipdoc}/blocknew.cfg', 'ab') as fp:
+    # 写 blocknew.cfg 文件
+    with open(block_file, 'ab') as fp:
         data = name + ((50 - len(name.encode('gbk', 'ignore'))) * "\x00")
         data += file + ((70 - len(file.encode('gbk', 'ignore'))) * "\x00")
         data = bytes(data.encode('gbk', 'ignore'))

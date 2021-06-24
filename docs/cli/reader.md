@@ -6,7 +6,7 @@
 使用方法如下：
 
 ```
-$ mootdx reader --help
+mootdx reader --help
 
 Usage: mootdx reader [OPTIONS]
 
@@ -26,8 +26,8 @@ Options:
 
 `-o` 参数导出数据
 
-```bash
-$ mootdx reader --tdxdir ../fixtures -s 600000 -a daily -o dt.csv
+```shell
+mootdx reader --tdxdir ../fixtures -s 600000 -a daily -o dt.csv
 
 写入到文件 : dt.csv
 
@@ -37,8 +37,8 @@ $ mootdx reader --tdxdir ../fixtures -s 600000 -a daily -o dt.csv
 
 `-o` 参数导出数据
 
-```bash
-$ mootdx reader --tdxdir ../fixtures -s 600000 -a minute -o dt.csv
+```shell
+mootdx reader --tdxdir ../fixtures -s 600000 -a minute -o dt.csv
 
 写入到文件 : dt.csv
 
@@ -48,8 +48,8 @@ $ mootdx reader --tdxdir ../fixtures -s 600000 -a minute -o dt.csv
 
 `-o` 参数导出数据
 
-```bash
-$ mootdx reader --tdxdir ../fixtures -s 600000 -a fzline -o dt.csv
+```shell
+mootdx reader --tdxdir ../fixtures -s 600000 -a fzline -o dt.csv
 
 写入到文件 : dt.csv
 

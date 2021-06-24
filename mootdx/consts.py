@@ -69,3 +69,17 @@ EX_HOSTS = [
 ]
 
 GP_HOSTS = [('默认财务数据线路', '120.76.152.87', 7709)]
+
+CONFIG = {
+    'SERVER': {
+        'HQ': HQ_HOSTS,
+        'EX': EX_HOSTS,
+        'GP': GP_HOSTS
+    },
+    'BESTIP': {
+        'HQ': '',
+        'EX': '',
+        'GP': ''
+    },
+    'TDXDIR': 'C:/new_tdx',
+}

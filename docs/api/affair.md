@@ -5,9 +5,11 @@
 ```python
 from mootdx.affair import Affair
 Affair.files()
+```
 
 结果:
 
+```
 Out[17]:
  [{'filename': 'gpcw19990630.zip',
   'hash': '65228d9db21d42e683698ac8dd72ef57',
@@ -45,7 +47,6 @@ Affair.fetch(downdir='output', filename='gpcw20170930.zip')
 from mootdx.affair import Affair
 
 data = Affair.parse(downdir='output', filename='gpcw20170930.zip')
-
 ```
 
 ## 04. 保存到文件
@@ -64,8 +65,8 @@ result.to_csv('gpcw20170930.xls')
 ```
 命令行方式
 
-写入到文件 : gpcw20170930.csv
+写入到文件 : `gpcw20170930.csv`
 
-```bash
-$ mootdx affair -f gpcw20000930.zip -o gpcw20170930.csv
+```shell
+mootdx affair -f gpcw20000930.zip -o gpcw20170930.csv
 ```

@@ -4,8 +4,8 @@
 
 使用方法如下：
 
-```bash
-$ mootdx quotes --help
+```shell
+mootdx quotes --help
 
 Usage: mootdx quotes [OPTIONS]
 
@@ -23,6 +23,6 @@ Options:
 
 读取行情并写入到文件: minute.csv
 
-```bash
-$ mootdx quotes -s 600000 -a minute -o minute.csv
+```shell
+mootdx quotes -s 600000 -a minute -o minute.csv
 ```
