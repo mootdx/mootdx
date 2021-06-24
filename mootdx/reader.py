@@ -183,7 +183,7 @@ class ExtReader(ReaderBase):
         super(ExtReader, self).__init__(tdxdir)
         self.reader = TdxExHqDailyBarReader()
 
-    def daily(self, symbol=None):
+    def daily(self, symbol=None, *args, **kwargs):
         """
         获取扩展市场日线数据
 
@@ -196,20 +196,20 @@ class ExtReader(ReaderBase):
 
         return None
 
-    def minute(self, symbol=None):
+    def minute(self, symbol=None, *args, **kwargs):
         """
         获取扩展市场分钟线数据
 
         :return: pd.dataFrame or None
         """
-        vipdoc = self.find_path(symbol=symbol, subdir='minline', suffix='lc1')
+        vipdoc = self.find_path(symbol=symbol, subdir='minline', suffix=['lc1','1'])
 
         if symbol is not None:
             return self.reader.get_df(vipdoc)
 
         return None
 
-    def fzline(self, symbol=None):
+    def fzline(self, symbol=None, *args, **kwargs):
         """
         获取日线数据
 
