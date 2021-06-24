@@ -14,14 +14,16 @@ from mootdx.reader import Reader
 from mootdx.server import Server
 from mootdx.utils import get_config_path, to_file
 
-logging.basicConfig(level=logging.NOTSET)
-
 
 @click.group()
-@click.option('-v', '--verbose', count=True)
+@click.option('--debug/--no-debug', default=False)
 @click.pass_context
-def cli(ctx, verbose):
-    ctx.obj["VERBOSE"] = verbose
+def cli(ctx, debug):
+    ctx.obj["DEBUG"] = debug
+    click.echo(f"Debug mode is {'on' if debug else 'off'}")
+
+    if debug:
+        logging.basicConfig(level=logging.DEBUG)
 
 
 @cli.command(help='读取股票在线行情数据.')
@@ -95,16 +97,6 @@ def bestip(limit, write, verbose):
         print('[√] 已经将最优服务器IP写入配置文件 {}'.format(config))
 
 
-# @cli.command(help='创建配置文件.')
-# def gencfg():
-#     '''
-#     创建默认配置文件
-#     :return:
-#     '''
-#     json.dump(CONFIG, open('config.json', 'w'), indent=2)
-#     print('[√] 在当前目录下创建默认配置文件 config.json')
-
-
 @cli.command(help='财务文件下载&解析.')
 @click.option('-p', '--parse', default=None, help='要解析文件名')
 @click.option('-l', '--files', count=True, default=True, help='列出文件列表')
@@ -151,7 +143,7 @@ def affair(parse, files, fetch, downdir, output, downall, verbose):
             else:
                 print(feed)
         else:
-            log.erro('cannot find file.')
+            log.error('cannot find file.')
 
 
 @cli.command(help='显示当前软件版本.')

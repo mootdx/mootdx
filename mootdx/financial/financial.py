@@ -12,6 +12,7 @@ from unipath import Path
 
 from mootdx import config
 from mootdx.config import settings
+
 from .base import BaseFinancial, BaseReader
 
 
@@ -107,9 +108,6 @@ class FinancialList(BaseFinancial):
 
 class Financial(BaseFinancial):
     mode = "content"
-
-    def __init__(self):
-        super().__init__()
 
     def build_url(self, *args, **kwargs):
         """

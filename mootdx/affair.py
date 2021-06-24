@@ -18,6 +18,7 @@ class Affair(object):
         :param filename:
         :return:
         """
+
         if not filename:
             log.critical('文件名不能为空!')
             return None

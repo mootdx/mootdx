@@ -1,8 +1,8 @@
 import json
 import re
 
-import requests
 import pandas as pd
+import requests
 import requests.exceptions
 from numpy import asarray
 
