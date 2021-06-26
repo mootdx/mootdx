@@ -22,8 +22,9 @@ class TestExReader(unittest.TestCase):
         self.assertFalse(data.empty)
 
     def test_minbar(self):
-        self.reader.minute(symbol='4#CF7D0LAO')
-
+        data = self.reader.minute(symbol='4#CF7D0LAO')
+        print(data)
+        self.assertFalse(data.empty)
 
 if __name__ == '__main__':
     unittest.main()
