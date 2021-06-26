@@ -6,7 +6,8 @@ import os
 import click
 from prettytable import PrettyTable
 
-from mootdx import CONFIG, __version__
+from mootdx.consts import CONFIG
+from mootdx import __version__
 from mootdx.affair import Affair
 from mootdx.logger import log
 from mootdx.quotes import Quotes
