@@ -2,12 +2,13 @@ import json
 import re
 
 import pandas as pd
-import requests
-import requests.exceptions
+import httpx
 from numpy import asarray
 
 from mootdx.logger import log
 
+transport = httpx.HTTPTransport(retries=1)
+client = httpx.Client(transport=transport)
 
 def get_adjust_year(symbol=None, year='2021', factor='00'):
     """
@@ -39,7 +40,7 @@ def get_adjust_year(symbol=None, year='2021', factor='00'):
 
     try:
         url = f'http://d.10jqka.com.cn/v2/line/hs_{symbol}/{factor}/{year}.js'
-        res = requests.get(url, headers=headers)
+        res = client.get(url, headers=headers)
         res.raise_for_status()
 
         # 出现 window.location.href 则请求太频繁，需要稍等再采集
@@ -51,7 +52,9 @@ def get_adjust_year(symbol=None, year='2021', factor='00'):
 
         columns = ['date', 'open', 'high', 'low', 'close', 'volume', 'amount', 'adjust']
         return pd.DataFrame(data, index=list(asarray(data).T[0]), columns=columns)
-    except requests.exceptions.RequestException:
+    except httpx.HTTPError:
+        log.warning('网络连接失败，请重试...')
+    except httpx.RequestError:
         log.warning('网络连接失败，请重试...')
     except IndexError as e:
         log.warning('数据解析错误，请求太频繁，请稍后重试...')

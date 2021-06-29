@@ -1,7 +1,8 @@
 import unittest
 
-import mock
+from unittest import mock
 import pytest
+from unipath.path import Path
 
 from mootdx.consts import MARKET_SH, MARKET_SZ
 from mootdx.reader import Reader
@@ -24,7 +25,7 @@ class TestMd5sum(unittest.TestCase):
         self.assertIsNone(md5sum('/ad/sd/sd'))
 
     def test_md5sum_success(self):
-        self.assertIsNotNone(md5sum('/vagrant/mootdx/setup.cfg'))
+        self.assertIsNotNone(md5sum('./setup.cfg'))
 
 
 class TestToData(unittest.TestCase):
@@ -68,11 +69,19 @@ class TestConfigPath(unittest.TestCase):
 
 
 class TestBlockNew(unittest.TestCase):
-    # 初始化工作
-    def setUp(self):
-        self.reader = Reader.factory(market='std', tdxdir='tests/fixtures')
 
-    def test_block_new(self):
+    tdxdir = 'tests/fixtures'
+
+    def setUp(self):
+        Path(self.tdxdir, 'T0002', 'blocknew', 'blocknew.cfg').remove()
+        self.reader = Reader.factory(market='std', tdxdir=self.tdxdir)
+        return super().setUp()
+
+    # def tearDown(self) -> None:
+    #     Path(self.tdxdir, 'T0002', 'blocknew', 'blocknew.cfg').remove()
+    #     return super().tearDown()
+
+    def test_block_new_write(self):
         self.assertTrue(self.reader.block_new(name='龙虎榜', symbol=['600036']))
         self.assertTrue(self.reader.block_new(name='优质股', symbol=['600036']))
         self.assertFalse(self.reader.block_new(group=True).empty)
