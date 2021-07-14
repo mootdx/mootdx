@@ -212,7 +212,7 @@ class StdQuotes(BaseQuotes):
 
         return to_data(result)
 
-    def transaction(self, symbol='', start=0, *args, **kwargs):
+    def transaction(self, symbol='', start=0, offset=10, *args, **kwargs):
         """
         查询分笔成交
 
@@ -223,7 +223,7 @@ class StdQuotes(BaseQuotes):
         self.reconnect()
 
         market = get_stock_market(symbol)
-        result = self.client.get_transaction_data(int(market), symbol, int(start), int(market))
+        result = self.client.get_transaction_data(int(market), symbol, int(start), offset)
 
         return to_data(result)
 
