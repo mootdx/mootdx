@@ -15,6 +15,7 @@ pages:
   - 扩展行情: api/quote2.md
   - 数据读取: api/reader.md
   - 财务数据: api/affair.md
+  - 财务对照: api/fields.md
 
 - 命令行工具:
   - 线路测试: cli/bestip.md
