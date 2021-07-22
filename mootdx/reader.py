@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 from abc import ABC
 
-from pytdx.reader import (BlockReader, CustomerBlockReader, TdxExHqDailyBarReader, TdxLCMinBarReader)
+from pytdx.reader import (BlockReader, CustomerBlockReader, TdxExHqDailyBarReader, TdxLCMinBarReader,
+                          TdxMinBarReader)
 from unipath import Path
 
 from mootdx import utils
@@ -103,9 +104,11 @@ class StdReader(ReaderBase):
         subdir = 'fzline' if str(suffix) == '5' else 'minline'
         suffix = ['lc5', '5'] if str(suffix) == '5' else ['lc1', '1']
         symbol = self.find_path(symbol, subdir=subdir, suffix=suffix)
-        reader = TdxLCMinBarReader()
-
         if symbol is not None:
+            if 'lc' not in symbol.ext:
+                reader = TdxMinBarReader()
+            else:
+                reader = TdxLCMinBarReader()
             return reader.get_df(symbol)
 
         return None
