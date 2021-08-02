@@ -118,7 +118,7 @@ class StdQuotes(BaseQuotes):
 
         return to_data(result)
 
-    def bars(self, symbol='000001', frequency='9', start='0', offset='100', *args, **kwargs):
+    def bars(self, symbol='000001', frequency=9, start=0, offset=100, *args, **kwargs):
         """
         获取实时日K线数据
 
@@ -131,6 +131,7 @@ class StdQuotes(BaseQuotes):
         self.reconnect()
 
         market = get_stock_market(symbol)
+        offset = 800 if int(offset) >= 800 else offset
         result = self.client.get_security_bars(int(frequency), int(market), str(symbol), int(start), int(offset))
 
         return to_data(result)
@@ -166,7 +167,7 @@ class StdQuotes(BaseQuotes):
 
         return stocks
 
-    def index_bars(self, symbol='000001', frequency='9', start='0', offset='100', *args, **kwargs):
+    def index_bars(self, symbol='000001', frequency=9, start=0, offset=100, *args, **kwargs):
         """
         获取指数k线
 
@@ -218,12 +219,13 @@ class StdQuotes(BaseQuotes):
 
         :param symbol: 股票代码
         :param start: 起始位置
+        :param offset: 结束位置
         :return: pd.dataFrame or None
         """
         self.reconnect()
 
         market = get_stock_market(symbol)
-        result = self.client.get_transaction_data(int(market), symbol, int(start), offset)
+        result = self.client.get_transaction_data(int(market), symbol, start, offset)
 
         return to_data(result)
 
@@ -327,7 +329,7 @@ class StdQuotes(BaseQuotes):
         result = self.client.get_k_data(symbol, begin, end)
         return result
 
-    def index(self, symbol='000001', market=MARKET_SH, frequency='9', start=1, offset=2):
+    def index(self, symbol='000001', market=MARKET_SH, frequency=9, start=1, offset=2):
         """
         获取指数k线
 
