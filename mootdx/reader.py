@@ -69,6 +69,7 @@ class ReaderBase(ABC):
                 continue
 
             log.debug(f"找到所需的文件: {vipdoc}")
+
             return vipdoc
 
         return None
