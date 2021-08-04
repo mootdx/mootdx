@@ -86,9 +86,11 @@ class StdQuotes(BaseQuotes):
 
         try:
             default = config.get('SERVER').get('HQ')[0]
-            self.bestip = config.get('BESTIP').get('HQ', default)
         except ValueError:
-            self.bestip = ('47.103.48.45', 7709)
+            server.bestip()
+        finally:
+            default = config.get('SERVER').get('HQ')[0]
+            self.bestip = config.get('BESTIP').get('HQ', default)
 
         self.client = TdxHq_API(**kwargs)
         self.client.connect(*self.bestip)
@@ -385,11 +387,11 @@ class ExtQuotes(BaseQuotes):
 
         try:
             default = config.get('SERVER').get('EX')[0]
-            self.bestip = config.get('BESTIP').get('EX', default)
         except ValueError:
-            self.bestip = ('112.74.214.43', 7727)
-
-        log.debug(self.bestip)
+            server.bestip()
+        finally:
+            default = config.get('SERVER').get('EX')[0]
+            self.bestip = config.get('BESTIP').get('EX', default)
 
         self.client = TdxExHq_API(**kwargs)
         self.client.connect(*self.bestip)
