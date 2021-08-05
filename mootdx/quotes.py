@@ -61,7 +61,8 @@ class BaseQuotes(object):
     def reconnect(self):
         if self.closed:
             log.debug('服务器连接已断开，正进行重新连接...')
-            self.client.connect(time_out=self.timeout, *self.bestip)
+            # self.client.connect(time_out=self.timeout, *self.bestip)
+            self.client.connect(*self.bestip)
 
     def close(self):
         log.debug('close')
@@ -69,7 +70,7 @@ class BaseQuotes(object):
 
     @property
     def closed(self):
-        if hasattr(self.client.client, '_closed') and not getattr(self.client.client, '_closed'):
+        if not hasattr(self.client.client, '_closed') or getattr(self.client.client, '_closed'):
             return False
 
         return True
