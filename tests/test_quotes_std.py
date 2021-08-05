@@ -24,10 +24,12 @@ class TestStdQuotes(unittest.TestCase):
         self.assertEqual(data.empty, False)
 
         data = self.client.quotes(symbol=['600036', '600016'])
+        print(data)
         self.assertEqual(data.empty, False)
 
     def test_bars(self):
         data = self.client.bars(symbol='600036', frequency=9, offset=10)
+        print(data)
         self.assertEqual(data.empty, False)
 
     def test_index(self):
@@ -44,10 +46,12 @@ class TestStdQuotes(unittest.TestCase):
 
     def test_transaction(self):
         data = self.client.transaction(symbol='600036', start=0, offset=10)
+        print(data)
         self.assertEqual(data.empty, False)
 
     def test_transactions(self):
-        data = self.client.transactions(symbol='000001', start=0, offset=10, date='20170209')
+        data = self.client.transactions(symbol='600036', start=0, offset=10, date='20170209')
+        print(data)
         self.assertEqual(data.empty, False)
 
     def test_F10C(self):

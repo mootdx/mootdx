@@ -72,7 +72,7 @@ def reader(symbol, action, market, tdxdir, output):
 
 @cli.command(help='测试行情服务器.')
 @click.option('-l', '--limit', default=5, help='显示最快前几个，默认 5.')
-@click.option('-w', '--write', count=True, help='将最优服务器IP写入配置文件 ~/.mootdx/config.json.')
+@click.option('-w', '--write', default=True, count=True, help='将最优服务器IP写入配置文件 ~/.mootdx/config.json.')
 @click.option('-v', '--verbose', count=True)
 def bestip(limit, write, verbose):
     """
