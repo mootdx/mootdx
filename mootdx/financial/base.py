@@ -3,6 +3,8 @@ import struct
 import tempfile
 from urllib.request import Request, urlopen
 
+from ..logger import log
+
 
 def reporthook(downloaded, total_size):
     print("Downloaded {}, Total is {}".format(downloaded, total_size))
@@ -54,14 +56,14 @@ class BaseFinancial:
         elif self.mode == "content":
             file = self.content(report_hook=report_hook, downdir=downdir, chunk_size=chunk_size, *args, **kwargs)
         else:
-            return
+            return None
 
         result = self.parse(file, *args, **kwargs)
 
         try:
             file.close()
         except Exception as e:
-            raise e
+            log.warning(e)
 
         return result
 

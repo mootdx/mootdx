@@ -23,6 +23,7 @@ unipath = "*"
 tqdm = "*"
 mock = "*"
 useragent = "*"
+httmock = "*"
 
 [requires]
 python_version = "3.8"

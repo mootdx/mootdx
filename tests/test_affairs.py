@@ -6,18 +6,13 @@ from mootdx.affair import Affair
 
 
 class TestAffair(unittest.TestCase):
-
     files = []
 
-    def setUp(self) -> None:
-        if not os.path.isdir('tmp'):
-            os.mkdir('tmp')
-
+    def setup_class(self) -> None:
         self.files = [x['filename'] for x in Affair.files()]
-        print(self.files)
 
-    # def tearDown(self) -> None:
-    #     os.removedirs('tmp')
+    def teardown_class(self):
+        pass
 
     def test_parse_all(self):
         data = Affair.parse(downdir='tmp')
