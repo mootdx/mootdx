@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import time
 import unittest
 
 from mootdx.consts import MARKET_SH
@@ -10,13 +11,11 @@ class TestStdQuotes(unittest.TestCase):
 
     # 初始化工作
     def setup_class(self):
-        self.client = Quotes.factory(market='std')  # 标准市场
-        print('setup_class')
+        self.client = Quotes.factory(market='std', timeout=10)  # 标准市场
 
     # 退出清理工作
     def teardown_class(self):
         del self.client
-        print('teardown_class')
 
     def test_quotes(self):
         data = self.client.quotes(symbol='600036')
@@ -73,5 +72,10 @@ class TestStdQuotes(unittest.TestCase):
         self.assertEqual(data.empty, False)
 
     def test_finance(self):
+        data = self.client.finance(symbol='000001')
+        self.assertEqual(data.empty, False)
+
+    def test_timeout(self):
+        time.sleep(12)
         data = self.client.finance(symbol='000001')
         self.assertEqual(data.empty, False)

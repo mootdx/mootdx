@@ -93,7 +93,7 @@ class StdQuotes(BaseQuotes):
             default = config.get('SERVER').get('HQ')[0]
             self.bestip = config.get('BESTIP').get('HQ', default)
 
-        self.client = TdxHq_API(**kwargs)
+        self.client = TdxHq_API(heartbeat=True, raise_exception=True, auto_retry=True, **kwargs)
         self.client.connect(*self.bestip)
 
     def traffic(self):
