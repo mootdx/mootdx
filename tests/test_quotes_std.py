@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import time
 import unittest
 
 from mootdx.consts import MARKET_SH
@@ -82,8 +81,3 @@ class TestStdQuotes(unittest.TestCase):
     def test_finance(self):
         data = self.client.finance(symbol='000001')
         self.assertEqual(data.empty, False)
-
-    # def test_timeout(self):
-    #     time.sleep(12)
-    #     data = self.client.finance(symbol='000001')
-    #     self.assertEqual(data.empty, False)
