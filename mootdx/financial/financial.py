@@ -12,7 +12,6 @@ from unipath import Path
 
 from mootdx import config
 from mootdx.config import settings
-
 from .base import BaseFinancial, BaseReader
 
 
@@ -38,7 +37,7 @@ class FinancialReader(BaseReader, ABC):
 
 class FinancialList(BaseFinancial):
 
-    def build_url(self, *args, **kwargs):
+    def build_url(self, *args, **kwargs) -> str:
         """
         获取采集数据的 URL
 
