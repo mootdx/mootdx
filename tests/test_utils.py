@@ -1,3 +1,4 @@
+import glob
 import unittest
 from unittest import mock
 
@@ -75,8 +76,10 @@ class TestBlockNew(unittest.TestCase):
         Path(self.tdxdir, 'T0002', 'blocknew').mkdir(parents=True)
         self.reader = Reader.factory(market='std', tdxdir=self.tdxdir)
 
-    def teardown_class(self) -> None:
-        Path(self.tdxdir, 'T0002', 'blocknew', 'blocknew.cfg').remove()
+    def teardown_class(self):
+        parent = Path(self.tdxdir, 'T0002', 'blocknew', 'blocknew.cfg').parent
+        [Path(x).remove() for x in glob.glob(f'{parent}/*.*')]
+        Path(parent).rmdir(parents=True)
 
     def test_block_new_write(self):
         self.assertTrue(self.reader.block_new(name='龙虎榜', symbol=['600036']))
