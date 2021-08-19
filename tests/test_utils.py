@@ -1,6 +1,6 @@
 import unittest
-
 from unittest import mock
+
 import pytest
 from unipath.path import Path
 
@@ -69,17 +69,14 @@ class TestConfigPath(unittest.TestCase):
 
 
 class TestBlockNew(unittest.TestCase):
-
     tdxdir = 'tests/fixtures'
 
-    def setUp(self):
-        Path(self.tdxdir, 'T0002', 'blocknew', 'blocknew.cfg').remove()
+    def setup_class(self):
+        Path(self.tdxdir, 'T0002', 'blocknew').mkdir(parents=True)
         self.reader = Reader.factory(market='std', tdxdir=self.tdxdir)
-        return super().setUp()
 
-    # def tearDown(self) -> None:
-    #     Path(self.tdxdir, 'T0002', 'blocknew', 'blocknew.cfg').remove()
-    #     return super().tearDown()
+    def teardown_class(self) -> None:
+        Path(self.tdxdir, 'T0002', 'blocknew', 'blocknew.cfg').remove()
 
     def test_block_new_write(self):
         self.assertTrue(self.reader.block_new(name='龙虎榜', symbol=['600036']))

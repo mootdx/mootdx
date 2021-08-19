@@ -1,13 +1,16 @@
 import json
 import re
 import time
-import pandas as pd
+
 import httpx
+import pandas as pd
 from numpy import asarray
+from tenacity import wait_fixed, stop_after_attempt, retry
 
 from mootdx.logger import log
 
 
+@retry(wait=wait_fixed(2), stop=stop_after_attempt(5))
 def get_adjust_year(symbol=None, year='2021', factor='00'):
     """
     采集同花顺复权数据
@@ -27,7 +30,7 @@ def get_adjust_year(symbol=None, year='2021', factor='00'):
         'DNT': '1',
     }
 
-    client = httpx.Client(transport=httpx.HTTPTransport(retries=5))
+    client = httpx.Client()
 
     if factor == 'before':
         factor = '01'
@@ -39,32 +42,28 @@ def get_adjust_year(symbol=None, year='2021', factor='00'):
         log.warning('复权参数错误，factor 的值必须是: before, after, 01, 02')
         return pd.DataFrame(data=None)
 
-    i = 0
+    try:
+        url = f'http://d.10jqka.com.cn/v2/line/hs_{symbol}/{factor}/{year}.js'
+        res = client.get(url, headers=headers)
+        res.raise_for_status()
 
-    while i < 3:
-        try:
-            url = f'http://d.10jqka.com.cn/v2/line/hs_{symbol}/{factor}/{year}.js'
-            res = client.get(url, headers=headers)
-            res.raise_for_status()
+        # 出现 window.location.href 则请求太频繁，需要稍等再采集
+        text = re.findall(r'\((.*)\)', res.text)[0]
+        text = json.loads(text)
 
-            # 出现 window.location.href 则请求太频繁，需要稍等再采集
-            text = re.findall(r'\((.*)\)', res.text)[0]
-            text = json.loads(text)
+        data = text['data'].split(';')
+        data = [item.split(',')[:8] for item in data]
 
-            data = text['data'].split(';')
-            data = [item.split(',')[:8] for item in data]
-
-            columns = ['date', 'open', 'high', 'low', 'close', 'volume', 'amount', 'adjust']
-            return pd.DataFrame(data, index=list(asarray(data).T[0]), columns=columns)
-        except httpx.HTTPError:
-            log.warning('网络连接失败，请重试...')
-        except httpx.RequestError:
-            log.warning('网络连接失败，请重试...')
-        except IndexError as e:
-            log.warning('数据解析错误，请求太频繁，请稍后重试...')
-            log.debug(e)
-        finally:
-            time.sleep(.2)
-            i += 1
+        columns = ['date', 'open', 'high', 'low', 'close', 'volume', 'amount', 'adjust']
+        return pd.DataFrame(data, index=list(asarray(data).T[0]), columns=columns)
+    except httpx.HTTPError:
+        log.warning('请求失败，正重试...')
+    except httpx.ConnectError:
+        log.warning('网络连接失败，请重试...')
+    except IndexError as e:
+        log.warning('数据解析错误，请求太频繁，请稍后重试...')
+        log.debug(e)
+    finally:
+        time.sleep(.2)
 
     return pd.DataFrame(data=None)

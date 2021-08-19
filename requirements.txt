@@ -8,3 +8,5 @@ unipath~=1.1
 loguru~=0.5.3
 httpx~=0.18.1
 pytest
+httmock
+vcrpy
