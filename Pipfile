@@ -23,6 +23,7 @@ tqdm = "*"
 mock = "*"
 useragent = "*"
 httmock = "*"
+vcrpy = "*"
 
 [requires]
 python_version = "3.8"

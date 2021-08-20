@@ -10,8 +10,6 @@ import pandas as pd
 from pytdx.hq import TdxHq_API
 from unipath import Path
 
-from mootdx import config
-from mootdx.config import settings
 from .base import BaseFinancial, BaseReader
 
 
@@ -59,25 +57,13 @@ class FinancialList(BaseFinancial):
         :param kwargs:
         :return:
         """
-        from pytdx.hq import TdxHq_API
 
         api = TdxHq_API(**kwargs)
         api.need_setup = False
 
-        try:
-            default = settings.get('SERVER').get('GP')[0][1:]
-            bestip = config.get('BESTIP').get('GP', default)
-        except ValueError:
-            bestip = ("106.14.95.149", 7727)
-
-        with api.connect(*bestip):
+        with api.connect(*self.bestip):
             content = api.get_report_file_by_size("tdxfin/gpcw.txt")
-
-            if downdir is None:
-                download_file = tempfile.NamedTemporaryFile(delete=True)
-            else:
-                download_file = open(downdir, 'wb')
-
+            download_file = open(downdir, 'wb') if downdir else tempfile.NamedTemporaryFile(delete=True)
             download_file.write(content)
             download_file.seek(0)
 
@@ -93,8 +79,9 @@ class FinancialList(BaseFinancial):
         :return:
         """
 
-        content = download_file.read()
-        content = content.decode("utf-8")
+        with download_file:
+            content = download_file.read()
+            content = content.decode("utf-8")
 
         def list_to_dict(i):
             return {'filename': i[0], 'hash': i[1], 'filesize': int(i[2])}
@@ -135,6 +122,7 @@ class Financial(BaseFinancial):
         :param kwargs:
         :return:
         """
+
         filename = kwargs.get('filename')
         filesize = kwargs.get("filesize") if kwargs.get("filesize") else 0
 
@@ -144,17 +132,13 @@ class Financial(BaseFinancial):
         api = TdxHq_API()
         api.need_setup = False
 
-        try:
-            default = settings.get('SERVER').get('GP')[0][1:]
-            bestip = config.get('BESTIP').get('GP', default)
-        except ValueError:
-            bestip = ("106.14.95.149", 7727)
-
-        with api.connect(*bestip):
+        with api.connect(*self.bestip):
             content = api.get_report_file_by_size(f"tdxfin/{filename}", filesize=filesize, reporthook=report_hook)
             download_file = open(downdir, 'wb') if downdir else tempfile.NamedTemporaryFile(delete=True)
             download_file.write(content)
             download_file.seek(0)
+
+            del content
 
             return download_file
 
@@ -229,6 +213,8 @@ class Financial(BaseFinancial):
             datfile.close()
             shutil.rmtree(tmpdir, ignore_errors=True)
 
+        download_file.close()
+
         return results
 
     @staticmethod
@@ -239,11 +225,11 @@ class Financial(BaseFinancial):
         :return: DataFrame
         """
 
-        if len(data) == 0:
+        if len(data) == 0 or len(data[0]) == 0:
             return None
 
-        column = ['code', 'report_date']
         length = len(data[0]) - 1
+        column = ['code', 'report_date']
 
         for i in range(1, length):
             column.append("col" + str(i))
