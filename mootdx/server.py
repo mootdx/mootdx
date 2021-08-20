@@ -87,7 +87,8 @@ def bestip(verbose=False, console=False, limit=5) -> None:
     default = dict(CONFIG)
 
     for index in ['HQ', 'EX', 'GP']:
-        if data := Server(index=index, limit=limit, console=console, verbose=verbose):
+        data = Server(index=index, limit=limit, console=console, verbose=verbose)
+        if data:
             default['BESTIP'][index] = data[0]
 
     json.dump(default, open(config_, 'w'), indent=2)
