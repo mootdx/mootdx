@@ -1,18 +1,18 @@
 # -*- coding: utf-8 -*-
-import contextlib
+import logging
 import math
 
 import pandas
 from pytdx.exhq import TdxExHq_API
 from pytdx.hq import TdxHq_API
-from tenacity import retry, stop_after_attempt, retry_if_result, retry_if_exception_type
+from tenacity import retry, stop_after_attempt, retry_if_result, retry_if_exception_type, before_log
 from tqdm import tqdm
 from unipath import Path
 
 from mootdx import config, server
 from mootdx.consts import MARKET_SH
 from mootdx.logger import log
-from mootdx.utils import (get_config_path, get_stock_market, get_stock_markets, to_data)
+from mootdx.utils import get_config_path, get_stock_market, get_stock_markets, to_data
 
 
 class Quotes(object):
@@ -40,19 +40,7 @@ class BaseQuotes(object):
 
         self.timeout = timeout
 
-        config_ = get_config_path('config.json')
-
-        if bestip or not Path(config_).exists():
-            server.bestip()
-
-    @contextlib.contextmanager
-    def connect(self):
-        if self.closed:
-            log.debug('服务器连接已断开，正进行重新连接...')
-
-        yield
-
-        self.close()
+        Path(get_config_path('config.json')).exists() or server.bestip()
 
     def __del__(self):
         log.debug('__del__')
@@ -96,13 +84,13 @@ class StdQuotes(BaseQuotes):
     """
     股票市场实时行情
     """
-    bestip = ('47.103.48.45', 7709)
+    # bestip = ('47.103.48.45', 7709)
 
     def __init__(self, bestip=False, timeout=15, **kwargs):
         super(StdQuotes, self).__init__(bestip=bestip, timeout=timeout, **kwargs)
 
         try:
-            default = config.get('SERVER').get('HQ')[0]
+            config.get('SERVER').get('HQ')[0]
         except ValueError:
             server.bestip()
         finally:
@@ -406,7 +394,7 @@ class ExtQuotes(BaseQuotes):
         super(ExtQuotes, self).__init__(bestip=bestip, timeout=timeout, **kwargs)
 
         try:
-            default = config.get('SERVER').get('EX')[0]
+            config.get('SERVER').get('EX')[0]
         except ValueError:
             server.bestip()
         finally:
