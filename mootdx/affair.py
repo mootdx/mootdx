@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import os
 
 from unipath import Path
 
@@ -59,13 +58,13 @@ class Affair(object):
         history = financial.FinancialList()
         crawler = financial.Financial()
 
-        if not os.path.isdir(downdir):
+        if not Path(downdir).isdir():
             log.warning('下载目录不存在, 进行创建.')
-            os.makedirs(downdir)
+            Path(downdir).mkdir(parents=True)
 
         if filename:
             log.info('下载文件 {}.'.format(filename))
-            downfile = os.path.join(downdir, filename)
+            downfile = Path(downdir, filename)
 
             with TqdmUpTo(unit='B', unit_scale=True, miniters=1, ascii=True) as t:
                 crawler.fetch_and_parse(report_hook=t.update_to, filename=filename, downdir=downfile)
@@ -75,11 +74,11 @@ class Affair(object):
         list_data = history.fetch_and_parse()
 
         for x in list_data:
-            downfile = os.path.join(downdir, x['filename'])
+            downfile = Path(downdir, x['filename'])
 
             # 判断文件存在并且长度一样，则忽略
-            if os.path.exists(downfile):
-                if int(x.get('filesize')) == int(os.path.getsize(downfile)):
+            if Path(downfile).exists():
+                if int(x.get('filesize')) == int(Path(downfile).size()):
                     log.warning('[!] 文件已经存在: {} 跳过.'.format(x['filename']))
                     continue
 
