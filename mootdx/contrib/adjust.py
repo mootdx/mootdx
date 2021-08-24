@@ -55,7 +55,11 @@ def get_adjust_year(symbol=None, year='2021', factor='00'):
         data = [item.split(',')[:8] for item in data]
 
         columns = ['date', 'open', 'high', 'low', 'close', 'volume', 'amount', 'adjust']
-        return pd.DataFrame(data, index=list(asarray(data).T[0]), columns=columns)
+        # dtype = ['datetime', 'float64', 'float64', 'float64', 'float64', 'float64', 'float64']
+        df = pd.DataFrame(data, index=list(asarray(data).T[0]), columns=columns)
+        df.date = pd.to_datetime(df.date)
+        df = df.set_index('date')
+        return df
     except httpx.HTTPError:
         log.warning('请求失败，正重试...')
     except httpx.ConnectError:

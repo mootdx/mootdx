@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
-import logging
 import math
 
 import pandas
+import pandas as pd
 from pytdx.exhq import TdxExHq_API
 from pytdx.hq import TdxHq_API
-from tenacity import retry, stop_after_attempt, retry_if_result, retry_if_exception_type, before_log
+from tenacity import retry, stop_after_attempt, retry_if_result, retry_if_exception_type
 from tqdm import tqdm
 from unipath import Path
 
@@ -70,7 +70,7 @@ instance: BaseQuotes = None
 def is_empty(value):
     """Return True if value is False"""
 
-    status = bool(value.empty) if hasattr(value, 'empty') else bool(value) is False
+    status = value.all().empty if isinstance(value, pd.DataFrame) else not value
 
     print('is_empty is ', status)
 
@@ -84,6 +84,7 @@ class StdQuotes(BaseQuotes):
     """
     股票市场实时行情
     """
+
     # bestip = ('47.103.48.45', 7709)
 
     def __init__(self, bestip=False, timeout=15, **kwargs):
