@@ -25,20 +25,22 @@ class TestAffair(unittest.TestCase):
         self.assertIsNone(data)
 
     def test_parse_one(self):
-        data = Affair.parse(downdir=self.downdir, filename=self.files[-1])
+        data = Affair.parse(downdir=self.downdir, filename=self.files[1])
         self.assertIsNotNone(data)
 
     def test_parse_export(self):
-        Affair.parse(downdir=self.downdir, filename=self.files[-1]).to_csv(self.files[-1] + '.csv')
-        self.assertTrue(os.path.exists(self.files[-1] + '.csv'))
+        csv_file = Path(self.downdir, self.files[1] + '.csv')
+        Affair.parse(downdir=self.downdir, filename=self.files[1]).to_csv(csv_file)
+        self.assertTrue(csv_file.exists())
 
     def test_files(self):
         data = Affair.files()
         self.assertTrue(type(data) is list)
 
     def test_fetch_one(self):
-        Affair.fetch(downdir=self.downdir, filename=self.files[-1])
-        self.assertTrue(os.path.exists(self.files[-1] + '.csv'))
+        csv_file = Path(self.downdir, self.files[1])
+        Affair.fetch(downdir=self.downdir, filename=self.files[1])
+        self.assertTrue(csv_file.exists())
 
 
 if __name__ == '__main__':
