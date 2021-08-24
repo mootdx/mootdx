@@ -18,7 +18,7 @@ def before(bfq_data, xdxr_data):
     if len(info) > 0:
         data = pd.concat([bfq_data, info.loc[bfq_data.index[0]:bfq_data.index[-1], ['category']]], axis=1)
         data['if_trade'].fillna(value=0, inplace=True)
-
+        # 分红， 配股，配给价，送转取
         columns = ['fenhong', 'peigu', 'peigujia', 'songzhuangu']
         data = data.fillna(method='ffill')
         data = pd.concat([data, info.loc[bfq_data.index[0]:bfq_data.index[-1], columns]], axis=1)
