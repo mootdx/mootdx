@@ -9,14 +9,20 @@ class TestStdQuotes(unittest.TestCase):
     client = None
 
     # 初始化工作
-    def setUp(self):
-        self.client = Quotes.factory(market='std')  # 标准市场
+    def setup_class(self):
+        self.client = Quotes.factory(market='std', timeout=10)  # 标准市场
+        print('')
+        print('初始化工作')
 
     # 退出清理工作
-    def tearDown(self):
+    def teardown_class(self):
         del self.client
+        print('')
+        print('退出清理工作')
 
     def test_quotes(self):
+        self.client.client.close()
+
         data = self.client.quotes(symbol='600036')
         self.assertEqual(data.empty, False)
 
@@ -47,14 +53,16 @@ class TestStdQuotes(unittest.TestCase):
         self.assertEqual(data.empty, False)
 
     def test_transactions(self):
-        data = self.client.transactions(symbol='000001', start=0, offset=10, date='20170209')
+        data = self.client.transactions(symbol='600036', start=0, offset=10, date='20170209')
         self.assertEqual(data.empty, False)
 
     def test_F10C(self):
+        self.client.client.close()
         data = self.client.F10C(symbol='000001')
         self.assertTrue(data)
 
     def test_F10(self):
+        self.client.client.close()
         data = self.client.F10(symbol='000001', name='龙虎榜单')
         self.assertTrue(data)
 
