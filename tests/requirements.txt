@@ -1,2 +1,2 @@
-pytest==6.0.1
-httmock==1.3.0
+pytest
+vcrpy

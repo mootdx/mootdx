@@ -41,11 +41,11 @@ class ReaderBase(ABC):
         :param tdxdir: 通达信安装目录
         """
 
-        if Path(tdxdir).isdir():
-            self.tdxdir = tdxdir
-        else:
+        if not Path(tdxdir).isdir():
             log.error('tdxdir 目录不存在')
             raise Exception('tdxdir 目录不存在')
+
+        self.tdxdir = tdxdir
 
     def find_path(self, symbol=None, subdir='lday', suffix=None):
         """
@@ -69,6 +69,7 @@ class ReaderBase(ABC):
                 continue
 
             log.debug(f"找到所需的文件: {vipdoc}")
+
             return vipdoc
 
         return None
@@ -147,21 +148,20 @@ class StdReader(ReaderBase):
 
         return None
 
-    def block(self, symbol='', custom=False, group=False):
+    def block(self, symbol='', group=False):
         """
         获取板块数据
         参考: http://blog.sina.com.cn/s/blog_623d2d280102vt8y.html
 
-        :param custom:
         :param symbol:
         :param group:
         :return: pd.dataFrame or None
         """
 
-        # suffix = symbol.split('.')
-        # suffix = suffix[-1] if len(suffix) > 1 else 'dat'
-        suffix = 'dat'
-        # symbol = suffix[0]
+        suffix = symbol.split('.')
+        suffix = suffix[-1] if len(suffix) > 1 else 'dat'
+        symbol = suffix[0]
+        # suffix = 'dat'
 
         reader = BlockReader()
         vipdoc = Path(self.tdxdir, 'T0002', 'hq_cache', f'{symbol}.{suffix}')
@@ -191,7 +191,7 @@ class ExtReader(ReaderBase):
         """
         vipdoc = self.find_path(symbol=symbol, subdir='lday', suffix='day')
 
-        if symbol is not None:
+        if symbol:
             return self.reader.get_df(vipdoc)
 
         return None
@@ -202,9 +202,9 @@ class ExtReader(ReaderBase):
 
         :return: pd.dataFrame or None
         """
-        vipdoc = self.find_path(symbol=symbol, subdir='minline', suffix=['lc1','1'])
+        vipdoc = self.find_path(symbol=symbol, subdir='minline', suffix=['lc1', '1'])
 
-        if symbol is not None:
+        if symbol:
             return self.reader.get_df(vipdoc)
 
         return None
@@ -217,7 +217,7 @@ class ExtReader(ReaderBase):
         """
         vipdoc = self.find_path(symbol=symbol, subdir='fzline', suffix='lc5')
 
-        if symbol is not None:
+        if symbol:
             return self.reader.get_df(vipdoc)
 
         return None
