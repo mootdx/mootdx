@@ -38,9 +38,8 @@ class TestAffair(unittest.TestCase):
         self.assertTrue(type(data) is list)
 
     def test_fetch_one(self):
-        csv_file = Path(self.downdir, self.files[1])
         Affair.fetch(downdir=self.downdir, filename=self.files[1])
-        self.assertTrue(csv_file.exists())
+        self.assertTrue(Path(self.downdir, self.files[1]).exists())
 
 
 if __name__ == '__main__':
