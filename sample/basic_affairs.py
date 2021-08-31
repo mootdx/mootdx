@@ -11,6 +11,6 @@ t.align["hash"] = "l"
 t.padding_width = 1
 
 for x in df:
-    t.add_row([x['filename'], x['filesize'], x['hash']])
+    t.add_row([x["filename"], x["filesize"], x["hash"]])
 
 print(t)

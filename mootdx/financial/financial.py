@@ -4,13 +4,15 @@ import random
 import shutil
 import tempfile
 from abc import ABC
-from struct import calcsize, unpack
+from struct import calcsize
+from struct import unpack
 
 import pandas as pd
 from pytdx.hq import TdxHq_API
 from unipath import Path
 
-from .base import BaseFinancial, BaseReader
+from .base import BaseFinancial
+from .base import BaseReader
 
 
 class FinancialReader(BaseReader, ABC):
@@ -27,14 +29,13 @@ class FinancialReader(BaseReader, ABC):
 
         crawler = Financial()
 
-        with open(filename, 'rb') as fp:
+        with open(filename, "rb") as fp:
             data = crawler.parse(download_file=fp)
 
         return crawler.to_df(data)
 
 
 class FinancialList(BaseFinancial):
-
     def build_url(self, *args, **kwargs) -> str:
         """
         获取采集数据的 URL
@@ -45,7 +46,15 @@ class FinancialList(BaseFinancial):
         """
         return "https://gitee.com/yutiansut/QADATA/raw/master/financial/content.txt"
 
-    def content(self, report_hook=None, downdir=None, proxies=None, chunk_size=1024 * 50, *args, **kwargs):
+    def content(
+        self,
+        report_hook=None,
+        downdir=None,
+        proxies=None,
+        chunk_size=1024 * 50,
+        *args,
+        **kwargs,
+    ):
         """
         解析财务文件
 
@@ -63,7 +72,11 @@ class FinancialList(BaseFinancial):
 
         with api.connect(*self.bestip):
             content = api.get_report_file_by_size("tdxfin/gpcw.txt")
-            download_file = open(downdir, 'wb') if downdir else tempfile.NamedTemporaryFile(delete=True)
+            download_file = (
+                open(downdir, "wb")
+                if downdir
+                else tempfile.NamedTemporaryFile(delete=True)
+            )
             download_file.write(content)
             download_file.seek(0)
 
@@ -84,10 +97,15 @@ class FinancialList(BaseFinancial):
             content = content.decode("utf-8")
 
         def list_to_dict(i):
-            return {'filename': i[0], 'hash': i[1], 'filesize': int(i[2])}
+            return {"filename": i[0], "hash": i[1], "filesize": int(i[2])}
 
         if content:
-            return [list_to_dict(i) for i in [line.strip().split(",") for line in content.strip().split('\n')]]
+            return [
+                list_to_dict(i)
+                for i in [
+                    line.strip().split(",") for line in content.strip().split("\n")
+                ]
+            ]
 
         return None
 
@@ -103,14 +121,22 @@ class Financial(BaseFinancial):
         :param kwargs:
         :return:
         """
-        filename = kwargs.get('filename')
+        filename = kwargs.get("filename")
 
         if not filename:
             raise Exception("Param filename is not set")
 
         return f"http://down.tdx.com.cn:8001/fin/{filename}"
 
-    def content(self, report_hook=None, downdir=None, proxies=None, chunk_size=1024 * 50, *args, **kwargs):
+    def content(
+        self,
+        report_hook=None,
+        downdir=None,
+        proxies=None,
+        chunk_size=1024 * 50,
+        *args,
+        **kwargs,
+    ):
         """
         解析财务文件
 
@@ -123,7 +149,7 @@ class Financial(BaseFinancial):
         :return:
         """
 
-        filename = kwargs.get('filename')
+        filename = kwargs.get("filename")
         filesize = kwargs.get("filesize") if kwargs.get("filesize") else 0
 
         if not filename:
@@ -133,8 +159,14 @@ class Financial(BaseFinancial):
         api.need_setup = False
 
         with api.connect(*self.bestip):
-            content = api.get_report_file_by_size(f"tdxfin/{filename}", filesize=filesize, reporthook=report_hook)
-            download_file = open(downdir, 'wb') if downdir else tempfile.NamedTemporaryFile(delete=True)
+            content = api.get_report_file_by_size(
+                f"tdxfin/{filename}", filesize=filesize, reporthook=report_hook
+            )
+            download_file = (
+                open(downdir, "wb")
+                if downdir
+                else tempfile.NamedTemporaryFile(delete=True)
+            )
             download_file.write(content)
             download_file.seek(0)
 
@@ -152,10 +184,10 @@ class Financial(BaseFinancial):
         :return:
         """
 
-        header_pack_format = '<1hI1H3L'
+        header_pack_format = "<1hI1H3L"
         tmpdir = tempfile.gettempdir()
 
-        if download_file.name.endswith('.zip'):
+        if download_file.name.endswith(".zip"):
             tmpdir_root = tempfile.gettempdir()
             random_sums = str(random.randint(0, 1000000))
             subdir_name = f"mootdx_{random_sums}"
@@ -176,7 +208,7 @@ class Financial(BaseFinancial):
             if datfile is None:
                 raise Exception("no dat file found in zip archive")
 
-        elif download_file.name.endswith('.dat'):
+        elif download_file.name.endswith(".dat"):
             datfile = download_file
         else:
             return None
@@ -192,7 +224,7 @@ class Financial(BaseFinancial):
         report_size = stock_header[4]
 
         report_fields_count = int(report_size / 4)
-        report_pack_format = '<{}f'.format(report_fields_count)
+        report_pack_format = "<{}f".format(report_fields_count)
 
         results = []
 
@@ -209,7 +241,7 @@ class Financial(BaseFinancial):
             one_record = (code, report_date) + cw_info
             results.append(one_record)
 
-        if download_file.name.endswith('.zip'):
+        if download_file.name.endswith(".zip"):
             datfile.close()
             shutil.rmtree(tmpdir, ignore_errors=True)
 
@@ -229,12 +261,12 @@ class Financial(BaseFinancial):
             return None
 
         length = len(data[0]) - 1
-        column = ['code', 'report_date']
+        column = ["code", "report_date"]
 
         for i in range(1, length):
             column.append("col" + str(i))
 
         df = pd.DataFrame(data=data, columns=column)
-        df.set_index('code', inplace=True)
+        df.set_index("code", inplace=True)
 
         return df

@@ -1,8 +1,9 @@
 import socket
 import threading
 
-from pytdx.base_socket_client import (CONNECT_TIMEOUT, BaseSocketClient,
-                                      TrafficStatSocket)
+from pytdx.base_socket_client import BaseSocketClient
+from pytdx.base_socket_client import CONNECT_TIMEOUT
+from pytdx.base_socket_client import TrafficStatSocket
 from pytdx.errors import TdxConnectionError
 from pytdx.heartbeat import HqHeartBeatThread
 from pytdx.reader import TdxDailyBarReader
@@ -12,10 +13,32 @@ from mootdx.logger import log
 
 class MooTdxDailyBarReader(TdxDailyBarReader):
     # 感谢 bopomofo 的鼎力支持
-    SECURITY_TYPE = ["SH_A_STOCK", "SH_B_STOCK", "SH_STAR_STOCK", "SH_INDEX", "SH_FUND", "SH_BOND", "SZ_A_STOCK", "SZ_B_STOCK", "SZ_INDEX", "SZ_FUND", "SZ_BOND"]
-    SECURITY_COEFFICIENT = {"SH_A_STOCK": [0.01, 0.01], "SH_B_STOCK": [0.001, 0.01], "SH_STAR_STOCK": [0.01, 0.01], "SH_INDEX": [0.01, 1.0], "SH_FUND": [0.001, 1.0],
-                            "SH_BOND": [0.001, 1.0], "SZ_A_STOCK": [0.01, 0.01], "SZ_B_STOCK": [0.01, 0.01], "SZ_INDEX": [0.01, 1.0], "SZ_FUND": [0.001, 0.01],
-                            "SZ_BOND": [0.001, 0.01]}
+    SECURITY_TYPE = [
+        "SH_A_STOCK",
+        "SH_B_STOCK",
+        "SH_STAR_STOCK",
+        "SH_INDEX",
+        "SH_FUND",
+        "SH_BOND",
+        "SZ_A_STOCK",
+        "SZ_B_STOCK",
+        "SZ_INDEX",
+        "SZ_FUND",
+        "SZ_BOND",
+    ]
+    SECURITY_COEFFICIENT = {
+        "SH_A_STOCK": [0.01, 0.01],
+        "SH_B_STOCK": [0.001, 0.01],
+        "SH_STAR_STOCK": [0.01, 0.01],
+        "SH_INDEX": [0.01, 1.0],
+        "SH_FUND": [0.001, 1.0],
+        "SH_BOND": [0.001, 1.0],
+        "SZ_A_STOCK": [0.01, 0.01],
+        "SZ_B_STOCK": [0.01, 0.01],
+        "SZ_INDEX": [0.01, 1.0],
+        "SZ_FUND": [0.001, 0.01],
+        "SZ_BOND": [0.001, 0.01],
+    }
 
     def get_security_type(self, fname):
 
@@ -52,8 +75,14 @@ class MooTdxDailyBarReader(TdxDailyBarReader):
 
 
 class MooBaseSocketClient(BaseSocketClient):
-
-    def connect(self, ip='101.227.73.20', port=7709, time_out=CONNECT_TIMEOUT, bindport=None, bindip='0.0.0.0'):
+    def connect(
+        self,
+        ip="101.227.73.20",
+        port=7709,
+        time_out=CONNECT_TIMEOUT,
+        bindport=None,
+        bindip="0.0.0.0",
+    ):
         """
 
         :param ip:  服务器ip 地址
@@ -99,7 +128,9 @@ class MooBaseSocketClient(BaseSocketClient):
 
         if self.heartbeat:
             self.stop_event = threading.Event()
-            self.heartbeat_thread = HqHeartBeatThread(self, self.stop_event, self.heartbeat_interval)
+            self.heartbeat_thread = HqHeartBeatThread(
+                self, self.stop_event, self.heartbeat_interval
+            )
             self.heartbeat_thread.start()
 
         return self

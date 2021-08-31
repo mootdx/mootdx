@@ -11,13 +11,13 @@ from mootdx.affair import Affair
 class TestAffair(unittest.TestCase):
     files = []
 
-    downdir = 'tests/fixtures/tmp'
+    downdir = "tests/fixtures/tmp"
 
     def setup_class(self) -> None:
-        self.files = [x['filename'] for x in Affair.files()]
+        self.files = [x["filename"] for x in Affair.files()]
 
     def teardown_class(self):
-        [Path(x).remove() for x in glob.glob(f'{self.downdir}/*.*')]
+        [Path(x).remove() for x in glob.glob(f"{self.downdir}/*.*")]
         Path(self.downdir).rmdir(parents=True)
 
     def test_parse_all(self):
@@ -29,7 +29,7 @@ class TestAffair(unittest.TestCase):
         self.assertIsNotNone(data)
 
     def test_parse_export(self):
-        csv_file = Path(self.downdir, self.files[1] + '.csv')
+        csv_file = Path(self.downdir, self.files[1] + ".csv")
         Affair.parse(downdir=self.downdir, filename=self.files[1]).to_csv(csv_file)
         self.assertTrue(csv_file.exists())
 
@@ -42,5 +42,5 @@ class TestAffair(unittest.TestCase):
         self.assertTrue(Path(self.downdir, self.files[1]).exists())
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()
