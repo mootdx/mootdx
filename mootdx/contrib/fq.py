@@ -16,15 +16,15 @@ def calc_fuquan_use_fenhong(df, df_fenhong):
 
     if money > 0:
         money = money * 0.1
-        df['o'].ix[:date] -= money
-        df['h'].ix[:date] -= money
-        df['c'].ix[:date] -= money
-        df['l'].ix[:date] -= money
+        df["o"].ix[:date] -= money
+        df["h"].ix[:date] -= money
+        df["c"].ix[:date] -= money
+        df["l"].ix[:date] -= money
     if gu > 0:
         # x = cur / (1+y/10)
         gu = 1 + gu / 10
-        df['o'].ix[:date] /= gu
-        df['h'].ix[:date] /= gu
-        df['c'].ix[:date] /= gu
-        df['l'].ix[:date] /= gu
+        df["o"].ix[:date] /= gu
+        df["h"].ix[:date] /= gu
+        df["c"].ix[:date] /= gu
+        df["l"].ix[:date] /= gu
     return df

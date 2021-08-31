@@ -21,7 +21,10 @@ class BaseReader(object):
         """
 
         record = struct.Struct(fmt)
-        return (record.unpack_from(data, offset) for offset in range(0, len(data), record.size))
+        return (
+            record.unpack_from(data, offset)
+            for offset in range(0, len(data), record.size)
+        )
 
     def get_df(self, code_or_file, exchange=None):
         """
@@ -32,7 +35,7 @@ class BaseReader(object):
         :return:
         """
 
-        raise NotImplementedError('not yet')
+        raise NotImplementedError("not yet")
 
 
 class BaseFinancial:
@@ -40,12 +43,14 @@ class BaseFinancial:
         self.mode = mode
 
         try:
-            default = settings.get('SERVER').get('GP')[0][1:]
-            self.bestip = config.get('BESTIP').get('GP', default)
+            default = settings.get("SERVER").get("GP")[0][1:]
+            self.bestip = config.get("BESTIP").get("GP", default)
         except ValueError:
             self.bestip = ("106.14.95.149", 7727)
 
-    def fetch_and_parse(self, report_hook=None, downdir=None, chunk_size=51200, *args, **kwargs):
+    def fetch_and_parse(
+        self, report_hook=None, downdir=None, chunk_size=51200, *args, **kwargs
+    ):
         """
         function to get data , 参考 https://docs.python.org/3/library/urllib.request.html#module-urllib.request
 
@@ -55,7 +60,13 @@ class BaseFinancial:
         :return: 解析之后的数据结果
         """
 
-        file = self.content(report_hook=report_hook, downdir=downdir, chunk_size=chunk_size, *args, **kwargs)
+        file = self.content(
+            report_hook=report_hook,
+            downdir=downdir,
+            chunk_size=chunk_size,
+            *args,
+            **kwargs
+        )
         data = self.parse(file, *args, **kwargs)
 
         return data
@@ -63,7 +74,15 @@ class BaseFinancial:
     def build_url(self, *args, **kwargs):
         raise NotImplementedError("will impl in subclass")
 
-    def content(self, report_hook=None, downdir=None, proxies=None, chunk_size=1024 * 50, *args, **kwargs):
+    def content(
+        self,
+        report_hook=None,
+        downdir=None,
+        proxies=None,
+        chunk_size=1024 * 50,
+        *args,
+        **kwargs
+    ):
         raise NotImplementedError("will impl in subclass")
 
     def parse(self, download_file, *args, **kwargs):

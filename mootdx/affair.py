@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-
 from unipath import Path
 
 from mootdx.financial import financial
@@ -9,7 +8,7 @@ from mootdx.utils import TqdmUpTo
 
 class Affair(object):
     @staticmethod
-    def parse(downdir='.', filename=None):
+    def parse(downdir=".", filename=None):
         """
         按目录解析文件
 
@@ -19,7 +18,7 @@ class Affair(object):
         """
 
         if not filename:
-            log.critical('文件名不能为空!')
+            log.critical("文件名不能为空!")
             return None
 
         filepath = Path(downdir, filename)
@@ -27,7 +26,7 @@ class Affair(object):
         if Path(filepath).exists():
             return financial.FinancialReader().to_data(filepath)
 
-        log.error('文件不存在：{}'.format(filename))
+        log.error("文件不存在：{}".format(filename))
 
         return None
 
@@ -45,7 +44,7 @@ class Affair(object):
         return results
 
     @staticmethod
-    def fetch(downdir='.', filename=None, *args, **kwargs):
+    def fetch(downdir=".", filename=None, *args, **kwargs):
         """
         财务数据下载
 
@@ -59,29 +58,33 @@ class Affair(object):
         crawler = financial.Financial()
 
         if not Path(downdir).isdir():
-            log.warning('下载目录不存在, 进行创建.')
+            log.warning("下载目录不存在, 进行创建.")
             Path(downdir).mkdir(parents=True)
 
         if filename:
-            log.info('下载文件 {}.'.format(filename))
+            log.info("下载文件 {}.".format(filename))
             downfile = Path(downdir, filename)
 
-            with TqdmUpTo(unit='B', unit_scale=True, miniters=1, ascii=True) as t:
-                crawler.fetch_and_parse(report_hook=t.update_to, filename=filename, downdir=downfile)
+            with TqdmUpTo(unit="B", unit_scale=True, miniters=1, ascii=True) as t:
+                crawler.fetch_and_parse(
+                    report_hook=t.update_to, filename=filename, downdir=downfile
+                )
 
             return True
 
         list_data = history.fetch_and_parse()
 
         for x in list_data:
-            downfile = Path(downdir, x['filename'])
+            downfile = Path(downdir, x["filename"])
 
             # 判断文件存在并且长度一样，则忽略
             if Path(downfile).exists():
-                if int(x.get('filesize')) == int(Path(downfile).size()):
-                    log.warning('[!] 文件已经存在: {} 跳过.'.format(x['filename']))
+                if int(x.get("filesize")) == int(Path(downfile).size()):
+                    log.warning("[!] 文件已经存在: {} 跳过.".format(x["filename"]))
                     continue
 
-            with TqdmUpTo(unit='b', unit_scale=True, miniters=1, ascii=True) as t:
-                print('\r[+] 准备下载文件 {}.'.format(x['filename']))
-                crawler.fetch_and_parse(report_hook=t.update_to, filename=x['filename'], downdir=downfile)
+            with TqdmUpTo(unit="b", unit_scale=True, miniters=1, ascii=True) as t:
+                print("\r[+] 准备下载文件 {}.".format(x["filename"]))
+                crawler.fetch_and_parse(
+                    report_hook=t.update_to, filename=x["filename"], downdir=downfile
+                )
