@@ -14,6 +14,9 @@ end_of_line = lf
 indent_style = tab
 end_of_line = crlf
 
+[*.yaml]
+indent_size = 2
+
 [LICENSE]
 insert_final_newline = false
 

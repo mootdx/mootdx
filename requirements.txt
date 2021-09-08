@@ -8,3 +8,5 @@ loguru~=0.5.3
 httpx>=0.18.1
 tenacity>=8.0.1
 setuptools>=57.4.0
+
+numpy~=1.21.2
