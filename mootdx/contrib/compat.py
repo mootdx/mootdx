@@ -65,7 +65,7 @@ class MooTdxDailyBarReader(TdxDailyBarReader):
                 return "SH_STAR_STOCK"
             elif code_head in ["00", "88", "99"]:
                 return "SH_INDEX"
-            elif code_head in ["50", "51"]:
+            elif code_head in ["50", "51", "58"]:
                 return "SH_FUND"
             elif code_head in ["01", "10", "11", "12", "13", "14"]:
                 return "SH_BOND"
