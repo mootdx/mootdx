@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 from abc import ABC
 
-from pytdx.reader import (BlockReader, TdxMinBarReader)
+from pytdx.reader import BlockReader
 from pytdx.reader import CustomerBlockReader
 from pytdx.reader import TdxExHqDailyBarReader
 from pytdx.reader import TdxLCMinBarReader
+from pytdx.reader import TdxMinBarReader
 from unipath import Path
 
 from mootdx import utils
@@ -111,7 +112,9 @@ class StdReader(ReaderBase):
         symbol = self.find_path(symbol, subdir=subdir, suffix=suffix)
 
         if symbol is not None:
-            reader = TdxMinBarReader() if 'lc' not in symbol.ext else TdxLCMinBarReader()
+            reader = (
+                TdxMinBarReader() if "lc" not in symbol.ext else TdxLCMinBarReader()
+            )
             return reader.get_df(symbol)
 
         return None
