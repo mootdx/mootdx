@@ -1,5 +1,5 @@
-site_name: Mootdx
-site_description: 基于 pytdx 数据接口的二次封装
+site_name: MOOTDX
+site_description: 基于 Pytdx 数据接口的二次封装
 
 theme: readthedocs
 

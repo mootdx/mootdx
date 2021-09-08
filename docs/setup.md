@@ -17,13 +17,13 @@ pip install -U mootdx
 直接远程源码安装
 
 ```shell
-pip install git+https://gitee.com/ibopo/mootdx.git
+pip install git+https://github.com/mootdx/mootdx.git
 ```
 
 或下载后手动安装
 
 ```shell
-git clone https://github.com/bopo/mootdx.git
+git clone https://github.com/mootdx/mootdx.git
 
 cd mootdx
 
