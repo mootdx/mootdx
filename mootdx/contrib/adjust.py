@@ -3,8 +3,8 @@ import re
 import time
 
 import httpx
+import numpy as np
 import pandas as pd
-from numpy import asarray
 from tenacity import retry
 from tenacity import stop_after_attempt
 from tenacity import wait_fixed
@@ -58,7 +58,7 @@ def get_adjust_year(symbol=None, year="2021", factor="00"):
 
         columns = ["date", "open", "high", "low", "close", "volume", "amount", "adjust"]
         # dtype = ['datetime', 'float64', 'float64', 'float64', 'float64', 'float64', 'float64']
-        df = pd.DataFrame(data, index=list(asarray(data).T[0]), columns=columns)
+        df = pd.DataFrame(data, index=list(np.asarray(data).T[0]), columns=columns)
         df.date = pd.to_datetime(df.date)
         df = df.set_index("date")
         return df

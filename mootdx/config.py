@@ -5,8 +5,7 @@
 """
 import copy
 import json
-
-from unipath import Path
+from pathlib import Path
 
 from mootdx.consts import EX_HOSTS
 from mootdx.consts import GP_HOSTS

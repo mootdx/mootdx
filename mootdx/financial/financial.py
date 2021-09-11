@@ -4,15 +4,16 @@ import random
 import shutil
 import tempfile
 from abc import ABC
+from pathlib import Path
 from struct import calcsize
 from struct import unpack
 
 import pandas as pd
 from pytdx.hq import TdxHq_API
-from unipath import Path
 
 from .base import BaseFinancial
 from .base import BaseReader
+from ..logger import logger
 
 
 class FinancialReader(BaseReader, ABC):
@@ -268,5 +269,7 @@ class Financial(BaseFinancial):
 
         df = pd.DataFrame(data=data, columns=column)
         df.set_index("code", inplace=True)
+
+        logger.debug(df)
 
         return df

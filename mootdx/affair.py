@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from unipath import Path
+from pathlib import Path
 
 from mootdx.financial import financial
 from mootdx.logger import log
@@ -21,12 +21,12 @@ class Affair(object):
             log.critical("文件名不能为空!")
             return None
 
-        filepath = Path(downdir, filename)
+        filepath = Path(downdir) / filename
 
         if Path(filepath).exists():
             return financial.FinancialReader().to_data(filepath)
 
-        log.error("文件不存在：{}".format(filename))
+        log.warning("文件不存在：{}".format(filename))
 
         return None
 
@@ -44,20 +44,19 @@ class Affair(object):
         return results
 
     @staticmethod
-    def fetch(downdir=".", filename=None, *args, **kwargs):
+    def fetch(downdir=".", filename=None):
         """
         财务数据下载
 
         :param downdir:
         :param filename:
-        :param kwargs:
         :return:
         """
 
         history = financial.FinancialList()
         crawler = financial.Financial()
 
-        if not Path(downdir).isdir():
+        if not Path(downdir).is_dir():
             log.warning("下载目录不存在, 进行创建.")
             Path(downdir).mkdir(parents=True)
 

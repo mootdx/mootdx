@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 from abc import ABC
+from pathlib import Path
 
 from pytdx.reader import BlockReader
 from pytdx.reader import CustomerBlockReader
 from pytdx.reader import TdxExHqDailyBarReader
 from pytdx.reader import TdxLCMinBarReader
 from pytdx.reader import TdxMinBarReader
-from unipath import Path
 
 from mootdx import utils
 from mootdx.consts import TYPE_GROUP
@@ -45,7 +45,7 @@ class ReaderBase(ABC):
         :param tdxdir: 通达信安装目录
         """
 
-        if not Path(tdxdir).isdir():
+        if not Path(tdxdir).is_dir():
             log.error("tdxdir 目录不存在")
             raise Exception("tdxdir 目录不存在")
 
@@ -66,15 +66,13 @@ class ReaderBase(ABC):
 
         for ex_ in suffix:
             ex_ = ex_.strip(".")
-            vipdoc = Path(
-                self.tdxdir, "vipdoc", market, subdir, f"{prefix}{symbol}.{ex_}"
-            )
+            vipdoc = Path(self.tdxdir) / "vipdoc" / market / subdir / f"{prefix}{symbol}.{ex_}"
 
             if not Path(vipdoc).exists():
-                log.debug(f"未找到所需的文件: {vipdoc}")
+                log.warning(f"未找到所需的文件: {vipdoc}")
                 continue
 
-            log.debug(f"找到所需的文件: {vipdoc}")
+            log.warning(f"找到所需的文件: {vipdoc}")
 
             return vipdoc
 
@@ -94,8 +92,9 @@ class StdReader(ReaderBase):
         reader = MooTdxDailyBarReader()
         vipdoc = self.find_path(symbol=symbol, subdir="lday", suffix="day")
 
-        if vipdoc is not None:
-            return reader.get_df(vipdoc)
+        if vipdoc:
+            log.error(str(vipdoc))
+            return reader.get_df(str(vipdoc))
 
         return None
 
@@ -113,9 +112,9 @@ class StdReader(ReaderBase):
 
         if symbol is not None:
             reader = (
-                TdxMinBarReader() if "lc" not in symbol.ext else TdxLCMinBarReader()
+                TdxMinBarReader() if "lc" not in symbol.suffix else TdxLCMinBarReader()
             )
-            return reader.get_df(symbol)
+            return reader.get_df(str(symbol))
 
         return None
 
@@ -140,17 +139,19 @@ class StdReader(ReaderBase):
         :return: pd.dataFrame or Bool
         """
 
-        if name or symbol:
+        if name and symbol:
             return utils.block_new(self.tdxdir, name=name, symbol=symbol)
 
         reader = CustomerBlockReader()
         vipdoc = Path(self.tdxdir, "T0002", "blocknew")
 
+        Path(vipdoc).is_dir() or Path(vipdoc).mkdir(parents=True)
+
         fmt = TYPE_GROUP if group else None
 
-        if Path(vipdoc).isdir():
+        if Path(vipdoc).is_dir():
             log.debug(f"找到所需的文件: {vipdoc}")
-            return reader.get_df(vipdoc, fmt)
+            return reader.get_df(str(vipdoc), fmt)
 
         log.error(f"未找到所需的文件: {vipdoc}")
 
@@ -177,6 +178,7 @@ class StdReader(ReaderBase):
         fmt = TYPE_GROUP if group else None
 
         if Path(vipdoc).exists():
+            log.warning(f"找到所需的文件: {vipdoc}")
             return reader.get_df(vipdoc, fmt)
 
         log.error(f"未找到所需的文件: {vipdoc}")
@@ -199,8 +201,12 @@ class ExtReader(ReaderBase):
         """
         vipdoc = self.find_path(symbol=symbol, subdir="lday", suffix="day")
 
-        if symbol:
-            return self.reader.get_df(vipdoc)
+        log.error(str(vipdoc))
+
+        if vipdoc:
+            from mootdx.logger import logger
+            logger.warning(vipdoc.name)
+            return self.reader.get_df(str(vipdoc))
 
         return None
 
@@ -210,10 +216,13 @@ class ExtReader(ReaderBase):
 
         :return: pd.dataFrame or None
         """
+        if not symbol:
+            return None
+
         vipdoc = self.find_path(symbol=symbol, subdir="minline", suffix=["lc1", "1"])
 
-        if symbol:
-            return self.reader.get_df(vipdoc)
+        if vipdoc:
+            return self.reader.get_df(str(vipdoc))
 
         return None
 
@@ -226,6 +235,6 @@ class ExtReader(ReaderBase):
         vipdoc = self.find_path(symbol=symbol, subdir="fzline", suffix="lc5")
 
         if symbol:
-            return self.reader.get_df(vipdoc)
+            return self.reader.get_df(str(vipdoc))
 
         return None

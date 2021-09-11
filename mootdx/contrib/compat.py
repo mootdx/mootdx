@@ -154,3 +154,6 @@ class MooBaseSocketClient(BaseSocketClient):
                     raise TdxConnectionError("disconnect err")
 
             log.debug("disconnected")
+
+    def setup(self):
+        pass

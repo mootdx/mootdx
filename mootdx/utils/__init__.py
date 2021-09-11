@@ -3,13 +3,13 @@ import hashlib
 import os
 import platform
 from datetime import datetime
+from pathlib import Path
 from struct import calcsize
 from struct import unpack
 
 import pandas as pd
 from pandas import DataFrame
 from tqdm import tqdm
-from unipath import Path
 
 from mootdx.consts import MARKET_SH
 from mootdx.consts import MARKET_SZ
@@ -102,7 +102,7 @@ def md5sum(downfile):
 
     try:
         md5_l = hashlib.md5()
-        md5_l.update(Path(downfile).read_file("rb"))
+        md5_l.update(Path(downfile).read_bytes())
         return md5_l.hexdigest()
     except (IOError, FileNotFoundError) as e:
         log.error(f"无法读取文件: {downfile}")
@@ -199,7 +199,7 @@ def get_config_path(config="config.json"):
     filename = os.path.join(os.path.expanduser("~"), sub_path, config)
     pathname = os.path.dirname(filename)
 
-    Path(pathname).mkdir(parents=True)
+    Path(pathname).exists() or Path(pathname).mkdir(parents=True)
 
     return filename
 
@@ -228,15 +228,15 @@ def block_new(tdxdir=None, name: str = None, symbol: list = None):
     symbol = list(set(symbol))
 
     # 判断目录是否存在
-    if not Path(vipdoc).isdir():
+    if not Path(vipdoc).is_dir():
         log.error(f"自定义板块目录错误: {vipdoc}")
         return False
 
-    block_file = Path(vipdoc, "blocknew.cfg")
+    block_file = Path(vipdoc) / "blocknew.cfg"
 
     # 文件不存在就创建
     if not block_file.exists():
-        block_file.write_file("")
+        block_file.write_text("")
 
     # 判断名字是否重名
     with open(block_file, "rb") as fp:

@@ -10,3 +10,5 @@ tenacity>=8.0.1
 setuptools>=57.4.0
 
 numpy~=1.21.2
+
+pytest>=6.2.5

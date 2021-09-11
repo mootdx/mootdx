@@ -1,4 +1,3 @@
-
 # 标准行情接口
 
 下面是如何在程序里面调用本接口
@@ -28,11 +27,11 @@ client = Quotes.factory(market='std', multithread=True, heartbeat=True, bestip=T
 
 **参数说明: **
 
- - symbol: 多个股票号码。 `["000001", "600300"]` 格式
+- symbol: 多个股票号码。 `["000001", "600300"]` 格式
 
 返回值：
 
- - Quotes{}
+- Quotes{}
 
 **调用方法：**
 
@@ -67,7 +66,7 @@ client.bars(symbol='600036', frequency=9, offset=10)
 
 ** 参数说明: **
 
- - market: 市场代码. 0 - 深圳， 1 - 上海 (可以使用常量 `MARKET_SZ`, `MARKET_SH` 代替)
+- market: 市场代码. 0 - 深圳， 1 - 上海 (可以使用常量 `MARKET_SZ`, `MARKET_SH` 代替)
 
 ** 调用方法：**
 
@@ -83,8 +82,7 @@ client.stock_count(market=consts.MARKET_SH)
 
 ** 参数说明: **
 
-
- - market: 市场代码. 0 - 深圳， 1 - 上海 (可以使用常量 `MARKET_SZ`, `MARKET_SH` 代替)
+- market: 市场代码. 0 - 深圳， 1 - 上海 (可以使用常量 `MARKET_SZ`, `MARKET_SH` 代替)
 
 > 注意，在引入 consts 之后， （`from mootdx import consts`）
 > 我们可以使用 consts.MARKET_SH , consts.MARKET_SZ 常量来代替 1 和 0 作为参数
@@ -103,19 +101,12 @@ symbol = client.stocks(market=consts.MARKET_SH)
 
 ** 参数说明: **
 
- - frequency: K线种类
- - market: 市场代码. 0 - 深圳， 1 - 上海 (可以使用常量 `MARKET_SZ`, `MARKET_SH` 代替)
- - start: 开始位置
- - offset: 用户要请求的 K 线数目，最大值为 800
+- frequency: K线种类
+- market: 市场代码. 0 - 深圳， 1 - 上海 (可以使用常量 `MARKET_SZ`, `MARKET_SH` 代替)
+- start: 开始位置
+- offset: 用户要请求的 K 线数目，最大值为 800
 
-> frequency: K线种类
-0 5分钟K线 1 15分钟K线 2 30分钟K线 3 1小时K线 4 日K线
-5 周K线
-6 月K线
-7 1分钟
-8 1分钟K线 9 日K线
-10 季K线
-11 年K线
+> frequency: K线种类 0 5分钟K线 1 15分钟K线 2 30分钟K线 3 1小时K线 4 日K线 5 周K线 6 月K线 7 1分钟 8 1分钟K线 9 日K线 10 季K线 11 年K线
 
 使用说明：
 
@@ -128,11 +119,12 @@ from mootdx.consts import MARKET_SH
 client = Quotes.factory(market='std')
 client.index(frequency=9, market=MARKET_SH, symbol='000001', start=1, offset=2)
 ```
+
 ## 06. 查询分时行情
 
 ** 参数说明: **
 
- - symbol: 股票代码
+- symbol: 股票代码
 
 ** 调用方法：**
 
@@ -147,9 +139,9 @@ client.minute(symbol='000001')
 
 ** 参数说明: **
 
- - market: 市场代码.
- - symbol: 股票代码
- - date: 时间
+- market: 市场代码.
+- symbol: 股票代码
+- date: 时间
 
 ** 调用方法：**
 
@@ -166,9 +158,9 @@ client.minutes(symbol='000001', date='20171010')
 
 ** 参数说明: **
 
- - market: 市场代码.
- - start: 起始位置
- - offset: 数量
+- market: 市场代码.
+- start: 起始位置
+- offset: 数量
 
 ** 调用方法：**
 
@@ -183,10 +175,10 @@ client.transaction(symbol='600036', start=0, offset=10)
 
 ** 参数说明: **
 
- - symbol: 股票代码.
- - start: 起始位置.
- - offset: 数量.
- - date: 日期.
+- symbol: 股票代码.
+- start: 起始位置.
+- offset: 数量.
+- date: 日期.
 
 ** 调用方法：**
 
@@ -204,7 +196,7 @@ client.transactions(symbol='000001', start=0, offset=10, date='20170209')
 
 ** 参数说明: **
 
- - symbol: 股票代码.
+- symbol: 股票代码.
 
 ** 调用方法：**
 
@@ -219,8 +211,8 @@ client.F10C(symbol='000001')
 
 ** 参数说明: **
 
- - symbol: 股票代码.
- - name: 公司详情标题. 可使用`F10C`获取
+- symbol: 股票代码.
+- name: 公司详情标题. 可使用`F10C`获取
 
 **调用方法：**
 
@@ -237,7 +229,7 @@ client.F10(symbol='000001', name='最新提示')
 
 **参数说明: **
 
- - symbol: 股票代码.
+- symbol: 股票代码.
 
 ** 调用方法：**
 
@@ -252,7 +244,7 @@ client.xdxr(symbol='600036')
 
 **参数说明: **
 
- - symbol: 股票代码.
+- symbol: 股票代码.
 
 **调用方法：**
 
@@ -267,9 +259,9 @@ client.finance(symbol="600300")
 
 **参数说明: **
 
- - symbol: 股票代码.
- - begin: 开始时间.
- - end: 结束时间.
+- symbol: 股票代码.
+- begin: 开始时间.
+- end: 结束时间.
 
 **调用方法：**
 

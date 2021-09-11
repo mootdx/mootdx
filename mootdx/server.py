@@ -49,8 +49,9 @@ def Server(index=None, limit=5, console=False, verbose=False):
                     proxy.get("addr"), proxy.get("port"), proxy.get("time")
                 )
             )
-        except Exception as e:
-            log.debug("{},{} 验证失败.".format(proxy.get("addr"), proxy.get("port")))
+        except socket.timeout as ex:
+            log.exception(ex)
+            log.debug("{addr},{port} 验证失败.".format(**proxy))
 
     # 结果按响应时间从小到大排序
 

@@ -40,8 +40,7 @@ Affair.fetch(downdir='output', filename='gpcw20170930.zip')
 
 ## 03. 解析本地数据
 
-如果您自己管理文件的下载或者本地已经有对应的数据文件，同时支持`.zip`和解压后的`.dat`文件.
-如果扩展名不写，则自动判断存在的文件.
+如果您自己管理文件的下载或者本地已经有对应的数据文件，同时支持`.zip`和解压后的`.dat`文件. 如果扩展名不写，则自动判断存在的文件.
 
 ```python
 from mootdx.affair import Affair
@@ -63,6 +62,7 @@ result.to_csv('gpcw20170930.csv')
 # 保存 Excel 文件
 result.to_csv('gpcw20170930.xls')
 ```
+
 命令行方式
 
 写入到文件 : `gpcw20170930.csv`

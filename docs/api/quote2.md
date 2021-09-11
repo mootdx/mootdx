@@ -5,6 +5,7 @@
 可以获取该api服务器可以使用的市场列表，类别等信息
 
 ** 调用方法：**
+
 ```python
 from mootdx.quotes import Quotes
 
@@ -16,15 +17,15 @@ client.markets()
 > 注意点：非股票品种代码，有些获取的价格不是实际价格，比如可转债获取价格为实际价格 x 10。
 > 这是可能是TDX为了防止浮点数错误，报价在传输和存储时实际都保存为整数，然后根据品种进行处理的结果。
 
-
 ## 02. 查询代码列表
 
 ** 参数说明: **
 
- - start: 起始位置.
- - offset: 获取数量.
+- start: 起始位置.
+- offset: 获取数量.
 
 ** 调用方法：**
+
 ```python
 from mootdx.quotes import Quotes
 
@@ -38,6 +39,7 @@ client.instruments()
 ## 03. 市场商品数量
 
 ** 调用方法：**
+
 ```python
 from mootdx.quotes import Quotes
 
@@ -50,10 +52,11 @@ client.instrument_count()
 
 ** 参数说明: **
 
- - market: 市场代码.
- - symbol: 证券代码.
+- market: 市场代码.
+- symbol: 证券代码.
 
 ** 调用方法：**
+
 ```python
 from mootdx.quotes import Quotes
 
@@ -68,10 +71,11 @@ client.quote(symbol="47#IF1709")
 
 ** 参数说明: **
 
- - market: 市场代码. 市场代码可以通过 `markets` 方法获得
- - symbol: 证券代码.
+- market: 市场代码. 市场代码可以通过 `markets` 方法获得
+- symbol: 证券代码.
 
 ** 调用方法：**
+
 ```python
 from mootdx.quotes import Quotes
 
@@ -86,10 +90,11 @@ client.minute(symbol="47#IF1709")
 
 ** 参数说明: **
 
- - market: 市场代码. 场ID可以通过 `markets` 方法获得
- - symbol: 证券代码
+- market: 市场代码. 场ID可以通过 `markets` 方法获得
+- symbol: 证券代码
 
 ** 调用方法：**
+
 ```python
 from mootdx.quotes import Quotes
 
@@ -104,13 +109,14 @@ client.minutes(symbol="47#IF1709")
 
 ** 参数说明: **
 
- - frequency: K线周期参考 `mootdx.consts`
- - market: 市场代码. 场ID可以通过 `markets` 方法获得
- - symbol: 证券代码
- - start: 起始位置
- - offset: 数量
+- frequency: K线周期参考 `mootdx.consts`
+- market: 市场代码. 场ID可以通过 `markets` 方法获得
+- symbol: 证券代码
+- start: 起始位置
+- offset: 数量
 
 ** 调用方法：**
+
 ```python
 from mootdx.quotes import Quotes
 from mootdx.consts import KLINE_DAILY
@@ -125,10 +131,11 @@ client.bars(frequency=KLINE_DAILY, symbol="47#IF1709", start=0, offset=100)
 
 ** 参数说明: **
 
- - market: 市场代码. 场ID可以通过 `markets` 方法获得
- - symbol: 证券代码
+- market: 市场代码. 场ID可以通过 `markets` 方法获得
+- symbol: 证券代码
 
 ** 调用方法：**
+
 ```python
 from mootdx.quotes import Quotes
 
@@ -144,6 +151,7 @@ client.transaction("31#00020")
 如期货的数据：这个接口可以取出1800条之前的记录，数量也是1800条
 
 ** 调用方法：**
+
 ```python
 from mootdx.quotes import Quotes
 
@@ -165,6 +173,7 @@ client.transaction("31#00020")
 - offset: 数量
 
 ** 调用方法：**
+
 ```python
 from mootdx.quotes import Quotes
 

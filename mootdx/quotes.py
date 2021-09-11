@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import math
+from pathlib import Path
 
 import pandas
 import pandas as pd
@@ -10,7 +11,6 @@ from tenacity import retry_if_exception_type
 from tenacity import retry_if_result
 from tenacity import stop_after_attempt
 from tqdm import tqdm
-from unipath import Path
 
 from mootdx import config
 from mootdx import server
@@ -73,7 +73,7 @@ class BaseQuotes(object):
         return False
 
 
-instance: BaseQuotes = None
+instance: BaseQuotes
 
 
 def is_empty(value):
@@ -147,7 +147,7 @@ class StdQuotes(BaseQuotes):
         stop=stop_after_attempt(3),
         retry=(retry_if_exception_type() | retry_if_result(is_empty)),
     )
-    def bars(self, symbol="000001", frequency=9, start=0, offset=100, *args, **kwargs):
+    def bars(self, symbol="000001", frequency=9, start=0, offset=100):
         """
         获取实时日K线数据
 
@@ -170,7 +170,7 @@ class StdQuotes(BaseQuotes):
         stop=stop_after_attempt(3),
         retry=(retry_if_exception_type() | retry_if_result(is_empty)),
     )
-    def stock_count(self, market=MARKET_SH, *args, **kwargs):
+    def stock_count(self, market=MARKET_SH):
         """
         获取市场股票数量
 
@@ -186,7 +186,7 @@ class StdQuotes(BaseQuotes):
         stop=stop_after_attempt(3),
         retry=(retry_if_exception_type() | retry_if_result(is_empty)),
     )
-    def stocks(self, market=MARKET_SH, *args, **kwargs):
+    def stocks(self, market=MARKET_SH):
         """
         获取股票列表
 
@@ -212,7 +212,7 @@ class StdQuotes(BaseQuotes):
         retry=(retry_if_exception_type() | retry_if_result(is_empty)),
     )
     def index_bars(
-        self, symbol="000001", frequency=9, start=0, offset=100, *args, **kwargs
+        self, symbol="000001", frequency=9, start=0, offset=100
     ):
         """
         获取指数k线
@@ -252,7 +252,7 @@ class StdQuotes(BaseQuotes):
         stop=stop_after_attempt(3),
         retry=(retry_if_exception_type() | retry_if_result(is_empty)),
     )
-    def minutes(self, symbol="", date="20191023", *args, **kwargs):
+    def minutes(self, symbol="", date="20191023"):
         """
         分时历史数据
 
@@ -272,7 +272,7 @@ class StdQuotes(BaseQuotes):
         stop=stop_after_attempt(3),
         retry=(retry_if_exception_type() | retry_if_result(is_empty)),
     )
-    def transaction(self, symbol="", start=0, offset=10, *args, **kwargs):
+    def transaction(self, symbol="", start=0, offset=10):
         """
         查询分笔成交
 

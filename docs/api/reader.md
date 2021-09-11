@@ -1,4 +1,3 @@
-
 ## 离线数据接口
 
 通过下面的接口，我们可以解析通达信的日K线文件，该文件可以通过读取通达信的软件本地目录导出的数据获取，也可以从通达信的官网上下载， 如果您安装了通达信的终端，可以在安装目录下找到 `vipdoc` 子目录。
@@ -16,6 +15,7 @@
 
 ```python
 from mootdx.reader import Reader
+
 reader = Reader.factory(market='std', tdxdir='C:/new_tdx')
 
 # 读取日线数据
@@ -44,14 +44,13 @@ reader.daily(symbol='29#A1801')
 
 > 读取通达信的分钟K线（目前支持1，5分钟k线）
 
-分钟线有两种格式，第一种是`.1` `.5` 为后缀的, 还有一种为 `.lc1` `.lc5` 后缀的.
-不过不用考虑，接口会自动判断
+分钟线有两种格式，第一种是`.1` `.5` 为后缀的, 还有一种为 `.lc1` `.lc5` 后缀的. 不过不用考虑，接口会自动判断
 
 ```python
 from mootdx.reader import Reader
 
 reader = Reader.factory(market='std', tdxdir='c:/new_tdx')
-reader.minute(symbol='000001', suffix='1') # suffix = 1 一分钟，5 五分钟
+reader.minute(symbol='000001', suffix='1')  # suffix = 1 一分钟，5 五分钟
 ```
 
 扩展数据接口读取方式
@@ -60,7 +59,7 @@ reader.minute(symbol='000001', suffix='1') # suffix = 1 一分钟，5 五分钟
 from mootdx.reader import Reader
 
 reader = Reader.factory(market='ext', tdxdir='c:/new_tdx')
-reader.minute(symbol='000001', suffix = '1') # suffix = 1 一分钟，5 五分钟
+reader.minute(symbol='000001', suffix='1')  # suffix = 1 一分钟，5 五分钟
 ```
 
 ## 04. 读取板块信息
@@ -101,5 +100,5 @@ result = reader.block_new(group=True)
 
 ```python
 # 写入新板块
-reader.block_new(name='最优盈利板块', symbol=['600001','600002','600003','600004',])
+reader.block_new(name='最优盈利板块', symbol=['600001', '600002', '600003', '600004', ])
 ```

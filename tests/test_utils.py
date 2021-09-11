@@ -12,6 +12,7 @@ from mootdx.utils import get_config_path
 from mootdx.utils import get_stock_market
 from mootdx.utils import md5sum
 from mootdx.utils import to_data
+from tests.conftest import is_empty
 
 data = [
     ("600036", MARKET_SH),
@@ -86,6 +87,18 @@ class TestBlockNew(unittest.TestCase):
         self.assertTrue(self.reader.block_new(name="龙虎榜", symbol=["600036"]))
         self.assertTrue(self.reader.block_new(name="优质股", symbol=["600036"]))
         self.assertFalse(self.reader.block_new(group=True).empty)
+
+    def test_blocks(self):
+        result = self.reader.block(symbol='block_zs', group=True)
+        assert is_empty(result)
+
+    def test_block(self):
+        self.reader.block(symbol='block_fg', group=True)
+        # self.assertFalse(self.reader.block(symbol='block', group=True).empty)
+        # self.assertFalse(self.reader.block(symbol='block_fg', group=True).empty or None)
+        # self.assertFalse(self.reader.block(symbol='block_gn', group=True).empty or None)
+        # self.assertFalse(self.reader.block(symbol='block_zs', group=True).empty or None)
+        # self.assertFalse(self.reader.block(symbol='tdxhy.cfg', group=True).empty)
 
 
 if __name__ == "__main__":

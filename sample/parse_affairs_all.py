@@ -18,7 +18,7 @@ for x in glob("tmp/*.zip"):
     file = os.path.basename(x)
 
     if os.path.exists("tmp/{}".format(dist)):
-        logger.warn("文件已存在: {}".format(dist))
+        logger.warning("文件已存在: {}".format(dist))
         continue
 
     data = Affair.parse(downdir="tmp", filename=file)
@@ -27,6 +27,6 @@ for x in glob("tmp/*.zip"):
         data.to_csv("tmp/{}".format(dist))
         logger.info("文件已导出: {}".format(dist))
 
-for inputfile in glob("tmp/*.csv"):
-    df = pd.read_csv(inputfile, header=None)
+for input_file in glob("tmp/*.csv"):
+    df = pd.read_csv(input_file, header=None)
     df.to_csv("all.csv", mode="a", index=False, header=False)
