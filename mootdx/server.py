@@ -65,7 +65,6 @@ def Server(index=None, limit=5, console=False):
         task.add_done_callback(partial(callback, key=index))
         tasks.append(task)
 
-    loop = asyncio.get_event_loop()
     loop.run_until_complete(asyncio.wait(tasks))
 
     server = results[index]
