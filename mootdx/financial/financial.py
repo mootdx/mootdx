@@ -11,7 +11,7 @@ import pandas as pd
 from pytdx.hq import TdxHq_API
 
 from .base import BaseFinancial
-from ..logger import logger
+from ..logger import logger, log
 
 
 class FinancialReader(object):
@@ -121,15 +121,7 @@ class Financial(BaseFinancial):
 
         return f"http://down.tdx.com.cn:8001/fin/{filename}"
 
-    def content(
-        self,
-        report_hook=None,
-        downdir=None,
-        proxies=None,
-        chunk_size=1024 * 50,
-        *args,
-        **kwargs,
-    ):
+    def content(self, report_hook=None, downdir=None, proxies=None, chunk_size=1024 * 50, *args, **kwargs):
         """
         解析财务文件
 
@@ -143,7 +135,10 @@ class Financial(BaseFinancial):
         """
 
         filename = kwargs.get("filename")
+        downfile = str(Path(downdir) / filename)
         filesize = kwargs.get("filesize") if kwargs.get("filesize") else 0
+
+        log.info('{}: start download...', filename)
 
         if not filename:
             raise Exception("Param filename is not set")
@@ -152,18 +147,14 @@ class Financial(BaseFinancial):
         api.need_setup = False
 
         with api.connect(*self.bestip):
-            content = api.get_report_file_by_size(
-                f"tdxfin/{filename}", filesize=filesize, reporthook=report_hook
-            )
-            download_file = (
-                open(downdir, "wb")
-                if downdir
-                else tempfile.NamedTemporaryFile(delete=True)
-            )
+            content = api.get_report_file_by_size(f"tdxfin/{filename}", filesize=filesize, reporthook=report_hook)
+            download_file = (open(downfile, "wb") if downfile else tempfile.NamedTemporaryFile(delete=True))
             download_file.write(content)
             download_file.seek(0)
 
             del content
+
+            log.info('{}: done', filename)
 
             return download_file
 

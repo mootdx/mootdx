@@ -48,9 +48,7 @@ class BaseFinancial:
         except ValueError:
             self.bestip = ("106.14.95.149", 7727)
 
-    def fetch_and_parse(
-        self, report_hook=None, downdir=None, chunk_size=51200, *args, **kwargs
-    ):
+    def fetch_and_parse(self, report_hook=None, downdir=None, chunk_size=51200, *args, **kwargs):
         """
         function to get data , 参考 https://docs.python.org/3/library/urllib.request.html#module-urllib.request
 
@@ -67,9 +65,8 @@ class BaseFinancial:
             *args,
             **kwargs
         )
-        data = self.parse(file, *args, **kwargs)
 
-        return data
+        return self.parse(file, *args, **kwargs)
 
     def build_url(self, *args, **kwargs):
         raise NotImplementedError("will impl in subclass")
