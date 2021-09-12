@@ -39,7 +39,9 @@ class Affair(object):
         """
 
         history = financial.FinancialList()
+        log.warning(history)
         results = history.fetch_and_parse()
+        log.warning(results)
 
         return results
 

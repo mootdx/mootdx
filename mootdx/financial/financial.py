@@ -3,7 +3,6 @@ import os
 import random
 import shutil
 import tempfile
-from abc import ABC
 from pathlib import Path
 from struct import calcsize
 from struct import unpack
@@ -12,11 +11,10 @@ import pandas as pd
 from pytdx.hq import TdxHq_API
 
 from .base import BaseFinancial
-from .base import BaseReader
 from ..logger import logger
 
 
-class FinancialReader(BaseReader, ABC):
+class FinancialReader(object):
     @staticmethod
     def to_data(filename):
         """
@@ -68,16 +66,14 @@ class FinancialList(BaseFinancial):
         :return:
         """
 
+        tmp = tempfile.NamedTemporaryFile(delete=True)
+
         api = TdxHq_API(**kwargs)
         api.need_setup = False
 
         with api.connect(*self.bestip):
             content = api.get_report_file_by_size("tdxfin/gpcw.txt")
-            download_file = (
-                open(downdir, "wb")
-                if downdir
-                else tempfile.NamedTemporaryFile(delete=True)
-            )
+            download_file = (open(downdir, "wb") if downdir else tmp)
             download_file.write(content)
             download_file.seek(0)
 
@@ -97,16 +93,12 @@ class FinancialList(BaseFinancial):
             content = download_file.read()
             content = content.decode("utf-8")
 
-        def list_to_dict(i):
+        def l2d(i):
             return {"filename": i[0], "hash": i[1], "filesize": int(i[2])}
 
         if content:
-            return [
-                list_to_dict(i)
-                for i in [
-                    line.strip().split(",") for line in content.strip().split("\n")
-                ]
-            ]
+            content = content.strip().split("\n")
+            return [l2d(i) for i in [line.strip().split(",") for line in content]]
 
         return None
 

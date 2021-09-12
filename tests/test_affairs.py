@@ -33,10 +33,6 @@ class TestAffair(unittest.TestCase):
         Affair.parse(downdir=self.downdir, filename=self.files[-1]).to_csv(csv_file)
         self.assertTrue(csv_file.exists())
 
-    def test_files(self):
-        data = Affair.files()
-        self.assertTrue(type(data) is list)
-
     def test_fetch_one(self):
         Affair.fetch(downdir=self.downdir, filename=self.files[-1])
         self.assertTrue(Path(self.downdir, self.files[-1]).exists())
