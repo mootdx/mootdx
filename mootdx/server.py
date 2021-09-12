@@ -20,15 +20,18 @@ hosts = {
     "GP": [{"addr": hs[1], "port": hs[2], "time": 0, "site": hs[0]} for hs in GP_HOSTS],
 }
 
-
-def callback(res):
-    print(res)
+results = {k: [] for k in hosts}
 
 
-async def verify(proxy):
+def callback(res, key):
+    results[key].append(res.result())
+    log.debug('callback: {}', res.result())
+
+
+def connect(proxy):
     try:
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        sock.settimeout(5)
+        sock.settimeout(3)
 
         start = time.perf_counter()
 
@@ -37,38 +40,36 @@ async def verify(proxy):
 
         proxy["time"] = (time.perf_counter() - start) * 1000
 
-        log.debug(
-            "{}:{} 验证通过，响应时间：{:5.2f} ms.".format(
-                proxy.get("addr"), proxy.get("port"), proxy.get("time")
-            )
-        )
+        log.debug("{addr}:{port} 验证通过，响应时间：{time} ms.".format(**proxy))
     except socket.timeout as ex:
-        log.exception(ex)
+        log.debug("{addr},{port} time out.".format(**proxy))
     except ConnectionRefusedError as ex:
-        log.exception(ex)
         log.debug("{addr},{port} 验证失败.".format(**proxy))
     finally:
         return proxy
 
 
+async def verify(proxy):
+    result = await asyncio.get_event_loop().run_in_executor(None, functools.partial(connect, proxy=proxy))
+    return result
+
+
 def Server(index=None, limit=5, console=False):
     _hosts = hosts[index]
 
-    log.warning(_hosts)
-
-    server = []
+    loop = asyncio.get_event_loop()
 
     tasks = []
 
-    loop = asyncio.get_event_loop()
-
     while len(_hosts) > 0:
-        task = loop.create_task((verify(_hosts.pop(0))))
-        task.add_done_callback(partial(callback))
+        task = loop.create_task(verify(_hosts.pop(0)))
+        task.add_done_callback(partial(callback, key=index))
         tasks.append(task)
 
     loop = asyncio.get_event_loop()
     loop.run_until_complete(asyncio.wait(tasks))
+
+    server = results[index]
 
     # 结果按响应时间从小到大排序
     if console:
@@ -99,33 +100,6 @@ def Server(index=None, limit=5, console=False):
     return [(item["addr"], item["port"]) for item in server]
 
 
-async def _get_requests(proxy):
-    loop = asyncio.get_event_loop()
-    r = await loop.run_in_executor(None, functools.partial(verify, proxy=proxy))
-    return r, proxy
-
-
-async def _get_docker_index_info(context, proxies):
-    tasks = [asyncio.ensure_future(_get_requests(proxy)) for proxy in proxies]
-
-    for task in asyncio.as_completed(tasks):
-        r, key = await task
-
-        if r.status_code == 200:
-            context[key] = r.json()
-
-    return context
-
-
-def get_context_data(**kwargs):
-    context = get_context_data(**kwargs)
-    loop = asyncio.new_event_loop()
-    task = loop.create_task(_get_docker_index_info(context, EX_HOSTS))
-    loop.run_until_complete(task)
-    context = task.result()
-    return context
-
-
 def bestip(console=False, limit=5) -> None:
     config_ = get_config_path("config.json")
     default = dict(CONFIG)
@@ -137,3 +111,7 @@ def bestip(console=False, limit=5) -> None:
 
     json.dump(default, open(config_, "w"), indent=2)
     config.setup()
+
+
+if __name__ == '__main__':
+    bestip()

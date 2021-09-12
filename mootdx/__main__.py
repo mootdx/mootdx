@@ -6,7 +6,7 @@ import os
 import click
 from prettytable import PrettyTable
 
-from mootdx import __version__
+from mootdx import __version__, logger
 from mootdx.affair import Affair
 from mootdx.consts import CONFIG
 from mootdx.logger import log
@@ -87,14 +87,8 @@ def reader(symbol, action, market, tdxdir, output):
 
 @cli.command(help="测试行情服务器.")
 @click.option("-l", "--limit", default=5, help="显示最快前几个，默认 5.")
-@click.option(
-    "-w",
-    "--write",
-    default=True,
-    count=True,
-    help="将最优服务器IP写入配置文件 ~/.mootdx/config.json.",
-)
-@click.option("-v", "--verbose", count=True)
+@click.option("-w", "--write", default=True, count=True, help="将最优服务器IP写入配置文件 ~/.mootdx/config.json.", )
+@click.option("-vv", "--verbose", default=False, count=True)
 def bestip(limit, write, verbose):
     """
     @todo 命令行最优线路配置功能调整
@@ -103,11 +97,13 @@ def bestip(limit, write, verbose):
     :param verbose:
     :return:
     """
+    verbose and logger.getLogger(level='DEBUG')
+
     config = get_config_path("config.json")
     default = CONFIG
 
     for index in ["HQ", "EX", "GP"]:
-        result = Server(index=index, limit=limit, console=True, verbose=verbose)
+        result = Server(index=index, limit=limit, console=True)
 
         if result:
             default["BESTIP"][index] = result[0]
@@ -116,22 +112,18 @@ def bestip(limit, write, verbose):
 
     if write:
         json.dump(CONFIG, open(config, "w"), indent=2)
-        print("[√] 已经将最优服务器IP写入配置文件 {}".format(config))
+        log.success("[√] 已经将最优服务器IP写入配置文件 {}".format(config))
 
 
 @cli.command(help="财务文件下载&解析.")
 @click.option("-p", "--parse", default=None, help="要解析文件名")
-# @click.option("-l", "--files", count=True, default=True, help="列出文件列表")
 @click.option("-f", "--fetch", default=None, help="下载财务文件的文件名")
 @click.option("-a", "--downall", count=True, help="下载全部文件")
-@click.option(
-    "-o", "--output", default=None, help="输出文件, 支持 CSV, HDF5, Excel, JSON 等格式."
-)
+@click.option("-o", "--output", default=None, help="输出文件, 支持 CSV, HDF5, Excel, JSON 等格式.")
 @click.option("-d", "--downdir", default="output", help="下载文件目录")
-@click.option("-v", "--verbose", count=True)
+@click.option("-vv", "--verbose", count=True)
 def affair(parse, fetch, downdir, output, downall, verbose):
-    if verbose:
-        logging.basicConfig(level=logging.DEBUG)
+    verbose and logger.getLogger(level='DEBUG')
 
     result = Affair.files()
 
@@ -172,24 +164,15 @@ def affair(parse, fetch, downdir, output, downall, verbose):
 
 @cli.command(help="显示当前软件版本.")
 def version():
-    print("mootdx v{}".format(__version__))
+    print("mootdx V{}".format(__version__))
 
 
 @cli.command(help="批量下载行情数据.")
 @click.option("-o", "--output", default="bundle", help="转存文件目录.")
 @click.option("-s", "--symbol", default="600000", help="股票代码. 多个用,隔开")
-@click.option(
-    "-a",
-    "--action",
-    default="bars",
-    help="操作类型 (daily: 日线, minute: 一分钟线, fzline: 五分钟线).",
-)
-@click.option(
-    "-m", "--market", default="std", help="证券市场, 默认 std (std: 标准股票市场, ext: 扩展市场)."
-)
-@click.option(
-    "-e", "--extension", default="csv", help="转存文件的格式, 支持 CSV, HDF5, Excel, JSON 等格式."
-)
+@click.option("-a", "--action", default="bars", help="操作类型 (daily: 日线, minute: 一分钟线, fzline: 五分钟线).")
+@click.option("-m", "--market", default="std", help="证券市场, 默认 std (std: 标准股票市场, ext: 扩展市场).")
+@click.option("-e", "--extension", default="csv", help="转存文件的格式, 支持 CSV, HDF5, Excel, JSON 等格式.")
 def bundle(symbol, action, market, output, extension):
     """
     批量下载行情数据
@@ -210,9 +193,7 @@ def bundle(symbol, action, market, output, extension):
                 frequency = 9
 
             feed = getattr(client, "bars")(symbol=code, frequency=frequency)
-            to_file(
-                feed, os.path.join(output, f"{code}.{extension}")
-            ) if output else None
+            resp = to_file(feed, os.path.join(output, f"{code}.{extension}")) if output else None
             print("下载完成 {}".format(code))
         except Exception as e:
             raise e
