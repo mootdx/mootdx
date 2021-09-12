@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 用于管理缓存的配置数据
 使用前必须先调用 init() 。
@@ -14,16 +13,16 @@ from mootdx.logger import log
 from mootdx.server import bestip
 from mootdx.utils import get_config_path
 
-__all__ = ["set", "get", "copy", "update", "settings"]
+__all__ = ['set', 'get', 'copy', 'update', 'settings']
 
 settings = {
-    "SERVER": {"HQ": HQ_HOSTS, "EX": EX_HOSTS, "GP": GP_HOSTS},
-    "BESTIP": {"HQ": "", "EX": "", "GP": ""},
-    "TDXDIR": "C:/new_tdx",
+    'SERVER': {'HQ': HQ_HOSTS, 'EX': EX_HOSTS, 'GP': GP_HOSTS},
+    'BESTIP': {'HQ': '', 'EX': '', 'GP': ''},
+    'TDXDIR': 'C:/new_tdx',
 }
 
 BASE = Path(__file__).parent.parent
-CONF = get_config_path("config.json")
+CONF = get_config_path('config.json')
 
 
 def setup():
@@ -38,7 +37,7 @@ def setup():
         settings.update(options)
     except Exception as e:
         log.error(e)
-        log.error(f"未找到配置文件 {CONF}, 正在生成配置文件.")
+        log.error(f'未找到配置文件 {CONF}, 正在生成配置文件.')
         bestip()
 
     return True if settings else False
@@ -77,7 +76,7 @@ def get(key, default=None):
     :return:
     """
 
-    key = key.split(".")
+    key = key.split('.')
     cfg = settings.get(key[0])
 
     if len(key) > 1:

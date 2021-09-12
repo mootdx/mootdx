@@ -1,4 +1,3 @@
-# # -*- coding: utf-8 -*-
 # import logging
 # import unittest
 # from mootdx.consts import KLINE_DAILY

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import struct
 
 from .. import config
@@ -6,7 +5,7 @@ from ..config import settings
 
 
 def reporthook(downloaded, total_size):
-    print("Downloaded {}, Total is {}".format(downloaded, total_size))
+    print('Downloaded {}, Total is {}'.format(downloaded, total_size))
 
 
 class BaseReader(object):
@@ -35,18 +34,18 @@ class BaseReader(object):
         :return:
         """
 
-        raise NotImplementedError("not yet")
+        raise NotImplementedError('not yet')
 
 
 class BaseFinancial:
-    def __init__(self, mode="content"):
+    def __init__(self, mode='content'):
         self.mode = mode
 
         try:
-            default = settings.get("SERVER").get("GP")[0][1:]
-            self.bestip = config.get("BESTIP").get("GP", default)
+            default = settings.get('SERVER').get('GP')[0][1:]
+            self.bestip = config.get('BESTIP').get('GP', default)
         except ValueError:
-            self.bestip = ("106.14.95.149", 7727)
+            self.bestip = ('106.14.95.149', 7727)
 
     def fetch_and_parse(self, report_hook=None, downdir=None, chunk_size=51200, *args, **kwargs):
         """
@@ -69,7 +68,7 @@ class BaseFinancial:
         return self.parse(file, *args, **kwargs)
 
     def build_url(self, *args, **kwargs):
-        raise NotImplementedError("will impl in subclass")
+        raise NotImplementedError('will impl in subclass')
 
     def content(
         self,
@@ -80,7 +79,7 @@ class BaseFinancial:
         *args,
         **kwargs
     ):
-        raise NotImplementedError("will impl in subclass")
+        raise NotImplementedError('will impl in subclass')
 
     def parse(self, download_file, *args, **kwargs):
-        raise NotImplementedError("will impl in subclass")
+        raise NotImplementedError('will impl in subclass')

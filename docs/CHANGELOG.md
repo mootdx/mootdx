@@ -136,7 +136,7 @@
 * Merge branch 'master' of gitee.com:ibopo/mootdx. [ibopo]
 
   Conflicts:
-  	mootdx/quotes.py
+      mootdx/quotes.py
 
 * Update commit. [bopo]
 
@@ -188,7 +188,7 @@
 * Merge branch 'master' of gitee.com:ibopo/mootdx. [ibopo]
 
   Conflicts:
-  	mootdx/quotes.py
+      mootdx/quotes.py
 
 * !2 bugfix: 查询分笔成交offset不能为market code * bugfix: 查询分笔成交offset不能为market code. [dhrhe]
 
@@ -1466,5 +1466,3 @@
 * Initial. [bopo]
 
 * Initial commit. [bopo]
-
-

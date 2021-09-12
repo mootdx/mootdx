@@ -1,14 +1,14 @@
 click>=6.7
-pandas>=0.23.3
-prettytable>=0.7.2
-tqdm>=4.37.0
-pytdx>=1.72
-unipath~=1.1
-loguru~=0.5.3
 httpx>=0.18.1
-tenacity>=8.0.1
-setuptools>=57.4.0
+loguru~=0.5.3
 
 numpy~=1.21.2
+pandas>=0.23.3
+prettytable>=0.7.2
+pytdx>=1.72
 
 pytest>=6.2.5
+setuptools>=57.4.0
+tenacity>=8.0.1
+tqdm>=4.37.0
+unipath~=1.1

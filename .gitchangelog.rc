@@ -93,9 +93,6 @@ section_regexps = [
     ('Fix', [
         r'^[fF]ix\s*:\s*((dev|use?r|pkg|test|doc)\s*:\s*)?([^\n]*)$',
      ]),
-
-
-
 ]
 
 

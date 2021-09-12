@@ -2,10 +2,16 @@ repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v2.5.0
     hooks:
-      - id: trailing-whitespace
-      - id: end-of-file-fixer
-      - id: debug-statements
-      - id: mixed-line-ending
+      - id: trailing-whitespace  # Trim trailing whitespace
+      - id: check-merge-conflict  # Check for files that contain merge conflict strings
+      - id: check-case-conflict
+      - id: double-quote-string-fixer  # Replace double quoted strings with single quoted strings
+      - id: end-of-file-fixer  # Make sure files end in a newline and only a newline
+      - id: requirements-txt-fixer  # Sort entries in requirements.txt and remove incorrect entry for pkg-resources==0.0.0
+      - id: fix-encoding-pragma  # Remove the coding pragma: # -*- coding: utf-8 -*-
+        args: [ "--remove" ]
+      - id: mixed-line-ending  # Replace or check mixed line ending
+        args: [ "--fix=lf" ]
       - id: check-ast
         name: Check python ast
         description: Simply check whether the files parse as valid python.
@@ -16,8 +22,6 @@ repos:
           (?x)^(
               setup.py
           )$
-      - id: check-merge-conflict
-      - id: check-case-conflict
 
   - repo: https://gitee.com/ibopo/pre-commit-hooks
     rev: v2.1.0
@@ -31,15 +35,3 @@ repos:
     rev: v2.3.6
     hooks:
       - id: reorder-python-imports
-
-  - repo: https://github.com/psf/black
-    rev: 21.7b0
-    hooks:
-      - id: black
-        name: black
-        description: "Black: The uncompromising Python code formatter"
-        entry: black
-        language: python
-        minimum_pre_commit_version: 2.9.2
-        require_serial: true
-        types_or: [ python, pyi ]

@@ -1472,5 +1472,3 @@
 * Initial. [bopo]
 
 * Initial commit. [bopo]
-
-

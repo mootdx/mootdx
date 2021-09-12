@@ -1,10 +1,11 @@
 import sys
 
-from loguru import logger, _defaults
+from loguru import _defaults
+from loguru import logger
 
 log = logger
 log.remove()
-log.add(sink=sys.stderr, level="INFO", format=_defaults.LOGURU_FORMAT)
+log.add(sink=sys.stderr, level='INFO', format=_defaults.LOGURU_FORMAT)
 
 
 def getLogger(level='INFO', **kwargs):

@@ -1,4 +1,5 @@
-from mootdx.server import bestip, Server
+from mootdx.server import bestip
+from mootdx.server import Server
 
 bestip()
 

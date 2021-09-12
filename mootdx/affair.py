@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import asyncio
 from functools import partial
 from pathlib import Path
@@ -9,7 +8,7 @@ from mootdx.utils import TqdmUpTo
 
 
 def download(downdir, filename):
-    with TqdmUpTo(unit="B", unit_scale=True, miniters=1, ascii=True) as t:
+    with TqdmUpTo(unit='B', unit_scale=True, miniters=1, ascii=True) as t:
         financial.Financial().fetch_and_parse(report_hook=t.update_to, filename=filename, downdir=downdir)
 
     return True
@@ -22,7 +21,7 @@ async def fetch_file(downdir, filename):
 
 class Affair(object):
     @staticmethod
-    def parse(downdir=".", filename=None):
+    def parse(downdir='.', filename=None):
         """
         按目录解析文件
 
@@ -32,7 +31,7 @@ class Affair(object):
         """
 
         if not filename:
-            log.critical("文件名不能为空!")
+            log.critical('文件名不能为空!')
             return None
 
         filepath = Path(downdir) / filename
@@ -40,7 +39,7 @@ class Affair(object):
         if Path(filepath).exists():
             return financial.FinancialReader().to_data(filepath)
 
-        log.warning("文件不存在：{}".format(filename))
+        log.warning('文件不存在：{}'.format(filename))
 
         return None
 
@@ -58,7 +57,7 @@ class Affair(object):
         return results
 
     @staticmethod
-    def fetch(downdir=".", filename=None):
+    def fetch(downdir='.', filename=None):
         """
         财务数据下载
 
@@ -71,14 +70,14 @@ class Affair(object):
         crawler = financial.Financial()
 
         if not Path(downdir).is_dir():
-            log.warning("下载目录不存在, 进行创建.")
+            log.warning('下载目录不存在, 进行创建.')
             Path(downdir).mkdir(parents=True)
 
         if filename:
-            log.info("下载文件 {}.".format(filename))
+            log.info('下载文件 {}.'.format(filename))
             downfile = Path(downdir, filename)
 
-            with TqdmUpTo(unit="B", unit_scale=True, miniters=1, ascii=True) as t:
+            with TqdmUpTo(unit='B', unit_scale=True, miniters=1, ascii=True) as t:
                 crawler.fetch_and_parse(report_hook=t.update_to, filename=filename, downdir=downfile)
 
             return True
@@ -88,7 +87,7 @@ class Affair(object):
         loop = asyncio.get_event_loop()
 
         for x in list_data:
-            task = loop.create_task(fetch_file(filename=x["filename"], downdir=downdir))
+            task = loop.create_task(fetch_file(filename=x['filename'], downdir=downdir))
             tasks.append(task)
 
         loop = asyncio.get_event_loop()

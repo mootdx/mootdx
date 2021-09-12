@@ -1,8 +1,7 @@
-# -*- coding: utf-8 -*-
-
 import unittest
 
-from mootdx.reader import Reader, ReaderBase
+from mootdx.reader import Reader
+from mootdx.reader import ReaderBase
 from tests.conftest import is_empty
 
 
