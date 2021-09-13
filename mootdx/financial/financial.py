@@ -45,15 +45,7 @@ class FinancialList(BaseFinancial):
         """
         return 'https://gitee.com/yutiansut/QADATA/raw/master/financial/content.txt'
 
-    def content(
-        self,
-        report_hook=None,
-        downdir=None,
-        proxies=None,
-        chunk_size=1024 * 50,
-        *args,
-        **kwargs,
-    ):
+    def content(self, report_hook=None, downdir=None, proxies=None, chunk_size=1024 * 50, *args, **kwargs):
         """
         解析财务文件
 
