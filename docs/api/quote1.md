@@ -122,6 +122,8 @@ client.index(frequency=9, market=MARKET_SH, symbol='000001', start=1, offset=2)
 
 ## 06. 查询分时行情
 
+> 网友反馈，此接口数据有误，不建议使用，可以使用 后面的 `历史分时行情` 来替代
+
 ** 参数说明: **
 
 - symbol: 股票代码
