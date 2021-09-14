@@ -71,7 +71,7 @@ reader.minute(symbol='000001', suffix='1')  # suffix = 1 一分钟，5 五分钟
 ```python
 from mootdx.reader import Reader
 
-reader = Reader.factory(market='ext', tdxdir='c:/new_tdx')
+reader = Reader.factory(market='std', tdxdir='c:/new_tdx')
 reader.block(symbol='block_zs', group=False)
 ```
 
