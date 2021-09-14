@@ -78,7 +78,7 @@ class Affair(object):
             downfile = Path(downdir, filename)
 
             with TqdmUpTo(unit='B', unit_scale=True, miniters=1, ascii=True) as t:
-                crawler.fetch_and_parse(report_hook=t.update_to, filename=filename, downdir=downfile)
+                crawler.fetch_and_parse(report_hook=t.update_to, filename=filename, downdir=downdir)
 
             return True
 

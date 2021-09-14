@@ -64,9 +64,7 @@ class BaseQuotes(object):
 
     @property
     def closed(self):
-        if not hasattr(self.client.client, '_closed') or getattr(
-            self.client.client, '_closed'
-        ):
+        if not hasattr(self.client.client, '_closed') or getattr(self.client.client, '_closed'):
             return True
 
         return False
@@ -83,6 +81,7 @@ def is_empty(value):
     print('is_empty is ', status)
 
     if instance and status:
+        print(instance.bestip, instance.timeout)
         instance.client.connect(time_out=instance.timeout, *instance.bestip)
 
     return status
@@ -112,17 +111,11 @@ class StdQuotes(BaseQuotes):
         global instance
         instance = self
 
-    @retry(
-        stop=stop_after_attempt(3),
-        retry=(retry_if_exception_type() | retry_if_result(is_empty)),
-    )
+    @retry(stop=stop_after_attempt(3), retry=(retry_if_exception_type() | retry_if_result(is_empty)))
     def traffic(self):
         return self.client.get_traffic_stats()
 
-    @retry(
-        stop=stop_after_attempt(3),
-        retry=(retry_if_exception_type() | retry_if_result(is_empty)),
-    )
+    @retry(stop=stop_after_attempt(3), retry=(retry_if_exception_type() | retry_if_result(is_empty)))
     def quotes(self, symbol=None):
         """
         获取实时日行情数据
@@ -142,10 +135,7 @@ class StdQuotes(BaseQuotes):
 
         return to_data(result)
 
-    @retry(
-        stop=stop_after_attempt(3),
-        retry=(retry_if_exception_type() | retry_if_result(is_empty)),
-    )
+    @retry(stop=stop_after_attempt(3), retry=(retry_if_exception_type() | retry_if_result(is_empty)))
     def bars(self, symbol='000001', frequency=9, start=0, offset=100):
         """
         获取实时日K线数据
@@ -165,10 +155,7 @@ class StdQuotes(BaseQuotes):
 
         return to_data(result)
 
-    @retry(
-        stop=stop_after_attempt(3),
-        retry=(retry_if_exception_type() | retry_if_result(is_empty)),
-    )
+    @retry(stop=stop_after_attempt(3), retry=(retry_if_exception_type() | retry_if_result(is_empty)))
     def stock_count(self, market=MARKET_SH):
         """
         获取市场股票数量
@@ -181,10 +168,7 @@ class StdQuotes(BaseQuotes):
 
         return result
 
-    @retry(
-        stop=stop_after_attempt(3),
-        retry=(retry_if_exception_type() | retry_if_result(is_empty)),
-    )
+    @retry(stop=stop_after_attempt(3), retry=(retry_if_exception_type() | retry_if_result(is_empty)))
     def stocks(self, market=MARKET_SH):
         """
         获取股票列表
@@ -206,13 +190,8 @@ class StdQuotes(BaseQuotes):
 
         return stocks
 
-    @retry(
-        stop=stop_after_attempt(3),
-        retry=(retry_if_exception_type() | retry_if_result(is_empty)),
-    )
-    def index_bars(
-        self, symbol='000001', frequency=9, start=0, offset=100
-    ):
+    @retry(stop=stop_after_attempt(3), retry=(retry_if_exception_type() | retry_if_result(is_empty)))
+    def index_bars(self, symbol='000001', frequency=9, start=0, offset=100):
         """
         获取指数k线
 
@@ -224,16 +203,11 @@ class StdQuotes(BaseQuotes):
         """
 
         market = get_stock_market(symbol)
-        result = self.client.get_index_bars(
-            frequency=frequency, market=market, code=symbol, start=start, count=offset
-        )
+        result = self.client.get_index_bars(frequency=frequency, market=market, code=symbol, start=start, count=offset)
 
         return to_data(result)
 
-    @retry(
-        stop=stop_after_attempt(3),
-        retry=(retry_if_exception_type() | retry_if_result(is_empty)),
-    )
+    @retry(stop=stop_after_attempt(3), retry=(retry_if_exception_type() | retry_if_result(is_empty)))
     def minute(self, symbol=''):
         """
         获取实时分时数据
@@ -247,10 +221,7 @@ class StdQuotes(BaseQuotes):
 
         return to_data(result)
 
-    @retry(
-        stop=stop_after_attempt(3),
-        retry=(retry_if_exception_type() | retry_if_result(is_empty)),
-    )
+    @retry(stop=stop_after_attempt(3), retry=(retry_if_exception_type() | retry_if_result(is_empty)))
     def minutes(self, symbol='', date='20191023'):
         """
         分时历史数据
@@ -261,16 +232,11 @@ class StdQuotes(BaseQuotes):
         """
 
         market = get_stock_market(symbol)
-        result = self.client.get_history_minute_time_data(
-            market=market, code=symbol, date=date
-        )
+        result = self.client.get_history_minute_time_data(market=market, code=symbol, date=date)
 
         return to_data(result)
 
-    @retry(
-        stop=stop_after_attempt(3),
-        retry=(retry_if_exception_type() | retry_if_result(is_empty)),
-    )
+    @retry(stop=stop_after_attempt(3), retry=(retry_if_exception_type() | retry_if_result(is_empty)))
     def transaction(self, symbol='', start=0, offset=10):
         """
         查询分笔成交
@@ -286,10 +252,7 @@ class StdQuotes(BaseQuotes):
 
         return to_data(result)
 
-    @retry(
-        stop=stop_after_attempt(3),
-        retry=(retry_if_exception_type() | retry_if_result(is_empty)),
-    )
+    @retry(stop=stop_after_attempt(3), retry=(retry_if_exception_type() | retry_if_result(is_empty)))
     def transactions(self, symbol='', start=0, offset=10, date='20170209'):
         """
         查询历史分笔成交
@@ -309,10 +272,7 @@ class StdQuotes(BaseQuotes):
 
         return to_data(result)
 
-    @retry(
-        stop=stop_after_attempt(3),
-        retry=(retry_if_exception_type() | retry_if_result(is_empty)),
-    )
+    @retry(stop=stop_after_attempt(3), retry=(retry_if_exception_type() | retry_if_result(is_empty)))
     def F10C(self, symbol=''):
         """
         查询公司信息目录
@@ -325,10 +285,7 @@ class StdQuotes(BaseQuotes):
 
         return result
 
-    @retry(
-        stop=stop_after_attempt(3),
-        retry=(retry_if_exception_type() | retry_if_result(is_empty)),
-    )
+    @retry(stop=stop_after_attempt(3), retry=(retry_if_exception_type() | retry_if_result(is_empty)))
     def F10(self, symbol='', name=''):
         """
         读取公司信息详情
@@ -367,10 +324,7 @@ class StdQuotes(BaseQuotes):
 
         return result
 
-    @retry(
-        stop=stop_after_attempt(3),
-        retry=(retry_if_exception_type() | retry_if_result(is_empty)),
-    )
+    @retry(stop=stop_after_attempt(3), retry=(retry_if_exception_type() | retry_if_result(is_empty)))
     def xdxr(self, symbol=''):
         """
         读取除权除息信息
@@ -384,10 +338,7 @@ class StdQuotes(BaseQuotes):
 
         return to_data(result)
 
-    @retry(
-        stop=stop_after_attempt(3),
-        retry=(retry_if_exception_type() | retry_if_result(is_empty)),
-    )
+    @retry(stop=stop_after_attempt(3), retry=(retry_if_exception_type() | retry_if_result(is_empty)))
     def finance(self, symbol='000001'):
         """
         读取财务信息
@@ -401,10 +352,7 @@ class StdQuotes(BaseQuotes):
 
         return to_data(result)
 
-    @retry(
-        stop=stop_after_attempt(3),
-        retry=(retry_if_exception_type() | retry_if_result(is_empty)),
-    )
+    @retry(stop=stop_after_attempt(3), retry=(retry_if_exception_type() | retry_if_result(is_empty)))
     def k(self, symbol='', begin=None, end=None):
         """
         读取k线信息
@@ -418,10 +366,7 @@ class StdQuotes(BaseQuotes):
         result = self.client.get_k_data(symbol, begin, end)
         return result
 
-    @retry(
-        stop=stop_after_attempt(3),
-        retry=(retry_if_exception_type() | retry_if_result(is_empty)),
-    )
+    @retry(stop=stop_after_attempt(3), retry=(retry_if_exception_type() | retry_if_result(is_empty)))
     def index(self, symbol='000001', market=MARKET_SH, frequency=9, start=1, offset=2):
         """
         获取指数k线
@@ -454,10 +399,7 @@ class StdQuotes(BaseQuotes):
         )
         return to_data(result)
 
-    @retry(
-        stop=stop_after_attempt(3),
-        retry=(retry_if_exception_type() | retry_if_result(is_empty)),
-    )
+    @retry(stop=stop_after_attempt(3), retry=(retry_if_exception_type() | retry_if_result(is_empty)))
     def block(self, tofile='block.dat'):
         """
         获取证券板块信息

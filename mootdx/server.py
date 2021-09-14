@@ -23,7 +23,9 @@ results = {k: [] for k in hosts}
 
 
 def callback(res, key):
-    results[key].append(res.result())
+    result = res.result()
+    if result.get('time'):
+        results[key].append(result)
     log.debug('callback: {}', res.result())
 
 

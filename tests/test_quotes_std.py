@@ -15,13 +15,12 @@ class TestStdQuotes(unittest.TestCase):
 
     # 退出清理工作
     def teardown_class(self):
+        self.client.client.close()
         del self.client
         print('')
         print('退出清理工作')
 
     def test_quotes(self):
-        self.client.client.close()
-
         data = self.client.quotes(symbol='600036')
         self.assertEqual(data.empty, False)
 
