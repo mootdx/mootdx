@@ -48,21 +48,18 @@ class TestToData(unittest.TestCase):
 
 
 class TestConfigPath(unittest.TestCase):
-    @mock.patch('unipath.Path.mkdir')
     @mock.patch('platform.system')
     def test_platform_windows(self, platform_system):
         platform_system.return_value = 'Windows'
         config = get_config_path(config='config.json')
         self.assertTrue('/mootdx/' in config)
 
-    @mock.patch('unipath.Path.mkdir')
     @mock.patch('platform.system')
     def test_platform_linux(self, platform_system):
         platform_system.return_value = 'Linux'
         config = get_config_path(config='config.json')
         self.assertTrue('/.mootdx/' in config)
 
-    @mock.patch('unipath.Path.mkdir')
     @mock.patch('platform.system')
     def test_platform_Darwin(self, platform_system):
         platform_system.return_value = 'Darwin'

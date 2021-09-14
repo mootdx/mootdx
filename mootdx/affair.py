@@ -75,10 +75,9 @@ class Affair(object):
 
         if filename:
             log.info('下载文件 {}.'.format(filename))
-            downfile = Path(downdir, filename)
 
             with TqdmUpTo(unit='B', unit_scale=True, miniters=1, ascii=True) as t:
-                crawler.fetch_and_parse(report_hook=t.update_to, filename=filename, downdir=downfile)
+                crawler.fetch_and_parse(report_hook=t.update_to, filename=filename, downdir=downdir)
 
             return True
 
@@ -92,31 +91,3 @@ class Affair(object):
 
         loop = asyncio.get_event_loop()
         loop.run_until_complete(asyncio.wait(tasks))
-    #
-    #     for x in list_data:
-    #         downfile = Path(downdir, x["filename"])
-    #
-    #         # 判断文件存在并且长度一样，则忽略
-    #         if Path(downfile).exists():
-    #             if int(x.get("filesize")) == int(Path(downfile).stat().st_size):
-    #                 log.warning("[!] 文件已经存在: {} 跳过.".format(x["filename"]))
-    #                 continue
-    #
-    #         with TqdmUpTo(unit="b", unit_scale=True, miniters=1, ascii=True) as t:
-    #             print("\r[+] 准备下载文件 {}.".format(x["filename"]))
-    #             crawler.fetch_and_parse(report_hook=t.update_to, filename=x["filename"], downdir=downfile)
-    #
-    # def async_fetch(self, downdir=".", filename=None):
-    #     loop = asyncio.get_event_loop()
-    #
-    #     tasks = []
-    #     history = financial.FinancialList()
-    #     list_data = history.fetch_and_parse()
-    #
-    #     for x in list_data:
-    #         downfile = Path(downdir, x["filename"])
-    #         task = loop.create_task(partial(self.fetch(downdir=".", filename=downfile)))
-    #         tasks.append(task)
-    #
-    #     loop = asyncio.get_event_loop()
-    #     loop.run_until_complete(asyncio.wait(tasks))

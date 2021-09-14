@@ -26,6 +26,8 @@ class FinancialReader(object):
         :return: pandas DataFrame 格式的历史财务数据
         """
 
+        print(filename)
+
         crawler = Financial()
 
         with open(filename, 'rb') as fp:
