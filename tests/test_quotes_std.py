@@ -54,9 +54,7 @@ class TestStdQuotes(unittest.TestCase):
         self.assertEqual(data.empty, False)
 
     def test_transactions(self):
-        data = self.client.transactions(
-            symbol='600036', start=0, offset=10, date='20170209'
-        )
+        data = self.client.transactions(symbol='600036', start=0, offset=10, date='20170209')
         self.assertEqual(data.empty, False)
 
     def test_F10C(self):

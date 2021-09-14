@@ -1,9 +1,8 @@
 import glob
-import unittest
-from unittest import mock
-
 import pytest
+import unittest
 from unipath.path import Path
+from unittest import mock
 
 from mootdx.consts import MARKET_SH
 from mootdx.consts import MARKET_SZ
@@ -51,21 +50,21 @@ class TestToData(unittest.TestCase):
 class TestConfigPath(unittest.TestCase):
     @mock.patch('unipath.Path.mkdir')
     @mock.patch('platform.system')
-    def test_platform_windows(self, platform_system, unipath_path_mkdir):
+    def test_platform_windows(self, platform_system):
         platform_system.return_value = 'Windows'
         config = get_config_path(config='config.json')
         self.assertTrue('/mootdx/' in config)
 
     @mock.patch('unipath.Path.mkdir')
     @mock.patch('platform.system')
-    def test_platform_linux(self, platform_system, unipath_path_mkdir):
+    def test_platform_linux(self, platform_system):
         platform_system.return_value = 'Linux'
         config = get_config_path(config='config.json')
         self.assertTrue('/.mootdx/' in config)
 
     @mock.patch('unipath.Path.mkdir')
     @mock.patch('platform.system')
-    def test_platform_Darwin(self, platform_system, unipath_path_mkdir):
+    def test_platform_Darwin(self, platform_system):
         platform_system.return_value = 'Darwin'
         config = get_config_path(config='config.json')
         self.assertTrue('/.mootdx/' in config)

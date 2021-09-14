@@ -20,10 +20,7 @@ class BaseReader(object):
         """
 
         record = struct.Struct(fmt)
-        return (
-            record.unpack_from(data, offset)
-            for offset in range(0, len(data), record.size)
-        )
+        return (record.unpack_from(data, offset) for offset in range(0, len(data), record.size))
 
     def get_df(self, code_or_file, exchange=None):
         """
@@ -57,28 +54,13 @@ class BaseFinancial:
         :return: 解析之后的数据结果
         """
 
-        file = self.content(
-            report_hook=report_hook,
-            downdir=downdir,
-            chunk_size=chunk_size,
-            *args,
-            **kwargs
-        )
-
+        file = self.content(report_hook=report_hook, downdir=downdir, chunk_size=chunk_size, *args, **kwargs)
         return self.parse(file, *args, **kwargs)
 
     def build_url(self, *args, **kwargs):
         raise NotImplementedError('will impl in subclass')
 
-    def content(
-        self,
-        report_hook=None,
-        downdir=None,
-        proxies=None,
-        chunk_size=1024 * 50,
-        *args,
-        **kwargs
-    ):
+    def content(self, report_hook=None, downdir=None, proxies=None, chunk_size=1024 * 50, *args, **kwargs):
         raise NotImplementedError('will impl in subclass')
 
     def parse(self, download_file, *args, **kwargs):

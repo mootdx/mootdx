@@ -1,6 +1,5 @@
 import socket
 import threading
-
 from pytdx.base_socket_client import BaseSocketClient
 from pytdx.base_socket_client import CONNECT_TIMEOUT
 from pytdx.base_socket_client import TrafficStatSocket
@@ -26,6 +25,7 @@ class MooTdxDailyBarReader(TdxDailyBarReader):
         'SZ_FUND',
         'SZ_BOND',
     ]
+
     SECURITY_COEFFICIENT = {
         'SH_A_STOCK': [0.01, 0.01],
         'SH_B_STOCK': [0.001, 0.01],
@@ -48,26 +48,35 @@ class MooTdxDailyBarReader(TdxDailyBarReader):
         if exchange == self.SECURITY_EXCHANGE[0]:
             if code_head in ['00', '30']:
                 return 'SZ_A_STOCK'
-            elif code_head in ['20']:
+
+            if code_head in ['20']:
                 return 'SZ_B_STOCK'
-            elif code_head in ['39']:
+
+            if code_head in ['39']:
                 return 'SZ_INDEX'
-            elif code_head in ['15', '16']:
+
+            if code_head in ['15', '16']:
                 return 'SZ_FUND'
-            elif code_head in ['10', '11', '12', '13', '14']:
+
+            if code_head in ['10', '11', '12', '13', '14']:
                 return 'SZ_BOND'
         elif exchange == self.SECURITY_EXCHANGE[1]:
             if code_head in ['60']:
                 return 'SH_A_STOCK'
-            elif code_head in ['90']:
+
+            if code_head in ['90']:
                 return 'SH_B_STOCK'
-            elif code_head in ['68']:
+
+            if code_head in ['68']:
                 return 'SH_STAR_STOCK'
-            elif code_head in ['00', '88', '99']:
+
+            if code_head in ['00', '88', '99']:
                 return 'SH_INDEX'
-            elif code_head in ['50', '51', '58']:
+
+            if code_head in ['50', '51', '58']:
                 return 'SH_FUND'
-            elif code_head in ['01', '10', '11', '12', '13', '14']:
+
+            if code_head in ['01', '10', '11', '12', '13', '14']:
                 return 'SH_BOND'
         else:
             log.error('Unknown security exchange !\n')
@@ -75,14 +84,10 @@ class MooTdxDailyBarReader(TdxDailyBarReader):
 
 
 class MooBaseSocketClient(BaseSocketClient):
-    def connect(
-        self,
-        ip='101.227.73.20',
-        port=7709,
-        time_out=CONNECT_TIMEOUT,
-        bindport=None,
-        bindip='0.0.0.0',
-    ):
+    def __init__(self):
+        self.client = None
+
+    def connect(self, ip='101.227.73.20', port=7709, time_out=CONNECT_TIMEOUT, bindport=None, bindip='0.0.0.0'):
         """
 
         :param ip:  服务器ip 地址
@@ -128,9 +133,7 @@ class MooBaseSocketClient(BaseSocketClient):
 
         if self.heartbeat:
             self.stop_event = threading.Event()
-            self.heartbeat_thread = HqHeartBeatThread(
-                self, self.stop_event, self.heartbeat_interval
-            )
+            self.heartbeat_thread = HqHeartBeatThread(self, self.stop_event, self.heartbeat_interval)
             self.heartbeat_thread.start()
 
         return self
