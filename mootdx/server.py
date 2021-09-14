@@ -26,6 +26,7 @@ def callback(res, key):
     result = res.result()
     if result.get('time'):
         results[key].append(result)
+
     log.debug('callback: {}', res.result())
 
 

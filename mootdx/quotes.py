@@ -78,10 +78,10 @@ def is_empty(value):
 
     status = value.all().empty if isinstance(value, pd.DataFrame) else not value
 
-    print('is_empty is ', status)
+    log.debug('is_empty is ', status)
 
     if instance and status:
-        print(instance.bestip, instance.timeout)
+        log.debug("重新连接 {}:{}", instance.bestip, instance.timeout)
         instance.client.connect(time_out=instance.timeout, *instance.bestip)
 
     return status
