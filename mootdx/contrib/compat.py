@@ -1,5 +1,6 @@
 import socket
 import threading
+
 from pytdx.base_socket_client import BaseSocketClient
 from pytdx.base_socket_client import CONNECT_TIMEOUT
 from pytdx.base_socket_client import TrafficStatSocket
