@@ -22,7 +22,7 @@ from mootdx.utils import to_file
 @click.pass_context
 def cli(ctx, debug):
     ctx.obj['DEBUG'] = debug
-    click.echo(f"Debug mode is {'on' if debug else 'off'}")
+    # click.echo(f"Debug mode is {'on' if debug else 'off'}")
 
     if debug:
         logging.basicConfig(level=logging.DEBUG)
@@ -113,17 +113,17 @@ def affair(parse, fetch, downdir, output, downall, verbose):
 
     result = Affair.files()
 
-    if not fetch and not parse:
-        t = PrettyTable(['filename', 'filesize', 'hash'])
-        t.align['filename'] = 'l'
-        t.align['filesize'] = 'l'
-        t.align['hash'] = 'l'
-        t.padding_width = 0
-
-        for x in result:
-            t.add_row([x['filename'], x['filesize'], x['hash']])
-
-        print(t)
+    # if not fetch and not parse:
+    #     t = PrettyTable(['filename', 'filesize', 'hash'])
+    #     t.align['filename'] = 'l'
+    #     t.align['filesize'] = 'l'
+    #     t.align['hash'] = 'l'
+    #     t.padding_width = 0
+    #
+    #     for x in result:
+    #         t.add_row([x['filename'], x['filesize'], x['hash']])
+    #
+    #     print(t)
 
     if downall or fetch == 'all':
         feed = Affair.fetch(downdir=downdir)

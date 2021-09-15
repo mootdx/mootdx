@@ -55,6 +55,7 @@ class BaseFinancial:
         """
 
         file = self.content(report_hook=report_hook, downdir=downdir, chunk_size=chunk_size, *args, **kwargs)
+
         return self.parse(file, *args, **kwargs)
 
     def build_url(self, *args, **kwargs):

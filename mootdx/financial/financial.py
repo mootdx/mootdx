@@ -9,9 +9,9 @@ from struct import unpack
 import pandas as pd
 from pytdx.hq import TdxHq_API
 
+from .base import BaseFinancial
 from ..logger import log
 from ..logger import logger
-from .base import BaseFinancial
 
 
 class FinancialReader(object):
@@ -132,6 +132,10 @@ class Financial(BaseFinancial):
         downfile = str(Path(downdir) / filename)
         filesize = kwargs.get('filesize') if kwargs.get('filesize') else 0
 
+        if Path(downfile).exists():
+            log.warning('{}: Already exists', filename)
+            return open(downfile, 'rb')
+
         log.info('{}: start download...', filename)
 
         if not filename:
@@ -172,7 +176,7 @@ class Financial(BaseFinancial):
 
             tmpdir = Path(tmpdir_root, subdir_name)
             shutil.rmtree(tmpdir, ignore_errors=True)
-            os.makedirs(tmpdir)
+            tmpdir.mkdir(parents=True)
 
             shutil.unpack_archive(download_file.name, extract_dir=tmpdir)
 
@@ -250,3 +254,17 @@ class Financial(BaseFinancial):
         logger.debug(df)
 
         return df
+
+    def fetch_only(self, report_hook=None, downdir=None, chunk_size=51200, *args, **kwargs):
+        """
+        function to get data , 参考 https://docs.python.org/3/library/urllib.request.html#module-urllib.request
+
+        :param report_hook 使用urllib.request 的report_hook 来汇报下载进度
+        :param downdir 数据文件下载的地址，如果没有提供，则下载到临时文件中，并在解析之后删除
+        :param chunk_size chunk_size
+        :return: 解析之后的数据结果
+        """
+
+        file = self.content(report_hook=report_hook, downdir=downdir, chunk_size=chunk_size, *args, **kwargs)
+
+        return file

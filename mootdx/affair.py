@@ -15,7 +15,7 @@ def download(downdir, filename):
 
 
 async def fetch_file(downdir, filename):
-    result = await asyncio.get_event_loop().run_in_executor(None, partial(financial.Financial().fetch_and_parse, report_hook=None, filename=filename, downdir=downdir))
+    result = await asyncio.get_event_loop().run_in_executor(None, partial(financial.Financial().fetch_only, report_hook=None, filename=filename, downdir=downdir))
     return result
 
 
@@ -75,10 +75,7 @@ class Affair(object):
 
         if filename:
             log.info('下载文件 {}.'.format(filename))
-
-            with TqdmUpTo(unit='B', unit_scale=True, miniters=1, ascii=True) as t:
-                crawler.fetch_and_parse(report_hook=t.update_to, filename=filename, downdir=downdir)
-
+            crawler.fetch_only(report_hook=None, filename=filename, downdir=downdir)
             return True
 
         list_data = history.fetch_and_parse()
