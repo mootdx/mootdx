@@ -266,5 +266,4 @@ class Financial(BaseFinancial):
         """
 
         file = self.content(report_hook=report_hook, downdir=downdir, chunk_size=chunk_size, *args, **kwargs)
-
-        return file
+        return file.close()
