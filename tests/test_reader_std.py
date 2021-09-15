@@ -38,7 +38,7 @@ class TestReaderBase(unittest.TestCase):
     def test_find_path(self):
         reader = ReaderBase('../fixtures')
         result = reader.find_path(symbol='688001', subdir='minline', suffix=['lc1', '1'])
-        self.assertIsNotNone(result)
+        self.assertIsNotNone(result), '读取失败'
 
 
 if __name__ == '__main__':

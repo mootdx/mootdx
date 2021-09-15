@@ -1,8 +1,9 @@
 import glob
-import pytest
 import unittest
-from unipath.path import Path
+from pathlib import Path
 from unittest import mock
+
+import pytest
 
 from mootdx.consts import MARKET_SH
 from mootdx.consts import MARKET_SZ
@@ -71,13 +72,13 @@ class TestBlockNew(unittest.TestCase):
     tdxdir = 'tests/fixtures'
 
     def setup_class(self):
-        Path(self.tdxdir, 'T0002', 'blocknew').mkdir(parents=True)
+        blocknew = Path(self.tdxdir, 'T0002', 'blocknew')
+        blocknew.exists() or blocknew.mkdir(parents=True)
         self.reader = Reader.factory(market='std', tdxdir=self.tdxdir)
 
     def teardown_class(self):
         parent = Path(self.tdxdir, 'T0002', 'blocknew', 'blocknew.cfg').parent
-        [Path(x).remove() for x in glob.glob(f'{parent}/*.*')]
-        Path(parent).rmdir(parents=True)
+        [Path(x).unlink() for x in glob.glob(f'{parent}/*.*')] and Path(parent).rmdir()
 
     def test_block_new_write(self):
         self.assertTrue(self.reader.block_new(name='龙虎榜', symbol=['600036']))
@@ -90,11 +91,6 @@ class TestBlockNew(unittest.TestCase):
 
     def test_block(self):
         self.reader.block(symbol='block_fg', group=True)
-        # self.assertFalse(self.reader.block(symbol='block', group=True).empty)
-        # self.assertFalse(self.reader.block(symbol='block_fg', group=True).empty or None)
-        # self.assertFalse(self.reader.block(symbol='block_gn', group=True).empty or None)
-        # self.assertFalse(self.reader.block(symbol='block_zs', group=True).empty or None)
-        # self.assertFalse(self.reader.block(symbol='tdxhy.cfg', group=True).empty)
 
 
 if __name__ == '__main__':
