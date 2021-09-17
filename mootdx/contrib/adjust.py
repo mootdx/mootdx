@@ -14,8 +14,7 @@ from mootdx.logger import log
 
 @retry(wait=wait_fixed(2), stop=stop_after_attempt(5))
 def get_adjust_year(symbol=None, year='2021', factor='00'):
-    """
-    采集同花顺复权数据
+    """ 采集同花顺复权数据
 
     # http://d.10jqka.com.cn/v2/line/hs_600036/01/2018.js
     # http://d.10jqka.com.cn/v6/line/hs_600000/00/all.js
@@ -60,6 +59,7 @@ def get_adjust_year(symbol=None, year='2021', factor='00'):
         df = pd.DataFrame(data, index=list(np.asarray(data).T[0]), columns=columns)
         df.date = pd.to_datetime(df.date)
         df = df.set_index('date')
+
         return df
     except httpx.HTTPError:
         log.warning('请求失败，正重试...')

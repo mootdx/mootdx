@@ -17,8 +17,7 @@ from ..logger import logger
 class FinancialReader(object):
     @staticmethod
     def to_data(filename):
-        """
-        读取历史财务数据文件，并返回pandas结果 ， 类似 `gpcw20171231.zip` 格式，具体字段含义参考
+        """ 读取历史财务数据文件，并返回pandas结果 ， 类似 `gpcw20171231.zip` 格式，具体字段含义参考
 
         https://github.com/rainx/pytdx/issues/133
 
@@ -26,30 +25,16 @@ class FinancialReader(object):
         :return: pandas DataFrame 格式的历史财务数据
         """
 
-        print(filename)
-
-        crawler = Financial()
-
         with open(filename, 'rb') as fp:
-            data = crawler.parse(download_file=fp)
+            data = Financial().parse(download_file=fp)
 
-        return crawler.to_df(data)
+        return Financial().to_df(data)
 
 
 class FinancialList(BaseFinancial):
-    def build_url(self, *args, **kwargs) -> str:
-        """
-        获取采集数据的 URL
-
-        :param args:
-        :param kwargs:
-        :return:
-        """
-        return 'https://gitee.com/yutiansut/QADATA/raw/master/financial/content.txt'
 
     def content(self, report_hook=None, downdir=None, proxies=None, chunk_size=1024 * 50, *args, **kwargs):
-        """
-        解析财务文件
+        """ 解析财务文件
 
         :param report_hook: 钩子回调函数
         :param downdir: 要解析的文件夹
@@ -61,7 +46,6 @@ class FinancialList(BaseFinancial):
         """
 
         tmp = tempfile.NamedTemporaryFile(delete=True)
-
         api = TdxHq_API(**kwargs)
         api.need_setup = False
 
@@ -74,8 +58,7 @@ class FinancialList(BaseFinancial):
             return download_file
 
     def parse(self, download_file, *args, **kwargs):
-        """
-        解析财务文件
+        """ 解析财务文件
 
         :param download_file:
         :param args:
@@ -83,41 +66,19 @@ class FinancialList(BaseFinancial):
         :return:
         """
 
-        with download_file:
-            content = download_file.read()
-            content = content.decode('utf-8')
-
         def l2d(i):
             return {'filename': i[0], 'hash': i[1], 'filesize': int(i[2])}
 
-        if content:
-            content = content.strip().split('\n')
-            return [l2d(i) for i in [line.strip().split(',') for line in content]]
+        with download_file:
+            content = download_file.read().decode('utf-8').strip().split('\n')
 
-        return None
+        return [l2d(i) for i in [line.strip().split(',') for line in content]] if content else None
 
 
 class Financial(BaseFinancial):
-    mode = 'content'
-
-    def build_url(self, *args, **kwargs):
-        """
-        获取采集数据的 URL
-
-        :param args:
-        :param kwargs:
-        :return:
-        """
-        filename = kwargs.get('filename')
-
-        if not filename:
-            raise Exception('Param filename is not set')
-
-        return f'http://down.tdx.com.cn:8001/fin/{filename}'
 
     def content(self, report_hook=None, downdir=None, proxies=None, chunk_size=1024 * 50, *args, **kwargs):
-        """
-        解析财务文件
+        """ 解析财务文件
 
         :param report_hook: 钩子回调函数
         :param downdir: 要解析的文件夹
@@ -157,8 +118,7 @@ class Financial(BaseFinancial):
             return download_file
 
     def parse(self, download_file, *args, **kwargs):
-        """
-        解析财务文件
+        """ 解析财务文件
 
         :param download_file: 要解析的文件
         :param args:
@@ -197,6 +157,7 @@ class Financial(BaseFinancial):
 
         header_size = calcsize(header_pack_format)
         stock_item_size = calcsize('<6s1c1L')
+
         data_header = datfile.read(header_size)
         stock_header = unpack(header_pack_format, data_header)
 
@@ -212,15 +173,19 @@ class Financial(BaseFinancial):
 
         for stock_idx in range(0, max_count):
             datfile.seek(header_size + stock_idx * calcsize('<6s1c1L'))
+
             si = datfile.read(stock_item_size)
             stock_item = unpack('<6s1c1L', si)
+
             code = stock_item[0].decode('utf-8')
             foa = stock_item[2]
+
             datfile.seek(foa)
 
             info_data = datfile.read(calcsize(report_pack_format))
             cw_info = unpack(report_pack_format, info_data)
             one_record = (code, report_date) + cw_info
+
             results.append(one_record)
 
         if download_file.name.endswith('.zip'):
@@ -256,8 +221,7 @@ class Financial(BaseFinancial):
         return df
 
     def fetch_only(self, report_hook=None, downdir=None, chunk_size=51200, *args, **kwargs):
-        """
-        function to get data , 参考 https://docs.python.org/3/library/urllib.request.html#module-urllib.request
+        """ function to get data , 参考 https://docs.python.org/3/library/urllib.request.html#module-urllib.request
 
         :param report_hook 使用urllib.request 的report_hook 来汇报下载进度
         :param downdir 数据文件下载的地址，如果没有提供，则下载到临时文件中，并在解析之后删除
@@ -265,5 +229,4 @@ class Financial(BaseFinancial):
         :return: 解析之后的数据结果
         """
 
-        file = self.content(report_hook=report_hook, downdir=downdir, chunk_size=chunk_size, *args, **kwargs)
-        return file.close()
+        return self.content(report_hook=report_hook, downdir=downdir, chunk_size=chunk_size, *args, **kwargs).close()

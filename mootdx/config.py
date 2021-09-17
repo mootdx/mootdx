@@ -26,8 +26,8 @@ CONF = get_config_path('config.json')
 
 
 def setup():
-    """
-    将 yaml 里的配置文件导入到 config.py 中
+    """ 将 yaml 里的配置文件导入到 config.py 中
+
     :return: bool，true 表示数据导入成功。
     """
     global settings
@@ -35,8 +35,8 @@ def setup():
     try:
         options = json.load(open(CONF))
         settings.update(options)
-    except Exception as e:
-        log.error(e)
+    except json.JSONDecodeError as e:
+        log.exception(e)
         log.error(f'未找到配置文件 {CONF}, 正在生成配置文件.')
         bestip()
 

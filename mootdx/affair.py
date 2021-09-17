@@ -22,8 +22,7 @@ async def fetch_file(downdir, filename):
 class Affair(object):
     @staticmethod
     def parse(downdir='.', filename=None):
-        """
-        按目录解析文件
+        """ 按目录解析文件
 
         :param downdir:
         :param filename:
@@ -45,24 +44,19 @@ class Affair(object):
 
     @staticmethod
     def files():
+        """ 财务文件列表
+
+        :return: object
         """
-        财务文件列表
 
-        :return:
-        """
-
-        history = financial.FinancialList()
-        results = history.fetch_and_parse()
-
-        return results
+        return financial.FinancialList().fetch_and_parse()
 
     @staticmethod
     def fetch(downdir='.', filename=None):
-        """
-        财务数据下载
+        """ 财务数据下载
 
-        :param downdir:
-        :param filename:
+        :param downdir: 下载路径
+        :param filename: 文件名
         :return:
         """
 
@@ -80,6 +74,7 @@ class Affair(object):
 
         list_data = history.fetch_and_parse()
         tasks = []
+
         loop = asyncio.get_event_loop()
 
         for x in list_data:

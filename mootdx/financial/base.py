@@ -11,8 +11,7 @@ def reporthook(downloaded, total_size):
 class BaseReader(object):
     @staticmethod
     def unpack(fmt, data):
-        """
-        解压文件
+        """ 解压数据
 
         :param fmt:
         :param data:
@@ -23,8 +22,7 @@ class BaseReader(object):
         return (record.unpack_from(data, offset) for offset in range(0, len(data), record.size))
 
     def get_df(self, code_or_file, exchange=None):
-        """
-        转换格式为 pd.DateFrame
+        """ 转换格式为 pd.DateFrame
 
         :param code_or_file:
         :param exchange:
@@ -56,9 +54,6 @@ class BaseFinancial:
 
         file = self.content(report_hook=report_hook, downdir=downdir, chunk_size=chunk_size, *args, **kwargs)
         return self.parse(file, *args, **kwargs)
-
-    def build_url(self, *args, **kwargs):
-        raise NotImplementedError('will impl in subclass')
 
     def content(self, report_hook=None, downdir=None, proxies=None, chunk_size=1024 * 50, *args, **kwargs):
         raise NotImplementedError('will impl in subclass')

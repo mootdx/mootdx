@@ -53,7 +53,7 @@ class TestConfigPath(unittest.TestCase):
     def test_platform_windows(self, platform_system):
         platform_system.return_value = 'Windows'
         config = get_config_path(config='config.json')
-        self.assertTrue('/mootdx/' in config)
+        self.assertTrue('/.mootdx/' in config)
 
     @mock.patch('platform.system')
     def test_platform_linux(self, platform_system):
