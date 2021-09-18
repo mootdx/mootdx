@@ -3,7 +3,7 @@ import unittest
 from pathlib import Path
 
 from mootdx.affair import Affair
-from mootdx.logger import log
+from mootdx.logger import logger
 
 
 class TestAffair(unittest.TestCase):
@@ -12,7 +12,8 @@ class TestAffair(unittest.TestCase):
     downdir = 'tests/fixtures/tmp'
 
     def setup_class(self) -> None:
-        log.info('获取文件列表')
+        logger.info('获取文件列表')
+        Path(self.downdir).mkdir(parents=True)
         self.files = [x['filename'] for x in Affair.files()]
 
     def teardown_class(self):
@@ -21,20 +22,20 @@ class TestAffair(unittest.TestCase):
 
     def test_parse_all(self):
         data = Affair.parse(downdir=self.downdir)
-        self.assertIsNone(data)
+        assert not data
 
     def test_parse_one(self):
         data = Affair.parse(downdir=self.downdir, filename=self.files[-1])
-        self.assertIsNotNone(data)
+        assert data
 
     def test_parse_export(self):
         csv_file = Path(self.downdir, self.files[1] + '.csv')
         Affair.parse(downdir=self.downdir, filename=self.files[-1]).to_csv(csv_file)
-        self.assertTrue(csv_file.exists())
+        assert csv_file.exists()
 
     def test_fetch_one(self):
         Affair.fetch(downdir=self.downdir, filename=self.files[-1])
-        self.assertTrue(Path(self.downdir, self.files[-1]).exists())
+        assert Path(self.downdir, self.files[-1]).exists()
 
 
 if __name__ == '__main__':
