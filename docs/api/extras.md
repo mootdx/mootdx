@@ -42,3 +42,45 @@ date
 
 [168 rows x 7 columns]
 ```
+
+## 02. 通达信导出数据转为 pandas 可用的 csv 文件
+
+将通达信通过数据工具导出的txt文件转换为标准的csv文件(其实不转回pandas 也可以读取，只是使用时候比较麻烦)
+
+**参数说明: **
+
+- infile: 输入文件
+- outfile: 转换后的文件，可为空
+
+返回值：
+
+- pd.dataframe
+
+**调用方法：**
+
+```python
+from mootdx.tools import tdx2csv
+
+result = tdx2csv.txt2csv(infile='sz#000001.txt', outfile='sz#000001.csv')
+```
+
+## 03. 通达信导出数据转为 pandas 可用的 csv 文件(批量异步接口)
+
+将通达信通过数据工具导出的txt文件转换为标准的csv文件(其实不转回pandas 也可以读取，只是使用时候比较麻烦)
+
+**参数说明: **
+
+- src: 要换行的目录(tdx导出文件目录)
+- dst: 转换后的目录
+
+返回值：
+
+- None
+
+**调用方法：**
+
+```python
+from mootdx.tools import tdx2csv
+
+tdx2csv.batch(src='c:/tdx/export', dst='c:/tdx/output')
+```
