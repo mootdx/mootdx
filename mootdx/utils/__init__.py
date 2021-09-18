@@ -20,16 +20,13 @@ def get_stock_markets(symbols=None):
 
     if isinstance(symbols, list):
         for symbol in symbols:
-            results.append(
-                [get_stock_market(symbol, string=False), symbol.strip('sh').strip('sz')]
-            )
+            results.append([get_stock_market(symbol, string=False), symbol.strip('sh').strip('sz')])
 
     return results
 
 
 def get_stock_market(symbol='', string=False):
-    """
-    判断股票ID对应的证券市场匹配规则
+    """ 判断股票ID对应的证券市场匹配规则
 
     ['50', '51', '60', '90', '110'] 为 sh
     ['00', '12'，'13', '18', '15', '16', '18', '20', '30', '39', '115'] 为 sz

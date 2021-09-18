@@ -4,11 +4,6 @@ from mootdx.contrib.adjust import get_adjust_year
 
 
 class TestAdjust(unittest.TestCase):
-    def setup_class(self) -> None:
-        pass
-
-    def teardown_class(self):
-        pass
 
     def test_adjust_before0(self):
         data = get_adjust_year(symbol='600000', year='2018', factor='before')

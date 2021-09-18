@@ -1,3 +1,4 @@
+import datetime
 import json
 import re
 import time
@@ -13,7 +14,7 @@ from mootdx.logger import log
 
 
 @retry(wait=wait_fixed(2), stop=stop_after_attempt(5))
-def get_adjust_year(symbol=None, year='2021', factor='00'):
+def get_adjust_year(symbol=None, year=None, factor='00'):
     """ 采集同花顺复权数据
 
     # http://d.10jqka.com.cn/v2/line/hs_600036/01/2018.js
@@ -24,6 +25,8 @@ def get_adjust_year(symbol=None, year='2021', factor='00'):
     :param year: 年份
     :return: DataFrame
     """
+
+    year = datetime.datetime.now().year if not year else year
 
     headers = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.212 Safari/537.36',
