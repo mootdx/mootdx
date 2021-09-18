@@ -164,7 +164,7 @@ class ExtReader(ReaderBase):
         vipdoc = self.find_path(symbol=symbol, subdir='lday', suffix='day')
         return self.reader.get_df(str(vipdoc)) if vipdoc else None
 
-    def minute(self, symbol=None, *args, **kwargs):
+    def minute(self, symbol=None):
         """ 获取扩展市场分钟线数据
 
         :return: pd.dataFrame or None
@@ -176,7 +176,7 @@ class ExtReader(ReaderBase):
         vipdoc = self.find_path(symbol=symbol, subdir='minline', suffix=['lc1', '1'])
         return self.reader.get_df(str(vipdoc)) if vipdoc else None
 
-    def fzline(self, symbol=None, *args, **kwargs):
+    def fzline(self, symbol=None):
         """ 获取日线数据
 
         :return: pd.dataFrame or None

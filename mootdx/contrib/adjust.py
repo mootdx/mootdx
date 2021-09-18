@@ -60,7 +60,7 @@ def get_adjust_year(symbol=None, year=None, factor='00'):
 
         columns = ['date', 'open', 'high', 'low', 'close', 'volume', 'amount', 'adjust']
         df = pd.DataFrame(data, index=list(np.asarray(data).T[0]), columns=columns)
-        df.date = pd.to_datetime(df.date)
+        df['date'] = pd.to_datetime(df['date'])
         df = df.set_index('date')
 
         return df

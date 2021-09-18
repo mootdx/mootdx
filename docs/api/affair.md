@@ -6,6 +6,7 @@
 
 ```python
 from mootdx.affair import Affair
+
 Affair.files()
 ```
 
@@ -58,6 +59,7 @@ data = Affair.parse(downdir='output', filename='gpcw20170930.zip')
 from mootdx.affair import Affair
 
 result = Affair.parse(downdir='output', filename='gpcw20170930.zip')
+
 # 保存 csv 文件
 result.to_csv('gpcw20170930.csv')
 

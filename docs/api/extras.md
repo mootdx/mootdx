@@ -12,14 +12,14 @@
 
 返回值：
 
-- pd.dataframe
+- pd.DataFrame
 
 **调用方法：**
 
 ```python
 from mootdx.contrib.adjust import get_adjust_year
 
-result = get_adjust_year(symbol='000001', year='2021', factor='01')
+get_adjust_year(symbol='000001', year='2021', factor='01')
 ```
 
 以下为返回内容格式
@@ -54,14 +54,14 @@ date
 
 返回值：
 
-- pd.dataframe
+- pd.DataFrame
 
 **调用方法：**
 
 ```python
 from mootdx.tools import tdx2csv
 
-result = tdx2csv.txt2csv(infile='sz#000001.txt', outfile='sz#000001.csv')
+tdx2csv.txt2csv(infile='sz#000001.txt', outfile='sz#000001.csv')
 ```
 
 ## 03. 通达信导出数据转为 pandas 可用的 csv 文件(批量异步接口)

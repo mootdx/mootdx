@@ -3,7 +3,7 @@ import unittest
 from pathlib import Path
 
 from mootdx.affair import Affair
-from mootdx.logger import logger
+from mootdx.logger import log
 
 
 class TestAffair(unittest.TestCase):
@@ -12,7 +12,7 @@ class TestAffair(unittest.TestCase):
     downdir = 'tests/fixtures/tmp'
 
     def setup_class(self) -> None:
-        logger.info('获取文件列表')
+        log.info('获取文件列表')
         self.files = [x['filename'] for x in Affair.files()]
 
     def teardown_class(self):

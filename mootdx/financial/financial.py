@@ -214,9 +214,7 @@ class Financial(BaseFinancial):
             column.append('col' + str(i))
 
         df = pd.DataFrame(data=data, columns=column)
-        df.set_index('code', inplace=True)
-
-        logger.debug(df)
+        df = df.set_index('code', inplace=True)
 
         return df
 

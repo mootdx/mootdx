@@ -446,6 +446,7 @@ class ExtQuotes(BaseQuotes):
 
         return int(market), symbol
 
+    @retry(stop=stop_after_attempt(3), retry=(retry_if_exception_type() | retry_if_result(check_empty)))
     def markets(self):
         """ 获取实时市场列表
 
@@ -455,6 +456,7 @@ class ExtQuotes(BaseQuotes):
         result = self.client.get_markets()
         return to_data(result)
 
+    @retry(stop=stop_after_attempt(3), retry=(retry_if_exception_type() | retry_if_result(check_empty)))
     def instrument(self, start=0, offset=100):
         """ 查询代码列表
 
@@ -466,6 +468,7 @@ class ExtQuotes(BaseQuotes):
         result = self.client.get_instrument_info(start=start, count=offset)
         return to_data(result)
 
+    @retry(stop=stop_after_attempt(3), retry=(retry_if_exception_type() | retry_if_result(check_empty)))
     def instrument_count(self):
         """ 市场商品数量
 
@@ -476,6 +479,7 @@ class ExtQuotes(BaseQuotes):
 
         return result
 
+    @retry(stop=stop_after_attempt(3), retry=(retry_if_exception_type() | retry_if_result(check_empty)))
     def instruments(self):
         """ 查询所有代码列表
 
@@ -492,6 +496,7 @@ class ExtQuotes(BaseQuotes):
 
         return to_data(result)
 
+    @retry(stop=stop_after_attempt(3), retry=(retry_if_exception_type() | retry_if_result(check_empty)))
     def quote(self, market='', symbol=''):
         """ 查询五档行情
 
@@ -505,6 +510,7 @@ class ExtQuotes(BaseQuotes):
 
         return to_data(result)
 
+    @retry(stop=stop_after_attempt(3), retry=(retry_if_exception_type() | retry_if_result(check_empty)))
     def minute(self, market='', symbol=''):
         """ 查询分时行情
 
@@ -518,6 +524,7 @@ class ExtQuotes(BaseQuotes):
 
         return to_data(result)
 
+    @retry(stop=stop_after_attempt(3), retry=(retry_if_exception_type() | retry_if_result(check_empty)))
     def minutes(self, market=None, symbol='', date=''):
         """ 查询历史分时行情
 
@@ -532,6 +539,7 @@ class ExtQuotes(BaseQuotes):
 
         return to_data(result)
 
+    @retry(stop=stop_after_attempt(3), retry=(retry_if_exception_type() | retry_if_result(check_empty)))
     def bars(self, frequency='', market='', symbol='', start=0, offset=100):
         """ 查询k线数据
 
@@ -550,6 +558,7 @@ class ExtQuotes(BaseQuotes):
 
         return to_data(result)
 
+    @retry(stop=stop_after_attempt(3), retry=(retry_if_exception_type() | retry_if_result(check_empty)))
     def transaction(self, market=None, symbol='', start=0, offset=1800):
         """ 查询分笔成交
 
@@ -567,6 +576,7 @@ class ExtQuotes(BaseQuotes):
 
         return to_data(result)
 
+    @retry(stop=stop_after_attempt(3), retry=(retry_if_exception_type() | retry_if_result(check_empty)))
     def transactions(self, market=None, symbol='', date='', start=0, offset=1800):
         """ 查询历史分笔成交
 

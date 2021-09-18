@@ -1,35 +1,9 @@
-import struct
-
 from .. import config
 from ..config import settings
 
 
-def reporthook(downloaded, total_size):
-    print('Downloaded {}, Total is {}'.format(downloaded, total_size))
-
-
-class BaseReader(object):
-    @staticmethod
-    def unpack(fmt, data):
-        """ 解压数据
-
-        :param fmt:
-        :param data:
-        :return:
-        """
-
-        record = struct.Struct(fmt)
-        return (record.unpack_from(data, offset) for offset in range(0, len(data), record.size))
-
-    def get_df(self, code_or_file, exchange=None):
-        """ 转换格式为 pd.DateFrame
-
-        :param code_or_file:
-        :param exchange:
-        :return:
-        """
-
-        raise NotImplementedError('not yet')
+# def reporthook(downloaded, total_size):
+#     print('Downloaded {}, Total is {}'.format(downloaded, total_size))
 
 
 class BaseFinancial:

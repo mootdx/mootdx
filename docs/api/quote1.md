@@ -12,8 +12,13 @@
 from mootdx.quotes import Quotes
 
 client = Quotes.factory(market='std')
+```
 
-# 其他参数
+### 其他参数
+
+```python
+from mootdx.quotes import Quotes
+
 client = Quotes.factory(market='std', multithread=True, heartbeat=True, bestip=True, timeout=15)
 # multithread 多线程
 # heartbeat 开启心跳包
@@ -66,7 +71,7 @@ client.bars(symbol='600036', frequency=9, offset=10)
 
 ** 参数说明: **
 
-- market: 市场代码. 0 - 深圳， 1 - 上海 (可以使用常量 `MARKET_SZ`, `MARKET_SH` 代替)
+- market: 市场代码. 0 - 深圳, 1 - 上海 (可以使用常量 `MARKET_SZ`, `MARKET_SH` 代替)
 
 ** 调用方法：**
 
@@ -82,7 +87,7 @@ client.stock_count(market=consts.MARKET_SH)
 
 ** 参数说明: **
 
-- market: 市场代码. 0 - 深圳， 1 - 上海 (可以使用常量 `MARKET_SZ`, `MARKET_SH` 代替)
+- market: 市场代码. 0 - 深圳, 1 - 上海 (可以使用常量 `MARKET_SZ`, `MARKET_SH` 代替)
 
 > 注意，在引入 consts 之后， （`from mootdx import consts`）
 > 我们可以使用 consts.MARKET_SH , consts.MARKET_SZ 常量来代替 1 和 0 作为参数
@@ -102,7 +107,7 @@ symbol = client.stocks(market=consts.MARKET_SH)
 ** 参数说明: **
 
 - frequency: K线种类
-- market: 市场代码. 0 - 深圳， 1 - 上海 (可以使用常量 `MARKET_SZ`, `MARKET_SH` 代替)
+- market: 市场代码. 0 - 深圳, 1 - 上海 (可以使用常量 `MARKET_SZ`, `MARKET_SH` 代替)
 - start: 开始位置
 - offset: 用户要请求的 K 线数目，最大值为 800
 
