@@ -9,16 +9,17 @@ def test():
 
 
 @task
-def push():
+def push(branch='develop'):
     """# push github rev"""
-    local('git push origin develop --tags')
-    # local('git push github develop --tags')
+    local(f'git push origin {branch} --tags')
+    local(f'git push github {branch} --tags')
 
 
 @task
-def pull():
+def pull(branch='develop'):
     """# push github rev"""
-    local('git pull origin develop --tags')
+    local(f'git pull origin {branch} --tags')
+    local(f'git pull github {branch} --tags')
 
 
 @task
