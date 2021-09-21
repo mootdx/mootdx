@@ -9,7 +9,7 @@ from mootdx.utils import TqdmUpTo
 
 def download(downdir, filename):
     with TqdmUpTo(unit='B', unit_scale=True, miniters=1, ascii=True) as t:
-        financial.Financial().fetch_and_parse(report_hook=t.update_to, filename=filename, downdir=downdir)
+        financial.Financial().fetch_only(report_hook=t.update_to, filename=filename, downdir=downdir)
 
     return True
 
@@ -22,7 +22,8 @@ async def fetch_file(downdir, filename):
 class Affair(object):
     @staticmethod
     def parse(downdir='.', filename=None):
-        """ 按目录解析文件
+        """
+        按目录解析文件
 
         :param downdir:
         :param filename:
@@ -35,27 +36,33 @@ class Affair(object):
 
         filepath = Path(downdir) / filename
 
-        if not Path(filepath).exists():
-            log.warning('文件不存在：{}'.format(filepath))
-            return None
+        if Path(filepath).exists():
+            return financial.FinancialReader().to_data(filepath)
 
-        return financial.FinancialReader().to_data(filepath)
+        log.warning('文件不存在：{}'.format(filename))
+
+        return None
 
     @staticmethod
     def files():
-        """ 财务文件列表
+        """
+        财务文件列表
 
-        :return: object
+        :return:
         """
 
-        return financial.FinancialList().fetch_and_parse()
+        history = financial.FinancialList()
+        results = history.fetch_and_parse()
+
+        return results
 
     @staticmethod
     def fetch(downdir='.', filename=None):
-        """ 财务数据下载
+        """
+        财务数据下载
 
-        :param downdir: 下载路径
-        :param filename: 文件名
+        :param downdir:
+        :param filename:
         :return:
         """
 
@@ -68,17 +75,19 @@ class Affair(object):
 
         if filename:
             log.info('下载文件 {}.'.format(filename))
-            crawler.fetch_only(report_hook=None, filename=filename, downdir=downdir)
+
+            with TqdmUpTo(unit='B', unit_scale=True, miniters=1, ascii=True) as t:
+                crawler.fetch_only(report_hook=t.update_to, filename=filename, downdir=downdir)
+
             return True
 
         list_data = history.fetch_and_parse()
-        tasks = []
 
-        loop = asyncio.get_event_loop()
+        tasks = []
+        event = asyncio.get_event_loop()
 
         for x in list_data:
-            task = loop.create_task(fetch_file(filename=x['filename'], downdir=downdir))
+            task = event.create_task(fetch_file(filename=x['filename'], downdir=downdir))
             tasks.append(task)
 
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(asyncio.wait(tasks))
+        event.run_until_complete(asyncio.wait(tasks))

@@ -21,7 +21,7 @@ class TestReader(unittest.TestCase):
         assert not is_empty(result), '股票代码不存在'
 
         result = self.reader.daily(symbol='000000')
-        assert is_empty(result), '股票代码存在'
+        assert is_empty(result), result
 
     def test_minute1(self):
         result = self.reader.minute(symbol='688001', suffix='1')

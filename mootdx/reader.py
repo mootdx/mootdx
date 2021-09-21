@@ -80,7 +80,7 @@ class StdReader(ReaderBase):
         reader = MooTdxDailyBarReader()
         vipdoc = self.find_path(symbol=symbol, subdir='lday', suffix='day')
 
-        return reader.get_df(str(vipdoc)) if vipdoc.exists() else None
+        return reader.get_df(str(vipdoc)) if vipdoc else None
 
     def minute(self, symbol=None, suffix=1):
         """ 获取1, 5分钟线
