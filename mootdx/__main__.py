@@ -22,10 +22,7 @@ from mootdx.utils import to_file
 @click.pass_context
 def cli(ctx, debug):
     ctx.obj['DEBUG'] = debug
-    click.echo(f"Debug mode is {'on' if debug else 'off'}")
-
-    if debug:
-        logging.basicConfig(level=logging.DEBUG)
+    ctx.obj['DEBUG'] and logging.basicConfig(level=logging.DEBUG)
 
 
 @cli.command(help='读取股票在线行情数据.')
@@ -76,13 +73,6 @@ def reader(symbol, action, market, tdxdir, output):
 @click.option('-w', '--write', default=True, count=True, help='将最优服务器IP写入配置文件 ~/.mootdx/config.json.', )
 @click.option('-v', '--verbose', default=False, count=True)
 def bestip(limit, write, verbose):
-    """
-    @todo 命令行最优线路配置功能调整
-    :param limit:
-    :param write:
-    :param verbose:
-    :return:
-    """
     verbose and logger.getLogger(level='DEBUG')
 
     config = get_config_path('config.json')
@@ -107,13 +97,14 @@ def bestip(limit, write, verbose):
 @click.option('-a', '--downall', count=True, help='下载全部文件')
 @click.option('-o', '--output', default=None, help='输出文件, 支持 CSV, HDF5, Excel, JSON 等格式.')
 @click.option('-d', '--downdir', default='output', help='下载文件目录')
+@click.option('-l', '--listfile', count=True, default=False, help='显示全部文件')
 @click.option('-v', '--verbose', count=True)
-def affair(parse, fetch, downdir, output, downall, verbose):
+def affair(parse, fetch, downdir, output, downall, verbose, listfile):
     verbose and logger.getLogger(level='DEBUG')
 
     result = Affair.files()
 
-    if not fetch and not parse:
+    if listfile:
         t = PrettyTable(['filename', 'filesize', 'hash'])
         t.align['filename'] = 'l'
         t.align['filesize'] = 'l'
@@ -124,6 +115,7 @@ def affair(parse, fetch, downdir, output, downall, verbose):
             t.add_row([x['filename'], x['filesize'], x['hash']])
 
         print(t)
+        return
 
     if downall or fetch == 'all':
         feed = Affair.fetch(downdir=downdir)

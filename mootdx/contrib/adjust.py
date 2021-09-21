@@ -1,3 +1,4 @@
+import datetime
 import json
 import re
 import time
@@ -13,9 +14,8 @@ from mootdx.logger import log
 
 
 @retry(wait=wait_fixed(2), stop=stop_after_attempt(5))
-def get_adjust_year(symbol=None, year='2021', factor='00'):
-    """
-    采集同花顺复权数据
+def get_adjust_year(symbol=None, year=None, factor='00'):
+    """ 采集同花顺复权数据
 
     # http://d.10jqka.com.cn/v2/line/hs_600036/01/2018.js
     # http://d.10jqka.com.cn/v6/line/hs_600000/00/all.js
@@ -25,6 +25,8 @@ def get_adjust_year(symbol=None, year='2021', factor='00'):
     :param year: 年份
     :return: DataFrame
     """
+
+    year = datetime.datetime.now().year if not year else year
 
     headers = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.212 Safari/537.36',
@@ -57,10 +59,10 @@ def get_adjust_year(symbol=None, year='2021', factor='00'):
         data = [item.split(',')[:8] for item in data]
 
         columns = ['date', 'open', 'high', 'low', 'close', 'volume', 'amount', 'adjust']
-        # dtype = ['datetime', 'float64', 'float64', 'float64', 'float64', 'float64', 'float64']
         df = pd.DataFrame(data, index=list(np.asarray(data).T[0]), columns=columns)
-        df.date = pd.to_datetime(df.date)
+        df['date'] = pd.to_datetime(df['date'])
         df = df.set_index('date')
+
         return df
     except httpx.HTTPError:
         log.warning('请求失败，正重试...')

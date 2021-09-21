@@ -123,6 +123,7 @@ client.minutes(symbol="47#IF1709")
 from mootdx.quotes import Quotes
 from mootdx.consts import KLINE_DAILY
 
+client = Quotes.factory(market='ext')
 client.bars(frequency=KLINE_DAILY, market=47, symbol="47#IF1709", start=0, offset=100)
 
 # 简写方式

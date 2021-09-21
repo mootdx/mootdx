@@ -35,15 +35,6 @@ class FinancialReader(object):
 
 
 class FinancialList(BaseFinancial):
-    def build_url(self, *args, **kwargs) -> str:
-        """
-        获取采集数据的 URL
-
-        :param args:
-        :param kwargs:
-        :return:
-        """
-        return 'https://gitee.com/yutiansut/QADATA/raw/master/financial/content.txt'
 
     def content(self, report_hook=None, downdir=None, proxies=None, chunk_size=1024 * 50, *args, **kwargs):
         """
@@ -96,22 +87,6 @@ class FinancialList(BaseFinancial):
 
 
 class Financial(BaseFinancial):
-    mode = 'content'
-
-    def build_url(self, *args, **kwargs):
-        """
-        获取采集数据的 URL
-
-        :param args:
-        :param kwargs:
-        :return:
-        """
-        filename = kwargs.get('filename')
-
-        if not filename:
-            raise Exception('Param filename is not set')
-
-        return f'http://down.tdx.com.cn:8001/fin/{filename}'
 
     def content(self, report_hook=None, downdir=None, proxies=None, chunk_size=1024 * 50, *args, **kwargs):
         """
@@ -129,6 +104,10 @@ class Financial(BaseFinancial):
         filename = kwargs.get('filename')
         downfile = str(Path(downdir) / filename)
         filesize = kwargs.get('filesize') if kwargs.get('filesize') else 0
+
+        if Path(downfile).exists():
+            log.warning(f'文件已经存在: {downfile}')
+            return open(downfile, 'wb')
 
         log.info('{}: start download...', filename)
 

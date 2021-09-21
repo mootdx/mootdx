@@ -3,7 +3,7 @@
 ## 使用最快的服务器
 
 ```shell
-python -m mootdx bestip -w
+python -m mootdx bestip -wv
 ```
 
 ## 通达信离线数据读取

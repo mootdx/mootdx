@@ -1,6 +1,4 @@
 import hashlib
-import os
-import platform
 from datetime import datetime
 from pathlib import Path
 from struct import calcsize
@@ -22,16 +20,13 @@ def get_stock_markets(symbols=None):
 
     if isinstance(symbols, list):
         for symbol in symbols:
-            results.append(
-                [get_stock_market(symbol, string=False), symbol.strip('sh').strip('sz')]
-            )
+            results.append([get_stock_market(symbol, string=False), symbol.strip('sh').strip('sz')])
 
     return results
 
 
 def get_stock_market(symbol='', string=False):
-    """
-    判断股票ID对应的证券市场匹配规则
+    """ 判断股票ID对应的证券市场匹配规则
 
     ['50', '51', '60', '90', '110'] 为 sh
     ['00', '12'，'13', '18', '15', '16', '18', '20', '30', '39', '115'] 为 sz
@@ -52,9 +47,7 @@ def get_stock_market(symbol='', string=False):
     elif symbol.startswith(('50', '51', '60', '68', '90', '110', '113', '132', '204')):
         market = 'sh'
 
-    elif symbol.startswith(
-        ('00', '12', '13', '18', '15', '16', '18', '20', '30', '39', '115', '1318')
-    ):
+    elif symbol.startswith(('00', '12', '13', '18', '15', '16', '18', '20', '30', '39', '115', '1318')):
         market = 'sz'
 
     elif symbol.startswith(('5', '6', '9', '7')):
@@ -117,16 +110,23 @@ def to_data(v):
     :return: pd.DataFrame
     """
 
+    # 空值
     if not v:
         return pd.DataFrame(data=[])
 
+    # DataFrame
     if isinstance(v, DataFrame):
         return v
-    elif isinstance(v, list):
+
+    # 列表
+    if isinstance(v, list):
         return pd.DataFrame(data=v) if len(v) else None
-    elif isinstance(v, dict):
+
+    # 字典
+    if isinstance(v, dict):
         return pd.DataFrame(data=[v])
 
+    # 空值
     return pd.DataFrame(data=[])
 
 
@@ -141,23 +141,24 @@ def to_file(df, filename=None):
     if filename is None or df is None:
         return None
 
-    path_name = os.path.dirname(filename)
+    path_name = Path(filename).parent
+    extension = Path(filename).suffix
 
-    if path_name and not os.path.isdir(path_name):
-        os.makedirs(path_name)
-
-    extension = os.path.splitext(filename)
-    extension = extension[1] if len(extension) >= 2 else ''
+    # 目录不存在创建目录
+    Path(path_name).is_dir() or Path(path_name).mkdir(parents=True)
 
     if extension == '.csv':
         return df.to_csv(filename, encoding='utf-8', index=False)
-    elif extension == '.xlsx' or extension == '.xls':
+
+    if extension == '.xlsx' or extension == '.xls':
         # openpyxl, xlwt
         return df.to_excel(filename, index=False)
-    elif extension == '.h5':
+
+    if extension == '.h5':
         # tables
         return df.to_hdf(filename, 'df', index=False)
-    elif extension == '.json':
+
+    if extension == '.json':
         return df.to_json(filename, orient='records')
 
     return None
@@ -193,14 +194,12 @@ def get_config_path(config='config.json'):
     :param config: 配置文件名称
     :return: filename
     """
-
-    sub_path = 'mootdx' if platform.system() == 'Windows' else '.mootdx'
-    filename = os.path.join(os.path.expanduser('~'), sub_path, config)
-    pathname = os.path.dirname(filename)
+    filename = Path.home() / '.mootdx' / config
+    pathname = Path(filename).parent
 
     Path(pathname).exists() or Path(pathname).mkdir(parents=True)
 
-    return filename
+    return str(filename)
 
 
 def block_new(tdxdir=None, name: str = None, symbol: list = None):

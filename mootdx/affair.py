@@ -9,13 +9,13 @@ from mootdx.utils import TqdmUpTo
 
 def download(downdir, filename):
     with TqdmUpTo(unit='B', unit_scale=True, miniters=1, ascii=True) as t:
-        financial.Financial().fetch_and_parse(report_hook=t.update_to, filename=filename, downdir=downdir)
+        financial.Financial().fetch_only(report_hook=t.update_to, filename=filename, downdir=downdir)
 
     return True
 
 
 async def fetch_file(downdir, filename):
-    result = await asyncio.get_event_loop().run_in_executor(None, partial(financial.Financial().fetch_and_parse, report_hook=None, filename=filename, downdir=downdir))
+    result = await asyncio.get_event_loop().run_in_executor(None, partial(financial.Financial().fetch_only, report_hook=None, filename=filename, downdir=downdir))
     return result
 
 
@@ -77,17 +77,17 @@ class Affair(object):
             log.info('下载文件 {}.'.format(filename))
 
             with TqdmUpTo(unit='B', unit_scale=True, miniters=1, ascii=True) as t:
-                crawler.fetch_and_parse(report_hook=t.update_to, filename=filename, downdir=downdir)
+                crawler.fetch_only(report_hook=t.update_to, filename=filename, downdir=downdir)
 
             return True
 
         list_data = history.fetch_and_parse()
+
         tasks = []
-        loop = asyncio.get_event_loop()
+        event = asyncio.get_event_loop()
 
         for x in list_data:
-            task = loop.create_task(fetch_file(filename=x['filename'], downdir=downdir))
+            task = event.create_task(fetch_file(filename=x['filename'], downdir=downdir))
             tasks.append(task)
 
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(asyncio.wait(tasks))
+        event.run_until_complete(asyncio.wait(tasks))

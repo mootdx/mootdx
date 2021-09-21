@@ -9,11 +9,11 @@ class TestReader(unittest.TestCase):
     reader = None
 
     # 初始化工作
-    def setUp(self):
+    def setup_class(self):
         self.reader = Reader.factory(market='std', tdxdir='../fixtures')
 
     # 退出清理工作
-    def tearDown(self):
+    def teardown_class(self):
         self.reader = None
 
     def test_daily(self):
@@ -21,24 +21,23 @@ class TestReader(unittest.TestCase):
         assert not is_empty(result), '股票代码不存在'
 
         result = self.reader.daily(symbol='000000')
-        assert is_empty(result), '股票代码存在'
+        assert is_empty(result), result
 
     def test_minute1(self):
         result = self.reader.minute(symbol='688001', suffix='1')
-        print(result)
-        self.assertFalse(result.empty)
+        self.assertFalse(result.empty, result)
 
     def test_minute5(self):
         result = self.reader.minute(symbol='688001', suffix='5')
-        print(result)
-        self.assertFalse(result.empty)
+        self.assertFalse(result.empty, result)
 
 
 class TestReaderBase(unittest.TestCase):
+
     def test_find_path(self):
         reader = ReaderBase('../fixtures')
         result = reader.find_path(symbol='688001', subdir='minline', suffix=['lc1', '1'])
-        self.assertIsNotNone(result)
+        self.assertIsNotNone(result), '读取失败'
 
 
 if __name__ == '__main__':

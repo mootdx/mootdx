@@ -1,5 +1,6 @@
 import socket
 import threading
+
 from pytdx.base_socket_client import BaseSocketClient
 from pytdx.base_socket_client import CONNECT_TIMEOUT
 from pytdx.base_socket_client import TrafficStatSocket
@@ -85,6 +86,7 @@ class MooTdxDailyBarReader(TdxDailyBarReader):
 
 class MooBaseSocketClient(BaseSocketClient):
     def __init__(self):
+        super().__init__()
         self.client = None
 
     def connect(self, ip='101.227.73.20', port=7709, time_out=CONNECT_TIMEOUT, bindport=None, bindip='0.0.0.0'):

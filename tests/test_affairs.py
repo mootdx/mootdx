@@ -21,6 +21,7 @@ class TestAffair(unittest.TestCase):
 
     def test_parse_all(self):
         data = Affair.parse(downdir=self.downdir)
+        print(data)
         self.assertIsNone(data)
 
     def test_parse_one(self):

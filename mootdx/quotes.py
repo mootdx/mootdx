@@ -24,17 +24,16 @@ from mootdx.utils import to_data
 class Quotes(object):
     @staticmethod
     def factory(market='std', **kwargs):
-        """
-        股票市场 工厂方法
+        """ 股票市场 工厂方法
 
-        :param market: std 标准市场, ext 扩展市场
-        :param kwargs:
+        :param market:  std 股票市场, ext 扩展市场， 默认股票市场
+        :param kwargs:  可变参数
         :return: object
         """
         if market == 'ext':
             return ExtQuotes(**kwargs)
-        elif market == 'std':
-            return StdQuotes(**kwargs)
+
+        return StdQuotes(**kwargs)
 
 
 class BaseQuotes(object):
@@ -70,31 +69,36 @@ class BaseQuotes(object):
         return False
 
 
-instance: BaseQuotes
+instance: BaseQuotes = None
 
 
-def is_empty(value):
-    """Return True if value is False"""
+def check_empty(value):
+    """ 重试判断函数
 
-    status = value.all().empty if isinstance(value, pd.DataFrame) else not value
+    :param value: 要判断的值
+    :return:
+    """
+    _empty = value.all().empty if isinstance(value, pd.DataFrame) else not value
 
-    log.debug('is_empty is ', status)
-
-    if instance and status:
-        log.debug("重新连接 {}:{}", instance.bestip, instance.timeout)
+    # 判断状态空，则重连接
+    if instance and _empty:
+        log.debug("重新连接 {}:{}", *instance.bestip)
         instance.client.connect(time_out=instance.timeout, *instance.bestip)
 
-    return status
+    return _empty
 
 
 class StdQuotes(BaseQuotes):
-    """
-    股票市场实时行情
-    """
-
-    # bestip = ('47.103.48.45', 7709)
+    """ 股票市场实时行情 """
 
     def __init__(self, bestip=False, timeout=15, **kwargs):
+        """ 构造函数
+
+        :param bestip:  最有服务器Ip
+        :param timeout: 超时时间
+        :param kwargs:  可变参数
+        """
+
         super(StdQuotes, self).__init__(bestip=bestip, timeout=timeout, **kwargs)
 
         try:
@@ -111,14 +115,13 @@ class StdQuotes(BaseQuotes):
         global instance
         instance = self
 
-    @retry(stop=stop_after_attempt(3), retry=(retry_if_exception_type() | retry_if_result(is_empty)))
+    @retry(stop=stop_after_attempt(3), retry=(retry_if_exception_type() | retry_if_result(check_empty)))
     def traffic(self):
         return self.client.get_traffic_stats()
 
-    @retry(stop=stop_after_attempt(3), retry=(retry_if_exception_type() | retry_if_result(is_empty)))
+    @retry(stop=stop_after_attempt(3), retry=(retry_if_exception_type() | retry_if_result(check_empty)))
     def quotes(self, symbol=None):
-        """
-        获取实时日行情数据
+        """ 获取实时日行情数据
 
         :param symbol: 股票代码
         :return: pd.dataFrame or None
@@ -135,10 +138,9 @@ class StdQuotes(BaseQuotes):
 
         return to_data(result)
 
-    @retry(stop=stop_after_attempt(3), retry=(retry_if_exception_type() | retry_if_result(is_empty)))
+    @retry(stop=stop_after_attempt(3), retry=(retry_if_exception_type() | retry_if_result(check_empty)))
     def bars(self, symbol='000001', frequency=9, start=0, offset=100):
-        """
-        获取实时日K线数据
+        """ 获取实时日K线数据
 
         :param symbol: 股票代码
         :param frequency: 数据类别
@@ -155,10 +157,9 @@ class StdQuotes(BaseQuotes):
 
         return to_data(result)
 
-    @retry(stop=stop_after_attempt(3), retry=(retry_if_exception_type() | retry_if_result(is_empty)))
+    @retry(stop=stop_after_attempt(3), retry=(retry_if_exception_type() | retry_if_result(check_empty)))
     def stock_count(self, market=MARKET_SH):
-        """
-        获取市场股票数量
+        """ 获取市场股票数量
 
         :param market: 股票市场代码 sh 上海， sz 深圳
         :return: pd.dataFrame or None
@@ -168,10 +169,9 @@ class StdQuotes(BaseQuotes):
 
         return result
 
-    @retry(stop=stop_after_attempt(3), retry=(retry_if_exception_type() | retry_if_result(is_empty)))
+    @retry(stop=stop_after_attempt(3), retry=(retry_if_exception_type() | retry_if_result(check_empty)))
     def stocks(self, market=MARKET_SH):
-        """
-        获取股票列表
+        """ 获取股票列表
 
         :param market: 股票市场
         :return:
@@ -190,15 +190,14 @@ class StdQuotes(BaseQuotes):
 
         return stocks
 
-    @retry(stop=stop_after_attempt(3), retry=(retry_if_exception_type() | retry_if_result(is_empty)))
+    @retry(stop=stop_after_attempt(3), retry=(retry_if_exception_type() | retry_if_result(check_empty)))
     def index_bars(self, symbol='000001', frequency=9, start=0, offset=100):
-        """
-        获取指数k线
+        """ 获取指数k线
 
         :param symbol: 股票代码
-        :param frequency:
-        :param start:
-        :param offset:
+        :param frequency: bar 类型
+        :param start: 开始位置
+        :param offset: 获取数量
         :return:
         """
 
@@ -207,10 +206,9 @@ class StdQuotes(BaseQuotes):
 
         return to_data(result)
 
-    @retry(stop=stop_after_attempt(3), retry=(retry_if_exception_type() | retry_if_result(is_empty)))
+    @retry(stop=stop_after_attempt(3), retry=(retry_if_exception_type() | retry_if_result(check_empty)))
     def minute(self, symbol=''):
-        """
-        获取实时分时数据
+        """ 获取实时分时数据
 
         :param symbol: 股票代码
         :return: pd.DataFrame
@@ -221,13 +219,12 @@ class StdQuotes(BaseQuotes):
 
         return to_data(result)
 
-    @retry(stop=stop_after_attempt(3), retry=(retry_if_exception_type() | retry_if_result(is_empty)))
+    @retry(stop=stop_after_attempt(3), retry=(retry_if_exception_type() | retry_if_result(check_empty)))
     def minutes(self, symbol='', date='20191023'):
-        """
-        分时历史数据
+        """ 分时历史数据
 
-        :param symbol: 股票代码
-        :param date:
+        :param symbol:  股票代码
+        :param date:    查询日期
         :return: pd.dataFrame or None
         """
 
@@ -236,14 +233,13 @@ class StdQuotes(BaseQuotes):
 
         return to_data(result)
 
-    @retry(stop=stop_after_attempt(3), retry=(retry_if_exception_type() | retry_if_result(is_empty)))
+    @retry(stop=stop_after_attempt(3), retry=(retry_if_exception_type() | retry_if_result(check_empty)))
     def transaction(self, symbol='', start=0, offset=10):
-        """
-        查询分笔成交
+        """ 查询分笔成交
 
-        :param symbol: 股票代码
-        :param start: 起始位置
-        :param offset: 结束位置
+        :param symbol:  股票代码
+        :param start:   起始位置
+        :param offset:  结束位置
         :return: pd.dataFrame or None
         """
 
@@ -252,16 +248,14 @@ class StdQuotes(BaseQuotes):
 
         return to_data(result)
 
-    @retry(stop=stop_after_attempt(3), retry=(retry_if_exception_type() | retry_if_result(is_empty)))
+    @retry(stop=stop_after_attempt(3), retry=(retry_if_exception_type() | retry_if_result(check_empty)))
     def transactions(self, symbol='', start=0, offset=10, date='20170209'):
-        """
-        查询历史分笔成交
-        参数：市场代码， 股票代码，起始位置，日期 数量 如： 0,000001,0,10,20170209
+        """ 查询历史分笔成交
 
-        :param symbol: 股票代码
-        :param start: 起始位置
-        :param offset: 数量
-        :param date: 日期
+        :param symbol:  股票代码
+        :param start:   起始位置
+        :param offset:  获取数量
+        :param date:    查询日期
         :return: pd.dataFrame or None
         """
 
@@ -272,10 +266,9 @@ class StdQuotes(BaseQuotes):
 
         return to_data(result)
 
-    @retry(stop=stop_after_attempt(3), retry=(retry_if_exception_type() | retry_if_result(is_empty)))
+    @retry(stop=stop_after_attempt(3), retry=(retry_if_exception_type() | retry_if_result(check_empty)))
     def F10C(self, symbol=''):
-        """
-        查询公司信息目录
+        """ 查询公司信息目录
 
         :param symbol: 股票代码
         :return: pd.dataFrame or None
@@ -285,10 +278,9 @@ class StdQuotes(BaseQuotes):
 
         return result
 
-    @retry(stop=stop_after_attempt(3), retry=(retry_if_exception_type() | retry_if_result(is_empty)))
+    @retry(stop=stop_after_attempt(3), retry=(retry_if_exception_type() | retry_if_result(check_empty)))
     def F10(self, symbol='', name=''):
-        """
-        读取公司信息详情
+        """ 读取公司信息详情
 
         :param name: 公司 F10 标题
         :param symbol: 股票代码
@@ -324,10 +316,9 @@ class StdQuotes(BaseQuotes):
 
         return result
 
-    @retry(stop=stop_after_attempt(3), retry=(retry_if_exception_type() | retry_if_result(is_empty)))
+    @retry(stop=stop_after_attempt(3), retry=(retry_if_exception_type() | retry_if_result(check_empty)))
     def xdxr(self, symbol=''):
-        """
-        读取除权除息信息
+        """ 读取除权除息信息
 
         :param symbol: 股票代码
         :return: pd.dataFrame or None
@@ -338,10 +329,9 @@ class StdQuotes(BaseQuotes):
 
         return to_data(result)
 
-    @retry(stop=stop_after_attempt(3), retry=(retry_if_exception_type() | retry_if_result(is_empty)))
+    @retry(stop=stop_after_attempt(3), retry=(retry_if_exception_type() | retry_if_result(check_empty)))
     def finance(self, symbol='000001'):
-        """
-        读取财务信息
+        """ 读取财务信息
 
         :param symbol: 股票代码
         :return:
@@ -352,24 +342,22 @@ class StdQuotes(BaseQuotes):
 
         return to_data(result)
 
-    @retry(stop=stop_after_attempt(3), retry=(retry_if_exception_type() | retry_if_result(is_empty)))
+    @retry(stop=stop_after_attempt(3), retry=(retry_if_exception_type() | retry_if_result(check_empty)))
     def k(self, symbol='', begin=None, end=None):
-        """
-        读取k线信息
+        """ 读取k线信息
 
-        :param symbol:
-        :param begin: 开始日期
-        :param end: 截止日期
+        :param symbol:  股票代码
+        :param begin:   开始日期
+        :param end:     截止日期
         :return: pd.dataFrame or None
         """
 
         result = self.client.get_k_data(symbol, begin, end)
         return result
 
-    @retry(stop=stop_after_attempt(3), retry=(retry_if_exception_type() | retry_if_result(is_empty)))
+    @retry(stop=stop_after_attempt(3), retry=(retry_if_exception_type() | retry_if_result(check_empty)))
     def index(self, symbol='000001', market=MARKET_SH, frequency=9, start=1, offset=2):
-        """
-        获取指数k线
+        """ 获取指数k线
 
         K线种类:
         - 0 5分钟K线
@@ -386,25 +374,25 @@ class StdQuotes(BaseQuotes):
         - 10 季K线
         - 11 年K线
 
-        :param symbol: 股票代码
-        :param frequency: 数据类别
-        :param market: 证券市场
-        :param start: 开始位置
-        :param offset: 每次获取条数
+        :param symbol:      股票代码
+        :param frequency:   数据类别
+        :param market:      证券市场
+        :param start:       开始位置
+        :param offset:      每次获取条数
         :return: pd.dataFrame or None
         """
 
         result = self.client.get_index_bars(
             int(frequency), int(market), str(symbol), int(start), int(offset)
         )
+
         return to_data(result)
 
-    @retry(stop=stop_after_attempt(3), retry=(retry_if_exception_type() | retry_if_result(is_empty)))
+    @retry(stop=stop_after_attempt(3), retry=(retry_if_exception_type() | retry_if_result(check_empty)))
     def block(self, tofile='block.dat'):
-        """
-        获取证券板块信息
+        """ 获取证券板块信息
 
-        :param tofile:
+        :param tofile: 保存文件
         :return: pd.dataFrame or None
         """
 
@@ -413,14 +401,20 @@ class StdQuotes(BaseQuotes):
 
 
 class ExtQuotes(BaseQuotes):
-    """
-    扩展市场实时行情
-    """
+    """ 扩展市场实时行情 """
 
     bestip = ('112.74.214.43', 7727)
 
     def __init__(self, bestip=False, timeout=15, **kwargs):
+        """ 构造函数
+
+        :param bestip:  最优服务器IP
+        :param timeout: 超时时间
+        :param kwargs:  可变参数
+        """
         super(ExtQuotes, self).__init__(bestip=bestip, timeout=timeout, **kwargs)
+
+        log.warning('目前扩展市场行情接口已经失效, 后期有望修复.')
 
         try:
             config.get('SERVER').get('EX')[0]
@@ -435,6 +429,13 @@ class ExtQuotes(BaseQuotes):
 
     @staticmethod
     def validate(market, symbol):
+        """ 验证股票市场
+
+        :param market: 股票市场
+        :param symbol: 股票代码
+        :return: tuple
+        """
+
         if not market:
             if len(symbol.split('#')) > 1:
                 market = symbol.split('#')[0]
@@ -445,9 +446,9 @@ class ExtQuotes(BaseQuotes):
 
         return int(market), symbol
 
+    @retry(stop=stop_after_attempt(3), retry=(retry_if_exception_type() | retry_if_result(check_empty)))
     def markets(self):
-        """
-        获取实时市场列表
+        """ 获取实时市场列表
 
         :return: pd.dataFrame or None
         """
@@ -455,21 +456,21 @@ class ExtQuotes(BaseQuotes):
         result = self.client.get_markets()
         return to_data(result)
 
+    @retry(stop=stop_after_attempt(3), retry=(retry_if_exception_type() | retry_if_result(check_empty)))
     def instrument(self, start=0, offset=100):
-        """
-        查询代码列表
+        """ 查询代码列表
 
-        :param offset:
-        :param start:
+        :param start:   开始位置
+        :param offset:  获取数量
         :return:
         """
 
         result = self.client.get_instrument_info(start=start, count=offset)
         return to_data(result)
 
+    @retry(stop=stop_after_attempt(3), retry=(retry_if_exception_type() | retry_if_result(check_empty)))
     def instrument_count(self):
-        """
-        市场商品数量
+        """ 市场商品数量
 
         :return:
         """
@@ -478,9 +479,9 @@ class ExtQuotes(BaseQuotes):
 
         return result
 
+    @retry(stop=stop_after_attempt(3), retry=(retry_if_exception_type() | retry_if_result(check_empty)))
     def instruments(self):
-        """
-        查询所有代码列表
+        """ 查询所有代码列表
 
         :return:
         """
@@ -495,9 +496,9 @@ class ExtQuotes(BaseQuotes):
 
         return to_data(result)
 
+    @retry(stop=stop_after_attempt(3), retry=(retry_if_exception_type() | retry_if_result(check_empty)))
     def quote(self, market='', symbol=''):
-        """
-        查询五档行情
+        """ 查询五档行情
 
         :param market: 市场ID
         :param symbol: 证券代码
@@ -509,9 +510,9 @@ class ExtQuotes(BaseQuotes):
 
         return to_data(result)
 
+    @retry(stop=stop_after_attempt(3), retry=(retry_if_exception_type() | retry_if_result(check_empty)))
     def minute(self, market='', symbol=''):
-        """
-        查询分时行情
+        """ 查询分时行情
 
         :param market: 市场ID
         :param symbol: 证券代码
@@ -523,13 +524,13 @@ class ExtQuotes(BaseQuotes):
 
         return to_data(result)
 
+    @retry(stop=stop_after_attempt(3), retry=(retry_if_exception_type() | retry_if_result(check_empty)))
     def minutes(self, market=None, symbol='', date=''):
-        """
-        查询历史分时行情
+        """ 查询历史分时行情
 
-        :param market: 市场ID
-        :param symbol: 证券代码
-        :param date:
+        :param market:  市场ID
+        :param symbol:  证券代码
+        :param date:    查询日期
         :return:
         """
 
@@ -538,16 +539,15 @@ class ExtQuotes(BaseQuotes):
 
         return to_data(result)
 
+    @retry(stop=stop_after_attempt(3), retry=(retry_if_exception_type() | retry_if_result(check_empty)))
     def bars(self, frequency='', market='', symbol='', start=0, offset=100):
-        """
-        查询k线数据
-        参数： K线周期， 市场ID， 证券代码，起始位置， 数量
+        """ 查询k线数据
 
         :param frequency: K线周期
         :param market: 市场ID
         :param symbol: 证券代码
-        :param start: 起始位置
-        :param offset: 数量
+        :param start:  起始位置
+        :param offset: 获取数量
         :return:
         """
 
@@ -558,14 +558,14 @@ class ExtQuotes(BaseQuotes):
 
         return to_data(result)
 
+    @retry(stop=stop_after_attempt(3), retry=(retry_if_exception_type() | retry_if_result(check_empty)))
     def transaction(self, market=None, symbol='', start=0, offset=1800):
-        """
-        查询分笔成交
+        """ 查询分笔成交
 
         :param market: 市场ID
         :param symbol: 证券代码
-        :param start:
-        :param offset:
+        :param start:  开始位置
+        :param offset: 获取数量
         :return:
         """
 
@@ -576,15 +576,15 @@ class ExtQuotes(BaseQuotes):
 
         return to_data(result)
 
+    @retry(stop=stop_after_attempt(3), retry=(retry_if_exception_type() | retry_if_result(check_empty)))
     def transactions(self, market=None, symbol='', date='', start=0, offset=1800):
-        """
-        查询历史分笔成交
+        """ 查询历史分笔成交
 
-        :param market: 市场ID
-        :param symbol: 证券代码
-        :param date:
-        :param start:
-        :param offset:
+        :param market:  市场ID
+        :param symbol:  证券代码
+        :param date:    查询日期
+        :param start:   开始位置
+        :param offset:  获取数量
         :return:
         """
 
