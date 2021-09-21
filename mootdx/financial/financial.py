@@ -9,9 +9,9 @@ from struct import unpack
 import pandas as pd
 from pytdx.hq import TdxHq_API
 
+from .base import BaseFinancial
 from ..logger import log
 from ..logger import logger
-from .base import BaseFinancial
 
 
 class FinancialReader(object):
@@ -25,8 +25,6 @@ class FinancialReader(object):
         :param filename: 数据文件地址， 数据文件类型可以为 .zip 文件，也可以为解压后的 .dat, 可以不写扩展名. 程序自动识别
         :return: pandas DataFrame 格式的历史财务数据
         """
-
-        print(filename)
 
         crawler = Financial()
 
