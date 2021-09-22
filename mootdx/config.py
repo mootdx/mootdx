@@ -35,9 +35,8 @@ def setup():
     try:
         options = json.load(open(CONF))
         settings.update(options)
-    except json.JSONDecodeError as e:
-        log.exception(e)
-        log.error(f'未找到配置文件 {CONF}, 正在生成配置文件.')
+    except (json.JSONDecodeError, FileNotFoundError):
+        log.warning(f'未找到配置文件 {CONF}, 正在生成配置文件.')
         bestip()
 
     return True if settings else False

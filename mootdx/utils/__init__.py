@@ -199,6 +199,7 @@ def get_config_path(config='config.json'):
     pathname = Path(filename).parent
 
     Path(pathname).exists() or Path(pathname).mkdir(parents=True)
+    Path(filename).exists() or Path(filename).write_text('{}')
 
     return str(filename)
 
