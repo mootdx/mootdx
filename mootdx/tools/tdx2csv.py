@@ -4,7 +4,6 @@ from functools import partial
 from pathlib import Path
 
 import pandas as pd
-from tqdm import tqdm
 
 from mootdx.logger import log
 
@@ -34,6 +33,7 @@ def txt2csv(infile: str, outfile: str = None) -> pd.DataFrame:
 
 
 async def covert(src, dst):
+    log.info('covert...')
     return await asyncio.get_event_loop().run_in_executor(None, partial(txt2csv, src=src, dst=dst))
 
 
@@ -48,7 +48,7 @@ def batch(src, dst):
     event = asyncio.get_event_loop()
 
     # 分配任务
-    for x in tqdm(glob.glob1(src, '*.txt')):
+    for x in glob.glob1(src, '*.txt'):
         src = str(Path(src, x))
         dst = str(Path(dst, x.replace('.txt', '.csv')))
 
