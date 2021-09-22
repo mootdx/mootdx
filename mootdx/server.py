@@ -59,16 +59,16 @@ async def verify(proxy):
 def Server(index=None, limit=5, console=False):
     _hosts = hosts[index]
 
-    loop = asyncio.get_event_loop()
+    event = asyncio.get_event_loop()
 
     tasks = []
 
     while len(_hosts) > 0:
-        task = loop.create_task(verify(_hosts.pop(0)))
+        task = event.create_task(verify(_hosts.pop(0)))
         task.add_done_callback(partial(callback, key=index))
         tasks.append(task)
 
-    loop.run_until_complete(asyncio.wait(tasks))
+    event.run_until_complete(asyncio.wait(tasks))
 
     server = results[index]
 
