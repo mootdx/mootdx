@@ -88,13 +88,13 @@ class FinancialList(BaseFinancial):
 
 class Financial(BaseFinancial):
 
-    def content(self, report_hook=None, downdir=None, proxies=None, chunk_size=1024 * 50, *args, **kwargs):
+    def content(self, report_hook=None, downdir=None, proxies=None, chunk_size=51200, *args, **kwargs):
         """
         解析财务文件
 
         :param report_hook: 钩子回调函数
         :param downdir: 要解析的文件夹
-        :param proxies:
+        :param proxies: 代理配置
         :param chunk_size:
         :param args:
         :param kwargs:
@@ -104,10 +104,6 @@ class Financial(BaseFinancial):
         filename = kwargs.get('filename')
         downfile = str(Path(downdir) / filename)
         filesize = kwargs.get('filesize') if kwargs.get('filesize') else 0
-
-        if Path(downfile).exists():
-            log.warning(f'文件已经存在: {downfile}')
-            return open(downfile, 'wb')
 
         log.info('{}: start download...', filename)
 
@@ -149,7 +145,7 @@ class Financial(BaseFinancial):
 
             tmpdir = Path(tmpdir_root, subdir_name)
             shutil.rmtree(tmpdir, ignore_errors=True)
-            os.makedirs(tmpdir)
+            Path(tmpdir).mkdir(parents=True)
 
             shutil.unpack_archive(download_file.name, extract_dir=tmpdir)
 

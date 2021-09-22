@@ -1,4 +1,5 @@
 import asyncio
+import hashlib
 from functools import partial
 from pathlib import Path
 
@@ -14,8 +15,16 @@ def download(downdir, filename):
     return True
 
 
-async def fetch_file(downdir, filename):
-    result = await asyncio.get_event_loop().run_in_executor(None, partial(financial.Financial().fetch_only, report_hook=None, filename=filename, downdir=downdir))
+async def fetch_file(downdir, file_obj):
+    filepath = Path(downdir) / file_obj['filename']
+
+    # 判断文件是否存在, 验证文件名和哈希值
+    if filepath.exists():
+        if file_obj['hash'] == hashlib.md5(open(filepath, 'rb').read()).hexdigest():
+            log.warning(f'文件已经存在: {filepath}')
+            return None
+
+    result = await asyncio.get_event_loop().run_in_executor(None, partial(financial.Financial().fetch_only, report_hook=None, filename=file_obj['filename'], downdir=downdir))
     return result
 
 
@@ -81,13 +90,11 @@ class Affair(object):
 
             return True
 
-        list_data = history.fetch_and_parse()
-
         tasks = []
         event = asyncio.get_event_loop()
 
-        for x in list_data:
-            task = event.create_task(fetch_file(filename=x['filename'], downdir=downdir))
+        for x in history.fetch_and_parse():
+            task = event.create_task(fetch_file(file_obj=x, downdir=downdir))
             tasks.append(task)
 
         event.run_until_complete(asyncio.wait(tasks))
