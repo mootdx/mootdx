@@ -77,6 +77,7 @@ def gpcw(filepath):
         code = stock_item[0].decode()
         foa = stock_item[2]
         cw_file.seek(foa)
+
         info_data = cw_file.read(calcsize('<264f'))
         cw_info = unpack('<264f', info_data)
 

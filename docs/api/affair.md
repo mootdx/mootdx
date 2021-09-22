@@ -64,7 +64,7 @@ result = Affair.parse(downdir='output', filename='gpcw20170930.zip')
 result.to_csv('gpcw20170930.csv')
 
 # 保存 Excel 文件
-result.to_csv('gpcw20170930.xls')
+result.to_excel('gpcw20170930.xls')
 ```
 
 命令行方式

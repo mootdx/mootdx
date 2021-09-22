@@ -184,8 +184,7 @@ class Financial(BaseFinancial):
             si = datfile.read(stock_item_size)
             stock_item = unpack('<6s1c1L', si)
             code = stock_item[0].decode('utf-8')
-            foa = stock_item[2]
-            datfile.seek(foa)
+            datfile.seek(stock_item[2])
 
             info_data = datfile.read(calcsize(report_pack_format))
             cw_info = unpack(report_pack_format, info_data)

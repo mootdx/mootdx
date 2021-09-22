@@ -6,7 +6,7 @@
 python -m mootdx bestip -wv
 ```
 
-## 通达信离线数据读取
+## 离线数据读取
 
 ```python
 from mootdx.reader import Reader
@@ -26,7 +26,7 @@ reader.minute(symbol='600036')
 reader.fzline(symbol='600036')
 ```
 
-## 通达信线上行情读取
+## 线上行情读取
 
 ```python
 
@@ -46,7 +46,7 @@ client.minute(symbol='000001')
 
 ```
 
-## 通达信财务数据读取
+## 财务数据读取
 
 ```python
 
