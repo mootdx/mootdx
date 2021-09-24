@@ -1,5 +1,4 @@
 import math
-from pathlib import Path
 
 import pandas
 import pandas as pd
@@ -15,7 +14,6 @@ from mootdx import config
 from mootdx import server
 from mootdx.consts import MARKET_SH
 from mootdx.logger import log
-from mootdx.utils import get_config_path
 from mootdx.utils import get_stock_market
 from mootdx.utils import get_stock_markets
 from mootdx.utils import to_data
@@ -46,8 +44,6 @@ class BaseQuotes(object):
         self.timeout = timeout
 
         config.setup()
-
-        # Path(get_config_path('config.json')).exists() or server.bestip()
 
     def __del__(self):
         log.debug('__del__')
