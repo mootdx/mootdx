@@ -101,6 +101,8 @@ class StdQuotes(BaseQuotes):
 
         super(StdQuotes, self).__init__(bestip=bestip, timeout=timeout, **kwargs)
 
+        config.setup()
+
         try:
             config.get('SERVER').get('HQ')[0]
         except ValueError:

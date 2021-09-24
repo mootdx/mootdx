@@ -111,7 +111,7 @@ def bestip(console=False, limit=5) -> None:
         if data:
             default['BESTIP'][index] = data[0]
 
-    json.dump(default, open(config_, 'w'), indent=2)
+    json.dump(default, open(config_, 'w'), indent=2, ensure_ascii=False)
     config.setup()
 
 
