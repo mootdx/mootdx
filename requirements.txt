@@ -1,3 +1,4 @@
+prettytable>=2.2.0
 tenacity>=8.0.1
 pandas>=0.23.3
 httpx>=0.18.1

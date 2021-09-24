@@ -87,7 +87,7 @@ def bestip(limit, write, verbose):
             print(result)
 
     if write:
-        json.dump(CONFIG, open(config, 'w'), indent=2)
+        json.dump(CONFIG, open(config, 'w'), indent=2, ensure_ascii=False)
         log.success('[√] 已经将最优服务器IP写入配置文件 {}'.format(config))
 
 
