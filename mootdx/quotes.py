@@ -45,7 +45,9 @@ class BaseQuotes(object):
 
         self.timeout = timeout
 
-        Path(get_config_path('config.json')).exists() or server.bestip()
+        config.setup()
+
+        # Path(get_config_path('config.json')).exists() or server.bestip()
 
     def __del__(self):
         log.debug('__del__')
@@ -100,8 +102,6 @@ class StdQuotes(BaseQuotes):
         """
 
         super(StdQuotes, self).__init__(bestip=bestip, timeout=timeout, **kwargs)
-
-        config.setup()
 
         try:
             config.get('SERVER').get('HQ')[0]
