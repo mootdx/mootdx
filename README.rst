@@ -5,7 +5,7 @@
    :target: http://badge.fury.io/py/mootdx
 
 .. image:: https://img.shields.io/travis/bopo/mootdx.svg
-        :target: https://travis-ci.org/bopo/mootdx
+        :target: https://travis-ci.org/mootdx/mootdx
 
 .. image:: https://readthedocs.org/projects/mootdx/badge/?version=latest
         :target: https://mootdx.readthedocs.io/zh/latest/?badge=latest
