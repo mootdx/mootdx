@@ -7,21 +7,23 @@ from mootdx.quotes import Quotes
 
 class TestBestIP(unittest.TestCase):
 
-    def test_config_setup(self):
-        conf = Path.home() / '.mootdx' / 'config.json'
-        conf.unlink()
-        assert not conf.exists()
+    def setup_class(self):
+        self.conf = Path.home() / '.mootdx' / 'config.json'
+
+    def teardown_class(self):
+        self.conf.unlink()
+
+    def test_config(self):
+        self.conf.unlink()
 
         config.setup()
-        assert conf.exists()
+        assert self.conf.exists()
 
     def test_quotes(self):
-        conf = Path.home() / '.mootdx' / 'config.json'
-        conf.unlink()
-        assert not conf.exists()
+        self.conf.unlink()
 
-        Quotes.factory(market='std', timeout=10)  # 标准市场
-        assert conf.exists()
+        Quotes.factory(market='std', timeout=10)
+        assert self.conf.exists()
 
 
 if __name__ == '__main__':
