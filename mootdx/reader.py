@@ -55,7 +55,7 @@ class ReaderBase(ABC):
         :return: pd.dataFrame or None
         """
         market = get_stock_market(symbol, True) if len(symbol.split('#')) == 1 else 'ds'
-        prefix = market if len(symbol.split('#')) == 1 else ''
+        prefix = market if len(symbol.split('#')) == 1 and not symbol.startswith('s') else ''
         suffix = suffix if isinstance(suffix, list) else [suffix]
 
         for ex_ in suffix:
