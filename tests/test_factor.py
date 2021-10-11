@@ -1,4 +1,4 @@
-from mootdx.utils.factor import fq_factor
+from mootdx.utils.adjust import fq_factor
 
 
 class TestFactor:
