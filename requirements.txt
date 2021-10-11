@@ -7,3 +7,4 @@ tqdm>=4.37.0
 click>=6.7
 pytdx>=1.72
 pyyaml
+py_mini_racer>=0.6.0
