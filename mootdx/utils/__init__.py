@@ -11,6 +11,7 @@ from tqdm import tqdm
 from mootdx.consts import MARKET_SH
 from mootdx.consts import MARKET_SZ
 from mootdx.logger import log
+from mootdx.utils.adjust import to_adjust
 
 
 def get_stock_markets(symbols=None):
@@ -111,6 +112,7 @@ def to_data(v, **kwargs):
     :return: pd.DataFrame
     """
 
+    symbol = kwargs.get('symbol')
     adjust = kwargs.get('adjust')
     adjust = adjust if adjust in ['qfq', 'hfq'] else None
 
@@ -134,9 +136,9 @@ def to_data(v, **kwargs):
     else:
         result = pd.DataFrame(data=[])
 
-    if adjust:
+    if adjust and adjust in ['qfq', 'hfq'] and symbol:
         from mootdx.utils.adjust import fq_factor
-        result = fq_factor(symbol=result['code'].values.any().all(), method=adjust)
+        result = to_adjust(symbol=symbol, adjust=adjust)
 
     return result
 
