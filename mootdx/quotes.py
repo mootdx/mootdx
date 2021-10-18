@@ -52,8 +52,7 @@ class BaseQuotes(object):
     def reconnect(self):
         if self.closed:
             log.debug('服务器连接已断开，正进行重新连接...')
-            self.client.connect(time_out=self.timeout, *self.bestip)
-            # self.client.connect(*self.bestip)
+            self.client.connect(*self.bestip)
 
     def close(self):
         log.debug('close')
@@ -81,7 +80,7 @@ def check_empty(value):
     # 判断状态空，则重连接
     if instance and _empty:
         log.debug("重新连接 {}:{}", *instance.bestip)
-        instance.client.connect(time_out=instance.timeout, *instance.bestip)
+        instance.client.connect(*instance.bestip, time_out=instance.timeout)
 
     return _empty
 
@@ -92,7 +91,7 @@ class StdQuotes(BaseQuotes):
     def __init__(self, bestip=False, timeout=15, **kwargs):
         """ 构造函数
 
-        :param bestip:  最有服务器Ip
+        :param bestip:  最佳 IP
         :param timeout: 超时时间
         :param kwargs:  可变参数
         """

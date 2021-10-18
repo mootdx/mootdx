@@ -19,8 +19,8 @@ class Reader(object):
     def factory(market='std', **kwargs):
         """ Reader 工厂方法
 
-        :param market:  std 标准市场, ext 扩展市场
-        :param kwargs:
+        :param market: std 标准市场, ext 扩展市场
+        :param kwargs: 可变参数
         :return:
         """
         if market == 'ext':
@@ -74,7 +74,7 @@ class StdReader(ReaderBase):
     def daily(self, symbol=None):
         """ 获取日线数据
 
-        :param symbol:
+        :param symbol: 证券代码
         :return: pd.dataFrame or None
         """
         reader = MooTdxDailyBarReader()
@@ -85,8 +85,8 @@ class StdReader(ReaderBase):
     def minute(self, symbol=None, suffix=1):
         """ 获取1, 5分钟线
 
-        :param suffix:
-        :param symbol:
+        :param suffix: 文件前缀
+        :param symbol: 证券代码
         :return: pd.dataFrame or None
         """
         subdir = 'fzline' if str(suffix) == '5' else 'minline'
@@ -131,8 +131,9 @@ class StdReader(ReaderBase):
         """ 获取板块数据
 
         参考: http://blog.sina.com.cn/s/blog_623d2d280102vt8y.html
-        :param symbol: 板块文件名称
-        :param group:
+
+        :param symbol:  板块文件
+        :param group:   分组解析
         :return: pd.dataFrame or None
         """
 
