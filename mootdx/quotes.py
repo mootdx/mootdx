@@ -133,7 +133,7 @@ class StdQuotes(BaseQuotes):
         symbol = get_stock_markets(symbol)
         result = self.client.get_security_quotes(symbol)
 
-        return to_data(result, **kwargs)
+        return to_data(result, symbol=symbol, **kwargs)
 
     @retry(stop=stop_after_attempt(3), retry=(retry_if_exception_type() | retry_if_result(check_empty)))
     def bars(self, symbol='000001', frequency=9, start=0, offset=100, **kwargs):
@@ -152,7 +152,7 @@ class StdQuotes(BaseQuotes):
             int(frequency), int(market), str(symbol), int(start), int(offset)
         )
 
-        return to_data(result, **kwargs)
+        return to_data(result, symbol=symbol, **kwargs)
 
     @retry(stop=stop_after_attempt(3), retry=(retry_if_exception_type() | retry_if_result(check_empty)))
     def stock_count(self, market=MARKET_SH):
@@ -201,7 +201,7 @@ class StdQuotes(BaseQuotes):
         market = get_stock_market(symbol)
         result = self.client.get_index_bars(frequency=frequency, market=market, code=symbol, start=start, count=offset)
 
-        return to_data(result, **kwargs)
+        return to_data(result, symbol=symbol, **kwargs)
 
     @retry(stop=stop_after_attempt(3), retry=(retry_if_exception_type() | retry_if_result(check_empty)))
     def minute(self, symbol='', **kwargs):
@@ -214,7 +214,7 @@ class StdQuotes(BaseQuotes):
         market = get_stock_market(symbol)
         result = self.client.get_minute_time_data(market=market, code=symbol)
 
-        return to_data(result, **kwargs)
+        return to_data(result, symbol=symbol, **kwargs)
 
     @retry(stop=stop_after_attempt(3), retry=(retry_if_exception_type() | retry_if_result(check_empty)))
     def minutes(self, symbol='', date='20191023', **kwargs):
@@ -228,7 +228,7 @@ class StdQuotes(BaseQuotes):
         market = get_stock_market(symbol)
         result = self.client.get_history_minute_time_data(market=market, code=symbol, date=date)
 
-        return to_data(result, **kwargs)
+        return to_data(result, symbol=symbol, **kwargs)
 
     @retry(stop=stop_after_attempt(3), retry=(retry_if_exception_type() | retry_if_result(check_empty)))
     def transaction(self, symbol='', start=0, offset=10, **kwargs):
@@ -243,7 +243,7 @@ class StdQuotes(BaseQuotes):
         market = get_stock_market(symbol)
         result = self.client.get_transaction_data(int(market), symbol, start, offset)
 
-        return to_data(result, **kwargs)
+        return to_data(result, symbol=symbol, **kwargs)
 
     @retry(stop=stop_after_attempt(3), retry=(retry_if_exception_type() | retry_if_result(check_empty)))
     def transactions(self, symbol='', start=0, offset=10, date='20170209', **kwargs):
@@ -261,7 +261,7 @@ class StdQuotes(BaseQuotes):
             market=market, code=symbol, start=start, count=offset, date=int(date)
         )
 
-        return to_data(result, **kwargs)
+        return to_data(result, symbol=symbol, **kwargs)
 
     @retry(stop=stop_after_attempt(3), retry=(retry_if_exception_type() | retry_if_result(check_empty)))
     def F10C(self, symbol=''):
@@ -324,7 +324,7 @@ class StdQuotes(BaseQuotes):
         market = get_stock_market(symbol)
         result = self.client.get_xdxr_info(int(market), symbol)
 
-        return to_data(result, **kwargs)
+        return to_data(result, symbol=symbol, **kwargs)
 
     @retry(stop=stop_after_attempt(3), retry=(retry_if_exception_type() | retry_if_result(check_empty)))
     def finance(self, symbol='000001', **kwargs):
@@ -337,7 +337,7 @@ class StdQuotes(BaseQuotes):
         market = get_stock_market(symbol)
         result = self.client.get_finance_info(market=market, code=symbol)
 
-        return to_data(result, **kwargs)
+        return to_data(result, symbol=symbol, **kwargs)
 
     @retry(stop=stop_after_attempt(3), retry=(retry_if_exception_type() | retry_if_result(check_empty)))
     def k(self, symbol='', begin=None, end=None):
@@ -383,7 +383,7 @@ class StdQuotes(BaseQuotes):
             int(frequency), int(market), str(symbol), int(start), int(offset)
         )
 
-        return to_data(result, **kwargs)
+        return to_data(result, symbol=symbol, **kwargs)
 
     @retry(stop=stop_after_attempt(3), retry=(retry_if_exception_type() | retry_if_result(check_empty)))
     def block(self, tofile='block.dat', **kwargs):
@@ -505,7 +505,7 @@ class ExtQuotes(BaseQuotes):
         market, symbol = self.validate(market, symbol)
         result = self.client.get_instrument_quote(market, symbol)
 
-        return to_data(result, **kwargs)
+        return to_data(result, symbol=symbol, **kwargs)
 
     @retry(stop=stop_after_attempt(3), retry=(retry_if_exception_type() | retry_if_result(check_empty)))
     def minute(self, market='', symbol='', **kwargs):
@@ -519,7 +519,7 @@ class ExtQuotes(BaseQuotes):
         market, symbol = self.validate(market, symbol)
         result = self.client.get_minute_time_data(market, symbol)
 
-        return to_data(result, **kwargs)
+        return to_data(result, symbol=symbol, **kwargs)
 
     @retry(stop=stop_after_attempt(3), retry=(retry_if_exception_type() | retry_if_result(check_empty)))
     def minutes(self, market=None, symbol='', date='', **kwargs):
@@ -534,7 +534,7 @@ class ExtQuotes(BaseQuotes):
         market, symbol = self.validate(market, symbol)
         result = self.client.get_history_minute_time_data(market, symbol, date)
 
-        return to_data(result, **kwargs)
+        return to_data(result, symbol=symbol, **kwargs)
 
     @retry(stop=stop_after_attempt(3), retry=(retry_if_exception_type() | retry_if_result(check_empty)))
     def bars(self, frequency='', market='', symbol='', start=0, offset=100, **kwargs):
@@ -553,7 +553,7 @@ class ExtQuotes(BaseQuotes):
             category=frequency, market=market, code=symbol, start=start, count=offset
         )
 
-        return to_data(result, **kwargs)
+        return to_data(result, symbol=symbol, **kwargs)
 
     @retry(stop=stop_after_attempt(3), retry=(retry_if_exception_type() | retry_if_result(check_empty)))
     def transaction(self, market=None, symbol='', start=0, offset=1800, **kwargs):
@@ -571,7 +571,7 @@ class ExtQuotes(BaseQuotes):
             market=market, code=symbol, start=start, count=offset
         )
 
-        return to_data(result, **kwargs)
+        return to_data(result, symbol=symbol, **kwargs)
 
     @retry(stop=stop_after_attempt(3), retry=(retry_if_exception_type() | retry_if_result(check_empty)))
     def transactions(self, market=None, symbol='', date='', start=0, offset=1800, **kwargs):
@@ -590,4 +590,4 @@ class ExtQuotes(BaseQuotes):
             market=market, code=symbol, date=int(date), start=start, count=offset
         )
 
-        return to_data(result, **kwargs)
+        return to_data(result, symbol=symbol, **kwargs)
