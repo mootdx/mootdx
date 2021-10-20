@@ -38,15 +38,19 @@ class BaseQuotes(object):
     client = None
     bestip = None
 
-    def __init__(self, bestip=False, timeout=15, **kwargs):
+    def __init__(self, bestip: bool = False, timeout: int = None, **kwargs) -> None:
+
         log.debug(f'bestip=>{bestip}')
+        bestip and server.bestip()
 
-        self.timeout = timeout
+        log.debug(f'timeout=>{timeout}')
+        self.timeout = timeout if timeout else 15
 
+        log.debug('config.setup()')
         config.setup()
 
     def __del__(self):
-        log.debug('__del__')
+        log.debug('call __del__')
         self.close()
 
     def reconnect(self):
@@ -59,7 +63,7 @@ class BaseQuotes(object):
         self.client.close()
 
     @property
-    def closed(self):
+    def closed(self) -> bool:
         if not hasattr(self.client.client, '_closed') or getattr(self.client.client, '_closed'):
             return True
 
@@ -79,8 +83,8 @@ def check_empty(value):
 
     # 判断状态空，则重连接
     if instance and _empty:
-        log.debug("重新连接 {}:{}", *instance.bestip)
-        instance.client.connect(*instance.bestip, time_out=instance.timeout)
+        log.info('重新连接服务器')
+        instance.client.connect(*instance.bestip)
 
     return _empty
 
@@ -100,8 +104,8 @@ class StdQuotes(BaseQuotes):
 
         try:
             config.get('SERVER').get('HQ')[0]
-        except ValueError:
-            server.bestip()
+        except ValueError as ex:
+            log.warning(ex)
         finally:
             default = config.get('SERVER').get('HQ')[0]
             self.bestip = config.get('BESTIP').get('HQ', default)

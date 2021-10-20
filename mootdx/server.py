@@ -5,7 +5,6 @@ import socket
 import time
 from functools import partial
 
-from mootdx import config
 from mootdx.consts import CONFIG
 from mootdx.consts import EX_HOSTS
 from mootdx.consts import GP_HOSTS
@@ -43,11 +42,13 @@ def connect(proxy):
 
         proxy['time'] = (time.perf_counter() - start) * 1000
 
-        log.debug('{addr}:{port} 验证通过，响应时间：{time} ms.'.format(**proxy))
+        log.info('{addr}:{port} 验证通过，响应时间：{time} ms.'.format(**proxy))
     except socket.timeout as ex:
-        log.debug('{addr},{port} time out.'.format(**proxy))
+        log.info('{addr},{port} time out.'.format(**proxy))
+        proxy['time'] = None
     except ConnectionRefusedError as ex:
-        log.debug('{addr},{port} 验证失败.'.format(**proxy))
+        log.info('{addr},{port} 验证失败.'.format(**proxy))
+        proxy['time'] = None
     finally:
         return proxy
 
@@ -57,19 +58,29 @@ async def verify(proxy):
     return result
 
 
-def Server(index=None, limit=5, console=False):
+def Server(index=None, limit=5, console=False, sync=True):
     _hosts = hosts[index]
 
-    event = asyncio.get_event_loop()
+    def async_event():
+        event = asyncio.get_event_loop()
+        tasks = []
 
-    tasks = []
+        while len(_hosts) > 0:
+            task = event.create_task(verify(_hosts.pop(0)))
+            task.add_done_callback(partial(callback, key=index))
+            tasks.append(task)
 
-    while len(_hosts) > 0:
-        task = event.create_task(verify(_hosts.pop(0)))
-        task.add_done_callback(partial(callback, key=index))
-        tasks.append(task)
+        # event.is_closed()
+        # event.is_running()
+        event.run_until_complete(asyncio.wait(tasks))
 
-    event.run_until_complete(asyncio.wait(tasks))
+    global results
+
+    if sync:
+        results[index] = [connect(proxy) for proxy in _hosts]
+        results[index] = [x for x in results[index] if x.get('time')]
+    else:
+        async_event()
 
     server = results[index]
 
@@ -107,12 +118,15 @@ def bestip(console=False, limit=5) -> None:
     default = dict(CONFIG)
 
     for index in ['HQ', 'EX', 'GP']:
-        data = Server(index=index, limit=limit, console=console)
-        if data:
-            default['BESTIP'][index] = data[0]
+        try:
+            data = Server(index=index, limit=limit, console=console)
+            if data:
+                default['BESTIP'][index] = data[0]
+        except RuntimeError as ex:
+            log.error('请手动运行`python -m mootdx bestip`')
+            break
 
     json.dump(default, open(config_, 'w'), indent=2, ensure_ascii=False)
-    config.setup()
 
 
 if __name__ == '__main__':

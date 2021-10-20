@@ -1,36 +1,33 @@
 import logging
-import unittest
 from pathlib import Path
 
 import pytest
 
 from mootdx import config
-from mootdx.quotes import Quotes
 
 
 class TestBestIP:
+    config = ''
 
-    def setup_class(self):
-        self.conf = Path.home() / '.mootdx' / 'config.json'
+    @staticmethod
+    def setup_class(cls):
+        logging.info('setup_class')
+        cls.config = Path.home() / '.mootdx' / 'config.json'
+        cls.config.exists() and cls.config.unlink()
 
-    def teardown_class(self):
-        pass
+    @staticmethod
+    def teardown_class(cls):
+        logging.info('teardown_class')
+        cls.config.exists() and cls.config.unlink()
 
     @pytest.mark.skip('skip')
     def test_config(self, caplog):
         caplog.set_level(logging.WARNING)
-        self.conf.exists() and self.conf.unlink()
+        self.config.exists() and self.config.unlink()
 
         config.setup()
-        # assert '未找到配置文件' in caplog.records
-        assert self.conf.exists()
+        assert self.config.exists(), self.config
 
     def test_quotes(self):
-        self.conf.exists() and self.conf.unlink()
-
-        Quotes.factory(market='std', timeout=10)
-        assert self.conf.exists()
-
-
-if __name__ == '__main__':
-    unittest.main()
+        config.setup()
+        assert self.config.exists(), self.config

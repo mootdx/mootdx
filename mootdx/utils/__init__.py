@@ -138,7 +138,7 @@ def to_data(v, **kwargs):
 
     if adjust and adjust in ['qfq', 'hfq'] and symbol:
         from mootdx.utils.adjust import fq_factor
-        result = to_adjust(symbol=symbol, adjust=adjust)
+        result = to_adjust(result, symbol=symbol, adjust=adjust)
 
     return result
 

@@ -1,4 +1,7 @@
 import pandas
+import pytest
+
+from mootdx.quotes import Quotes
 
 
 def is_empty(obj):
@@ -6,3 +9,8 @@ def is_empty(obj):
         return obj.empty
 
     return not bool(obj)
+
+
+@pytest.fixture()
+def quotes():
+    return Quotes.factory('std')
