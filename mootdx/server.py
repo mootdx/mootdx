@@ -113,13 +113,13 @@ def Server(index=None, limit=5, console=False, sync=True):
     return [(item['addr'], item['port']) for item in server]
 
 
-def bestip(console=False, limit=5) -> None:
+def bestip(console=False, limit=5, sync=True) -> None:
     config_ = get_config_path('config.json')
     default = dict(CONFIG)
 
     for index in ['HQ', 'EX', 'GP']:
         try:
-            data = Server(index=index, limit=limit, console=console)
+            data = Server(index=index, limit=limit, console=console, sync=sync)
             if data:
                 default['BESTIP'][index] = data[0]
         except RuntimeError as ex:

@@ -1,18 +1,17 @@
-import json
 import logging
 import os
+from pathlib import Path
 
 import click
 from prettytable import PrettyTable
 
 from mootdx import __version__
 from mootdx import logger
+from mootdx import server
 from mootdx.affair import Affair
-from mootdx.consts import CONFIG
 from mootdx.logger import log
 from mootdx.quotes import Quotes
 from mootdx.reader import Reader
-from mootdx.server import Server
 from mootdx.utils import get_config_path
 from mootdx.utils import to_file
 
@@ -46,7 +45,7 @@ def quotes(symbol, action, market, output):
 
         feed = getattr(client, 'bars')(symbol=symbol, frequency=frequency)
         to_file(feed, output) if output else None
-        print(feed)
+        click.echo(feed)
     except Exception as e:
         raise e
 
@@ -63,46 +62,33 @@ def reader(symbol, action, market, tdxdir, output):
     try:
         feed = getattr(client, action)(symbol=symbol)
         to_file(feed, output) if output else None
-        print(feed)
+        click.echo(feed)
     except Exception as e:
         raise e
 
 
 @cli.command(help='测试行情服务器.')
 @click.option('-l', '--limit', default=5, help='显示最快前几个，默认 5.')
-@click.option('-w', '--write', default=True, count=True, help='将最优服务器IP写入配置文件 ~/.mootdx/config.json.', )
-@click.option('-v', '--verbose', default=False, count=True)
-def bestip(limit, write, verbose):
+@click.option('-v', '--verbose', is_flag=True, help='详细模式')
+def bestip(limit, verbose):
     verbose and logger.getLogger(level='DEBUG')
-
     config = get_config_path('config.json')
-    default = CONFIG
-
-    for index in ['HQ', 'EX', 'GP']:
-        result = Server(index=index, limit=limit, console=True)
-
-        if result:
-            default['BESTIP'][index] = result[0]
-        else:
-            print(result)
-
-    if write:
-        json.dump(CONFIG, open(config, 'w'), indent=2, ensure_ascii=False)
-        log.success('[√] 已经将最优服务器IP写入配置文件 {}'.format(config))
+    server.bestip(limit=limit, console=True, sync=False)
+    log.success('[√] 已经将最优服务器IP写入配置文件 {}'.format(config))
 
 
 @cli.command(help='财务文件下载&解析.')
 @click.option('-p', '--parse', default=None, help='要解析文件名')
 @click.option('-f', '--fetch', default=None, help='下载财务文件的文件名')
-@click.option('-a', '--downall', count=True, help='下载全部文件')
+@click.option('-a', '--downall', is_flag=True, help='下载全部文件')
 @click.option('-o', '--output', default=None, help='输出文件, 支持 CSV, HDF5, Excel, JSON 等格式.')
 @click.option('-d', '--downdir', default='output', help='下载文件目录')
-@click.option('-l', '--listfile', count=True, default=False, help='显示全部文件')
-@click.option('-v', '--verbose', count=True)
+@click.option('-l', '--listfile', is_flag=True, default=False, help='显示全部文件')
+@click.option('-v', '--verbose', is_flag=True, help='详细模式')
 def affair(parse, fetch, downdir, output, downall, verbose, listfile):
     verbose and logger.getLogger(level='DEBUG')
 
-    result = Affair.files()
+    files = Affair.files()
 
     if listfile:
         t = PrettyTable(['filename', 'filesize', 'hash'])
@@ -111,38 +97,39 @@ def affair(parse, fetch, downdir, output, downall, verbose, listfile):
         t.align['hash'] = 'l'
         t.padding_width = 0
 
-        for x in result:
+        for x in files:
             t.add_row([x['filename'], x['filesize'], x['hash']])
 
-        print(t)
+        click.echo(t)
         return
 
+    # download all files
     if downall or fetch == 'all':
         feed = Affair.fetch(downdir=downdir)
-        to_file(feed, output) if output else None
-    elif fetch:
-        Affair.fetch(downdir=downdir, filename=fetch.strip('.zip') + '.zip')
+        return to_file(feed, output) if output else None
 
+    # download file
+    if fetch:
+        return Affair.fetch(downdir=downdir, filename=fetch.strip('.zip') + '.zip')
+
+    # parse file
     if parse:
-        files = [x['filename'] for x in result]
+        parse = parse.strip('.zip') + '.zip'
+        files = [x['filename'] for x in files]
 
         if parse in files:
-            if not os.path.exists(os.path.join(downdir, parse)):
-                Affair.fetch(downdir=downdir, filename=parse.strip('.zip') + '.zip')
-
-            feed = Affair.parse(downdir=downdir, filename=parse.strip('.zip') + '.zip')
-
-            if output:
-                to_file(feed, output)
-            else:
-                print(feed)
+            # 文件不存在，先下载
+            Path(downdir, parse).exists() or Affair.fetch(downdir=downdir, filename=parse)
+            feed = Affair.parse(downdir=downdir, filename=parse)
+            output and to_file(feed, output)
+            click.echo(feed)
         else:
-            log.error('cannot find file.')
+            log.error('没找到要解析的文件.')
 
 
 @cli.command(help='显示当前软件版本.')
 def version():
-    print('mootdx V{}'.format(__version__))
+    click.echo('mootdx v{}'.format(__version__))
 
 
 @cli.command(help='批量下载行情数据.')
@@ -171,12 +158,12 @@ def bundle(symbol, action, market, output, extension):
                 frequency = 9
 
             feed = getattr(client, 'bars')(symbol=code, frequency=frequency)
-            resp = to_file(feed, os.path.join(output, f'{code}.{extension}')) if output else None
-            print('下载完成 {}'.format(code))
+            output and to_file(feed, os.path.join(output, f'{code}.{extension}'))
+            click.echo('下载完成 {}'.format(code))
         except Exception as e:
             raise e
 
-    print('[√] 下载文件到 "{}"'.format(os.path.realpath(output)))
+    click.echo('[√] 下载文件到 "{}"'.format(os.path.realpath(output)))
 
 
 def entry():
