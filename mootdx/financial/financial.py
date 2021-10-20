@@ -54,8 +54,6 @@ class FinancialList(BaseFinancial):
         api = TdxHq_API(**kwargs)
         api.need_setup = False
 
-        log.critical(self.bestip)
-
         with api.connect(*self.bestip):
             content = api.get_report_file_by_size('tdxfin/gpcw.txt')
             download_file = (open(downdir, 'wb') if downdir else tmp)

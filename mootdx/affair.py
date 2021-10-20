@@ -19,10 +19,9 @@ async def fetch_file(downdir, file_obj):
     filepath = Path(downdir) / file_obj['filename']
 
     # 判断文件是否存在, 验证文件名和哈希值
-    if filepath.exists():
-        if file_obj['hash'] == hashlib.md5(open(filepath, 'rb').read()).hexdigest():
-            log.warning(f'文件已经存在: {filepath}')
-            return None
+    if filepath.exists() and file_obj['hash'] == hashlib.md5(open(filepath, 'rb').read()).hexdigest():
+        log.warning(f'文件已经存在: {filepath}')
+        return None
 
     result = await asyncio.get_event_loop().run_in_executor(
         None, partial(financial.Financial().fetch_only, report_hook=None, filename=file_obj['filename'], downdir=downdir)

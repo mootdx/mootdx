@@ -39,15 +39,13 @@ class BaseFinancial:
         self.mode = mode
 
         config.setup()
-        
+
         try:
             default = config.get('SERVER').get('GP')[0][1:]
             self.bestip = config.get('BESTIP').get('GP', default)
         except ValueError as ex:
             log.exception(ex)
             self.bestip = ('106.14.95.149', 7727)
-
-        print(self.bestip)
 
     def fetch_and_parse(self, report_hook=None, downdir=None, chunk_size=51200, *args, **kwargs):
         """
