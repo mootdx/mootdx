@@ -12,7 +12,7 @@ from mootdx.logger import log
 
 
 class MooTdxDailyBarReader(TdxDailyBarReader):
-    # 感谢 bopomofo 的鼎力支持
+    """ 感谢 bopomofo 的鼎力支持 """
     SECURITY_TYPE = [
         'SH_A_STOCK',
         'SH_B_STOCK',
