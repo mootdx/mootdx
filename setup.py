@@ -24,7 +24,7 @@ test_requirements.append('pytest')
 
 setup(
     name='mootdx',
-    version='0.8.0',
+    version='0.8.1',
     description='通达信数据读取接口.',
     long_description=readme,
     author='bopo.wang',
