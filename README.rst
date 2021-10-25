@@ -15,6 +15,8 @@
      :target: https://pyup.io/repos/github/mootdx/mootdx/
      :alt: Updates
 
+如果喜欢本项目可以在右上角给颗⭐！你的支持是我最大的动力😎！
+
 * 开源协议: MIT license
 * 在线文档: https://mootdx.readthedocs.io
 * 国内镜像: https://gitee.com/ibopo/mootdx
