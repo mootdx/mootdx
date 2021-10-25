@@ -17,6 +17,9 @@ end_of_line = crlf
 [*.yaml]
 indent_size = 2
 
+[*.yml]
+indent_size = 2
+
 [LICENSE]
 insert_final_newline = false
 

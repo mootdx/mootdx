@@ -24,3 +24,11 @@ class TestHoliday:
     def test_holiday_dataset(self):
         data = holiday()
         assert data.all().any(), data
+
+    def test_holiday_now(self):
+        data = holiday('now')
+        assert data.all().any(), data
+
+    def test_holiday_date(self):
+        data = holiday('2021-10-25')
+        assert data.all().any(), data

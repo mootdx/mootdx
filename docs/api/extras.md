@@ -84,3 +84,24 @@ from mootdx.tools import tdx2csv
 
 tdx2csv.batch(src='c:/tdx/export', dst='c:/tdx/output')
 ```
+
+## 04. 交易日历数据
+
+返回值：
+
+- pd.DataFrame
+
+**调用方法：**
+
+```python
+from mootdx.utils import holiday
+
+# 获取全部交易日期
+days = holiday.holiday()
+
+# 判断一个日期是否是交易日
+holiday.holiday(date='2020-02-02')
+
+# 判断当天日期是否是交易日（date的值只要是非日期格式的字符串，都转换为当天日期）
+holiday.holiday(date='now')
+```

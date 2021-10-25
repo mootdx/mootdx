@@ -3,25 +3,24 @@ site_description: 基于 Pytdx 数据接口的二次封装
 
 theme: readthedocs
 
-pages:
+nav:
+  - 快速开始:
+    - 项目概述: index.md
+    - 安装说明: setup.md
+    - 快速上手: quick.md
+    - 修改日志: chlog.md
 
-    -   快速开始:
-            -   项目概述: index.md
-            -   安装说明: setup.md
-            -   快速上手: quick.md
-            -   修改日志: chlog.md
+    - 行情接口:
+      - 标准行情: api/quote1.md
+      - 扩展行情: api/quote2.md
+      - 数据读取: api/reader.md
+      - 财务数据: api/affair.md
+      - 财务对照: api/fields.md
+      - 辅助函数: api/extras.md
 
-    -   行情接口:
-            -   标准行情: api/quote1.md
-            -   扩展行情: api/quote2.md
-            -   数据读取: api/reader.md
-            -   财务数据: api/affair.md
-            -   财务对照: api/fields.md
-            -   辅助函数: api/extras.md
-
-    -   命令行工具:
-            -   线路测试: cli/bestip.md
-            -   离线数据: cli/reader.md
-            -   行情数据: cli/quotes.md
-            -   财务数据: cli/affair.md
-            -   批量下载: cli/bundle.md
+    - 命令行工具:
+      - 线路测试: cli/bestip.md
+      - 离线数据: cli/reader.md
+      - 行情数据: cli/quotes.md
+      - 财务数据: cli/affair.md
+      - 批量下载: cli/bundle.md

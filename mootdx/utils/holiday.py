@@ -13,6 +13,7 @@ from py_mini_racer import py_mini_racer
 from tenacity import stop_after_attempt, wait_fixed, retry
 
 from mootdx import get_config_path
+from mootdx.logger import log
 
 hk_js_decode = """
 function d(t) {
@@ -306,41 +307,54 @@ function d(t) {
 
 
 @retry(wait=wait_fixed(2), stop=stop_after_attempt(5))
-def holiday(save=True) -> pd.DataFrame:
+def holiday(date=False, save=True) -> pd.DataFrame:
     """ 交易日历-历史数据
     :return: 交易日历
     :rtype: pandas.DataFrame
     """
     cache_file = get_config_path('holiday.csv')
+    temp_df = None
 
     if Path(cache_file).exists():
         df = pd.read_csv(cache_file)
         if not df.loc[df['year'] == datetime.datetime.now().year].empty:
-            return df
+            temp_df = df
 
-    client = httpx.Client(verify=False)
+    if type(temp_df) is not pd.DataFrame:
+        client = httpx.Client(verify=False)
 
-    url = "https://finance.sina.com.cn/realstock/company/klc_td_sh.txt"
-    res = client.get(url)
+        url = "https://finance.sina.com.cn/realstock/company/klc_td_sh.txt"
+        res = client.get(url)
 
-    js_code = py_mini_racer.MiniRacer()
-    js_code.eval(hk_js_decode)
+        js_code = py_mini_racer.MiniRacer()
+        js_code.eval(hk_js_decode)
 
-    # 执行js解密代码
-    dict_list = js_code.call("d", res.text.split("=")[1].split(";")[0].replace('"', ""))
+        # 执行js解密代码
+        dict_list = js_code.call("d", res.text.split("=")[1].split(";")[0].replace('"', ""))
 
-    temp_df = pd.DataFrame(dict_list)
-    temp_df.columns = ["date"]
-    temp_df["date"] = pd.to_datetime(temp_df["date"]).dt.date
+        temp_df = pd.DataFrame(dict_list)
+        temp_df.columns = ["date"]
+        temp_df["date"] = pd.to_datetime(temp_df["date"]).dt.date
 
-    temp_list = temp_df["date"].to_list()
-    temp_list.append(datetime.date(1992, 5, 4))  # 是交易日但是交易日历缺失该日期
-    temp_list.sort()
+        temp_list = temp_df["date"].to_list()
+        temp_list.append(datetime.date(1992, 5, 4))  # 是交易日但是交易日历缺失该日期
+        temp_list.sort()
 
-    temp_df = pd.DataFrame(temp_list, columns=['date'])
-    temp_df['year'] = pd.DatetimeIndex(temp_df['date']).year
+        temp_df = pd.DataFrame(temp_list, columns=['date'])
+        temp_df['year'] = pd.DatetimeIndex(temp_df['date']).year
 
-    # 保存缓存
-    save and temp_df.to_csv(cache_file)
+        # 保存缓存
+        save and temp_df.to_csv(cache_file)
+
+    if date:
+
+        try:
+            date = datetime.datetime.strptime(date, "%Y-%m-%d").date()
+        except ValueError:
+            date = datetime.datetime.now().date()
+
+        log.debug(date)
+
+        return temp_df.loc[temp_df['date'] == date].all().any()
 
     return temp_df
