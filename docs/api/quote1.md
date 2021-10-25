@@ -65,6 +65,12 @@ from mootdx.quotes import Quotes
 
 client = Quotes.factory(market='std')
 client.bars(symbol='600036', frequency=9, offset=10)
+
+# 前复权
+client.bars(symbol='600036', adjust='qfq')
+
+# 后复权
+client.bars(symbol='600036', adjust='hfq')
 ```
 
 ## 03. 查询股票数量
@@ -152,6 +158,12 @@ from mootdx.quotes import Quotes
 
 client = Quotes.factory(market='std')
 client.minute(symbol='000001')
+
+# 前复权
+client.minute(symbol='000001', adjust='qfq')
+
+# 后复权
+client.minute(symbol='000001', adjust='hfq')
 ```
 
 ## 07. 历史分时行情
@@ -169,6 +181,13 @@ from mootdx.quotes import Quotes
 
 client = Quotes.factory(market='std')
 client.minutes(symbol='000001', date='20171010')
+
+# 前复权
+client.minutes(symbol='000001', date='20171010', adjust='qfq')
+
+# 后复权
+client.minutes(symbol='000001', date='20171010', adjust='hfq')
+
 ```
 
 注意，在引入 consts 之后， （`from mootdx import consts`） 我们可以使用 consts.MARKET_SH , consts.MARKET_SZ 常量来代替 1 和 0 作为参数

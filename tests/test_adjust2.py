@@ -1,9 +1,10 @@
 import unittest
 
 import pytest
+from loguru import logger
 
 from mootdx.quotes import Quotes
-from mootdx.utils import to_adjust, get_stock_markets
+from mootdx.utils import to_adjust
 
 
 class TestAdjust2(unittest.TestCase):
@@ -27,7 +28,7 @@ class TestAdjust2(unittest.TestCase):
         result = self.client.bars(symbol='600036')
         result = to_adjust(result, symbol='sh600036', adjust='qfq')
 
-        print(result)
+        logger.info(result)
         assert not result.empty, result
 
 

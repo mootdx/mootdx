@@ -113,8 +113,14 @@ def to_data(v, **kwargs):
     """
 
     symbol = kwargs.get('symbol')
-    adjust = kwargs.get('adjust')
-    adjust = adjust if adjust in ['qfq', 'hfq'] else None
+    adjust = kwargs.get('adjust', None)
+
+    if adjust in ['01', 'qfq', 'before']:
+        adjust = 'qfq'
+    elif adjust in ['02', 'hfq', 'after']:
+        adjust = 'hfq'
+    else:
+        adjust = None
 
     # 空值
     if not v:
