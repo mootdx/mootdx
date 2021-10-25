@@ -13,7 +13,6 @@ from py_mini_racer import py_mini_racer
 from tenacity import stop_after_attempt, wait_fixed, retry
 
 from mootdx import get_config_path
-from mootdx.logger import log
 
 hk_js_decode = """
 function d(t) {
@@ -345,23 +344,3 @@ def holiday(save=True) -> pd.DataFrame:
     save and temp_df.to_csv(cache_file)
 
     return temp_df
-
-
-if __name__ == '__main__':
-    res = holiday()
-    print(res)
-    # holiday = ['20181229-20190101']
-    # dates = Holiday('20190122')
-    #
-    # print(dates.date, dates.holiday)
-    # print("Class-Today: %s" % dates.getToday())
-    # print("Object-Today: %s" % dates.getToday())
-    #
-    # print(dates.getYesterday())
-    # print(dates.getTomorrow())
-    #
-    # print('--------------------')
-    # print(dates.getHolidayList())
-    #
-    # print("LastTradeDay: %s" % dates.getLastTradeDay())
-    # print("%s is TradeDay: %s" % (dates.date, dates.isTradeDay()))
