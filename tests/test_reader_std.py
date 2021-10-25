@@ -1,7 +1,6 @@
 import unittest
 
 from mootdx.reader import Reader
-from mootdx.reader import ReaderBase
 from tests.conftest import is_empty
 
 
@@ -30,14 +29,6 @@ class TestReader(unittest.TestCase):
     def test_minute5(self):
         result = self.reader.minute(symbol='688001', suffix='5')
         self.assertFalse(result.empty, result)
-
-
-class TestReaderBase(unittest.TestCase):
-
-    def test_find_path(self):
-        reader = ReaderBase('../fixtures')
-        result = reader.find_path(symbol='688001', subdir='minline', suffix=['lc1', '1'])
-        self.assertIsNotNone(result), '读取失败'
 
 
 if __name__ == '__main__':
