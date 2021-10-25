@@ -353,8 +353,6 @@ def holiday(date=False, save=True) -> pd.DataFrame:
         except ValueError:
             date = datetime.datetime.now().date()
 
-        log.debug(date)
-
         return temp_df.loc[temp_df['date'] == date].all().any()
 
     return temp_df

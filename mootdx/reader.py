@@ -10,7 +10,6 @@ from pytdx.reader import TdxMinBarReader
 from mootdx import utils
 from mootdx.consts import TYPE_GROUP, TYPE_FLATS
 from mootdx.contrib.compat import MooTdxDailyBarReader
-from mootdx.logger import log
 from mootdx.utils import get_stock_market
 
 
@@ -55,7 +54,6 @@ class ReaderBase(ABC):
         :param suffix:
         :return: pd.dataFrame or None
         """
-        log.warning(f'symbol=>{symbol}')
 
         # 判断市场, 带#扩展市场
         if '#' in symbol:
@@ -65,18 +63,17 @@ class ReaderBase(ABC):
             market = get_stock_market(symbol, True)
 
         # 判断前缀(市场是sh和sz重置前缀)
-        symbol = market + symbol.lower().replace(market, '') if market.lower() in ['sh', 'sz'] else symbol
+        if market.lower() in ['sh', 'sz']:
+            symbol = market + symbol.lower().replace(market, '')
 
         # 判断后缀
         suffix = suffix if isinstance(suffix, list) else [suffix]
 
-        log.warning(f'symbol=>{symbol}')
-        log.warning(f'market=>{market}')
-        log.warning(f'suffix=>{suffix}')
-
+        # 调试使用
         if kwargs.get('debug'):
             return market, symbol, suffix
 
+        # 遍历扩展名
         for ex_ in suffix:
             ex_ = ex_.strip('.')
             vipdoc = Path(self.tdxdir) / 'vipdoc' / market / subdir / f'{symbol}.{ex_}'
