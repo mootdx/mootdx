@@ -10,6 +10,7 @@ from pytdx.reader import TdxMinBarReader
 from mootdx import utils
 from mootdx.consts import TYPE_GROUP, TYPE_FLATS
 from mootdx.contrib.compat import MooTdxDailyBarReader
+from mootdx.logger import log
 from mootdx.utils import get_stock_market
 
 
@@ -46,7 +47,7 @@ class ReaderBase(ABC):
 
         self.tdxdir = tdxdir
 
-    def find_path(self, symbol=None, subdir='lday', suffix=None):
+    def find_path(self, symbol=None, subdir='lday', suffix=None, **kwargs):
         """ 自动匹配文件路径，辅助函数
 
         :param symbol:
@@ -54,13 +55,31 @@ class ReaderBase(ABC):
         :param suffix:
         :return: pd.dataFrame or None
         """
-        market = get_stock_market(symbol, True) if len(symbol.split('#')) == 1 else 'ds'
-        prefix = market if len(symbol.split('#')) == 1 else ''
+        log.warning(f'symbol=>{symbol}')
+
+        # 判断市场, 带#扩展市场
+        if '#' in symbol:
+            market = 'ds'
+        else:
+            # 判断是sh还是sz
+            market = get_stock_market(symbol, True)
+
+        # 判断前缀(市场是sh和sz重置前缀)
+        symbol = market + symbol.lower().replace(market, '') if market.lower() in ['sh', 'sz'] else symbol
+
+        # 判断后缀
         suffix = suffix if isinstance(suffix, list) else [suffix]
+
+        log.warning(f'symbol=>{symbol}')
+        log.warning(f'market=>{market}')
+        log.warning(f'suffix=>{suffix}')
+
+        if kwargs.get('debug'):
+            return market, symbol, suffix
 
         for ex_ in suffix:
             ex_ = ex_.strip('.')
-            vipdoc = Path(self.tdxdir) / 'vipdoc' / market / subdir / f'{prefix}{symbol}.{ex_}'
+            vipdoc = Path(self.tdxdir) / 'vipdoc' / market / subdir / f'{symbol}.{ex_}'
 
             if Path(vipdoc).exists():
                 return vipdoc
