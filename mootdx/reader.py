@@ -10,6 +10,7 @@ from pytdx.reader import TdxMinBarReader
 from mootdx import utils
 from mootdx.consts import TYPE_GROUP, TYPE_FLATS
 from mootdx.contrib.compat import MooTdxDailyBarReader
+from mootdx.logger import log
 from mootdx.utils import get_stock_market
 
 
@@ -143,7 +144,7 @@ class StdReader(ReaderBase):
 
         return CustomerBlockReader().get_df(str(vipdoc), types_) if vipdoc.is_dir() else None
 
-    def block(self, symbol='', group=False):
+    def block(self, symbol='', group=False, **kwargs):
         """ 获取板块数据
 
         参考: http://blog.sina.com.cn/s/blog_623d2d280102vt8y.html
@@ -159,8 +160,15 @@ class StdReader(ReaderBase):
         symbol = symbol.replace(suffix, '')
         suffix = suffix.strip('.')
 
-        vipdoc = Path(self.tdxdir) / 'T0002' / 'hq_cache' / f'{symbol}.{suffix}'
+        if 'incon' in symbol:
+            vipdoc = Path(self.tdxdir) / f'{symbol}.{suffix}'
+        else:
+            vipdoc = Path(self.tdxdir) / 'T0002' / 'hq_cache' / f'{symbol}.{suffix}'
+
         types_ = TYPE_GROUP if group else TYPE_FLATS
+
+        if kwargs.get('debug'):
+            return str(vipdoc)
 
         return BlockReader().get_df(str(vipdoc), types_) if vipdoc.exists() else None
 
