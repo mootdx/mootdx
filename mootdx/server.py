@@ -126,7 +126,7 @@ def bestip(console=False, limit=5, sync=True) -> None:
             log.error('请手动运行`python -m mootdx bestip`')
             break
 
-    json.dump(default, open(config_, 'w'), indent=2, ensure_ascii=False)
+    json.dump(default, open(config_, 'w', encoding='utf-8'), indent=2, ensure_ascii=False)
 
 
 if __name__ == '__main__':

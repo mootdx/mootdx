@@ -60,7 +60,9 @@ class BaseQuotes(object):
 
     def close(self):
         log.debug('close')
-        self.client.close()
+
+        hasattr(self.client, 'close') and self.client.close()
+
 
     @property
     def closed(self) -> bool:

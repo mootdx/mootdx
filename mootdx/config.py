@@ -33,7 +33,7 @@ def setup():
     global settings
 
     try:
-        options = json.load(open(CONF))
+        options = json.load(open(CONF, 'r', encoding='utf-8'))
         settings.update(options)
     except (json.JSONDecodeError, FileNotFoundError):
         log.warning(f'未找到配置文件 {CONF}, 正在生成配置文件.')
