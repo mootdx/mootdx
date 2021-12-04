@@ -19,11 +19,12 @@ client = Quotes.factory(market='std')
 ```python
 from mootdx.quotes import Quotes
 
-client = Quotes.factory(market='std', multithread=True, heartbeat=True, bestip=True, timeout=15)
+client = Quotes.factory(market='std', multithread=True, heartbeat=True, bestip=True, quiet=False, timeout=15)
 # multithread 多线程
 # heartbeat 开启心跳包
 # bestip 重新测试最快服务器
 # timeout 设置超时时间
+# quiet 日志静默方式, 默认False, 设置为 True 则不打印日志信息
 ```
 
 ## 01. 查询实时行情

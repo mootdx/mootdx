@@ -10,10 +10,11 @@ from tenacity import retry
 from tenacity import stop_after_attempt
 from tenacity import wait_fixed
 
+from mootdx.consts import return_last_value
 from mootdx.logger import log
 
 
-@retry(wait=wait_fixed(2), stop=stop_after_attempt(5))
+@retry(wait=wait_fixed(2), retry_error_callback=return_last_value, stop=stop_after_attempt(5))
 def get_adjust_year(symbol=None, year=None, factor='00'):
     """ 采集同花顺复权数据
 

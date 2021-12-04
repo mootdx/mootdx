@@ -76,3 +76,7 @@ class TestStdQuotes(unittest.TestCase):
     def test_finance(self):
         data = self.client.finance(symbol='000001')
         self.assertEqual(data.empty, False)
+
+    def test_retry_last_value(self):
+        data = self.client.minutes('159995', '20200130')
+        self.assertEqual(data.empty, True)

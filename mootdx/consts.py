@@ -75,3 +75,8 @@ CONFIG = {
     'BESTIP': {'HQ': '', 'EX': '', 'GP': ''},
     'TDXDIR': 'C:/new_tdx',
 }
+
+
+def return_last_value(retry_state):
+    """return the result of the last call attempt"""
+    return retry_state.outcome.result()
