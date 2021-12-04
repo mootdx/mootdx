@@ -1,5 +1,4 @@
 import math
-
 import pandas
 import pandas as pd
 from pytdx.exhq import TdxExHq_API
@@ -63,7 +62,6 @@ class BaseQuotes(object):
 
         hasattr(self.client, 'close') and self.client.close()
 
-
     @property
     def closed(self) -> bool:
         if not hasattr(self.client.client, '_closed') or getattr(self.client.client, '_closed'):
@@ -72,7 +70,7 @@ class BaseQuotes(object):
         return False
 
 
-instance: BaseQuotes = None
+instance: BaseQuotes
 
 
 def check_empty(value):
