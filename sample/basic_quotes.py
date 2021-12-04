@@ -15,11 +15,12 @@ client = Quotes.factory(market='std', quiet=True)  # 标准市场
 # client = Quotes.factory(market='std')
 from mootdx.logger import logger, log
 
-logger.remove()
+# logger.remove()
 
 logger.info('------------')
 log.info('-========')
 
-rd = client.minutes('159995', '20200130')  # 这条记录不存在为啥会报异常？返回None就好了吧
+# rd = client.minutes('159995', '20200130')  # 这条记录不存在为啥会报异常？返回None就好了吧
+rd = client.minutes('300191', '301188')  # 这条记录不存在为啥会报异常？返回None就好了吧
 
 print(rd)

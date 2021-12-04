@@ -45,7 +45,7 @@
     pip install mootdx
 
     # 手动下载源码安装
-    git clone --depth=1 https://github.com/bopo/mootdx.git
+    git clone --depth=1 https://github.com/mootdx/mootdx.git
     cd mootdx
     python setup.py install
 
