@@ -113,7 +113,9 @@ class StdQuotes(BaseQuotes):
             default = config.get('SERVER').get('HQ')[0]
             self.bestip = config.get('BESTIP').get('HQ', default)
 
-        del kwargs['quiet']
+        if kwargs.get('quiet'):
+            del kwargs['quiet']
+
         self.client = TdxHq_API(raise_exception=False, **kwargs)
         self.client.connect(*self.bestip)
 
@@ -429,7 +431,9 @@ class ExtQuotes(BaseQuotes):
             default = config.get('SERVER').get('EX')[0]
             self.bestip = config.get('BESTIP').get('EX', default)
 
-        del kwargs['quiet']
+        if kwargs.get('quiet'):
+            del kwargs['quiet']
+            
         self.client = TdxExHq_API(**kwargs)
         self.client.connect(*self.bestip)
 
