@@ -13,7 +13,7 @@ from py_mini_racer import py_mini_racer
 from tenacity import stop_after_attempt, wait_fixed, retry
 
 from mootdx import get_config_path
-from mootdx.logger import log
+from mootdx.consts import return_last_value
 
 hk_js_decode = """
 function d(t) {
@@ -306,7 +306,7 @@ function d(t) {
 """
 
 
-@retry(wait=wait_fixed(2), stop=stop_after_attempt(5))
+@retry(wait=wait_fixed(2), retry_error_callback=return_last_value, stop=stop_after_attempt(5))
 def holiday(date=False, save=True) -> pd.DataFrame:
     """ 交易日历-历史数据
     :return: 交易日历

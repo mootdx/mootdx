@@ -71,7 +71,7 @@ def reader(symbol, action, market, tdxdir, output):
 @click.option('-l', '--limit', default=5, help='显示最快前几个，默认 5.')
 @click.option('-v', '--verbose', is_flag=True, help='详细模式')
 def bestip(limit, verbose):
-    verbose and logger.getLogger(level='DEBUG')
+    verbose and logger.getLogger(verbose=verbose)
     config = get_config_path('config.json')
     server.bestip(limit=limit, console=True, sync=False)
     log.success('[√] 已经将最优服务器IP写入配置文件 {}'.format(config))
@@ -86,7 +86,7 @@ def bestip(limit, verbose):
 @click.option('-l', '--listfile', is_flag=True, default=False, help='显示全部文件')
 @click.option('-v', '--verbose', is_flag=True, help='详细模式')
 def affair(parse, fetch, downdir, output, downall, verbose, listfile):
-    verbose and logger.getLogger(level='DEBUG')
+    verbose and logger.getLogger(verbose=verbose)
 
     files = Affair.files()
 
