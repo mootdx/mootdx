@@ -100,8 +100,11 @@ from mootdx.utils import holiday
 days = holiday.holiday()
 
 # 判断一个日期是否是交易日
+holiday.holiday(date='20200202', format_='%Y%m%d', country='中国')
+
+# 判断一个日期是否是交易日
 holiday.holiday(date='2020-02-02')
 
-# 判断当天日期是否是交易日（date的值只要是非日期格式的字符串，都转换为当天日期）
-holiday.holiday(date='now')
+# 判断当天日期是否是交易日（date的值空为当天日期）
+holiday.holiday()
 ```

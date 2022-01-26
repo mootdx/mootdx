@@ -1,34 +1,25 @@
-from pathlib import Path
+import pytest
 
-from mootdx import get_config_path
 from mootdx.utils.holiday import holiday
 
 
 class TestHoliday:
-    cache_file = get_config_path('holiday.csv')
-
-    def setup_method(self):
-        Path(self.cache_file).exists() and Path(self.cache_file).unlink()
-
-    def teardown_method(self):
-        Path(self.cache_file).exists() and Path(self.cache_file).unlink()
 
     def test_holiday_exists(self):
-        data = holiday(save=True)
-        assert data.all().any(), data
-        assert Path(self.cache_file).exists()
+        assert holiday('2022-01-23')
 
-        data = holiday(save=True)
-        assert data.all().any(), data
+    def test_holiday_not(self):
+        assert not holiday('2022-01-26')
 
-    def test_holiday_dataset(self):
-        data = holiday()
-        assert data.all().any(), data
+    def test_holiday_fmt(self):
+        assert holiday('2022-01-23', '%Y-%m-%d')
 
-    def test_holiday_now(self):
-        data = holiday('now')
-        assert data.all().any(), data
+    def test_holiday_country(self):
+        assert holiday('2022-01-23', '%Y-%m-%d', '法国')
 
-    def test_holiday_date(self):
-        data = holiday('2021-10-25')
-        assert data.all().any(), data
+        with pytest.raises(ValueError):
+            holiday('20220126')
+
+        with pytest.raises(ValueError):
+            holiday('2022-01-26', '%Y-%m-%d', country='巴西')
+#
