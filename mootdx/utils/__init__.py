@@ -146,6 +146,14 @@ def to_data(v, **kwargs):
         from mootdx.utils.adjust import fq_factor
         result = to_adjust(result, symbol=symbol, adjust=adjust)
 
+    if "datetime" in result.columns:
+        result.index = pd.to_datetime(result.datetime)
+    elif "date" in result.columns:
+        result.index = pd.to_datetime(result.date)
+
+    if "vol" in result.columns:
+        result['volume'] = result.vol
+
     return result
 
 
@@ -165,6 +173,10 @@ def to_file(df, filename=None):
 
     # 目录不存在创建目录
     Path(path_name).is_dir() or Path(path_name).mkdir(parents=True)
+
+    # methods = {'to_json': ['.json']}
+    # method = [k for k, v in methods if extension in v][0]
+    # getattr(pd, method)(filename)
 
     if extension == '.csv':
         return df.to_csv(filename, encoding='utf-8', index=False)

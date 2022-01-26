@@ -1,11 +1,11 @@
 import logging
-from pathlib import Path
-
 import pytest
+from pathlib import Path
 
 from mootdx import config
 
 
+@pytest.mark.skip
 class TestBestIP:
     config = ''
 
