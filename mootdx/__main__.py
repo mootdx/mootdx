@@ -22,7 +22,7 @@ from mootdx.utils import to_file
 #     ctx.obj['DEBUG'] and logging.basicConfig(level=logging.DEBUG)
 
 @click.group()
-@click.version_option(__version__, '-V', '--version', prog_name='Mootdx', message='%(prog)s: version %(version)s')
+@click.version_option(__version__, '-V', '--version', prog_name='Mootdx', message='%(prog)s: v%(version)s')
 @click.help_option('-h', '--help')
 def entry():
     ...
@@ -133,11 +133,6 @@ def affair(parse, fetch, downdir, output, downall, verbose, listfile):
             click.echo(feed)
         else:
             logger.logger.error('没找到要解析的文件.')
-
-
-# @entry.command(help='显示当前软件版本.')
-# def version():
-#     click.echo('mootdx v{}'.format(__version__))
 
 
 @entry.command(help='批量下载行情数据.')
