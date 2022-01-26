@@ -9,7 +9,7 @@ from mootdx.consts import CONFIG
 from mootdx.consts import EX_HOSTS
 from mootdx.consts import GP_HOSTS
 from mootdx.consts import HQ_HOSTS
-from mootdx.logger import log
+from mootdx.logger import logger
 from mootdx.utils import get_config_path
 
 hosts = {
@@ -27,7 +27,7 @@ def callback(res, key):
     if result.get('time'):
         results[key].append(result)
 
-    log.debug('callback: {}', res.result())
+    logger.debug('callback: {}', res.result())
 
 
 def connect(proxy):
@@ -42,12 +42,12 @@ def connect(proxy):
 
         proxy['time'] = (time.perf_counter() - start) * 1000
 
-        log.info('{addr}:{port} 验证通过，响应时间：{time} ms.'.format(**proxy))
+        logger.info('{addr}:{port} 验证通过，响应时间：{time} ms.'.format(**proxy))
     except socket.timeout as ex:
-        log.info('{addr},{port} time out.'.format(**proxy))
+        logger.info('{addr},{port} time out.'.format(**proxy))
         proxy['time'] = None
     except ConnectionRefusedError as ex:
-        log.info('{addr},{port} 验证失败.'.format(**proxy))
+        logger.info('{addr},{port} 验证失败.'.format(**proxy))
         proxy['time'] = None
     finally:
         return proxy
@@ -123,7 +123,7 @@ def bestip(console=False, limit=5, sync=True) -> None:
             if data:
                 default['BESTIP'][index] = data[0]
         except RuntimeError as ex:
-            log.error('请手动运行`python -m mootdx bestip`')
+            logger.error('请手动运行`python -m mootdx bestip`')
             break
 
     json.dump(default, open(config_, 'w', encoding='utf-8'), indent=2, ensure_ascii=False)

@@ -11,7 +11,7 @@ from tenacity import stop_after_attempt
 from tenacity import wait_fixed
 
 from mootdx.consts import return_last_value
-from mootdx.logger import log
+from mootdx.logger import logger
 
 
 @retry(wait=wait_fixed(2), retry_error_callback=return_last_value, stop=stop_after_attempt(5))
@@ -44,7 +44,7 @@ def get_adjust_year(symbol=None, year=None, factor='00'):
         factor = '02'
 
     if factor not in ['01', '02']:
-        log.warning('复权参数错误，factor 的值必须是: before, after, 01, 02')
+        logger.warning('复权参数错误，factor 的值必须是: before, after, 01, 02')
         return pd.DataFrame(data=None)
 
     try:
@@ -66,12 +66,12 @@ def get_adjust_year(symbol=None, year=None, factor='00'):
 
         return df
     except httpx.HTTPError:
-        log.warning('请求失败，正重试...')
+        logger.warning('请求失败，正重试...')
     except httpx.ConnectError:
-        log.warning('网络连接失败，请重试...')
+        logger.warning('网络连接失败，请重试...')
     except IndexError as e:
-        log.warning('数据解析错误，请求太频繁，请稍后重试...')
-        log.debug(e)
+        logger.warning('数据解析错误，请求太频繁，请稍后重试...')
+        logger.debug(e)
     finally:
         time.sleep(0.2)
 

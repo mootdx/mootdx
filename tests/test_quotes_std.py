@@ -1,7 +1,7 @@
 import unittest
 
 from mootdx.consts import MARKET_SH
-from mootdx.logger import log
+from mootdx.logger import logger
 from mootdx.quotes import Quotes
 
 
@@ -11,13 +11,13 @@ class TestStdQuotes(unittest.TestCase):
     # 初始化工作
     def setup_class(self):
         self.client = Quotes.factory(market='std', timeout=10)  # 标准市场
-        log.success('初始化工作')
+        logger.success('初始化工作')
 
     # 退出清理工作
     def teardown_class(self):
         self.client.client.close()
         del self.client
-        log.success('退出清理工作')
+        logger.success('退出清理工作')
 
     def test_quotes(self):
         data = self.client.quotes(symbol='600036')

@@ -9,7 +9,7 @@ from mootdx import __version__
 from mootdx import logger
 from mootdx import server
 from mootdx.affair import Affair
-from mootdx.logger import log
+from mootdx.logger import logger
 from mootdx.quotes import Quotes
 from mootdx.reader import Reader
 from mootdx.utils import get_config_path
@@ -69,12 +69,12 @@ def reader(symbol, action, market, tdxdir, output):
 
 @cli.command(help='测试行情服务器.')
 @click.option('-l', '--limit', default=5, help='显示最快前几个，默认 5.')
-@click.option('-v', '--verbose', is_flag=True, help='详细模式')
+@click.option('-v', '--verbose', count=True, help='详细模式')
 def bestip(limit, verbose):
-    verbose and logger.getLogger(verbose=verbose)
+    logger.reset(verbose=verbose)
     config = get_config_path('config.json')
     server.bestip(limit=limit, console=True, sync=False)
-    log.success('[√] 已经将最优服务器IP写入配置文件 {}'.format(config))
+    logger.success('[√] 已经将最优服务器IP写入配置文件 {}'.format(config))
 
 
 @cli.command(help='财务文件下载&解析.')
@@ -86,7 +86,7 @@ def bestip(limit, verbose):
 @click.option('-l', '--listfile', is_flag=True, default=False, help='显示全部文件')
 @click.option('-v', '--verbose', is_flag=True, help='详细模式')
 def affair(parse, fetch, downdir, output, downall, verbose, listfile):
-    verbose and logger.getLogger(verbose=verbose)
+    logger.reset(verbose=verbose)
 
     files = Affair.files()
 
@@ -124,7 +124,7 @@ def affair(parse, fetch, downdir, output, downall, verbose, listfile):
             output and to_file(feed, output)
             click.echo(feed)
         else:
-            log.error('没找到要解析的文件.')
+            logger.error('没找到要解析的文件.')
 
 
 @cli.command(help='显示当前软件版本.')

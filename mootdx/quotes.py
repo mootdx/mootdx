@@ -13,7 +13,7 @@ from tqdm import tqdm
 from mootdx import config
 from mootdx import server
 from mootdx.consts import MARKET_SH, return_last_value
-from mootdx.logger import log
+from mootdx.logger import logger
 from mootdx.utils import get_stock_market
 from mootdx.utils import get_stock_markets
 from mootdx.utils import to_data
@@ -40,28 +40,28 @@ class BaseQuotes(object):
 
     def __init__(self, bestip: bool = False, timeout: int = None, quiet=False, **kwargs) -> None:
 
-        quiet and log.remove()
+        quiet and logger.remove()
 
-        log.debug(f'bestip=>{bestip}')
+        logger.debug(f'bestip=>{bestip}')
         bestip and server.bestip()
 
-        log.debug(f'timeout=>{timeout}')
+        logger.debug(f'timeout=>{timeout}')
         self.timeout = timeout if timeout else 15
 
-        log.debug('config.setup()')
+        logger.debug('config.setup()')
         config.setup()
 
     def __del__(self):
-        log.debug('call __del__')
+        logger.debug('call __del__')
         self.close()
 
     def reconnect(self):
         if self.closed:
-            log.debug('服务器连接已断开，正进行重新连接...')
+            logger.debug('服务器连接已断开，正进行重新连接...')
             self.client.connect(*self.bestip)
 
     def close(self):
-        log.debug('close')
+        logger.debug('close')
 
         hasattr(self.client, 'close') and self.client.close()
 
@@ -86,7 +86,7 @@ def check_empty(value):
 
     # 判断状态空，则重连接
     if instance and _empty:
-        log.info('重新连接服务器')
+        logger.info('重新连接服务器')
         instance.client.connect(*instance.bestip)
 
     return _empty
@@ -108,7 +108,7 @@ class StdQuotes(BaseQuotes):
         try:
             config.get('SERVER').get('HQ')[0]
         except ValueError as ex:
-            log.warning(ex)
+            logger.warning(ex)
         finally:
             default = config.get('SERVER').get('HQ')[0]
             self.bestip = config.get('BESTIP').get('HQ', default)
@@ -421,7 +421,7 @@ class ExtQuotes(BaseQuotes):
         """
         super(ExtQuotes, self).__init__(bestip=bestip, timeout=timeout, **kwargs)
 
-        log.warning('目前扩展市场行情接口已经失效, 后期有望修复.')
+        logger.warning('目前扩展市场行情接口已经失效, 后期有望修复.')
 
         try:
             config.get('SERVER').get('EX')[0]
@@ -433,7 +433,7 @@ class ExtQuotes(BaseQuotes):
 
         if kwargs.get('quiet'):
             del kwargs['quiet']
-            
+
         self.client = TdxExHq_API(**kwargs)
         self.client.connect(*self.bestip)
 

@@ -4,7 +4,7 @@ from functools import partial
 from pathlib import Path
 
 from mootdx.financial import financial
-from mootdx.logger import log
+from mootdx.logger import logger
 from mootdx.utils import TqdmUpTo
 
 
@@ -20,7 +20,7 @@ async def fetch_file(downdir, file_obj):
 
     # 判断文件是否存在, 验证文件名和哈希值
     if filepath.exists() and file_obj['hash'] == hashlib.md5(open(filepath, 'rb').read()).hexdigest():
-        log.warning(f'文件已经存在: {filepath}')
+        logger.warning(f'文件已经存在: {filepath}')
         return None
 
     result = await asyncio.get_event_loop().run_in_executor(
@@ -42,7 +42,7 @@ class Affair(object):
         """
 
         if not filename:
-            log.critical('文件名不能为空!')
+            logger.critical('文件名不能为空!')
             return None
 
         filepath = Path(downdir) / filename
@@ -50,7 +50,7 @@ class Affair(object):
         if Path(filepath).exists():
             return financial.FinancialReader().to_data(filepath)
 
-        log.warning('文件不存在：{}'.format(filename))
+        logger.warning('文件不存在：{}'.format(filename))
 
         return None
 
@@ -81,11 +81,11 @@ class Affair(object):
         crawler = financial.Financial()
 
         if not Path(downdir).is_dir():
-            log.warning('下载目录不存在, 进行创建.')
+            logger.warning('下载目录不存在, 进行创建.')
             Path(downdir).mkdir(parents=True)
 
         if filename:
-            log.info('下载文件 {}.'.format(filename))
+            logger.info('下载文件 {}.'.format(filename))
 
             with TqdmUpTo(unit='B', unit_scale=True, miniters=1, ascii=True) as t:
                 crawler.fetch_only(report_hook=t.update_to, filename=filename, downdir=downdir)

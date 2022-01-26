@@ -5,7 +5,7 @@ from pathlib import Path
 
 import pandas as pd
 
-from mootdx.logger import log
+from mootdx.logger import logger
 
 
 def txt2csv(infile: str, outfile: str = None) -> pd.DataFrame:
@@ -25,17 +25,17 @@ def txt2csv(infile: str, outfile: str = None) -> pd.DataFrame:
 
         return df
     except FileNotFoundError as ex:
-        log.exception(ex)
-        log.warning(f'输入文件不存在: {infile}')
+        logger.exception(ex)
+        logger.warning(f'输入文件不存在: {infile}')
         raise ex
     except ValueError as ex:
-        log.exception(ex)
-        log.warning(f'无法解析输入文件: {infile}')
+        logger.exception(ex)
+        logger.warning(f'无法解析输入文件: {infile}')
         raise ex
 
 
 async def covert(src, dst):
-    log.info('covert {}...', src)
+    logger.info('covert {}...', src)
     return await asyncio.get_event_loop().run_in_executor(None, partial(txt2csv, infile=src, outfile=dst))
 
 

@@ -10,7 +10,7 @@ from pytdx.reader import TdxMinBarReader
 from mootdx import utils
 from mootdx.consts import TYPE_GROUP, TYPE_FLATS
 from mootdx.contrib.compat import MooTdxDailyBarReader
-from mootdx.logger import log
+from mootdx.logger import logger
 from mootdx.utils import get_stock_market
 
 

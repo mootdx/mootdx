@@ -10,7 +10,7 @@ import pandas as pd
 from pytdx.hq import TdxHq_API
 
 from .base import BaseFinancial
-from ..logger import log
+from ..logger import logger
 from ..logger import logger
 
 
@@ -105,7 +105,7 @@ class Financial(BaseFinancial):
         downfile = str(Path(downdir) / filename)
         filesize = kwargs.get('filesize') if kwargs.get('filesize') else 0
 
-        log.info('{}: start download...', filename)
+        logger.info('{}: start download...', filename)
 
         if not filename:
             raise Exception('Param filename is not set')
@@ -121,7 +121,7 @@ class Financial(BaseFinancial):
 
             del content
 
-            log.info('{}: done', filename)
+            logger.info('{}: done', filename)
 
             return download_file
 
