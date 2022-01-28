@@ -5,6 +5,7 @@ import pytest
 
 from mootdx.consts import MARKET_SH
 from mootdx.consts import MARKET_SZ
+from mootdx.consts import MARKET_BJ
 from mootdx.utils import get_config_path
 from mootdx.utils import get_stock_market
 from mootdx.utils import md5sum
@@ -13,6 +14,7 @@ from mootdx.utils import to_data
 data = [
     ('600036', MARKET_SH),
     ('000001', MARKET_SZ),
+    ('430090', MARKET_BJ),
 ]
 
 
