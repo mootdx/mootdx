@@ -1,6 +1,7 @@
 # 市场
-MARKET_SZ = 0  # 深圳
-MARKET_SH = 1  # 上海
+MARKET_SZ = 0  # 深市
+MARKET_SH = 1  # 沪市
+MARKET_BJ = 2  # 北交
 
 # K线种类
 # 0 -   5 分钟K 线

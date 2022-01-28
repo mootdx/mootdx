@@ -8,7 +8,7 @@ import pandas as pd
 from pandas import DataFrame
 from tqdm import tqdm
 
-from mootdx.consts import MARKET_SH
+from mootdx.consts import MARKET_SH, MARKET_BJ
 from mootdx.consts import MARKET_SZ
 from mootdx.logger import logger
 from mootdx.utils.adjust import to_adjust
@@ -44,6 +44,7 @@ def get_stock_market(symbol='', string=False):
 
     if symbol.startswith(('sh', 'sz', 'SH', 'SZ')):
         market = symbol[:2].lower()
+        return market
 
     elif symbol.startswith(('50', '51', '60', '68', '90', '110', '113', '132', '204')):
         market = 'sh'
@@ -54,8 +55,21 @@ def get_stock_market(symbol='', string=False):
     elif symbol.startswith(('5', '6', '9', '7')):
         market = 'sh'
 
+    elif symbol.startswith(('4', '8')):
+        market = 'bj'
+
     if string is False:
-        market = MARKET_SZ if market == 'sz' else MARKET_SH
+
+        if market == 'sh':
+            market = MARKET_SH
+
+        if market == 'sz':
+            market = MARKET_SZ
+
+        if market == 'bj':
+            market = MARKET_BJ
+
+        market = market if market else MARKET_SH
 
     return market
 
