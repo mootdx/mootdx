@@ -15,6 +15,7 @@ data = [
     ('600036', MARKET_SH),
     ('000001', MARKET_SZ),
     ('430090', MARKET_BJ),
+    ('872925', MARKET_BJ),
 ]
 
 

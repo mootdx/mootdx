@@ -8,6 +8,9 @@ class TestHoliday:
     def test_holiday_exists(self):
         assert holiday('2022-01-23')
 
+    def test_holiday_today(self):
+        assert not holiday()
+
     def test_holiday_not(self):
         assert not holiday('2022-01-26')
 

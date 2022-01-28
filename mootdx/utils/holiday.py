@@ -16,6 +16,7 @@ from tenacity import stop_after_attempt, wait_fixed, retry
 
 from mootdx import get_config_path
 from mootdx.consts import return_last_value
+from mootdx.logger import logger
 
 hk_js_decode = """
 function d(t) {
@@ -360,16 +361,19 @@ def holiday2(date=False, save=True) -> pd.DataFrame:
     return temp_df
 
 
-def holiday(date=None, format_=None, country=None) -> bool:
+def holiday(date=None, format_=None, country=None):
     cache_file = get_config_path('holiday.plk')
 
     format_ = format_ if format_ else "%Y-%m-%d"
-    date = date if date else datetime.datetime.now().date()
     country = country if country else '中国'
 
     try:
-        date = datetime.datetime.strptime(date, format_).date()
+        if date:
+            date = datetime.datetime.strptime(date, format_).date()
+        else:
+            date = datetime.datetime.now().date()
     except ValueError as ex:
+        logger.exception("日期或者日期格式错误!")
         raise ex
 
     if date.weekday() >= 5:
@@ -389,4 +393,5 @@ def holiday(date=None, format_=None, country=None) -> bool:
     if country not in list(set(df['国家'].values)):
         raise ValueError(f'没有该国家`{country}`的交易日数据')
 
-    return df[df.index == date][df['国家'] == country].empty is False
+    df = df[df['国家'] == country]
+    return not df[df.index.isin([date])].empty
