@@ -85,26 +85,28 @@ from mootdx.tools import tdx2csv
 tdx2csv.batch(src='c:/tdx/export', dst='c:/tdx/output')
 ```
 
-## 04. 交易日历数据
+## 04. 交易日是否法定节假日
+
+参数：
+ - date: 日期, 字符格式
+ - format_: 日期格式 默认: %Y-%m-%d (e: 2010-01-01)
+ - country: 国家, 默认: 中国
 
 返回值：
 
-- pd.DataFrame
+- 布尔值, True 为法定节假日, False 不是法定节假日
 
 **调用方法：**
 
 ```python
 from mootdx.utils import holiday
 
-# 获取全部交易日期
-days = holiday.holiday()
-
-# 判断一个日期是否是交易日
+# 判断一个日期是否是法定节假日
 holiday.holiday(date='20200202', format_='%Y%m%d', country='中国')
 
-# 判断一个日期是否是交易日
+# 判断一个日期是否是法定节假日
 holiday.holiday(date='2020-02-02')
 
-# 判断当天日期是否是交易日（date的值空为当天日期）
+# 判断当天日期是否是法定节假日（date的值空为当天日期）
 holiday.holiday()
 ```
