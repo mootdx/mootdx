@@ -2,6 +2,8 @@ import sys
 
 from loguru import logger
 
+logger.remove()
+
 
 def getLogger(quiet=None, verbose=None):
     level = ('INFO', 'DEBUG')[bool(verbose)]
@@ -12,11 +14,7 @@ def getLogger(quiet=None, verbose=None):
     return logger
 
 
-logger.level('TRADER', no=29, color='<green>', icon='[@]')
-logger.level('VERBOSE', no=6, color='<yellow>', icon='[@]')
-
-
-def reset(verbose=None, **kwargs) -> logger:
+def reset(verbose: int = 0, **kwargs) -> logger:
     """
     重置 logger 等级函数
 
@@ -24,14 +22,10 @@ def reset(verbose=None, **kwargs) -> logger:
     :param kwargs:
     :return:
     """
+
     levels = ['WARNING', 'INFO', 'DEBUG', 'TRACE']
     levels = levels[-1] if verbose > len(levels) else levels[verbose]
 
     logger.remove()
-    logger.add(sys.stdout, format='{message}', level=levels)
-    logger.add('runtime/trade-{time}.log', format='{message}', level='TRADER', filter='tradebot')
-
-    # DEBUG 日志
-    verbose and logger.add('runtime/debug-{time}.log', format='{message}', level=levels, filter='tradebot')
-
+    logger.add(sys.stdout, level=levels)
     return logger
