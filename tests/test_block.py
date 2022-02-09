@@ -28,6 +28,9 @@ def test_block_new(reader):
     assert reader.block_new(name='优质股', symbol=['600036'])
     assert reader.block_new(group=True).empty is False
 
+    df = reader.block_new()
+    assert (df[df.blockname == "优质股"].code == "600036").all()
+
 
 @pytest.mark.parametrize("symbol,expected", [
     ("incon.dat", "incon.dat"),
