@@ -294,7 +294,7 @@ def block_new(tdxdir=None, name: str = None, symbol: list = None):
 
     # 写 blk 文件
     with open(f'{vipdoc}/{file}.blk', 'w') as fp:
-        fp.write('\n'.join([get_stock_market(s) + s for s in symbol]))
+        fp.write('\n'.join([f"{get_stock_market(s)}{s}" for s in symbol]))
 
     # 写 blocknew.cfg 文件
     with open(block_file, 'ab') as fp:
