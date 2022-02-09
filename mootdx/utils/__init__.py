@@ -1,4 +1,5 @@
 import hashlib
+import time
 from datetime import datetime
 from pathlib import Path
 from struct import calcsize
@@ -264,7 +265,7 @@ def block_new(tdxdir=None, name: str = None, symbol: list = None):
         name = datetime.now().strftime('%Y%m%d%H%M%S')
 
     # 按时间生成 blk 文件名
-    file = datetime.now().strftime('%Y%m%d%H%M%S')
+    file = str(time.time_ns())
 
     vipdoc = Path(tdxdir, 'T0002', 'blocknew')
     symbol = list(set(symbol))
@@ -293,7 +294,7 @@ def block_new(tdxdir=None, name: str = None, symbol: list = None):
 
     # 写 blk 文件
     with open(f'{vipdoc}/{file}.blk', 'w') as fp:
-        fp.write('\n'.join(symbol))
+        fp.write('\n'.join([get_stock_market(s) + s for s in symbol]))
 
     # 写 blocknew.cfg 文件
     with open(block_file, 'ab') as fp:
