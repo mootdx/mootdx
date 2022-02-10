@@ -1,17 +1,12 @@
-# -*- coding: utf-8 -*-
 # @Author  : BoPo
 # @Time    : 2022/1/18 15:47
 # @Function:
-
 # array(['year', 'month', 'day', 'category', 'name', 'fenhong', 'peigujia',
 #        'songzhuangu', 'peigu', 'suogu', 'panqianliutong', 'panhouliutong',
 #        'qianzongguben', 'houzongguben', 'fenshu', 'xingquanjia'],
 #       dtype=object)
-
-
 # present  bonus  price  rationed
 # 展示      奖金    价格    配给
-
 # category == 1
 # fenhong 分红
 # peigujia 配股价
@@ -23,15 +18,11 @@
 # houzongguben 后总股本
 # fenshu 分属
 # xingquanjia 行权价
-
 # http://www.allparty.cn/yong-Pandas-ji-suan-qian-fu-quan-shu-ju.html
 # http://www.cppblog.com/wangkang2009/archive/2015/04/25/210437.aspx
-
 # https://raw.githubusercontent.com/yutiansut/QUANTAXIS/master/QUANTAXIS/QAData/data_fq.py
 # https://www.cnblogs.com/whiteBear/p/12782161.html
 # https://www.cnblogs.com/weidu/p/9831807.html
-
-
 import pandas as pd
 
 from mootdx.quotes import Quotes

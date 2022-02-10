@@ -111,3 +111,42 @@ holiday.holiday(date='2020-02-02')
 # 判断当天日期是否是法定节假日（date的值空为当天日期）
 holiday.holiday()
 ```
+
+<a href="#05"></a>
+
+## 05. 新版自定义板块操作
+
+参数说明:
+
+- name: 板块名称
+- symbol: 股票代码列表
+- tdxdir: 通达信的安装目录
+
+返回值：
+
+- 布尔值, True 成功, False 失败
+
+**调用方法：**
+
+```python
+from mootdx.tools.customize import Customize
+
+# 初始化一个自定义版本操作对象, tdxdir 可根据具体情况修改
+custom = Customize(tdxdir='C:/new_tdx')
+
+# 新建自定义板块
+custom.create(name='龙虎榜', symbol=['600036', '600016'])
+
+# 再创建一个, 板块名称不能重复
+custom.create(name='优质股', symbol=['600036', '600016'])
+
+# 修改自定义板块
+custom.update(name='龙虎榜', symbol=['600036', '600016'])
+
+# 查询自定义板块
+custom.search(name='龙虎榜')
+
+# 删除指定名称的自定义板块
+custom.remove(name='龙虎榜')
+
+```

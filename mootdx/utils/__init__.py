@@ -1,6 +1,4 @@
 import hashlib
-import time
-from datetime import datetime
 from pathlib import Path
 from struct import calcsize
 from struct import unpack
@@ -9,7 +7,8 @@ import pandas as pd
 from pandas import DataFrame
 from tqdm import tqdm
 
-from mootdx.consts import MARKET_SH, MARKET_BJ
+from mootdx.consts import MARKET_BJ
+from mootdx.consts import MARKET_SH
 from mootdx.consts import MARKET_SZ
 from mootdx.logger import logger
 from mootdx.utils.adjust import to_adjust
@@ -159,12 +158,12 @@ def to_data(v, **kwargs):
         from mootdx.utils.adjust import fq_factor
         result = to_adjust(result, symbol=symbol, adjust=adjust)
 
-    if "datetime" in result.columns:
+    if 'datetime' in result.columns:
         result.index = pd.to_datetime(result.datetime)
-    elif "date" in result.columns:
+    elif 'date' in result.columns:
         result.index = pd.to_datetime(result.date)
 
-    if "vol" in result.columns:
+    if 'vol' in result.columns:
         result['volume'] = result.vol
 
     return result
@@ -247,63 +246,13 @@ def get_config_path(config='config.json'):
     return str(filename)
 
 
-def block_new(tdxdir: str = None, name: str = None, symbol: list = None, blk_file: str = None, **kwargs):
-    """
-    自定义模块写入函数
+def get_frequency(frequency) -> int:
+    FREQUENCY = ['5m', '15m', '30m', '1h', 'day', 'week', 'mon', '1m', '1m', 'day', '3mon', 'year']
 
-    :param tdxdir: tdx 路径
-    :param name: 自定义板块名称
-    :param symbol: 自定义板块股票代码集合
-    :param blk_file: 自定义板块股票代码集合文件
-    :return: bool
-    """
-    logger.info(blk_file)
+    try:
+        if isinstance(frequency, str):
+            frequency = FREQUENCY.index(frequency)
+    except ValueError:
+        frequency = 0
 
-    if not tdxdir:
-        logger.error(f'通达信路径不存在或者空: {tdxdir}')
-        return False
-
-    # 自定义板块名称未传入则自动按时间生成名称
-    if not name:
-        name = datetime.now().strftime('%Y%m%d%H%M%S')
-
-    # 按时间生成 blk 文件名
-    blk_file = blk_file if blk_file else str(time.time_ns())
-
-    vipdoc = Path(tdxdir, 'T0002', 'blocknew')
-    symbol = list(set(symbol))
-
-    # 判断目录是否存在
-    if not Path(vipdoc).is_dir():
-        logger.error(f'自定义板块目录错误: {vipdoc}')
-        return False
-
-    block_file = Path(vipdoc) / 'blocknew.cfg'
-
-    # 文件不存在就创建
-    if not block_file.exists():
-        block_file.write_text('')
-
-    # 判断名字是否重名
-    with open(block_file, 'rb') as fp:
-        names = fp.read().decode('gbk', 'ignore')
-        names = names.split('\x00')
-        names = [x for x in names if x != '']
-        names = [v for i, v in enumerate(names) if i % 2 == 0]
-
-        # if name in names:
-        #     logger.error('自定义板块名称重复.')
-        #     raise Exception('自定义板块名称重复.')
-
-    # 写 blk 文件
-    with open(f'{vipdoc}/{blk_file}.blk', 'w') as fp:
-        fp.write('\n'.join([f"{get_stock_market(s)}{s}" for s in symbol]))
-
-    # 写 blocknew.cfg 文件
-    with open(block_file, 'ab') as fp:
-        data = name + ((50 - len(name.encode('gbk', 'ignore'))) * '\x00')
-        data += blk_file + ((70 - len(blk_file.encode('gbk', 'ignore'))) * '\x00')
-        data = bytes(data.encode('gbk', 'ignore'))
-        fp.write(data)
-
-    return True
+    return frequency

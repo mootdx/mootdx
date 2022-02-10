@@ -1,16 +1,12 @@
 from abc import ABC
 from pathlib import Path
 
-from pytdx.reader import BlockReader
-from pytdx.reader import CustomerBlockReader
 from pytdx.reader import TdxExHqDailyBarReader
 from pytdx.reader import TdxLCMinBarReader
 from pytdx.reader import TdxMinBarReader
 
-from mootdx import utils
-from mootdx.consts import TYPE_GROUP, TYPE_FLATS
+from mootdx import block
 from mootdx.contrib.compat import MooTdxDailyBarReader
-from mootdx.logger import logger
 from mootdx.utils import get_stock_market
 
 
@@ -18,12 +14,14 @@ from mootdx.utils import get_stock_market
 class Reader(object):
     @staticmethod
     def factory(market='std', **kwargs):
-        """ Reader 工厂方法
+        """
+        Reader 工厂方法
 
         :param market: std 标准市场, ext 扩展市场
         :param kwargs: 可变参数
         :return:
         """
+
         if market == 'ext':
             return ExtReader(**kwargs)
 
@@ -37,7 +35,8 @@ class ReaderBase(ABC):
     tdxdir = 'C:/new_tdx'
 
     def __init__(self, tdxdir=None):
-        """ 构造函数
+        """
+        构造函数
 
         :param tdxdir: 通达信安装目录
         """
@@ -48,7 +47,8 @@ class ReaderBase(ABC):
         self.tdxdir = tdxdir
 
     def find_path(self, symbol=None, subdir='lday', suffix=None, **kwargs):
-        """ 自动匹配文件路径，辅助函数
+        """
+        自动匹配文件路径，辅助函数
 
         :param symbol:
         :param subdir:
@@ -89,7 +89,8 @@ class StdReader(ReaderBase):
     """股票市场"""
 
     def daily(self, symbol=None):
-        """ 获取日线数据
+        """
+        获取日线数据
 
         :param symbol: 证券代码
         :return: pd.dataFrame or None
@@ -100,7 +101,8 @@ class StdReader(ReaderBase):
         return reader.get_df(str(vipdoc)) if vipdoc else None
 
     def minute(self, symbol=None, suffix=1):
-        """ 获取1, 5分钟线
+        """
+        获取1, 5分钟线
 
         :param suffix: 文件前缀
         :param symbol: 证券代码
@@ -117,7 +119,8 @@ class StdReader(ReaderBase):
         return None
 
     def fzline(self, symbol=None):
-        """ 分钟线数据
+        """
+        分钟线数据
 
         :param symbol: 自定义板块股票列表, 类型 list
         :return: pd.dataFrame or Bool
@@ -125,10 +128,8 @@ class StdReader(ReaderBase):
         return self.minute(symbol, suffix=5)
 
     def block_new(self, name: str = None, symbol: list = None, group=False, **kwargs):
-        """ 自定义板块数据操作
-
-        提示: name 和 symbol 全为空则为读取，否则写入操作
-        参考: http://blog.sina.com.cn/s/blog_623d2d280102vt8y.html
+        """
+        自定义板块数据操作
 
         :param name: 自定义板块名称
         :param symbol: 自定义板块股票列表, 类型 list
@@ -136,43 +137,18 @@ class StdReader(ReaderBase):
         :return: pd.dataFrame or Bool
         """
 
-        if name and symbol:
-            return utils.block_new(self.tdxdir, name=name, symbol=symbol, **kwargs)
-
-        vipdoc = Path(self.tdxdir, 'T0002', 'blocknew')
-        types_ = TYPE_GROUP if group else TYPE_FLATS
-
-        return CustomerBlockReader().get_df(str(vipdoc), types_) if vipdoc.is_dir() else None
+        return block.blocknew(self.tdxdir, name, symbol, group=group, **kwargs)
 
     def block(self, symbol='', group=False, **kwargs):
-        """ 获取板块数据
-
-        参考: http://blog.sina.com.cn/s/blog_623d2d280102vt8y.html
+        """
+        获取板块数据
 
         :param symbol:  板块文件
         :param group:   分组解析
         :return: pd.dataFrame or None
         """
 
-        suffix = Path(symbol).suffix
-        suffix = suffix if suffix else 'dat'
-
-        symbol = symbol.replace(suffix, '')
-        suffix = suffix.strip('.')
-
-        if 'incon' in symbol:
-            vipdoc = Path(self.tdxdir) / f'{symbol}.{suffix}'
-        else:
-            vipdoc = Path(self.tdxdir) / 'T0002' / 'hq_cache' / f'{symbol}.{suffix}'
-
-        vipdoc.exists() or logger.debug(f'文件不存在: {vipdoc}')
-
-        types_ = TYPE_GROUP if group else TYPE_FLATS
-
-        if kwargs.get('debug'):
-            return str(vipdoc)
-
-        return BlockReader().get_df(str(vipdoc), types_) if vipdoc.exists() else None
+        return block.block(self.tdxdir, symbol, group=group, **kwargs)
 
 
 class ExtReader(ReaderBase):
@@ -183,7 +159,8 @@ class ExtReader(ReaderBase):
         self.reader = TdxExHqDailyBarReader()
 
     def daily(self, symbol=None):
-        """ 获取扩展市场日线数据
+        """
+        获取扩展市场日线数据
 
         :return: pd.dataFrame or None
         """
@@ -192,7 +169,8 @@ class ExtReader(ReaderBase):
         return self.reader.get_df(str(vipdoc)) if vipdoc else None
 
     def minute(self, symbol=None):
-        """ 获取扩展市场分钟线数据
+        """
+        获取扩展市场分钟线数据
 
         :return: pd.dataFrame or None
         """
@@ -204,7 +182,8 @@ class ExtReader(ReaderBase):
         return self.reader.get_df(str(vipdoc)) if vipdoc else None
 
     def fzline(self, symbol=None):
-        """ 获取日线数据
+        """
+        获取日线数据
 
         :return: pd.dataFrame or None
         """

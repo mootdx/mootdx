@@ -9,6 +9,14 @@ from mootdx.utils import TqdmUpTo
 
 
 def download(downdir, filename):
+    """
+    带进度条下载函数
+
+    :param downdir:
+    :param filename:
+    :return:
+    """
+
     with TqdmUpTo(unit='B', unit_scale=True, miniters=1, ascii=True) as t:
         financial.Financial().fetch_only(report_hook=t.update_to, filename=filename, downdir=downdir)
 
@@ -16,6 +24,14 @@ def download(downdir, filename):
 
 
 async def fetch_file(downdir, file_obj):
+    """
+    下载文件
+
+    :param downdir:
+    :param file_obj: 文件对象
+    :return:
+    """
+
     filepath = Path(downdir) / file_obj['filename']
 
     # 判断文件是否存在, 验证文件名和哈希值
@@ -70,17 +86,18 @@ class Affair(object):
         return results
 
     @staticmethod
-    def fetch(downdir='.', filename=None):
+    def fetch(downdir: str = None, filename: str = None):
         """
         财务数据下载
 
-        :param downdir:
-        :param filename:
+        :param downdir: 下载目录
+        :param filename: 文件名
         :return:
         """
 
         history = financial.FinancialList()
         crawler = financial.Financial()
+        downdir = downdir or '.'
 
         if not Path(downdir).is_dir():
             logger.warning('下载目录不存在, 进行创建.')

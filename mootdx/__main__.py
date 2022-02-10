@@ -5,11 +5,8 @@ import click
 from prettytable import PrettyTable
 
 from mootdx import __version__
-from mootdx import logger
-from mootdx import server
-from mootdx.affair import Affair
-from mootdx.quotes import Quotes
-from mootdx.reader import Reader
+from mootdx.logger import logger
+from mootdx.logger import reset as logger_reset
 from mootdx.utils import get_config_path
 from mootdx.utils import to_file
 
@@ -35,7 +32,8 @@ def entry():
 @click.option('-a', '--action', default='bars', help='操作类型 (daily: 日线, minute: 一分钟线, fzline: 五分钟线).', )
 @click.option('-m', '--market', default='std', help='证券市场, 默认 std (std: 标准股票市场, ext: 扩展市场).')
 def quotes(symbol, action, market, output):
-    client = Quotes.factory(market=market, multithread=True, heartbeat=True)
+    from mootdx.quotes import Quotes
+    client = Quotes.factory(market=market, multithread=True)
 
     try:
         action = 'bars' if 'daily' else action
@@ -63,6 +61,7 @@ def quotes(symbol, action, market, output):
 @click.option('-m', '--market', default='std', help='证券市场, 默认 std (std: 标准股票市场, ext: 扩展市场).')
 @click.option('-o', '--output', default=None, help='输出文件, 支持 CSV, HDF5, Excel 等格式.')
 def reader(symbol, action, market, tdxdir, output):
+    from mootdx.reader import Reader
     client = Reader.factory(market=market, tdxdir=tdxdir)
 
     try:
@@ -73,15 +72,27 @@ def reader(symbol, action, market, tdxdir, output):
         raise e
 
 
-@entry.command(help='测试行情服务器.')
+@entry.command(help='添加行情服务器.', name='remote')
+@click.help_option('-h', '--help')
+@click.option('-v', '--verbose', count=True, help='详细模式')
+@click.argument('server')
+def channel(server, verbose):
+    logger_reset(verbose=verbose)
+    config = get_config_path('config.json')
+    logger.success('[√] 已经将最优服务器IP写入配置文件 {} {}'.format(config, server))
+
+
+@entry.command(help='测试行情服务器.', name='bestip')
 @click.help_option('-h', '--help')
 @click.option('-l', '--limit', default=5, help='显示最快前几个，默认 5.')
 @click.option('-v', '--verbose', count=True, help='详细模式')
-def bestip(limit, verbose):
-    logger.reset(verbose=verbose)
+def server(limit, verbose):
+    from mootdx.server import bestip
+
+    logger_reset(verbose=verbose)
     config = get_config_path('config.json')
-    server.bestip(limit=limit, console=True, sync=False)
-    logger.logger.success('[√] 已经将最优服务器IP写入配置文件 {}'.format(config))
+    bestip(limit=limit, console=True, sync=False)
+    logger.success('[√] 已经将最优服务器IP写入配置文件 {}'.format(config))
 
 
 @entry.command(help='财务文件下载&解析.')
@@ -94,7 +105,9 @@ def bestip(limit, verbose):
 @click.option('-l', '--listfile', is_flag=True, default=False, help='显示全部文件')
 @click.option('-v', '--verbose', count=True, help='详细模式')
 def affair(parse, fetch, downdir, output, downall, verbose, listfile):
-    logger.reset(verbose=verbose)
+    from mootdx.affair import Affair
+
+    logger_reset(verbose=verbose)
 
     files = Affair.files()
 
@@ -132,7 +145,7 @@ def affair(parse, fetch, downdir, output, downall, verbose, listfile):
             output and to_file(feed, output)
             click.echo(feed)
         else:
-            logger.logger.error('没找到要解析的文件.')
+            logger.error('没找到要解析的文件.')
 
 
 @entry.command(help='批量下载行情数据.')
@@ -147,7 +160,9 @@ def bundle(symbol, action, market, output, extension):
     批量下载行情数据
     :return:
     """
-    client = Quotes.factory(market=market)
+    from mootdx.quotes import Quotes
+
+    client = Quotes.factory(market=market, multithread=True)
     symbol = symbol.replace('，', ',').strip(',').split(',')
 
     for code in symbol:

@@ -1,10 +1,11 @@
-prettytable>=2.2.0
-tenacity>=8.0.1
-pandas>=0.23.3
-loguru>=0.5.3
-httpx>=0.22.0
-tqdm>=4.37.0
 click>=6.7
+httpx>=0.22.0
+loguru>=0.5.3
+pandas>=0.23.3
+prettytable>=2.2.0
 pytdx>=1.72
+simplejson>=3.17.6
+tenacity>=8.0.1
+tqdm>=4.37.0
 # pyyaml
 # py_mini_racer>=0.6.0

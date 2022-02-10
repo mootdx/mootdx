@@ -7,6 +7,7 @@ from mootdx.quotes import Quotes
 from mootdx.utils import to_adjust
 
 
+@pytest.mark.skip
 class TestAdjust2(unittest.TestCase):
     client = None
 
