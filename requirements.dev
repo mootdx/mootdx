@@ -1,0 +1,13 @@
+pipenv_to_requirements
+gitchangelog
+bumpversion
+pytest
+pystache
+mock
+useragent
+httmock
+vcrpy
+coverage
+responses
+coloredlogs
+respx
