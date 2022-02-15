@@ -5,7 +5,7 @@ from loguru import logger
 logger.remove()
 
 
-def getLogger(quiet=None, verbose=None):
+def getLogger(quiet=None, verbose=None) -> logger:  # noqa
     level = ('INFO', 'DEBUG')[bool(verbose)]
     logger.remove()
 
@@ -14,7 +14,7 @@ def getLogger(quiet=None, verbose=None):
     return logger
 
 
-def reset(verbose: int = 0, **kwargs) -> logger:
+def reset(verbose: int = 0, **kwargs) -> logger:  # noqa
     """
     重置 logger 等级函数
 
@@ -24,8 +24,13 @@ def reset(verbose: int = 0, **kwargs) -> logger:
     """
 
     levels = ['WARNING', 'INFO', 'DEBUG', 'TRACE']
-    levels = levels[-1] if verbose > len(levels) else levels[verbose]
+    level0 = levels[-1] if verbose > len(levels) else levels[verbose]
 
     logger.remove()
-    logger.add(sys.stdout, level=levels)
+    logger.add(sys.stdout, level=level0)
+
     return logger
+
+
+def setup(verbose: int = 0, **kwargs) -> logger:  # noqa
+    return reset(verbose=verbose, **kwargs)

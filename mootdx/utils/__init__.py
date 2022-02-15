@@ -247,17 +247,20 @@ def get_config_path(config='config.json'):
     return str(filename)
 
 
-def block_new(tdxdir=None, name: str = None, symbol: list = None):
+def block_new(tdxdir: str = None, name: str = None, symbol: list = None, blk_file: str = None, **kwargs):
     """
     自定义模块写入函数
 
     :param tdxdir: tdx 路径
     :param name: 自定义板块名称
     :param symbol: 自定义板块股票代码集合
+    :param blk_file: 自定义板块股票代码集合文件
     :return: bool
     """
+    logger.info(blk_file)
 
     if not tdxdir:
+        logger.error(f'通达信路径不存在或者空: {tdxdir}')
         return False
 
     # 自定义板块名称未传入则自动按时间生成名称
@@ -265,7 +268,7 @@ def block_new(tdxdir=None, name: str = None, symbol: list = None):
         name = datetime.now().strftime('%Y%m%d%H%M%S')
 
     # 按时间生成 blk 文件名
-    file = str(time.time_ns())
+    blk_file = blk_file if blk_file else str(time.time_ns())
 
     vipdoc = Path(tdxdir, 'T0002', 'blocknew')
     symbol = list(set(symbol))
@@ -288,18 +291,18 @@ def block_new(tdxdir=None, name: str = None, symbol: list = None):
         names = [x for x in names if x != '']
         names = [v for i, v in enumerate(names) if i % 2 == 0]
 
-        if name in names:
-            logger.error('自定义板块名称重复.')
-            raise Exception('自定义板块名称重复.')
+        # if name in names:
+        #     logger.error('自定义板块名称重复.')
+        #     raise Exception('自定义板块名称重复.')
 
     # 写 blk 文件
-    with open(f'{vipdoc}/{file}.blk', 'w') as fp:
+    with open(f'{vipdoc}/{blk_file}.blk', 'w') as fp:
         fp.write('\n'.join([f"{get_stock_market(s)}{s}" for s in symbol]))
 
     # 写 blocknew.cfg 文件
     with open(block_file, 'ab') as fp:
         data = name + ((50 - len(name.encode('gbk', 'ignore'))) * '\x00')
-        data += file + ((70 - len(file.encode('gbk', 'ignore'))) * '\x00')
+        data += blk_file + ((70 - len(blk_file.encode('gbk', 'ignore'))) * '\x00')
         data = bytes(data.encode('gbk', 'ignore'))
         fp.write(data)
 

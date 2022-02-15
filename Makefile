@@ -56,6 +56,9 @@ clean-test: ## remove test and coverage artifacts
 lint: ## check style with flake8
 	flake8 --max-line-length=200
 
+cov: 
+	py.test --cov=mootdx -v
+
 test: ## run tests quickly with the default Python
 	py.test tests
 

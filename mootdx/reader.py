@@ -124,7 +124,7 @@ class StdReader(ReaderBase):
         """
         return self.minute(symbol, suffix=5)
 
-    def block_new(self, name: str = None, symbol: list = None, group=False):
+    def block_new(self, name: str = None, symbol: list = None, group=False, **kwargs):
         """ 自定义板块数据操作
 
         提示: name 和 symbol 全为空则为读取，否则写入操作
@@ -137,7 +137,7 @@ class StdReader(ReaderBase):
         """
 
         if name and symbol:
-            return utils.block_new(self.tdxdir, name=name, symbol=symbol)
+            return utils.block_new(self.tdxdir, name=name, symbol=symbol, **kwargs)
 
         vipdoc = Path(self.tdxdir, 'T0002', 'blocknew')
         types_ = TYPE_GROUP if group else TYPE_FLATS
@@ -164,6 +164,8 @@ class StdReader(ReaderBase):
             vipdoc = Path(self.tdxdir) / f'{symbol}.{suffix}'
         else:
             vipdoc = Path(self.tdxdir) / 'T0002' / 'hq_cache' / f'{symbol}.{suffix}'
+
+        vipdoc.exists() or logger.debug(f'文件不存在: {vipdoc}')
 
         types_ = TYPE_GROUP if group else TYPE_FLATS
 
