@@ -294,7 +294,7 @@ client = Quotes.factory(market='std')
 client.finance(symbol="600300")
 ```
 
-## 14. 读取k线信息
+## 14. 读取 OHLC k线信息
 
 **参数说明: **
 

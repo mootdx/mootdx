@@ -4,7 +4,7 @@ url = "https://mirrors.aliyun.com/pypi/simple/"
 verify_ssl = true
 
 [dev-packages]
-pipenv_to_requirements = "*"
+pipenv-to-requirements = "*"
 gitchangelog = "*"
 bumpversion = "*"
 pytest = "*"
@@ -15,20 +15,21 @@ httmock = "*"
 vcrpy = "*"
 coverage = "*"
 responses = "*"
-coloredlogs = ">=10.0"
+coloredlogs = "*"
+respx = "*"
 
 [packages]
-prettytable = ">=0.7.2"
-pandas = ">=0.23.3"
-pytdx = ">=1.67"
+prettytable = "*"
+tenacity = "*"
+pandas = "*"
 loguru = "*"
 httpx = "*"
-click = ">=6.7"
 tqdm = "*"
-tenacity = "*"
-matplotlib = "*"
-py_mini_racer = ">=0.6.0"
-akshare = "*"
+click = "*"
+pytdx = "*"
 
 [requires]
 python_version = "3.8"
+
+[pipenv]
+allow_prereleases = true

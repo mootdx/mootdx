@@ -72,6 +72,9 @@ class BaseQuotes(object):
 
         return False
 
+    def pool(self):
+        ...
+
 
 instance: BaseQuotes
 
@@ -110,11 +113,14 @@ class StdQuotes(BaseQuotes):
         except ValueError as ex:
             logger.warning(ex)
         finally:
-            default = config.get('SERVER').get('HQ')[0]
+            default = config.get('SERVER').get('HQ')[0][1:]
             self.bestip = config.get('BESTIP').get('HQ', default)
 
         if kwargs.get('quiet'):
             del kwargs['quiet']
+
+        # ip_pool = AvailableIPPool(TdxHq_API, config.get('SERVER').get('HQ')[:5])
+        # self.client = TdxHqPool_API(TdxHq_API, ip_pool)
 
         self.client = TdxHq_API(raise_exception=False, **kwargs)
         self.client.connect(*self.bestip)
@@ -274,7 +280,7 @@ class StdQuotes(BaseQuotes):
         return to_data(result, symbol=symbol, **kwargs)
 
     @retry(stop=stop_after_attempt(3), retry_error_callback=return_last_value, retry=(retry_if_exception_type() | retry_if_result(check_empty)))
-    def F10C(self, symbol=''):
+    def F10C(self, symbol=''):  # noqa
         """ 查询公司信息目录
 
         :param symbol: 股票代码
@@ -286,7 +292,7 @@ class StdQuotes(BaseQuotes):
         return result
 
     @retry(stop=stop_after_attempt(3), retry_error_callback=return_last_value, retry=(retry_if_exception_type() | retry_if_result(check_empty)))
-    def F10(self, symbol='', name=''):
+    def F10(self, symbol='', name=''):  # noqa
         """ 读取公司信息详情
 
         :param name: 公司 F10 标题
@@ -359,8 +365,22 @@ class StdQuotes(BaseQuotes):
         :return: pd.dataFrame or None
         """
 
-        result = self.client.get_k_data(symbol, begin, end)
+        result = self.get_k_data(symbol, begin, end)
         return result
+
+    def ohlc(self, **kwargs):
+        return self.k(**kwargs)
+
+    def get_k_data(self, code, start_date, end_date):
+
+        # !! todo
+        data = pd.concat([self.client.to_df(self.client.get_security_bars(9, get_stock_market(code), code, (9 - i) * 800, 800)) for i in range(10)], axis=0)
+        data = data.assign(date=data['datetime'].apply(lambda x: str(x)[0:10])).assign(code=str(code))
+        data = data.set_index('date', drop=False, inplace=False)
+        data = data.drop(['year', 'month', 'day', 'hour', 'minute', 'datetime'], axis=1)[start_date:end_date]
+        data = data.assign(date=data['date'].apply(lambda x: str(x)[0:10]))
+
+        return data
 
     @retry(stop=stop_after_attempt(3), retry_error_callback=return_last_value, retry=(retry_if_exception_type() | retry_if_result(check_empty)))
     def index(self, symbol='000001', market=MARKET_SH, frequency=9, start=1, offset=2, **kwargs):
@@ -374,7 +394,6 @@ class StdQuotes(BaseQuotes):
         - 4 日K线
         - 5 周K线
         - 6 月K线
-
         - 7 1分钟
         - 8 1分钟K线
         - 9 日K线
