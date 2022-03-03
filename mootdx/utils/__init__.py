@@ -291,9 +291,10 @@ def block_new(tdxdir: str = None, name: str = None, symbol: list = None, blk_fil
         names = [x for x in names if x != '']
         names = [v for i, v in enumerate(names) if i % 2 == 0]
 
-        # if name in names:
-        #     logger.error('自定义板块名称重复.')
-        #     raise Exception('自定义板块名称重复.')
+        if name in names:
+            # todo symbol 不空则合并, 空则删除
+            logger.error('自定义板块名称重复.')
+            raise Exception('自定义板块名称重复.')
 
     # 写 blk 文件
     with open(f'{vipdoc}/{blk_file}.blk', 'w') as fp:
@@ -307,3 +308,8 @@ def block_new(tdxdir: str = None, name: str = None, symbol: list = None, blk_fil
         fp.write(data)
 
     return True
+
+
+def get_frequency(frequency) -> int:
+    if isinstance(frequency, int):
+        return frequency

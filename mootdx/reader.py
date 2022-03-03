@@ -142,7 +142,17 @@ class StdReader(ReaderBase):
         vipdoc = Path(self.tdxdir, 'T0002', 'blocknew')
         types_ = TYPE_GROUP if group else TYPE_FLATS
 
-        return CustomerBlockReader().get_df(str(vipdoc), types_) if vipdoc.is_dir() else None
+        if not vipdoc.is_dir():
+            return None
+
+        if name:
+            result = CustomerBlockReader().get_df(str(vipdoc), TYPE_GROUP)
+            result = result.loc[result.blockname == name].code_list.values
+            result = list(set(result[0].split(',')))
+        else:
+            result = CustomerBlockReader().get_df(str(vipdoc), types_)
+
+        return result
 
     def block(self, symbol='', group=False, **kwargs):
         """ 获取板块数据

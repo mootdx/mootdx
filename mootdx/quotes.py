@@ -16,6 +16,7 @@ from mootdx.consts import MARKET_SH, return_last_value
 from mootdx.logger import logger
 from mootdx.utils import get_stock_market
 from mootdx.utils import get_stock_markets
+from mootdx.utils import get_frequency
 from mootdx.utils import to_data
 
 
@@ -156,12 +157,12 @@ class StdQuotes(BaseQuotes):
         """ 获取实时日K线数据
 
         :param symbol: 股票代码
-        :param frequency: 数据类别
+        :param frequency: 数据频次
         :param start: 开始位置
         :param offset: 每次获取条数
         :return: pd.dataFrame or None
         """
-
+        frequency = get_frequency(frequency)
         market = get_stock_market(symbol)
         offset = 800 if int(offset) >= 800 else offset
         result = self.client.get_security_bars(
@@ -208,11 +209,13 @@ class StdQuotes(BaseQuotes):
         """ 获取指数k线
 
         :param symbol: 股票代码
-        :param frequency: bar 类型
+        :param frequency: 数据频次
         :param start: 开始位置
         :param offset: 获取数量
         :return:
         """
+
+        frequency = get_frequency(frequency)
 
         market = get_stock_market(symbol)
         result = self.client.get_index_bars(frequency=frequency, market=market, code=symbol, start=start, count=offset)
@@ -302,13 +305,13 @@ class StdQuotes(BaseQuotes):
         result = {}
         market = int(get_stock_market(symbol, string=False))
 
-        frequency = self.client.get_company_info_category(market, symbol)
+        category = self.client.get_company_info_category(market, symbol)
 
-        if not frequency:
+        if not category:
             return None
 
         if name:
-            for x in frequency:
+            for x in category:
                 if x['name'] == name:
                     return self.client.get_company_info_content(
                         market=market,
@@ -318,7 +321,7 @@ class StdQuotes(BaseQuotes):
                         length=x['length'],
                     )
 
-        for x in frequency:
+        for x in category:
             result[x['name']] = self.client.get_company_info_content(
                 market=market,
                 code=symbol,
@@ -401,7 +404,7 @@ class StdQuotes(BaseQuotes):
         - 11 年K线
 
         :param symbol:      股票代码
-        :param frequency:   数据类别
+        :param frequency:   数据频次
         :param market:      证券市场
         :param start:       开始位置
         :param offset:      每次获取条数
@@ -572,13 +575,15 @@ class ExtQuotes(BaseQuotes):
     def bars(self, frequency='', market='', symbol='', start=0, offset=100, **kwargs):
         """ 查询k线数据
 
-        :param frequency: K线周期
+        :param frequency: 数据频次, K线周期
         :param market: 市场ID
         :param symbol: 证券代码
         :param start:  起始位置
         :param offset: 获取数量
         :return:
         """
+
+        frequency = get_frequency(frequency)
 
         market, symbol = self.validate(market, symbol)
         result = self.client.get_instrument_bars(

@@ -20,7 +20,7 @@ with open('HISTORY.rst', encoding='utf-8') as history_file:
 
 requirements = parse_requirements('requirements.txt')
 test_requirements = requirements
-test_requirements.append('pytest')
+# test_requirements.append('pytest')
 
 setup(
     name='mootdx',
