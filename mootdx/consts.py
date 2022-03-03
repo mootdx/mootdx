@@ -19,7 +19,6 @@ KLINE_WEEKLY = 5
 # 6 -   月K 线
 KLINE_MONTHLY = 6
 # 7 -   扩展市场 1 分钟
-
 KLINE_EX_1MIN = 7
 # 8 -   1 分钟K 线
 KLINE_1MIN = 8
@@ -32,6 +31,7 @@ KLINE_YEARLY = 11
 
 # 分笔行情最多2000条
 MAX_TRANSACTION_COUNT = 2000
+
 # K线数据最多800条
 MAX_KLINE_COUNT = 800
 
@@ -81,3 +81,5 @@ CONFIG = {
 def return_last_value(retry_state):
     """return the result of the last call attempt"""
     return retry_state.outcome.result()
+
+FREQUENCY = ['5m', '15m', '30m', '1h', 'day', 'week', 'mon', '1m', '1m', 'day', 'quar', 'year']

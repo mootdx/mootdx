@@ -34,3 +34,6 @@ def reset(verbose: int = 0, **kwargs) -> logger:  # noqa
 
 def setup(verbose: int = 0, **kwargs) -> logger:  # noqa
     return reset(verbose=verbose, **kwargs)
+
+def config(verbose: int = 0, **kwargs) -> logger:  # noqa
+    return reset(verbose=verbose, **kwargs)
