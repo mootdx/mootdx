@@ -311,5 +311,12 @@ def block_new(tdxdir: str = None, name: str = None, symbol: list = None, blk_fil
 
 
 def get_frequency(frequency) -> int:
-    if isinstance(frequency, int):
-        return frequency
+    FREQUENCY = ['5m', '15m', '30m', '1h', 'day', 'week', 'mon', '1m', '1m', 'day', '3mon', 'year']
+
+    try:
+        if isinstance(frequency, str):
+            frequency = FREQUENCY.index(frequency)
+    except ValueError:
+        frequency = 0
+
+    return frequency
