@@ -3,6 +3,7 @@ from pathlib import Path
 
 import pytest
 
+import mootdx.block
 from mootdx.reader import Reader
 
 tdxdir = '../fixtures'
@@ -23,12 +24,12 @@ def reader():
     return Reader.factory(market='std', tdxdir=tdxdir)
 
 
-def test_block_new(reader):
-    assert reader.block_new(name='龙虎榜', symbol=['600036'], blk_file='600036')
-    assert reader.block_new(name='优质股', symbol=['600036'], blk_file='600036s')
-    assert reader.block_new(group=True).empty is False
+def test_blocknew(reader):
+    assert mootdx.block.blocknew(name='龙虎榜', symbol=['600036'], blk_file='600036')
+    assert mootdx.block.blocknew(name='优质股', symbol=['600036'], blk_file='600036s')
+    assert mootdx.block.blocknew(group=True).empty is False
 
-    df = reader.block_new()
+    df = mootdx.block.blocknew()
     assert (df[df.blockname == "优质股"].code == "600036").all()
 
 
