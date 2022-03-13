@@ -26,7 +26,8 @@ CONF = get_config_path('config.json')
 
 
 def setup():
-    """ 将 yaml 里的配置文件导入到 config.py 中
+    """
+    将 yaml 里的配置文件导入到 config.py 中
 
     :return: bool，true 表示数据导入成功。
     """
