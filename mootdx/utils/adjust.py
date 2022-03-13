@@ -2,7 +2,7 @@
 # @Author  : BoPo
 # @Time    : 2021/10/11 17:28
 # @Function:
-import json
+import simplejson as json
 
 import httpx
 import pandas as pd
