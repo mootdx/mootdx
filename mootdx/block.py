@@ -78,6 +78,7 @@ def blocknew(tdxdir: str = None, name: str = None, symbol: list = None, group=Fa
     提示: name 和 symbol 全为空则为读取，否则写入操作
     参考: http://blog.sina.com.cn/s/blog_623d2d280102vt8y.html
 
+    :param tdxdir: tdx 路径
     :param name: 自定义板块名称
     :param symbol: 自定义板块股票列表, 类型 list
     :param group:
@@ -114,22 +115,16 @@ def block(tdxdir, symbol='', group=False, **kwargs):
     :return: pd.dataFrame or None
     """
 
-    suffix = Path(symbol).suffix
-    suffix = suffix if suffix else 'dat'
+    symbol = Path(symbol).stem
+    suffix = Path(symbol).suffix or '.dat'
 
-    symbol = symbol.replace(suffix, '')
-    suffix = suffix.strip('.')
+    vipdoc = (Path('T0002', 'hq_cache'), '')['incon' in symbol]
+    vipdoc = Path(tdxdir, vipdoc) / f'{symbol}{suffix}'
 
-    if 'incon' in symbol:
-        vipdoc = Path(tdxdir) / f'{symbol}.{suffix}'
-    else:
-        vipdoc = Path(tdxdir) / 'T0002' / 'hq_cache' / f'{symbol}.{suffix}'
+    print(str(vipdoc))
 
-    vipdoc.exists() or logger.debug(f'文件不存在: {vipdoc}')
+    if not vipdoc.exists():
+        logger.error(f'文件不存在: {vipdoc}')
+        return None
 
-    types_ = TYPE_GROUP if group else TYPE_FLATS
-
-    if kwargs.get('debug'):
-        return str(vipdoc)
-
-    return BlockReader().get_df(str(vipdoc), types_) if vipdoc.exists() else None
+    return BlockReader().get_df(str(vipdoc), (TYPE_FLATS, TYPE_GROUP)[group])

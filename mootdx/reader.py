@@ -137,7 +137,7 @@ class StdReader(ReaderBase):
         :return: pd.dataFrame or Bool
         """
 
-        return block.blocknew(name, symbol, group=group, **kwargs)
+        return block.blocknew(self.tdxdir, name, symbol, group=group, **kwargs)
 
     def block(self, symbol='', group=False, **kwargs):
         """
@@ -148,7 +148,7 @@ class StdReader(ReaderBase):
         :return: pd.dataFrame or None
         """
 
-        return block.block(symbol, group=group, **kwargs)
+        return block.block(self.tdxdir, symbol, group=group, **kwargs)
 
 
 class ExtReader(ReaderBase):
