@@ -1,9 +1,10 @@
 import asyncio
 import functools
-import json
 import socket
 import time
 from functools import partial
+
+import simplejson as json
 
 from mootdx.consts import CONFIG
 from mootdx.consts import EX_HOSTS
@@ -22,6 +23,12 @@ results = {k: [] for k in hosts}
 
 
 def callback(res, key):
+    """
+    异步回调函数
+
+    :param res:
+    :param key:
+    """
     result = res.result()
 
     if result.get('time'):
@@ -30,7 +37,13 @@ def callback(res, key):
     logger.debug('callback: {}', res.result())
 
 
-def connect(proxy):
+def connect(proxy: dict) -> dict:
+    """
+    连接服务器函数
+
+    :param proxy: 代理IP信息
+    :return:
+    """
     try:
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         sock.settimeout(3)
@@ -53,12 +66,17 @@ def connect(proxy):
         return proxy
 
 
-async def verify(proxy):
-    result = await asyncio.get_event_loop().run_in_executor(None, functools.partial(connect, proxy=proxy))
-    return result
+async def verify(proxy: dict):
+    """
+    检验代理连通性函数
+
+    :param proxy: 代理IP信息
+    :return:
+    """
+    return await asyncio.get_event_loop().run_in_executor(None, functools.partial(connect, proxy=proxy))
 
 
-def Server(index=None, limit=5, console=False, sync=True):
+def server(index=None, limit=5, console=False, sync=True):
     _hosts = hosts[index]
 
     def async_event():
@@ -119,7 +137,7 @@ def bestip(console=False, limit=5, sync=True) -> None:
 
     for index in ['HQ', 'EX', 'GP']:
         try:
-            data = Server(index=index, limit=limit, console=console, sync=sync)
+            data = server(index=index, limit=limit, console=console, sync=sync)
             if data:
                 default['BESTIP'][index] = data[0]
         except RuntimeError as ex:

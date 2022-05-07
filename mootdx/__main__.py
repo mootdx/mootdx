@@ -5,7 +5,7 @@ import click
 from prettytable import PrettyTable
 
 from mootdx import __version__
-from mootdx import logger
+from mootdx.logger import logger, reset as logger_reset
 from mootdx import server
 from mootdx.affair import Affair
 from mootdx.quotes import Quotes
@@ -35,7 +35,7 @@ def entry():
 @click.option('-a', '--action', default='bars', help='操作类型 (daily: 日线, minute: 一分钟线, fzline: 五分钟线).', )
 @click.option('-m', '--market', default='std', help='证券市场, 默认 std (std: 标准股票市场, ext: 扩展市场).')
 def quotes(symbol, action, market, output):
-    client = Quotes.factory(market=market, multithread=True, heartbeat=True)
+    client = Quotes.factory(market=market, multithread=True)
 
     try:
         action = 'bars' if 'daily' else action
@@ -78,10 +78,10 @@ def reader(symbol, action, market, tdxdir, output):
 @click.option('-l', '--limit', default=5, help='显示最快前几个，默认 5.')
 @click.option('-v', '--verbose', count=True, help='详细模式')
 def bestip(limit, verbose):
-    logger.reset(verbose=verbose)
+    logger_reset(verbose=verbose)
     config = get_config_path('config.json')
     server.bestip(limit=limit, console=True, sync=False)
-    logger.logger.success('[√] 已经将最优服务器IP写入配置文件 {}'.format(config))
+    logger.success('[√] 已经将最优服务器IP写入配置文件 {}'.format(config))
 
 
 @entry.command(help='财务文件下载&解析.')
@@ -94,7 +94,7 @@ def bestip(limit, verbose):
 @click.option('-l', '--listfile', is_flag=True, default=False, help='显示全部文件')
 @click.option('-v', '--verbose', count=True, help='详细模式')
 def affair(parse, fetch, downdir, output, downall, verbose, listfile):
-    logger.reset(verbose=verbose)
+    logger_reset(verbose=verbose)
 
     files = Affair.files()
 
@@ -132,7 +132,7 @@ def affair(parse, fetch, downdir, output, downall, verbose, listfile):
             output and to_file(feed, output)
             click.echo(feed)
         else:
-            logger.logger.error('没找到要解析的文件.')
+            logger.error('没找到要解析的文件.')
 
 
 @entry.command(help='批量下载行情数据.')
@@ -147,7 +147,7 @@ def bundle(symbol, action, market, output, extension):
     批量下载行情数据
     :return:
     """
-    client = Quotes.factory(market=market)
+    client = Quotes.factory(market=market, multithread=True)
     symbol = symbol.replace('，', ',').strip(',').split(',')
 
     for code in symbol:
