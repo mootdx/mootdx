@@ -1,5 +1,5 @@
 import datetime
-import json
+import simplejson as json
 import re
 import time
 
