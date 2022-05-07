@@ -7,7 +7,7 @@ from pathlib import Path
 
 from pytdx.reader import CustomerBlockReader
 
-from .. import utils
+from ..block import _blocknew
 from ..consts import TYPE_GROUP, TYPE_FLATS
 from ..logger import logger
 from ..utils import get_stock_market
@@ -21,7 +21,7 @@ class Customize:
         self.tdxdir = str(tdxdir)
 
     def create(self, name: str = None, symbol: list = None, **kwargs):
-        return utils.block_new(self.tdxdir, name=name, symbol=symbol, **kwargs)
+        return _blocknew(self.tdxdir, name=name, symbol=symbol, **kwargs)
 
     def remove(self, name: str):
         # 板块数据
@@ -79,7 +79,7 @@ class Customize:
         # 对于名称空的情况, 直接创建写入
         if block_temp.empty:
             logger.debug('block_temp is empty {}', block_temp.empty)
-            return utils.block_new(self.tdxdir, name=name, symbol=list(set(symbol)))
+            return _blocknew(self.tdxdir, name=name, symbol=list(set(symbol)))
 
         # 覆盖情况
         if not overflow:
