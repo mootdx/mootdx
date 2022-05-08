@@ -8,7 +8,8 @@ def is_empty(obj):
     if isinstance(obj, pandas.DataFrame):
         return obj.empty
 
-    return not bool(obj)
+    print(obj)
+    return not obj
 
 
 @pytest.fixture()
