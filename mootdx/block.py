@@ -2,6 +2,7 @@ import time
 from datetime import datetime
 from pathlib import Path
 
+import pandas as pd
 from loguru import logger
 from pytdx.reader import CustomerBlockReader, BlockReader
 
@@ -128,3 +129,24 @@ def block(tdxdir, symbol='', group=False, **kwargs):
         return None
 
     return BlockReader().get_df(str(vipdoc), (TYPE_FLATS, TYPE_GROUP)[group])
+
+
+class Parse(object):
+
+    @staticmethod
+    def _incon(path):
+        t = Path(path).read_text(encoding='gbk').strip()
+        m = [x for x in t.split('######')]
+        v = [n.split() for n in m if n.strip()]
+        d = {i[0]: [c.split('|') for c in i[1:]] for i in v}
+        d = {key: dict([vv for vv in val if len(vv) == 2]) for key, val in d.items()}
+
+        return d
+
+    @staticmethod
+    def _cfg(path):
+        ts = Path(path).read_text(encoding='gbk').strip()
+        ls = [ll.split('|') for ll in ts.split()]
+        df = pd.DataFrame(ls)
+
+        return df
