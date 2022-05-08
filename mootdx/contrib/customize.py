@@ -53,7 +53,7 @@ class Customize:
         # 写回文件
         return Path(block_file).write_bytes(data)
 
-    def search(self, name: str = None, group=None):
+    def search(self, name: str = None, group=False):
         """
         按名称查找自定义板块名称
 

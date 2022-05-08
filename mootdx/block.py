@@ -133,9 +133,11 @@ def block(tdxdir, symbol='', group=False, **kwargs):
 
 class Parse(object):
 
-    @staticmethod
-    def _incon(path):
-        t = Path(path).read_text(encoding='gbk').strip()
+    def __init__(self, tdxdir):
+        self.tdxdir = tdxdir
+
+    def _incon(self, path):
+        t = Path(self.tdxdir, path).read_text(encoding='gbk').strip()
         m = [x for x in t.split('######')]
         v = [n.split() for n in m if n.strip()]
         d = {i[0]: [c.split('|') for c in i[1:]] for i in v}
@@ -143,9 +145,8 @@ class Parse(object):
 
         return d
 
-    @staticmethod
-    def _cfg(path):
-        ts = Path(path).read_text(encoding='gbk').strip()
+    def _cfg(self, path):
+        ts = Path(self.tdxdir, path).read_text(encoding='gbk').strip()
         ls = [ll.split('|') for ll in ts.split()]
         df = pd.DataFrame(ls)
 

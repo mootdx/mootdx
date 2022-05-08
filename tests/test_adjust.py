@@ -1,8 +1,11 @@
 import unittest
 
+import pytest
+
 from mootdx.contrib.adjust import get_adjust_year
 
 
+@pytest.mark.skip
 class TestAdjust(unittest.TestCase):
 
     def test_adjust_before0(self):

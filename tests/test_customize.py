@@ -38,7 +38,7 @@ def test_block_create(custom):
     assert custom.create(name='龙虎榜', symbol=['600036', '600016'], blk_file='blk_file')
     assert custom.create(name='优质股', symbol=['600036', '600016'])
     assert custom.create(name=None, symbol=['600036', '600016'])
-    assert custom.create(name='优质股1', symbol=('600036', '600016'))
+    assert custom.create(name='优质股1', symbol=['600036', '600016'])
 
     # 异常测试
     with pytest.raises(Exception):
