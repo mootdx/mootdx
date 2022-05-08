@@ -3,8 +3,9 @@
 使用前必须先调用 init() 。
 """
 import copy
-import simplejson as json
 from pathlib import Path
+
+import simplejson as json
 
 from mootdx.consts import EX_HOSTS
 from mootdx.consts import GP_HOSTS

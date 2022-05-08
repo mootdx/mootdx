@@ -129,7 +129,7 @@ holiday.holiday()
 **调用方法：**
 
 ```python
-from mootdx.contrib.customize import Customize
+from mootdx.tools.customize import Customize
 
 # 初始化一个自定义版本操作对象, tdxdir 可根据具体情况修改
 custom = Customize(tdxdir='C:/new_tdx')

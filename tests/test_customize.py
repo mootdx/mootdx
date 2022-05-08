@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # @Author  : BoPo
 # @Time    : 2022/5/7 13:23
 # @Function:
@@ -8,7 +7,7 @@ from pathlib import Path
 import pytest
 from loguru import logger
 
-from mootdx.contrib.customize import Customize
+from mootdx.tools.customize import Customize
 from mootdx.logger import reset
 
 reset(verbose=2)
@@ -38,7 +37,7 @@ def test_block_create(custom):
     assert custom.create(name='龙虎榜', symbol=['600036', '600016'], blk_file='blk_file')
     assert custom.create(name='优质股', symbol=['600036', '600016'])
     assert custom.create(name=None, symbol=['600036', '600016'])
-    assert custom.create(name='优质股1', symbol=('600036', '600016'))
+    assert custom.create(name='优质股1', symbol=['600036', '600016'])
 
     # 异常测试
     with pytest.raises(Exception):

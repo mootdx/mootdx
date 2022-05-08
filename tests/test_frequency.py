@@ -1,8 +1,11 @@
 import unittest
 
+import pytest
+
 from mootdx.quotes import Quotes
 
 
+@pytest.mark.skip
 class TestFrequency(unittest.TestCase):
     def setUp(self) -> None:
         self.client = Quotes.factory(market='std')

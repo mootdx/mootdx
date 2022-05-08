@@ -7,7 +7,8 @@ import pandas as pd
 from pandas import DataFrame
 from tqdm import tqdm
 
-from mootdx.consts import MARKET_SH, MARKET_BJ
+from mootdx.consts import MARKET_BJ
+from mootdx.consts import MARKET_SH
 from mootdx.consts import MARKET_SZ
 from mootdx.logger import logger
 from mootdx.utils.adjust import to_adjust
@@ -157,12 +158,12 @@ def to_data(v, **kwargs):
         from mootdx.utils.adjust import fq_factor
         result = to_adjust(result, symbol=symbol, adjust=adjust)
 
-    if "datetime" in result.columns:
+    if 'datetime' in result.columns:
         result.index = pd.to_datetime(result.datetime)
-    elif "date" in result.columns:
+    elif 'date' in result.columns:
         result.index = pd.to_datetime(result.date)
 
-    if "vol" in result.columns:
+    if 'vol' in result.columns:
         result['volume'] = result.vol
 
     return result

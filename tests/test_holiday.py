@@ -3,6 +3,7 @@ import pytest
 from mootdx.utils.holiday import holiday
 
 
+@pytest.mark.skip
 class TestHoliday:
 
     def test_holiday_exists(self):

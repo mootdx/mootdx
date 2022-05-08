@@ -5,9 +5,10 @@ import click
 from prettytable import PrettyTable
 
 from mootdx import __version__
-from mootdx.logger import logger, reset as logger_reset
 from mootdx import server
 from mootdx.affair import Affair
+from mootdx.logger import logger
+from mootdx.logger import reset as logger_reset
 from mootdx.quotes import Quotes
 from mootdx.reader import Reader
 from mootdx.utils import get_config_path

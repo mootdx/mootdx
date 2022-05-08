@@ -1,11 +1,11 @@
 import datetime
-import simplejson as json
 import re
 import time
 
 import httpx
 import numpy as np
 import pandas as pd
+import simplejson as json
 from tenacity import retry
 from tenacity import stop_after_attempt
 from tenacity import wait_fixed

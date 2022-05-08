@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # @Author  : BoPo
 # @Time    : 2022/2/17 14:49
 # @Function:
@@ -7,10 +6,11 @@ from pathlib import Path
 
 from pytdx.reader import CustomerBlockReader
 
-from ..block import _blocknew
-from ..consts import TYPE_GROUP, TYPE_FLATS
-from ..logger import logger
-from ..utils import get_stock_market
+from mootdx.block import _blocknew
+from mootdx.consts import TYPE_FLATS
+from mootdx.consts import TYPE_GROUP
+from mootdx.logger import logger
+from mootdx.utils import get_stock_market
 
 
 class Customize:
@@ -23,43 +23,61 @@ class Customize:
     def create(self, name: str = None, symbol: list = None, **kwargs):
         return _blocknew(self.tdxdir, name=name, symbol=symbol, **kwargs)
 
-    def remove(self, name: str):
-        # 板块数据
+    def remove(self, name: str = None):
+        """
+        删除板块数据
+
+        :param name:
+        :return:
+        """
+
         block_data = self.search()
         block_file = Path(self.vipdoc) / 'blocknew.cfg'
         block_temp = block_data[block_data.blockname == name]
         block_type = ''
 
+        # 删除blk文件
         if block_temp.block_type.to_list():
             block_type = list(set(block_temp.block_type.to_list()))[0]
-            [Path(self.vipdoc, f"{x}.blk").unlink() for x in block_temp.block_type.to_list() if Path(self.vipdoc, f"{x}.blk").is_file()]
+            [Path(self.vipdoc, f'{x}.blk').unlink() for x in block_temp.block_type.to_list() if Path(self.vipdoc, f'{x}.blk').is_file()]
 
+        # 读取文件
         block_data = Path(block_file).read_bytes().decode(encoding='gb2312')
+
+        # 替换内容
         data = name + ((50 - len(name.encode('gbk', 'ignore'))) * '\x00')
         data += block_type + ((70 - len(block_type.encode('gbk', 'ignore'))) * '\x00')
         data = block_data.replace(data, '')
         data = bytes(data.encode('gbk', 'ignore'))
 
+        # 写回文件
         return Path(block_file).write_bytes(data)
 
-    def search(self, name: str = None, group=None):
-        types_ = TYPE_GROUP if group else TYPE_FLATS
+    def search(self, name: str = None, group=False):
+        """
+        按名称查找自定义板块名称
+
+        :param name:
+        :param group:
+        :return:
+        """
 
         if name:
             result = CustomerBlockReader().get_df(str(self.vipdoc), TYPE_GROUP)
-            result = result.loc[result.blockname == name]
+            result = result[result.blockname == name]
 
             if result.empty:
                 return None
 
             result = result.code_list.values
             result = list(set(result[0].split(',')))
-        else:
-            result = CustomerBlockReader().get_df(str(self.vipdoc), types_)
+            return result
 
+        # 全部数据
+        result = CustomerBlockReader().get_df(str(self.vipdoc), (TYPE_FLATS, TYPE_GROUP)[group])
         return result
 
-    def update(self, name, symbol=None, overflow=False):
+    def update(self, name: str = None, symbol=None, overflow=False):
         """
         修改自定义板块内容
 
@@ -67,6 +85,9 @@ class Customize:
         :param symbol: 股票代码, ['600036','600016']
         :param overflow:
         """
+
+        if not name:
+            return False
 
         # 板块路径
         block_path = self.vipdoc
@@ -99,8 +120,8 @@ class Customize:
         logger.debug('证券代码: {}', block_code)
 
         # 股票代码逗号隔开拼字符串
-        block_code = '\n'.join([f"{get_stock_market(s)}{s}" for s in block_code])
+        block_code = '\n'.join([f'{get_stock_market(s)}{s}' for s in block_code])
 
         # 写入 blk 文件
-        logger.debug("写入文件 : {}", Path(block_path, f"{block_type}.blk"))
-        return Path(block_path, f"{block_type}.blk").write_text(block_code, encoding='gb2312')
+        logger.debug('写入文件 : {}', Path(block_path, f'{block_type}.blk'))
+        return Path(block_path, f'{block_type}.blk').write_text(block_code, encoding='gb2312')

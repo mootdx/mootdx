@@ -9,9 +9,8 @@ from struct import unpack
 import pandas as pd
 from pytdx.hq import TdxHq_API
 
+from ..logger import logger
 from .base import BaseFinancial
-from ..logger import logger
-from ..logger import logger
 
 
 class FinancialReader(object):

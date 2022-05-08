@@ -2,10 +2,13 @@ import glob
 import unittest
 from pathlib import Path
 
+import pytest
+
 from mootdx.affair import Affair
 from mootdx.logger import logger
 
 
+@pytest.mark.skip
 class TestAffair(unittest.TestCase):
     files = []
 

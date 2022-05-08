@@ -1,9 +1,6 @@
-# -*- coding: utf-8 -*-
 # @Author  : BoPo
 # @Time    : 2021/10/9 10:56
 # @Function:
-
-
 import datetime
 import re
 import time
@@ -11,12 +8,14 @@ from pathlib import Path
 
 import httpx
 import pandas as pd
-# from py_mini_racer import py_mini_racer
-from tenacity import stop_after_attempt, wait_fixed, retry
+from tenacity import retry
+from tenacity import stop_after_attempt
+from tenacity import wait_fixed
 
 from mootdx import get_config_path
-# from mootdx.consts import return_last_value
 from mootdx.logger import logger
+# from py_mini_racer import py_mini_racer
+# from mootdx.consts import return_last_value
 
 # hk_js_decode = """
 # function d(t) {
@@ -364,7 +363,7 @@ from mootdx.logger import logger
 def holiday(date=None, format_=None, country=None):
     cache_file = get_config_path('holiday.plk')
 
-    format_ = format_ if format_ else "%Y-%m-%d"
+    format_ = format_ if format_ else '%Y-%m-%d'
     country = country if country else '中国'
 
     try:
@@ -373,7 +372,7 @@ def holiday(date=None, format_=None, country=None):
         else:
             date = datetime.datetime.now().date()
     except ValueError as ex:
-        logger.exception("日期或者日期格式错误!")
+        logger.exception('日期或者日期格式错误!')
         raise ex
 
     if date.weekday() >= 5:
@@ -387,7 +386,7 @@ def holiday(date=None, format_=None, country=None):
         day = [d.split('|')[:4] for d in ret.split('\n')]
 
         df = pd.DataFrame(day, columns=['日期', '节日', '国家', '交易所'], dtype=str)
-        df.index = pd.to_datetime(df['日期'].astype("str"), format='%Y%m%d')
+        df.index = pd.to_datetime(df['日期'].astype('str'), format='%Y%m%d')
         df.to_pickle(cache_file)
 
     if country not in list(set(df['国家'].values)):
