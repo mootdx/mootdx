@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # @Author  : BoPo
 # @Time    : 2022/2/17 14:49
 # @Function:
@@ -7,10 +6,11 @@ from pathlib import Path
 
 from pytdx.reader import CustomerBlockReader
 
-from ..block import _blocknew
-from ..consts import TYPE_GROUP, TYPE_FLATS
-from ..logger import logger
-from ..utils import get_stock_market
+from mootdx.block import _blocknew
+from mootdx.consts import TYPE_FLATS
+from mootdx.consts import TYPE_GROUP
+from mootdx.logger import logger
+from mootdx.utils import get_stock_market
 
 
 class Customize:
@@ -39,7 +39,7 @@ class Customize:
         # 删除blk文件
         if block_temp.block_type.to_list():
             block_type = list(set(block_temp.block_type.to_list()))[0]
-            [Path(self.vipdoc, f"{x}.blk").unlink() for x in block_temp.block_type.to_list() if Path(self.vipdoc, f"{x}.blk").is_file()]
+            [Path(self.vipdoc, f'{x}.blk').unlink() for x in block_temp.block_type.to_list() if Path(self.vipdoc, f'{x}.blk').is_file()]
 
         # 读取文件
         block_data = Path(block_file).read_bytes().decode(encoding='gb2312')
@@ -120,8 +120,8 @@ class Customize:
         logger.debug('证券代码: {}', block_code)
 
         # 股票代码逗号隔开拼字符串
-        block_code = '\n'.join([f"{get_stock_market(s)}{s}" for s in block_code])
+        block_code = '\n'.join([f'{get_stock_market(s)}{s}' for s in block_code])
 
         # 写入 blk 文件
-        logger.debug("写入文件 : {}", Path(block_path, f"{block_type}.blk"))
-        return Path(block_path, f"{block_type}.blk").write_text(block_code, encoding='gb2312')
+        logger.debug('写入文件 : {}', Path(block_path, f'{block_type}.blk'))
+        return Path(block_path, f'{block_type}.blk').write_text(block_code, encoding='gb2312')

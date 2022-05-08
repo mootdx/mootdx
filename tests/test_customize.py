@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # @Author  : BoPo
 # @Time    : 2022/5/7 13:23
 # @Function:
@@ -8,7 +7,7 @@ from pathlib import Path
 import pytest
 from loguru import logger
 
-from mootdx.contrib.customize import Customize
+from mootdx.tools.customize import Customize
 from mootdx.logger import reset
 
 reset(verbose=2)

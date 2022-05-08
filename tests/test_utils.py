@@ -3,9 +3,9 @@ from unittest import mock
 
 import pytest
 
+from mootdx.consts import MARKET_BJ
 from mootdx.consts import MARKET_SH
 from mootdx.consts import MARKET_SZ
-from mootdx.consts import MARKET_BJ
 from mootdx.utils import get_config_path
 from mootdx.utils import get_stock_market
 from mootdx.utils import md5sum

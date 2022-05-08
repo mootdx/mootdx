@@ -82,7 +82,6 @@ def return_last_value(retry_state):
     """return the result of the last call attempt"""
     return retry_state.outcome.result()
 
-
 # 5MIN = 0
 # 15MIN = 1
 # 30MIN = 2
@@ -95,4 +94,3 @@ def return_last_value(retry_state):
 # RI_K = 9
 # 3MONTH = 10
 # YEARLY = 11
-

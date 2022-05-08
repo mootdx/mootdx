@@ -1,9 +1,8 @@
 from fabric.api import local
 from fabric.api import task
-
 from git import Repo
 
-repo = Repo(".")
+repo = Repo('.')
 
 
 @task(alias='t')

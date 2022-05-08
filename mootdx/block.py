@@ -4,9 +4,11 @@ from pathlib import Path
 
 import pandas as pd
 from loguru import logger
-from pytdx.reader import CustomerBlockReader, BlockReader
+from pytdx.reader import BlockReader
+from pytdx.reader import CustomerBlockReader
 
-from mootdx.consts import TYPE_GROUP, TYPE_FLATS
+from mootdx.consts import TYPE_FLATS
+from mootdx.consts import TYPE_GROUP
 from mootdx.utils import get_stock_market
 
 
@@ -60,7 +62,7 @@ def _blocknew(tdxdir: str = None, name: str = None, symbol: list = None, blk_fil
 
     # 写 blk 文件
     with open(f'{vipdoc}/{blk_file}.blk', 'w') as fp:
-        fp.write('\n'.join([f"{get_stock_market(s)}{s}" for s in symbol]))
+        fp.write('\n'.join([f'{get_stock_market(s)}{s}' for s in symbol]))
 
     # 写 blocknew.cfg 文件
     with open(block_file, 'ab') as fp:

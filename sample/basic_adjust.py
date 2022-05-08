@@ -1,4 +1,4 @@
-from mootdx.contrib.reversion import reversion
+from mootdx.tools.reversion import reversion
 from mootdx.quotes import Quotes
 
 client = Quotes.factory(market='std')

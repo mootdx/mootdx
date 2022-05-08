@@ -12,11 +12,12 @@ from tqdm import tqdm
 
 from mootdx import config
 from mootdx import server
-from mootdx.consts import MARKET_SH, return_last_value
+from mootdx.consts import MARKET_SH
+from mootdx.consts import return_last_value
 from mootdx.logger import logger
+from mootdx.utils import get_frequency
 from mootdx.utils import get_stock_market
 from mootdx.utils import get_stock_markets
-from mootdx.utils import get_frequency
 from mootdx.utils import to_data
 
 
