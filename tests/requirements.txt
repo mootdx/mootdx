@@ -1,6 +1,6 @@
 pytest
 pytest-autochecklog
-pytest-benchmark
-pytest-mock
 pytest-bdd
+pytest-benchmark
 pytest-cov
+pytest-mock

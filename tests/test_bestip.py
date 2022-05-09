@@ -1,6 +1,7 @@
 import logging
-import pytest
 from pathlib import Path
+
+import pytest
 
 from mootdx import config
 

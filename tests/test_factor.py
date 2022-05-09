@@ -1,6 +1,9 @@
+import pytest
+
 from mootdx.utils.adjust import fq_factor
 
 
+@pytest.mark.skip
 class TestFactor:
 
     def test_qfq_factor(self):

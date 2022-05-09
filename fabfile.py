@@ -1,9 +1,8 @@
 from fabric.api import local
 from fabric.api import task
-
 from git import Repo
 
-repo = Repo(".")
+repo = Repo('.')
 
 
 @task(alias='t')
@@ -12,14 +11,21 @@ def test():
     local('py.test tests -v')
 
 
-@task(alias='p')
+@task(alias='lp')
+def lp(branch=repo.active_branch.name):
+    """# push github rev"""
+    pull()
+    push()
+
+
+@task(alias='up')
 def push(branch=repo.active_branch.name):
     """# push github rev"""
     local(f'git push origin {branch} --tags')
     local(f'git push github {branch} --tags')
 
 
-@task(alias='l')
+@task(alias='pl')
 def pull(branch=repo.active_branch.name):
     """# push github rev"""
     local(f'git pull origin {branch} --tags')
