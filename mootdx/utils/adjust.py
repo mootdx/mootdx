@@ -52,7 +52,13 @@ def fq_factor(method: str, symbol: str) -> pd.DataFrame:
         return qfq_factor_df
 
 
-def to_adjust(temp_df, symbol=None, adjust=None):
+def to_adjust(temp_df, symbol=None, adjust=None, client=None):
+    from mootdx.tools.reversion import reversion
+    xdxr = client.xdxr(symbol=symbol)
+    return reversion(temp_df, xdxr, adjust)
+
+
+def to_adjust2(temp_df, symbol=None, adjust=None):
     # zh_sina_a_stock_hfq_url = "https://finance.sina.com.cn/realstock/company/{}/hfq.js"
     # zh_sina_a_stock_qfq_url = "https://finance.sina.com.cn/realstock/company/{}/qfq.js"
 

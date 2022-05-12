@@ -65,6 +65,28 @@ def reversion(stock_data, xdxr, type_='01'):
     return _reversion(bfq_data=stock_data, xdxr_data=_fetch_xdxr(symbol, xdxr), type_=type_)
 
 
+# 算法一样
+def baoli_qfq(df, xdxr):
+    fenhong = xdxr['fenhong']  # 分红
+    peigu = xdxr['peigu']  # 配股
+    peigujia = xdxr['peigujia']  # 配股价
+    songzhuangu = xdxr['songzhuangu']  # 送转股
+
+    for i in range(0, len(xdxr)):
+        fh = fenhong[i]
+        pg = peigu[i]
+        pgj = peigujia[i]
+        szg = songzhuangu[i]
+        date = xdxr.index[i]
+
+        df.loc[df.index < date, 'open'] = (df['open'][df.index < date] * 10 - fh + pg * pgj) / (10 + pg + szg)
+        df.loc[df.index < date, 'close'] = (df['close'][df.index < date] * 10 - fh + pg * pgj) / (10 + pg + szg)
+        df.loc[df.index < date, 'high'] = (df['high'][df.index < date] * 10 - fh + pg * pgj) / (10 + pg + szg)
+        df.loc[df.index < date, 'low'] = (df['low'][df.index < date] * 10 - fh + pg * pgj) / (10 + pg + szg)
+
+    return df
+
+
 if __name__ == '__main__':
     from mootdx.quotes import Quotes
 
@@ -78,5 +100,6 @@ if __name__ == '__main__':
     # result = adjust.after(bfq_data, xdxr_data)
     # print(result)
     print(bfq_data)
-    result = reversion(bfq_data, xdxr_data, '02')
+    # result = reversion(bfq_data, xdxr_data, '02')
+    result = baoli(bfq_data, xdxr_data)
     print(result)

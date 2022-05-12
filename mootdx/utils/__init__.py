@@ -1,17 +1,15 @@
 import hashlib
+import pandas as pd
+from pandas import DataFrame
 from pathlib import Path
 from struct import calcsize
 from struct import unpack
-
-import pandas as pd
-from pandas import DataFrame
 from tqdm import tqdm
 
 from mootdx.consts import MARKET_BJ
 from mootdx.consts import MARKET_SH
 from mootdx.consts import MARKET_SZ
 from mootdx.logger import logger
-from mootdx.utils.adjust import to_adjust
 
 
 def get_stock_markets(symbols=None):
@@ -126,6 +124,7 @@ def to_data(v, **kwargs):
 
     symbol = kwargs.get('symbol')
     adjust = kwargs.get('adjust', None)
+    client = kwargs.get('client', None)
 
     if adjust in ['01', 'qfq', 'before']:
         adjust = 'qfq'
@@ -155,8 +154,9 @@ def to_data(v, **kwargs):
         result = pd.DataFrame(data=[])
 
     if adjust and adjust in ['qfq', 'hfq'] and symbol:
-        from mootdx.utils.adjust import fq_factor
-        result = to_adjust(result, symbol=symbol, adjust=adjust)
+        from mootdx.utils.adjust import to_adjust
+        result['code'] = symbol
+        result = to_adjust(result, symbol=symbol, client=client, adjust=adjust)
 
     if 'datetime' in result.columns:
         result.index = pd.to_datetime(result.datetime)
@@ -246,8 +246,11 @@ def get_config_path(config='config.json'):
     return str(filename)
 
 
+FREQUENCY = ['5m', '15m', '30m', '1h', 'day', 'week', 'mon', 'ex_1m', '1m', 'days', '3mon', 'year']
+
+
 def get_frequency(frequency) -> int:
-    FREQUENCY = ['5m', '15m', '30m', '1h', 'day', 'week', 'mon', '1m', '1m', 'day', '3mon', 'year']
+    # FREQUENCY = ['5m', '15m', '30m', '1h', 'day', 'week', 'mon', '1m', '1m', 'day', '3mon', 'year']
 
     try:
         if isinstance(frequency, str):

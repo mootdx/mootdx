@@ -27,13 +27,15 @@ def reset(verbose: int = 0, **kwargs) -> logger:  # noqa
     level0 = levels[-1] if verbose > len(levels) else levels[verbose]
 
     logger.remove()
-    logger.add(sys.stdout, level=level0)
+    logger.add(sys.stdout, level=level0, filter='mootdx')
+    # logger.add(sys.stdout, filter=lambda record: "message" in record["extra"], format="<level>{message}</level>")
 
     return logger
 
 
 def setup(verbose: int = 0, **kwargs) -> logger:  # noqa
     return reset(verbose=verbose, **kwargs)
+
 
 def config(verbose: int = 0, **kwargs) -> logger:  # noqa
     return reset(verbose=verbose, **kwargs)

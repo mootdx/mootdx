@@ -1,10 +1,9 @@
 import asyncio
 import functools
+import simplejson as json
 import socket
 import time
 from functools import partial
-
-import simplejson as json
 
 from mootdx.consts import CONFIG
 from mootdx.consts import EX_HOSTS
@@ -129,6 +128,10 @@ def server(index=None, limit=5, console=False, sync=True):
         print(t)
 
     return [(item['addr'], item['port']) for item in server]
+
+
+def check_server(console=False, limit=5, sync=True) -> None:
+    return bestip(console=console, limit=limit, sync=sync)
 
 
 def bestip(console=False, limit=5, sync=True) -> None:
