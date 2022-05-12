@@ -1,21 +1,15 @@
+import pytest
 import unittest
 
-import pytest
-
 from mootdx.quotes import Quotes
+from mootdx.utils import FREQUENCY
 
 
-@pytest.mark.skip
-class TestFrequency(unittest.TestCase):
-    def setUp(self) -> None:
-        self.client = Quotes.factory(market='std')
-
-    def test_to_data_empty(self):
-        data = ['5m', '15m', '30m', '1h', 'day', 'week', 'mon', '1m', '1m', 'day', '3mon', 'year']
-
-        for i, v in enumerate(data):
-            assert all(self.client.bars(symbol='600036', frequency=i) == self.client.bars(symbol='600036', frequency=v))
+@pytest.fixture(scope='function')
+def client():
+    return Quotes.factory(market='std')
 
 
-if __name__ == '__main__':
-    unittest.main()
+@pytest.mark.parametrize('i,v', [(i, v) for i, v in enumerate(FREQUENCY)])
+def test_to_data_empty(client, i, v):
+    assert all(client.bars(symbol='600036', frequency=i) == client.bars(symbol='600036', frequency=v))
