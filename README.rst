@@ -20,7 +20,7 @@
 郑重声明: 本项目只作学习交流, 不得用于任何商业目的. 
 
 * 开源协议: MIT license
-* 在线文档: https://mootdx.readthedocs.io
+* 在线文档: https://www.mootdx.com
 * 国内镜像: https://gitee.com/ibopo/mootdx
 * 项目仓库: https://github.com/mootdx/mootdx
 
