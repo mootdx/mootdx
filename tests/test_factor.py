@@ -10,7 +10,7 @@ class TestFactor:
     # 初始化工作
     def setup_class(self):
         self.client = Quotes.factory(market="std", timeout=10)  # 标准市场
-        self.reader = Reader.factory(market="std", tdxdir="../fixtures")
+        self.reader = Reader.factory(market="std", tdxdir="tests/fixtures")
         logger.debug("初始化工作")
 
     def test_qfq_factor(self):
