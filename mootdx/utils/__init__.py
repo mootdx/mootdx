@@ -246,7 +246,7 @@ def get_config_path(config='config.json'):
     return str(filename)
 
 
-FREQUENCY = ['5m', '15m', '30m', '1h', 'day', 'week', 'mon', 'ex_1m', '1m', 'days', '3mon', 'year']
+FREQUENCY = ['5m', '15m', '30m', '1h', 'days', 'week', 'mon', 'ex_1m', '1m', 'day', '3mon', 'year']
 
 
 def get_frequency(frequency) -> int:

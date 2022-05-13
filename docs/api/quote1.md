@@ -19,12 +19,14 @@ client = Quotes.factory(market='std')
 ```python
 from mootdx.quotes import Quotes
 
-client = Quotes.factory(market='std', multithread=True, heartbeat=True, bestip=True, quiet=False, timeout=15)
+client = Quotes.factory(market='std', server=None, multithread=True, heartbeat=True, bestip=True, verbose=0, quiet=False, timeout=15)
 # multithread 多线程
 # heartbeat 开启心跳包
 # bestip 重新测试最快服务器
+# server 自行设置服务器IP, 格式 `server=('127.0.0.1', 7727)`
 # timeout 设置超时时间
 # quiet 日志静默方式, 默认False, 设置为 True 则不打印日志信息
+# verbose 日志显示等级 0, 静默模式, 1 一般级别, 2 详细级别
 ```
 
 ## 01. 查询实时行情
@@ -57,15 +59,14 @@ client.quotes(symbol=["000001", "600300"])
 > 1 => 15分钟K线            => 15m
 > 2 => 30分钟K线            => 30m
 > 3 => 小时K线              => 1h
-> 4 => 日K线 (小数点x100)   => day
+> 4 => 日K线 (小数点x100)    => days
 > 5 => 周K线                => week
 > 6 => 月K线                => mon
-> 7 => 1分钟K线(好像一样)   => 1m
-> 8 => 1分钟K线(好像一样)   => 1m
+> 7 => 1分钟K线(好像一样)     => 1m
+> 8 => 1分钟K线(好像一样)     => 1m
 > 9 => 日K线                => day
-> 10 => 季K线               => quar
+> 10 => 季K线               => 3mon
 > 11 => 年K线               => year
-
 
 如
 
@@ -128,19 +129,19 @@ symbol = client.stocks(market=consts.MARKET_SH)
 - start: 开始位置
 - offset: 用户要请求的 K 线数目，最大值为 800
 
-> frequency: K线种类
-> 0: 5分钟K线
-> 1: 15分钟K线
-> 2: 30分钟K线
-> 3: 1小时K线
-> 4: 日K线
-> 5: 周K线
-> 6: 月K线
-> 7: 1分钟
-> 8: 1分钟K线
-> 9: 日K线
-> 10: 季K线
-> 11: 年K线
+> frequency -> K线种类
+> 0 => 5分钟K线             => 5m
+> 1 => 15分钟K线            => 15m
+> 2 => 30分钟K线            => 30m
+> 3 => 小时K线              => 1h
+> 4 => 日K线 (小数点x100)    => days
+> 5 => 周K线                => week
+> 6 => 月K线                => mon
+> 7 => 1分钟K线(好像一样)     => 1m
+> 8 => 1分钟K线(好像一样)     => 1m
+> 9 => 日K线                => day
+> 10 => 季K线               => 3mon
+> 11 => 年K线               => year
 
 使用说明：
 

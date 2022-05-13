@@ -102,11 +102,17 @@ tdx2csv.batch(src='c:/tdx/export', dst='c:/tdx/output')
 ```python
 from mootdx.utils import holiday
 
-# 判断一个日期是否是法定节假日
+# 判断一个日期是否是法定节假日 （tdx接口）
 holiday.holiday(date='20200202', format_='%Y%m%d', country='中国')
 
 # 判断一个日期是否是法定节假日
 holiday.holiday(date='2020-02-02')
+
+# 判断当天日期是否是法定节假日（date的值空为当天日期）
+holiday.holiday()
+
+# 判断一个日期是否是法定节假日（sina接口）
+holiday.holiday2(date='2020-02-02')
 
 # 判断当天日期是否是法定节假日（date的值空为当天日期）
 holiday.holiday()
