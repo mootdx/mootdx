@@ -1,6 +1,10 @@
 # @Author  : BoPo
 # @Time    : 2021/10/11 17:28
 # @Function:
+import datetime
+import time
+from pathlib import Path
+
 import httpx
 import pandas as pd
 import simplejson as json
@@ -52,10 +56,27 @@ def fq_factor(method: str, symbol: str) -> pd.DataFrame:
         return qfq_factor_df
 
 
+def get_xdxr(symbol, client):
+    from mootdx import get_config_path
+
+    cache_file = Path(get_config_path(f'xdxr/{symbol}.plk'))
+    cache_file.parent.mkdir(exist_ok=True)
+
+    # 判断数据是否存在, 判断修改时间是否今天
+    today = time.mktime(datetime.date.today().timetuple())
+    if cache_file.is_file() and cache_file.stat().st_mtime > today:
+        xdxr = pd.read_pickle(cache_file)
+    else:
+        xdxr = client.xdxr(symbol=symbol)
+        xdxr.to_pickle(cache_file)
+
+    return xdxr
+
+
 def to_adjust(temp_df, symbol=None, adjust=None, client=None):
     from mootdx.tools.reversion import reversion
-    xdxr = client.xdxr(symbol=symbol)
-    return reversion(temp_df, xdxr, adjust)
+    xdxr_data = get_xdxr(symbol=symbol, client=client)
+    return reversion(temp_df, xdxr_data, adjust)
 
 
 def to_adjust2(temp_df, symbol=None, adjust=None):

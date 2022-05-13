@@ -1,9 +1,6 @@
-import pytest
 import unittest
-from loguru import logger
 
 from mootdx.quotes import Quotes
-from mootdx.utils.adjust import to_adjust
 
 
 class TestAdjust2(unittest.TestCase):
