@@ -60,7 +60,7 @@ cov:
 	py.test --cov=mootdx -v
 
 test: ## run tests quickly with the default Python
-	py.test tests
+	py.test tests -v
 
 test-all: ## run tests on every Python version with tox
 	tox
