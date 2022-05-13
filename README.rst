@@ -17,6 +17,8 @@
 
 如果喜欢本项目可以在右上角给颗⭐！你的支持是我最大的动力😎！
 
+郑重声明: 本项目只作学习交流, 不得用于任何商业目的. 
+
 * 开源协议: MIT license
 * 在线文档: https://www.mootdx.com
 * 国内镜像: https://gitee.com/ibopo/mootdx
