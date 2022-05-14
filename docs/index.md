@@ -2,7 +2,7 @@
 
 Mootdx 是一款纯 Python 语言开发的类似 TDX 的行情数据接口的实现。
 
-- 在线文档: [https://mootdx.readthedocs.io](https://mootdx.readthedocs.io)
+- 在线文档: [https://www.mootdx.com](https://www.mootdx.com)
 - 国内镜像: [https://gitee.com/ibopo/mootdx](https://gitee.com/ibopo/mootdx)
 - 项目仓库: [https://github.com/mootdx/mootdx](https://github.com/mootdx/mootdx)
 

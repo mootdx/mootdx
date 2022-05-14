@@ -49,7 +49,7 @@ async def fetch_file(downdir, file_obj):
 class Affair(object):
 
     @staticmethod
-    def parse(downdir='.', filename=None):
+    def parse(downdir='.', filename=None, **kwargs):
         """
         按目录解析文件
 
@@ -66,7 +66,7 @@ class Affair(object):
         Affair.fetch(downdir, filename)
 
         if Path(filepath).exists():
-            return financial.FinancialReader().to_data(filepath)
+            return financial.FinancialReader().to_data(filepath, **kwargs)
 
         logger.warning(f'文件不存在：{filename}')
 

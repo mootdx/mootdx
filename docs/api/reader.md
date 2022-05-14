@@ -94,10 +94,10 @@ from mootdx.reader import Reader
 reader = Reader.factory(market='std', tdxdir='C:/new_tdx')
 
 # 默认扁平格式
-mootdx.block.block_new()
+reader.block_new()
 
 # 分组格式
-mootdx.block.block_new(group=True)
+reader.block_new(group=True)
 ```
 
 写入新板块
@@ -108,5 +108,5 @@ import mootdx.block
 from mootdx.reader import Reader
 
 reader = Reader.factory(market='std', tdxdir='C:/new_tdx')
-mootdx.block.block_new(name='最优盈利板块', symbol=['600001', '600002', '600003', '600004', ])
+reader.block_new(name='最优盈利板块', symbol=['600001', '600002', '600003', '600004', ])
 ```

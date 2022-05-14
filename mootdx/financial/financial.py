@@ -15,7 +15,7 @@ from ..logger import logger
 
 class FinancialReader(object):
     @staticmethod
-    def to_data(filename):
+    def to_data(filename, **kwargs):
         """
         读取历史财务数据文件，并返回pandas结果 ， 类似 `gpcw20171231.zip` 格式，具体字段含义参考
 
@@ -30,7 +30,7 @@ class FinancialReader(object):
         with open(filename, 'rb') as fp:
             data = crawler.parse(download_file=fp)
 
-        data = crawler.to_df(data)
+        data = crawler.to_df(data, **kwargs)
         return data
 
 
@@ -150,23 +150,23 @@ class Financial(BaseFinancial):
             shutil.unpack_archive(download_file.name, extract_dir=tmpdir)
 
             # only one file endswith .dat should be in zip archives
-            datfile = None
+            dat_file = None
 
             for _file in os.listdir(tmpdir):
-                if _file.endswith('.dat'):
-                    datfile = open(Path(tmpdir, _file), 'rb')
+                if str(_file).endswith('.dat'):
+                    dat_file = open(Path(tmpdir, str(_file)), 'rb')
 
-            if datfile is None:
+            if dat_file is None:
                 raise Exception('no dat file found in zip archive')
 
         elif download_file.name.endswith('.dat'):
-            datfile = download_file
+            dat_file = download_file
         else:
             return None
 
         header_size = calcsize(header_pack_format)
         stock_item_size = calcsize('<6s1c1L')
-        data_header = datfile.read(header_size)
+        data_header = dat_file.read(header_size)
         stock_header = unpack(header_pack_format, data_header)
 
         max_count = stock_header[2]
@@ -180,19 +180,19 @@ class Financial(BaseFinancial):
         results = []
 
         for stock_idx in range(0, max_count):
-            datfile.seek(header_size + stock_idx * calcsize('<6s1c1L'))
-            si = datfile.read(stock_item_size)
+            dat_file.seek(header_size + stock_idx * calcsize('<6s1c1L'))
+            si = dat_file.read(stock_item_size)
             stock_item = unpack('<6s1c1L', si)
             code = stock_item[0].decode('utf-8')
-            datfile.seek(stock_item[2])
+            dat_file.seek(stock_item[2])
 
-            info_data = datfile.read(calcsize(report_pack_format))
+            info_data = dat_file.read(calcsize(report_pack_format))
             cw_info = unpack(report_pack_format, info_data)
             one_record = (code, report_date) + cw_info
             results.append(one_record)
 
         if download_file.name.endswith('.zip'):
-            datfile.close()
+            dat_file.close()
             shutil.rmtree(tmpdir, ignore_errors=True)
 
         download_file.close()
@@ -200,25 +200,29 @@ class Financial(BaseFinancial):
         return results
 
     @staticmethod
-    def to_df(data):
+    def to_df(data, header='zh'):
         """
         转换数据为 pandas DataFrame 格式
+
         :param data: 要转换的数据
+        :param header: 是否中文表头
         :return: DataFrame
         """
 
         if len(data) == 0 or len(data[0]) == 0:
-            return None
+            return pd.DataFrame(data=None)
 
-        length = len(data[0]) - 1
         column = ['code', 'report_date']
 
-        for i in range(1, length):
+        for i in range(1, len(data[0]) - 1):
             column.append('col' + str(i))
 
         df = pd.DataFrame(data=data, columns=column)
         df.set_index('code', inplace=True)
-        df.columns = columns
+
+        if header == 'zh':
+            df.columns = columns
+
         logger.debug(df)
 
         return df
