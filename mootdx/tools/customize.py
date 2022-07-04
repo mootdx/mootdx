@@ -5,13 +5,14 @@ import time
 from datetime import datetime
 from pathlib import Path
 
-from loguru import logger
 from pytdx.reader import CustomerBlockReader
 
 from mootdx.consts import TYPE_FLATS
 from mootdx.consts import TYPE_GROUP
 from mootdx.logger import logger
 from mootdx.utils import get_stock_market
+
+time_ns = lambda: int(time.time() * 1e9)
 
 
 class Customize:
@@ -148,7 +149,7 @@ def _blocknew(tdxdir: str = None, name: str = None, symbol: list = None, blk_fil
         name = datetime.now().strftime('%Y%m%d%H%M%S')
 
     # 按时间生成 blk 文件名
-    blk_file = blk_file if blk_file else str(time.time_ns())
+    blk_file = blk_file if blk_file else str(time_ns())
 
     vipdoc = Path(tdxdir, 'T0002', 'blocknew')
     symbol = list(set(symbol))
