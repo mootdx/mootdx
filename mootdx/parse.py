@@ -34,7 +34,7 @@ class BaseParse:
             return None
 
         if 'incon' in symbol:
-            return self.incon(vipdoc)
+            return self.__incon(vipdoc)
 
         if 'block_' in symbol and suffix == '.dat':
             return BlockReader().get_df(str(vipdoc), (TYPE_FLATS, TYPE_GROUP)[bool(group)])
@@ -44,7 +44,7 @@ class BaseParse:
     def read_text(self, path):
         return Path(self.tdxdir, path).read_text(encoding='gbk').strip()
 
-    def incon(self, path):
+    def __incon(self, path):
         t = self.read_text(path)
         m = [x for x in t.split('######')]
         v = [n.split() for n in m if n.strip()]
@@ -54,11 +54,7 @@ class BaseParse:
         return d
 
     def cfg(self, path):
-        logger.debug('cfg: {path}')
-
         ts = self.read_text(path)
         ls = [ll.split('|') for ll in ts.split()]
-
-        logger.debug('data: {ls}')
 
         return pd.DataFrame(ls)

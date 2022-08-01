@@ -11,10 +11,11 @@
 √ [修复] 复权算法, 已经修复
 
 - [x] test_block
+- [x] 修复 holiday
 - [] 修正扩展市场离线数据读取问题
-- [] 测试代码分目录整理
-- [] 修复 holiday2 增加 cache3 库做过期管理
 - [] test_incon 格式整理
+- [] cache3 库做过期管理
+- [] 测试代码分目录整理
 
 parse
 -> block
