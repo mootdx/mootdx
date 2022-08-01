@@ -5,7 +5,6 @@ from pytdx.reader import TdxExHqDailyBarReader
 from pytdx.reader import TdxLCMinBarReader
 from pytdx.reader import TdxMinBarReader
 
-from mootdx import block
 from mootdx.contrib.compat import MooTdxDailyBarReader
 from mootdx.utils import get_stock_market
 
@@ -136,8 +135,13 @@ class StdReader(ReaderBase):
         :param group:
         :return: pd.dataFrame or Bool
         """
+        from mootdx.tools.customize import Customize
+        reader = Customize(tdxdir=self.tdxdir)
 
-        return block.blocknew(self.tdxdir, name, symbol, group=group, **kwargs)
+        if symbol:
+            return reader.create(name=name, symbol=symbol, **kwargs)
+
+        return reader.search(name=name, group=group)
 
     def block(self, symbol='', group=False, **kwargs):
         """
@@ -147,8 +151,9 @@ class StdReader(ReaderBase):
         :param group:   分组解析
         :return: pd.dataFrame or None
         """
+        from mootdx.block import BlockParse
 
-        return block.block(self.tdxdir, symbol, group=group, **kwargs)
+        return BlockParse(self.tdxdir).parse(symbol, group=group, **kwargs)
 
 
 class ExtReader(ReaderBase):

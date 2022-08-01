@@ -1,4 +1,6 @@
 pytest
+pytest-datadir
+
 # pytest-autochecklog
 # pytest-benchmark
 # pytest-mock

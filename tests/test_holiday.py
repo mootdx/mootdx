@@ -3,6 +3,7 @@ import pytest
 from mootdx.utils.holiday import holiday, holiday_, holiday2
 
 
+# @pytest.mark.skip
 class TestHoliday:
 
     def test_holiday_exists(self):
@@ -24,6 +25,7 @@ class TestHoliday:
         assert holiday('2022-01-23', '%Y-%m-%d')
 
 
+@pytest.mark.skip
 class Testholiday0:
 
     def test_holiday_exists(self):

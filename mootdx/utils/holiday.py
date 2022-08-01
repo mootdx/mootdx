@@ -315,13 +315,13 @@ def holiday2(date=False, save=True) -> pd.DataFrame:
     :return: 交易日历
     :rtype: pandas.DataFrame
     """
-    cache_file = get_config_path('holiday.csv')
+    # cache_file = get_config_path('holiday.csv')
     temp_df = None
 
-    if Path(cache_file).exists():
-        df = pd.read_csv(cache_file)
-        if not df.loc[df['year'] == datetime.datetime.now().year].empty:
-            temp_df = df
+    # if Path(cache_file).exists():
+    #     df = pd.read_csv(cache_file)
+    #     if not df.loc[df['year'] == datetime.datetime.now().year].empty:
+    #         temp_df = df
 
     if type(temp_df) is not pd.DataFrame:
         client = httpx.Client(verify=False)
@@ -347,7 +347,7 @@ def holiday2(date=False, save=True) -> pd.DataFrame:
         temp_df['year'] = pd.DatetimeIndex(temp_df['date']).year
 
         # 保存缓存
-        save and temp_df.to_csv(cache_file)
+        # save and temp_df.to_csv(cache_file)
 
     if date:
 
@@ -362,7 +362,7 @@ def holiday2(date=False, save=True) -> pd.DataFrame:
 
 
 def holiday(date=None, format_=None, country=None, result=False):
-    cache_file = get_config_path('holiday.plk')
+    # cache_file = get_config_path('holiday.plk')
 
     format_ = format_ if format_ else '%Y-%m-%d'
     country = country if country else '中国'
@@ -376,16 +376,17 @@ def holiday(date=None, format_=None, country=None, result=False):
         logger.exception('日期或者日期格式错误!')
         raise ex
 
-    if Path(cache_file).exists() and time.localtime(Path(cache_file).stat().st_mtime).tm_year == time.localtime(time.time()).tm_year:
-        df = pd.read_pickle(cache_file)
-    else:
-        res = httpx.get('https://www.tdx.com.cn/url/holiday/')
-        ret = re.findall(r'<textarea id="data" style="display:none;">([\s\w\d\W]+)</textarea>', res.text, re.M)[0].strip()
-        day = [d.split('|')[:4] for d in ret.split('\n')]
+    # if Path(cache_file).exists() and time.localtime(Path(cache_file).stat().st_mtime).tm_year == time.localtime(time.time()).tm_year:
+    #     df = pd.read_pickle(cache_file)
+    # else:
 
-        df = pd.DataFrame(day, columns=['日期', '节日', '国家', '交易所'], dtype=str)
-        df.index = pd.to_datetime(df['日期'].astype('str'), format='%Y%m%d')
-        df.to_pickle(cache_file)
+    res = httpx.get('https://www.tdx.com.cn/url/holiday/')
+    ret = re.findall(r'<textarea id="data" style="display:none;">([\s\w\d\W]+)</textarea>', res.text, re.M)[0].strip()
+    day = [d.split('|')[:4] for d in ret.split('\n')]
+
+    df = pd.DataFrame(day, columns=['日期', '节日', '国家', '交易所'], dtype=str)
+    df.index = pd.to_datetime(df['日期'].astype('str'), format='%Y%m%d')
+    # df.to_pickle(cache_file)
 
     if country not in list(set(df['国家'].values)):
         raise ValueError(f'没有该国家`{country}`的交易日数据')

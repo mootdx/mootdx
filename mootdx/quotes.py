@@ -1,4 +1,5 @@
 import math
+
 import pandas
 import pandas as pd
 from pytdx.exhq import TdxExHq_API
@@ -452,14 +453,15 @@ class ExtQuotes(BaseQuotes):
 
         try:
             config.get('SERVER').get('EX')[0]
-        except ValueError:
-            server.bestip()
+        except ValueError as ex:
+            logger.warning(ex)
         finally:
             default = config.get('SERVER').get('EX')[0]
             self.bestip = config.get('BESTIP').get('EX', default)
 
-        if kwargs.get('quiet'):
-            del kwargs['quiet']
+        for x in ['verbose', 'server', 'quiet']:
+            if x in kwargs.keys():
+                del kwargs[x]
 
         self.client = TdxExHq_API(**kwargs)
         self.client.connect(*self.bestip)

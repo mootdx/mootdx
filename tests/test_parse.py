@@ -1,6 +1,6 @@
 import pytest
 
-from mootdx.block import ParseBase
+from mootdx.block import BaseParse
 from tests.conftest import is_empty
 
 tdxdir = '../fixtures'
@@ -8,9 +8,10 @@ tdxdir = '../fixtures'
 
 @pytest.fixture(scope='function')
 def reader():
-    return ParseBase(tdxdir)
+    return BaseParse(tdxdir)
 
 
+@pytest.mark.skip
 @pytest.mark.parametrize('symbol,expected', [
     ("incon.dat", "incon.dat"),
     # ("block.dat", "T0002/hq_cache/block.dat"),
@@ -22,5 +23,5 @@ def reader():
     ("tdxzs.cfg", "T0002/hq_cache/tdxzs.cfg"),
 ])
 def test_block(reader, symbol, expected):
-    result = reader.parse(symbol=symbol, debug=False)
+    result = reader.block(symbol=symbol, debug=False)
     assert not is_empty(result), f'result => {symbol}'

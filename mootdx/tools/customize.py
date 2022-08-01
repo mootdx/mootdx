@@ -73,11 +73,11 @@ class Customize:
 
             result = result.code_list.values
             result = list(set(result[0].split(',')))
+
             return result
 
         # 全部数据
-        result = CustomerBlockReader().get_df(str(self.vipdoc), (TYPE_FLATS, TYPE_GROUP)[group])
-        return result
+        return CustomerBlockReader().get_df(str(self.vipdoc), (TYPE_FLATS, TYPE_GROUP)[group])
 
     def update(self, name: str = None, symbol=None, overflow=False):
         """
@@ -150,6 +150,8 @@ def _blocknew(tdxdir: str = None, name: str = None, symbol: list = None, blk_fil
 
     # 按时间生成 blk 文件名
     blk_file = blk_file if blk_file else str(time_ns())
+
+    print(symbol)
 
     vipdoc = Path(tdxdir, 'T0002', 'blocknew')
     symbol = list(set(symbol))
