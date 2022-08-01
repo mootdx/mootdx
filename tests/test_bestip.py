@@ -8,20 +8,20 @@ from mootdx import config
 
 @pytest.mark.skip
 class TestBestIP:
-    config = ''
+    config = ""
 
     @staticmethod
     def setup_class(cls):
-        logging.info('setup_class')
-        cls.config = Path.home() / '.mootdx' / 'config.json'
+        logging.info("setup_class")
+        cls.config = Path.home() / ".mootdx" / "config.json"
         cls.config.exists() and cls.config.unlink()
 
     @staticmethod
     def teardown_class(cls):
-        logging.info('teardown_class')
+        logging.info("teardown_class")
         cls.config.exists() and cls.config.unlink()
 
-    @pytest.mark.skip('skip')
+    @pytest.mark.skip("skip")
     def test_config(self, caplog):
         caplog.set_level(logging.WARNING)
         self.config.exists() and self.config.unlink()

@@ -13,9 +13,9 @@ from mootdx.logger import logger
 from mootdx.utils import get_config_path
 
 hosts = {
-    'HQ': [{'addr': hs[1], 'port': hs[2], 'time': 0, 'site': hs[0]} for hs in HQ_HOSTS],
-    'EX': [{'addr': hs[1], 'port': hs[2], 'time': 0, 'site': hs[0]} for hs in EX_HOSTS],
-    'GP': [{'addr': hs[1], 'port': hs[2], 'time': 0, 'site': hs[0]} for hs in GP_HOSTS],
+    "HQ": [{"addr": hs[1], "port": hs[2], "time": 0, "site": hs[0]} for hs in HQ_HOSTS],
+    "EX": [{"addr": hs[1], "port": hs[2], "time": 0, "site": hs[0]} for hs in EX_HOSTS],
+    "GP": [{"addr": hs[1], "port": hs[2], "time": 0, "site": hs[0]} for hs in GP_HOSTS],
 }
 
 results = {k: [] for k in hosts}
@@ -30,10 +30,10 @@ def callback(res, key):
     """
     result = res.result()
 
-    if result.get('time'):
+    if result.get("time"):
         results[key].append(result)
 
-    logger.debug('callback: {}', res.result())
+    logger.debug("callback: {}", res.result())
 
 
 def connect(proxy: dict) -> dict:
@@ -49,18 +49,18 @@ def connect(proxy: dict) -> dict:
 
         start = time.perf_counter()
 
-        sock.connect((proxy.get('addr'), int(proxy.get('port'))))
+        sock.connect((proxy.get("addr"), int(proxy.get("port"))))
         sock.close()
 
-        proxy['time'] = (time.perf_counter() - start) * 1000
+        proxy["time"] = (time.perf_counter() - start) * 1000
 
-        logger.info('{addr}:{port} 验证通过，响应时间：{time} ms.'.format(**proxy))
+        logger.info("{addr}:{port} 验证通过，响应时间：{time} ms.".format(**proxy))
     except socket.timeout as ex:
-        logger.info('{addr},{port} time out.'.format(**proxy))
-        proxy['time'] = None
+        logger.info("{addr},{port} time out.".format(**proxy))
+        proxy["time"] = None
     except ConnectionRefusedError as ex:
-        logger.info('{addr},{port} 验证失败.'.format(**proxy))
-        proxy['time'] = None
+        logger.info("{addr},{port} 验证失败.".format(**proxy))
+        proxy["time"] = None
     finally:
         return proxy
 
@@ -95,7 +95,7 @@ def server(index=None, limit=5, console=False, sync=True):
 
     if sync:
         results[index] = [connect(proxy) for proxy in _hosts]
-        results[index] = [x for x in results[index] if x.get('time')]
+        results[index] = [x for x in results[index] if x.get("time")]
     else:
         async_event()
 
@@ -105,29 +105,29 @@ def server(index=None, limit=5, console=False, sync=True):
     if console:
         from prettytable import PrettyTable
 
-        server.sort(key=lambda item: item['time'])
-        print('[√] 最优服务器:')
+        server.sort(key=lambda item: item["time"])
+        print("[√] 最优服务器:")
 
-        t = PrettyTable(['Name', 'Addr', 'Port', 'Time'])
-        t.align['Name'] = 'l'
-        t.align['Addr'] = 'l'
-        t.align['Port'] = 'l'
-        t.align['Time'] = 'r'
+        t = PrettyTable(["Name", "Addr", "Port", "Time"])
+        t.align["Name"] = "l"
+        t.align["Addr"] = "l"
+        t.align["Port"] = "l"
+        t.align["Time"] = "r"
         t.padding_width = 1
 
         for host in server[: int(limit)]:
             t.add_row(
                 [
-                    host['site'],
-                    host['addr'],
-                    host['port'],
-                    '{:5.2f} ms'.format(host['time']),
+                    host["site"],
+                    host["addr"],
+                    host["port"],
+                    "{:5.2f} ms".format(host["time"]),
                 ]
             )
 
         print(t)
 
-    return [(item['addr'], item['port']) for item in server]
+    return [(item["addr"], item["port"]) for item in server]
 
 
 def check_server(console=False, limit=5, sync=True) -> None:
@@ -135,20 +135,20 @@ def check_server(console=False, limit=5, sync=True) -> None:
 
 
 def bestip(console=False, limit=5, sync=True) -> None:
-    config_ = get_config_path('config.json')
+    config_ = get_config_path("config.json")
     default = dict(CONFIG)
 
-    for index in ['HQ', 'EX', 'GP']:
+    for index in ["HQ", "EX", "GP"]:
         try:
             data = server(index=index, limit=limit, console=console, sync=sync)
             if data:
-                default['BESTIP'][index] = data[0]
+                default["BESTIP"][index] = data[0]
         except RuntimeError as ex:
-            logger.error('请手动运行`python -m mootdx bestip`')
+            logger.error("请手动运行`python -m mootdx bestip`")
             break
 
-    json.dump(default, open(config_, 'w', encoding='utf-8'), indent=2, ensure_ascii=False)
+    json.dump(default, open(config_, "w", encoding="utf-8"), indent=2, ensure_ascii=False)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     bestip()

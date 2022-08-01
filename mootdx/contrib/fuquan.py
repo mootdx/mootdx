@@ -49,25 +49,25 @@ def calc_fuquan_use_fenhong(df, df_fenhong):
 
         if money > 0:
             money = money * 0.1
-            df['o'].ix[:date] -= money
-            df['h'].ix[:date] -= money
-            df['c'].ix[:date] -= money
-            df['l'].ix[:date] -= money
+            df["o"].ix[:date] -= money
+            df["h"].ix[:date] -= money
+            df["c"].ix[:date] -= money
+            df["l"].ix[:date] -= money
         if gu > 0:
             # x = cur / (1+y/10)
             gu = 1 + gu / 10
-            df['o'].ix[:date] /= gu
-            df['h'].ix[:date] /= gu
-            df['c'].ix[:date] /= gu
-            df['l'].ix[:date] /= gu
+            df["o"].ix[:date] /= gu
+            df["h"].ix[:date] /= gu
+            df["c"].ix[:date] /= gu
+            df["l"].ix[:date] /= gu
 
     return df
 
 
-def make_fq(symbol='', method='00'):
-    client = Quotes.factory(market='std')
+def make_fq(symbol="", method="00"):
+    client = Quotes.factory(market="std")
     data = client.bars(symbol=symbol)
-    xdxr = client.xdxr(symbol=symbol).query('category==1')
+    xdxr = client.xdxr(symbol=symbol).query("category==1")
 
     if method:
         return make_qfq(data, xdxr, method)
@@ -78,11 +78,12 @@ def make_fq(symbol='', method='00'):
 # present  bonus  price  rationed
 # 展示      奖金    价格    配给
 
-def make_qfq(data, xdxr, fq_type='01'):
+
+def make_qfq(data, xdxr, fq_type="01"):
     """使用数据库数据进行复权"""
 
     # 过滤其他，只留除权信息
-    xdxr = xdxr.query('category==1')
+    xdxr = xdxr.query("category==1")
     # data = data.assign(if_trade=1)
 
     if len(xdxr) > 0:
@@ -90,18 +91,20 @@ def make_qfq(data, xdxr, fq_type='01'):
         # data = pd.concat([data, xdxr.loc[data.index[0]:data.index[-1], ['category']]], axis=1)
         # data['if_trade'].fillna(value=0, inplace=True)
 
-        data = data.fillna(method='ffill')
+        data = data.fillna(method="ffill")
         # present       bonus       price       rationed
         # songzhuangu   fenhong     peigujia    peigu
-        data = pd.concat([data, xdxr.loc[data.index[0]:data.index[-1], ['fenhong', 'peigu', 'peigujia', 'songzhuangu']]], axis=1)
+        data = pd.concat(
+            [data, xdxr.loc[data.index[0] : data.index[-1], ["fenhong", "peigu", "peigujia", "songzhuangu"]]], axis=1
+        )
     else:
         # 没有除权信息
-        data = pd.concat([data, xdxr.loc[:, ['fenhong', 'peigu', 'peigujia', 'songzhuangu']]], axis=1)
+        data = pd.concat([data, xdxr.loc[:, ["fenhong", "peigu", "peigujia", "songzhuangu"]]], axis=1)
 
     # 清理数据
     data = data.fillna(0)
 
-    if fq_type == '01':
+    if fq_type == "01":
         # 生成 preclose todo 关键位置
 
         # for key,val in ea.iterrows():
@@ -113,25 +116,38 @@ def make_qfq(data, xdxr, fq_type='01'):
         #             df.iloc[date:, field] /= 1 + val.present/10 + val.rationed/10
 
         # -= val.bonus / 10 == @todo
-        df1 = (data['close'].shift(1) * 10 - data['fenhong'] + data['peigu'] * data['peigujia'])
-        df2 = (10 + data['peigu'] + data['songzhuangu'])
+        df1 = data["close"].shift(1) * 10 - data["fenhong"] + data["peigu"] * data["peigujia"]
+        df2 = 10 + data["peigu"] + data["songzhuangu"]
 
-        data['preclose'] = (data['close'].shift(1) * 10 - data['fenhong'] + data['peigu'] * data['peigujia']) / (10 + data['peigu'] + data['songzhuangu'])
+        data["preclose"] = (data["close"].shift(1) * 10 - data["fenhong"] + data["peigu"] * data["peigujia"]) / (
+            10 + data["peigu"] + data["songzhuangu"]
+        )
         # 生成 adj 复权因子
-        data['adj'] = (data['preclose'].shift(-1) / data['close']).fillna(1)[::-1].cumprod()
+        data["adj"] = (data["preclose"].shift(-1) / data["close"]).fillna(1)[::-1].cumprod()
     else:
         # 生成 preclose todo 关键位置
-        data['preclose'] = (data['close'].shift(1) * 10 - data['fenhong'] + data['peigu'] * data['peigujia']) / (10 + data['peigu'] + data['songzhuangu'])
+        data["preclose"] = (data["close"].shift(1) * 10 - data["fenhong"] + data["peigu"] * data["peigujia"]) / (
+            10 + data["peigu"] + data["songzhuangu"]
+        )
         # 生成 adj 复权因子
-        data['adj'] = (data['close'] / data['preclose'].shift(-1)).cumprod().shift(1).fillna(1)
+        data["adj"] = (data["close"] / data["preclose"].shift(-1)).cumprod().shift(1).fillna(1)
 
     # 计算复权价格
     for field in data.columns.values:
-        if field in ('open', 'close', 'high', 'low', 'preclose'):
-            data[field] = data[field] * data['adj']
+        if field in ("open", "close", "high", "low", "preclose"):
+            data[field] = data[field] * data["adj"]
 
     # 清理数据, 返回结果
-    return data.query('open != 0').drop(['fenhong', 'peigu', 'peigujia', 'songzhuangu', ], axis=1)
+    return data.query("open != 0").drop(
+        [
+            "fenhong",
+            "peigu",
+            "peigujia",
+            "songzhuangu",
+        ],
+        axis=1,
+    )
+
 
 # def make_hfq(bfq_data, xdxr_data):
 #     """使用数据库数据进行复权"""
