@@ -59,6 +59,9 @@ lint: ## check style with flake8
 cov:
 	py.test --cov=mootdx -v
 
+fmt:
+	black -l 120 -t py36 -t py37 -t py38 -t py39 -t py310 .
+
 test: ## run tests quickly with the default Python
 	py.test tests -v
 
