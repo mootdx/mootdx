@@ -11,7 +11,6 @@ from mootdx.utils import TqdmUpTo
 def download(downdir, filename):
     """
     带进度条下载函数
-
     :param downdir:
     :param filename:
     :return:
@@ -63,7 +62,7 @@ class Affair(object):
             return None
 
         filepath = Path(downdir) / filename
-        Affair.fetch(downdir, filename)
+        filepath.exists() or Affair.fetch(downdir, filename)
 
         if Path(filepath).exists():
             return financial.FinancialReader().to_data(filepath, **kwargs)
