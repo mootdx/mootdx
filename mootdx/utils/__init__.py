@@ -127,7 +127,7 @@ def to_data(v, **kwargs):
 
     symbol = kwargs.get("symbol")
     adjust = kwargs.get("adjust", None)
-    client = kwargs.get("client", None)
+    # client = kwargs.get("client", None)
 
     if adjust in ["01", "qfq", "before"]:
         adjust = "qfq"
@@ -137,8 +137,8 @@ def to_data(v, **kwargs):
         adjust = None
 
     # 空值
-    if not v:
-        return pd.DataFrame(data=[])
+    # if not v:
+    #     return pd.DataFrame(data=None)
 
     # DataFrame
     if isinstance(v, DataFrame):
@@ -160,7 +160,7 @@ def to_data(v, **kwargs):
         from mootdx.utils.adjust import to_adjust
 
         result["code"] = symbol
-        result = to_adjust(result, symbol=symbol, client=client, adjust=adjust)
+        result = to_adjust(result, symbol=symbol, adjust=adjust)
 
     if "datetime" in result.columns:
         result.index = pd.to_datetime(result.datetime)

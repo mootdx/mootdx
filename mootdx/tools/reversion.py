@@ -35,7 +35,7 @@ def _reversion(bfq_data, xdxr_data, type_):
 
     # data['volume'] = data['volume'] / data['adj'] if 'volume' in data.columns else data['vol'] / data['adj']
 
-    data["volume"] = data.get("volume", data["vol"])
+    data["volume"] = data.get("volume", data.get("vol"))
 
     try:
         # 大该是涨跌幅

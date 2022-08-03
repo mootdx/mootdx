@@ -73,10 +73,12 @@ def get_xdxr(symbol, client):
     return xdxr
 
 
-def to_adjust(temp_df, symbol=None, adjust=None, client=None):
+def to_adjust(temp_df, symbol=None, adjust=None):
     from mootdx.tools.reversion import reversion
+    from mootdx.quotes import Quotes
 
-    xdxr_data = get_xdxr(symbol=symbol, client=client)
+    # xdxr_data = get_xdxr(symbol=symbol, client=client)
+    xdxr_data = Quotes.factory('std').xdxr(symbol=symbol)
     return reversion(temp_df, xdxr_data, adjust)
 
 

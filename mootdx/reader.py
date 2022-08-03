@@ -6,7 +6,7 @@ from pytdx.reader import TdxLCMinBarReader
 from pytdx.reader import TdxMinBarReader
 
 from mootdx.contrib.compat import MooTdxDailyBarReader
-from mootdx.utils import get_stock_market
+from mootdx.utils import get_stock_market, to_data
 
 
 # 股票市场
@@ -87,7 +87,7 @@ class ReaderBase(ABC):
 class StdReader(ReaderBase):
     """股票市场"""
 
-    def daily(self, symbol=None):
+    def daily(self, symbol=None, **kwargs):
         """
         获取日线数据
 
@@ -96,10 +96,10 @@ class StdReader(ReaderBase):
         """
         reader = MooTdxDailyBarReader()
         vipdoc = self.find_path(symbol=symbol, subdir="lday", suffix="day")
+        result = reader.get_df(str(vipdoc)) if vipdoc else None
+        return to_data(result, symbol=symbol, client=self, **kwargs)
 
-        return reader.get_df(str(vipdoc)) if vipdoc else None
-
-    def minute(self, symbol=None, suffix=1):
+    def minute(self, symbol=None, suffix=1, **kwargs):
         """
         获取1, 5分钟线
 

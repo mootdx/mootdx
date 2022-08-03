@@ -737,13 +737,12 @@ class ExtQuotes(BaseQuotes):
         """
 
         frequency = get_frequency(frequency)
-
         market, symbol = self.validate(market, symbol)
         result = self.client.get_instrument_bars(
             category=frequency, market=market, code=symbol, start=start, count=offset
         )
 
-        return to_data(result, symbol=symbol, client=self, **kwargs)
+        return to_data(result, symbol=symbol, **kwargs)
 
     @retry(
         stop=stop_after_attempt(3),
