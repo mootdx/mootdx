@@ -137,8 +137,8 @@ def to_data(v, **kwargs):
         adjust = None
 
     # 空值
-    # if not v:
-    #     return pd.DataFrame(data=None)
+    if not isinstance(v, DataFrame) and not v:
+        return pd.DataFrame(data=None)
 
     # DataFrame
     if isinstance(v, DataFrame):
