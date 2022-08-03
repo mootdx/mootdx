@@ -105,20 +105,3 @@ def baoli_qfq(df, xdxr):
         df.loc[df.index < date, "low"] = (df["low"][df.index < date] * 10 - fh + pg * pgj) / (10 + pg + szg)
 
     return df
-
-# if __name__ == "__main__":
-#     from mootdx.quotes import Quotes
-#
-#     client = Quotes.factory(market="std")
-#     bfq_data = client.bars(symbol="600036")
-#     xdxr_data = client.xdxr(symbol="600036")
-#     bfq_data["code"] = "600036"
-#     # result = adjust.before(bfq_data, xdxr_data)
-#     # print(result)
-#
-#     # result = adjust.after(bfq_data, xdxr_data)
-#     # print(result)
-#     print(bfq_data)
-#     # result = reversion(bfq_data, xdxr_data, '02')
-#     result = baoli(bfq_data, xdxr_data)
-#     print(result)

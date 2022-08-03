@@ -16,7 +16,7 @@ try:
     from time import time_ns
 except ImportError:
     # 兼容 3.6
-    time_ns = lambda: int(time.time() * 1e9)
+    time_ns = lambda: int(time.time() * 1e9)  # noqa
 
 
 class Customize:
@@ -137,7 +137,7 @@ class Customize:
         return Path(block_path, f"{block_type}.blk").write_text(block_code, encoding="gb2312")
 
 
-def _blocknew(tdxdir: str = None, name: str = None, symbol: list = None, blk_file: str = None, **kwargs):
+def _blocknew(tdxdir: str = None, name: str = None, symbol: list = None, blk_file: str = None, **kwargs):  # noqa
     """
     自定义模块写入函数
 
