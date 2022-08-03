@@ -8,13 +8,10 @@ def _reversion(bfq_data, xdxr_data, type_):
 
     if len(info) > 0:
         # 有除权数据
-        data = pd.concat([bfq_data, info.loc[bfq_data.index[0] : bfq_data.index[-1], ["category"]]], axis=1)
+        data = pd.concat([bfq_data, info.loc[bfq_data.index[0]: bfq_data.index[-1], ["category"]]], axis=1)
         data["if_trade"].fillna(value=0, inplace=True)
         data = data.fillna(method="ffill")
-        data = pd.concat(
-            [data, info.loc[bfq_data.index[0] : bfq_data.index[-1], ["fenhong", "peigu", "peigujia", "songzhuangu"]]],
-            axis=1,
-        )
+        data = pd.concat([data, info.loc[bfq_data.index[0]: bfq_data.index[-1], ["fenhong", "peigu", "peigujia", "songzhuangu"]]], axis=1)
     else:
         data = pd.concat([bfq_data, info.loc[:, ["category", "fenhong", "peigu", "peigujia", "songzhuangu"]]], axis=1)
 
@@ -22,9 +19,7 @@ def _reversion(bfq_data, xdxr_data, type_):
     data = data.fillna(0)
 
     # 计算前日收盘
-    data["preclose"] = (data["close"].shift(1) * 10 - data["fenhong"] + data["peigu"] * data["peigujia"]) / (
-        10 + data["peigu"] + data["songzhuangu"]
-    )
+    data["preclose"] = (data["close"].shift(1) * 10 - data["fenhong"] + data["peigu"] * data["peigujia"]) / (10 + data["peigu"] + data["songzhuangu"])
 
     # 前复权
     if type_ in ["01", "qfq"]:
@@ -49,9 +44,7 @@ def _reversion(bfq_data, xdxr_data, type_):
     except:
         pass
 
-    return data.query("if_trade==1 and open != 0").drop(
-        ["fenhong", "peigu", "peigujia", "songzhuangu", "if_trade", "category"], axis=1, errors="ignore"
-    )
+    return data.query("if_trade==1 and open != 0").drop(["fenhong", "peigu", "peigujia", "songzhuangu", "if_trade", "category"], axis=1, errors="ignore")
 
 
 def reversion(stock_data, xdxr, type_="01"):
@@ -113,20 +106,19 @@ def baoli_qfq(df, xdxr):
 
     return df
 
-
-if __name__ == "__main__":
-    from mootdx.quotes import Quotes
-
-    client = Quotes.factory(market="std")
-    bfq_data = client.bars(symbol="600036")
-    xdxr_data = client.xdxr(symbol="600036")
-    bfq_data["code"] = "600036"
-    # result = adjust.before(bfq_data, xdxr_data)
-    # print(result)
-
-    # result = adjust.after(bfq_data, xdxr_data)
-    # print(result)
-    print(bfq_data)
-    # result = reversion(bfq_data, xdxr_data, '02')
-    result = baoli(bfq_data, xdxr_data)
-    print(result)
+# if __name__ == "__main__":
+#     from mootdx.quotes import Quotes
+#
+#     client = Quotes.factory(market="std")
+#     bfq_data = client.bars(symbol="600036")
+#     xdxr_data = client.xdxr(symbol="600036")
+#     bfq_data["code"] = "600036"
+#     # result = adjust.before(bfq_data, xdxr_data)
+#     # print(result)
+#
+#     # result = adjust.after(bfq_data, xdxr_data)
+#     # print(result)
+#     print(bfq_data)
+#     # result = reversion(bfq_data, xdxr_data, '02')
+#     result = baoli(bfq_data, xdxr_data)
+#     print(result)

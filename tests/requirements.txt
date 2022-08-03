@@ -1,7 +1,4 @@
-pytest
 pytest-datadir
+pytest-cov
+pytest
 
-# pytest-autochecklog
-# pytest-benchmark
-# pytest-mock
-# pytest-cov

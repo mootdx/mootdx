@@ -1,9 +1,10 @@
 import hashlib
-import pandas as pd
-from pandas import DataFrame
 from pathlib import Path
 from struct import calcsize
 from struct import unpack
+
+import pandas as pd
+from pandas import DataFrame
 from tqdm import tqdm
 
 from mootdx.consts import MARKET_BJ
@@ -55,8 +56,9 @@ def get_stock_market(symbol="", string=False):
     elif symbol.startswith(("4", "8")):
         market = "bj"
 
-    if string is False:
+    logger.debug(f"market => {market}")
 
+    if string is False:
         if market == "sh":
             market = MARKET_SH
 
@@ -66,7 +68,8 @@ def get_stock_market(symbol="", string=False):
         if market == "bj":
             market = MARKET_BJ
 
-    logger.debug(f"market=>{market}")
+    logger.debug(f"market => {market}")
+
     return market
 
 

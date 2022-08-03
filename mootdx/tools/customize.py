@@ -12,7 +12,11 @@ from mootdx.consts import TYPE_GROUP
 from mootdx.logger import logger
 from mootdx.utils import get_stock_market
 
-time_ns = lambda: int(time.time() * 1e9)
+try:
+    from time import time_ns
+except ImportError:
+    # 兼容 3.6
+    time_ns = lambda: int(time.time() * 1e9)
 
 
 class Customize:

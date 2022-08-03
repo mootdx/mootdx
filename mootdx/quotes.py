@@ -31,30 +31,49 @@ class Quotes(object):
         :param kwargs:  可变参数
         :return: object
         """
+
+        logger.debug(kwargs)
+
         if market == "ext":
             return ExtQuotes(**kwargs)
 
         return StdQuotes(**kwargs)
 
 
+def valid_server(server):
+    import ipaddress
+
+    if isinstance(server, tuple) or isinstance(server, list):
+        try:
+            address, port = server
+            ipaddress.ip_address(address)
+            return address, int(port)
+        except Exception:
+            raise ValueError('Server 格式错误. 例如: server = ("127.0.0.1", 2272)')
+
+    return None
+
+
 class BaseQuotes(object):
     client = None
     bestip = None
+    server = None
 
-    def __init__(self, bestip: bool = False, server: list = None, timeout: int = None, verbose=0, **kwargs) -> None:
+    def __init__(self, server=None, bestip: bool = False, timeout: int = None, verbose=0, **kwargs) -> None:
 
         logger_reset(verbose=verbose)
 
-        logger.debug(f"verify=>{bestip}")
-        bestip and check_server()
+        logger.debug(f"server => {server}")
+        self.server = valid_server(server)
 
-        logger.debug(f"timeout=>{timeout}")
+        logger.debug(f"bestip => {bestip}")
+        (bestip or (not config.get("BESTIP"))) and check_server()
+
+        logger.debug(f"timeout => {timeout}")
         self.timeout = timeout if timeout else 15
 
         logger.debug("config.setup()")
-
         config.setup()
-        server and config.set("BESTIP", {"HQ": server})
 
     def __del__(self):
         logger.debug("call __del__")
@@ -95,7 +114,7 @@ def check_empty(value):
     # 判断状态空，则重连接
     if instance and _empty:
         logger.info("重新连接服务器")
-        instance.client.connect(*instance.bestip)
+        instance.client.connect(*instance.server)
 
     return _empty
 
@@ -104,7 +123,7 @@ class StdQuotes(BaseQuotes):
     """
     股票市场实时行情"""
 
-    def __init__(self, bestip=False, timeout=15, **kwargs):
+    def __init__(self, server=None, bestip=False, timeout=15, **kwargs):
         """构造函数
 
         :param bestip:  最佳 IP
@@ -112,7 +131,8 @@ class StdQuotes(BaseQuotes):
         :param kwargs:  可变参数
         """
 
-        super(StdQuotes, self).__init__(bestip=bestip, timeout=timeout, **kwargs)
+        super().__init__(bestip=bestip, timeout=timeout, server=server, **kwargs)
+        self.server and config.set("BESTIP", {"HQ": self.server})
 
         try:
             config.get("SERVER").get("HQ")[0]
@@ -120,14 +140,14 @@ class StdQuotes(BaseQuotes):
             logger.warning(ex)
         finally:
             default = config.get("SERVER").get("HQ")[0][1:]
-            self.bestip = config.get("BESTIP").get("HQ", default)
+            self.server = config.get("BESTIP").get("HQ", default)
 
         for x in ["verbose", "server", "quiet"]:
             if x in kwargs.keys():
                 del kwargs[x]
 
-        self.client = TdxHq_API(raise_exception=False, **kwargs)
-        self.client.connect(*self.bestip)
+        self.client = TdxHq_API(raise_exception=False, auto_retry=True, **kwargs)
+        self.client.connect(*self.server, time_out=timeout)
 
         global instance
         instance = self
@@ -515,9 +535,9 @@ class StdQuotes(BaseQuotes):
 class ExtQuotes(BaseQuotes):
     """扩展市场实时行情"""
 
-    bestip = ("112.74.214.43", 7727)
+    # server = ("112.74.214.43", 7727)
 
-    def __init__(self, bestip=False, timeout=15, **kwargs):
+    def __init__(self, server: list = None, bestip=False, timeout=15, **kwargs):
         """
         构造函数
 
@@ -525,7 +545,8 @@ class ExtQuotes(BaseQuotes):
         :param timeout: 超时时间
         :param kwargs:  可变参数
         """
-        super(ExtQuotes, self).__init__(bestip=bestip, timeout=timeout, **kwargs)
+        super().__init__(bestip=bestip, timeout=timeout, server=server, **kwargs)
+        self.server and config.set("BESTIP", {"EX": self.server})
 
         logger.warning("目前扩展市场行情接口已经失效, 后期有望修复.")
 
@@ -535,14 +556,20 @@ class ExtQuotes(BaseQuotes):
             logger.warning(ex)
         finally:
             default = config.get("SERVER").get("EX")[0]
-            self.bestip = config.get("BESTIP").get("EX", default)
+            self.server = config.get("BESTIP").get("EX", default)
 
         for x in ["verbose", "server", "quiet"]:
             if x in kwargs.keys():
                 del kwargs[x]
 
-        self.client = TdxExHq_API(**kwargs)
-        self.client.connect(*self.bestip)
+        try:
+            self.client = TdxExHq_API(raise_exception=False, auto_retry=True, **kwargs)
+            self.client.connect(*self.server)
+        except Exception:
+            logger.error('服务器连接超时.')
+
+        global instance
+        instance = self
 
     @staticmethod
     def validate(market, symbol):

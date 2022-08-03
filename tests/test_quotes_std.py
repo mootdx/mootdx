@@ -10,7 +10,7 @@ class TestStdQuotes(unittest.TestCase):
 
     # 初始化工作
     def setup_class(self):
-        self.client = Quotes.factory(market="std", timeout=10)  # 标准市场
+        self.client = Quotes.factory(market="std", timeout=10, verbose=2)  # 标准市场
         logger.success("初始化工作")
 
     # 退出清理工作
@@ -82,6 +82,15 @@ class TestStdQuotes(unittest.TestCase):
         self.assertEqual(data.empty, True)
 
     def test_bj_quotes(self):
-        data = self.client.minutes("430090", "830946")
+        # todo 无法使用 minutes, F10, F10C, transactions
+        data = self.client.minute(symbol="430090")
+        self.assertEqual(data.empty, False)
         print(data)
-        self.assertEqual(data.empty, True)
+
+        data = self.client.bars(symbol="430090")
+        print(data)
+        self.assertEqual(data.empty, False)
+
+        data = self.client.transaction(symbol="430090")
+        print(data)
+        self.assertEqual(data.empty, False)
