@@ -24,6 +24,7 @@
 - [x] mootdx 读取通达信本地数据复权问题
 - [x] mootdx 请问是否可以手动指定市场服务器IP
 - [ ] pytdx 转向 tdxpy
+- [ ] pandas 解析时间问题
 
 以下，网友提供的复权代码
 ```python
