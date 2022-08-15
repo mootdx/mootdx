@@ -2,8 +2,8 @@ import math
 
 import pandas
 import pandas as pd
-from pytdx.exhq import TdxExHq_API
-from pytdx.hq import TdxHq_API
+from tdxpy.exhq import TdxExHq_API
+from tdxpy.hq import TdxHq_API
 from tenacity import retry
 from tenacity import retry_if_exception_type
 from tenacity import retry_if_result

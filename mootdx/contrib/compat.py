@@ -1,12 +1,12 @@
 import socket
 import threading
 
-from pytdx.base_socket_client import BaseSocketClient
-from pytdx.base_socket_client import CONNECT_TIMEOUT
-from pytdx.base_socket_client import TrafficStatSocket
-from pytdx.errors import TdxConnectionError
-from pytdx.heartbeat import HqHeartBeatThread
-from pytdx.reader import TdxDailyBarReader
+from tdxpy.base_socket_client import BaseSocketClient
+from tdxpy.base_socket_client import CONNECT_TIMEOUT
+from tdxpy.base_socket_client import TrafficStatSocket
+from tdxpy.exceptions import TdxConnectionError
+from tdxpy.heartbeat import HeartBeatThread
+from tdxpy.reader import TdxDailyBarReader
 
 from mootdx.logger import logger
 

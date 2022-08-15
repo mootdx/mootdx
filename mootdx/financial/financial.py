@@ -4,7 +4,7 @@ import random
 import shutil
 import tempfile
 from pathlib import Path
-from pytdx.hq import TdxHq_API
+from tdxpy.hq import TdxHq_API
 from struct import calcsize
 from struct import unpack
 

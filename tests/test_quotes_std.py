@@ -58,7 +58,7 @@ class TestStdQuotes(unittest.TestCase):
         self.assertTrue(data)
 
     def test_F10(self):
-        data = self.client.F10(symbol="000001", name="龙虎榜单")
+        data = self.client.F10(symbol="000001", name="公司概况")
         self.assertTrue(data)
 
     def test_xdxr(self):

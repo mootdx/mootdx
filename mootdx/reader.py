@@ -1,9 +1,9 @@
 from abc import ABC
 from pathlib import Path
 
-from pytdx.reader import TdxExHqDailyBarReader
-from pytdx.reader import TdxLCMinBarReader
-from pytdx.reader import TdxMinBarReader
+from tdxpy.reader import TdxExHqDailyBarReader
+from tdxpy.reader import TdxLCMinBarReader
+from tdxpy.reader import TdxMinBarReader
 
 from mootdx.contrib.compat import MooTdxDailyBarReader
 from mootdx.utils import get_stock_market, to_data

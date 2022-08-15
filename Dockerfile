@@ -1,7 +1,8 @@
 FROM python:3.8-alpine
 ENV PYTHONUNBUFFERED 1
 
-RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
+#RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
+RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.tuna.tsinghua.edu.cn/g' /etc/apk/repositories
 RUN apk add py3-pandas
 
 #RUN apk add --no-cache --virtual .build-deps openssl-dev make autoconf automake gcc g++ postgresql-dev zlib-dev
