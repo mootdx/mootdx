@@ -61,8 +61,8 @@ def connect(proxy: dict) -> dict:
     except ConnectionRefusedError as ex:
         logger.info("{addr},{port} 验证失败.".format(**proxy))
         proxy["time"] = None
-    finally:
-        return proxy
+
+    return proxy
 
 
 async def verify(proxy: dict):

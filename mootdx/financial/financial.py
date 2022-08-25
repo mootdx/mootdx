@@ -1,6 +1,6 @@
 import os
 import pandas as pd
-import random
+import secrets
 import shutil
 import tempfile
 from pathlib import Path
@@ -113,7 +113,7 @@ class Financial(BaseFinancial):
 
         with api.connect(*self.bestip):
             content = api.get_report_file_by_size(f"tdxfin/{filename}", filesize=filesize, reporthook=report_hook)
-            download_file = open(downfile, "wb") if downfile else tempfile.NamedTemporaryFile(delete=True)
+            download_file = downfile and open(downfile, "wb") or tempfile.NamedTemporaryFile(delete=True)
             download_file.write(content)
             download_file.seek(0)
 
@@ -138,13 +138,12 @@ class Financial(BaseFinancial):
 
         if download_file.name.endswith(".zip"):
             tmpdir_root = tempfile.gettempdir()
-            random_sums = str(random.randint(0, 1000000))
-            subdir_name = f"mootdx_{random_sums}"
+            subdir_name = f"mootdx_{secrets.randbelow(1000000)}"
 
             tmpdir = Path(tmpdir_root, subdir_name)
             shutil.rmtree(tmpdir, ignore_errors=True)
-            Path(tmpdir).mkdir(parents=True)
 
+            Path(tmpdir).mkdir(parents=True)
             shutil.unpack_archive(download_file.name, extract_dir=tmpdir)
 
             # only one file endswith .dat should be in zip archives

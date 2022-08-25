@@ -36,5 +36,4 @@ def pull(branch=repo.active_branch.name):
 def help():
     """使用帮助"""
     text = open("README.rst").read()
-    text = text
     print(text)
