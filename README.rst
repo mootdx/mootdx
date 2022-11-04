@@ -17,7 +17,7 @@
 
 如果喜欢本项目可以在右上角给颗⭐！你的支持是我最大的动力😎！
 
-郑重声明: 本项目只作学习交流, 不得用于任何商业目的. 
+郑重声明: 本项目只作学习交流, 不得用于任何商业目的.
 
 * 开源协议: MIT license
 * 在线文档: https://www.mootdx.com
@@ -144,3 +144,8 @@
 .. image:: docs/img/IMG_2851.JPG
         :width: 130 px
         :align: left
+
+常见问题
+-------
+
+M1 mac 系统PyMiniRacer不能使用，访问: https://github.com/sqreen/PyMiniRacer/issues/143

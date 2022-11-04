@@ -1,5 +1,5 @@
 click>=6.7
-httpx<0.23.0
+httpx[socks]
 loguru>=0.5.3
 pandas>=0.23.3
 prettytable>=2.2.0
