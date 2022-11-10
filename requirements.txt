@@ -3,7 +3,6 @@ httpx[socks]
 loguru>=0.5.3
 pandas>=0.23.3
 prettytable>=2.2.0
-tdxpy
 simplejson>=3.17.6
 tenacity>=8.0.1
 tqdm>=4.37.0

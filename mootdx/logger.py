@@ -2,12 +2,10 @@ import sys
 
 from loguru import logger
 
-logger.remove()
-
 
 def getLogger(quiet=None, verbose=None) -> logger:  # noqa
     level = ("INFO", "DEBUG")[bool(verbose)]
-    logger.remove()
+    # logger.remove(0)
 
     quiet or logger.add(sys.stderr, level=level)
 
@@ -26,7 +24,7 @@ def reset(verbose: int = 0, **kwargs) -> logger:  # noqa
     levels = ["WARNING", "INFO", "DEBUG", "TRACE"]
     level0 = levels[-1] if verbose > len(levels) else levels[verbose]
 
-    logger.remove()
+    # logger.remove(0)
     logger.add(sys.stdout, level=level0, filter="mootdx")
     # logger.add(sys.stdout, filter=lambda record: "message" in record["extra"], format="<level>{message}</level>")
 
