@@ -3,7 +3,7 @@ import logging
 import sys
 
 import notifiers
-from notifiers.exceptions import NotifierException
+from .exceptions import NotifierException
 
 
 class NotificationHandler(logging.Handler):
