@@ -1,7 +1,7 @@
 from pathlib import Path
 
 import pandas as pd
-from loguru import logger
+from mootdx.logger import logger
 from tdxpy.reader import BlockReader
 
 from mootdx.consts import TYPE_FLATS

@@ -87,7 +87,7 @@ def reader(symbol, action, market, tdxdir, output):
 def channel(server, verbose):
     logger_reset(verbose=verbose)
     config = get_config_path("config.json")
-    logger.success("[√] 已经将最优服务器IP写入配置文件 {} {}".format(config, server))
+    logger.info("[√] 已经将最优服务器IP写入配置文件 {} {}".format(config, server))
 
 
 @entry.command(help="测试行情服务器.", name="bestip")
@@ -100,7 +100,7 @@ def server(limit, verbose):
     logger_reset(verbose=verbose)
     config = get_config_path("config.json")
     bestip(limit=limit, console=True, sync=False)
-    logger.success("[√] 已经将最优服务器IP写入配置文件 {}".format(config))
+    logger.info("[√] 已经将最优服务器IP写入配置文件 {}".format(config))
 
 
 @entry.command(help="财务文件下载&解析.")

@@ -11,7 +11,7 @@ class TestFactor:
     def setup_class(self):
         self.client = Quotes.factory(market="std", timeout=10)  # 标准市场
         self.reader = Reader.factory(market="std", tdxdir="../fixtures")
-        logger.success("初始化工作")
+        logger.info("初始化工作")
 
     def test_qfq_factor(self):
         result = self.client.bars(symbol="600036", adjust="qfq")

@@ -103,7 +103,7 @@ class Financial(BaseFinancial):
         downfile = str(Path(downdir) / filename)
         filesize = kwargs.get("filesize") if kwargs.get("filesize") else 0
 
-        logger.info("{}: start download...", filename)
+        logger.debug(f"{filename}: start download...")
 
         if not filename:
             raise Exception("Param filename is not set")
@@ -119,7 +119,7 @@ class Financial(BaseFinancial):
 
             del content
 
-            logger.info("{}: done", filename)
+            logger.debug(f"{filename}: done")
 
             return download_file
 

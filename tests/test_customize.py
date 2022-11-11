@@ -2,15 +2,12 @@
 # @Time    : 2022/5/7 13:23
 # @Function:
 import glob
+import pytest
 from pathlib import Path
 
-import pytest
-from loguru import logger
-
+from mootdx.logger import logger
 from mootdx.tools.customize import Customize
-from mootdx.logger import reset
 
-reset(verbose=2)
 tdxdir = "tests/fixtures"
 
 

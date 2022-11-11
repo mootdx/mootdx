@@ -1,5 +1,4 @@
 import math
-
 import pandas
 import pandas as pd
 from tdxpy.exhq import TdxExHq_API
@@ -13,7 +12,7 @@ from tqdm import tqdm
 from mootdx import config
 from mootdx.consts import MARKET_SH
 from mootdx.consts import return_last_value
-from mootdx.logger import logger, reset as logger_reset
+from mootdx.logger import logger
 from mootdx.server import check_server
 from mootdx.utils import get_frequency
 from mootdx.utils import get_stock_market
@@ -60,8 +59,6 @@ class BaseQuotes(object):
     server = None
 
     def __init__(self, server=None, bestip: bool = False, timeout: int = None, verbose=0, **kwargs) -> None:
-
-        logger_reset(verbose=verbose)
 
         logger.debug(f"server => {server}")
         self.server = valid_server(server)
