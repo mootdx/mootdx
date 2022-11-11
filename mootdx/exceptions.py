@@ -1,4 +1,4 @@
-class NotifierException(Exception):
+class MootdxException(Exception):
     """Base notifier exception. Catch this to catch all of :mod:`notifiers` errors"""
 
     def __init__(self, *args, **kwargs):
@@ -9,9 +9,11 @@ class NotifierException(Exception):
         """
         self.provider = kwargs.get("provider")
         self.message = kwargs.get("message")
+
         self.data = kwargs.get("data")
         self.response = kwargs.get("response")
+
         super().__init__(self.message)
 
     def __repr__(self):
-        return f"<NotificationError: {self.message}>"
+        return f"<MOOTDXError: {self.message}>"

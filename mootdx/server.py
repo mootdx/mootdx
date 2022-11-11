@@ -141,6 +141,7 @@ def bestip(console=False, limit=5, sync=True) -> None:
     for index in ["HQ", "EX", "GP"]:
         try:
             data = server(index=index, limit=limit, console=console, sync=sync)
+
             if data:
                 default["BESTIP"][index] = data[0]
         except RuntimeError as ex:

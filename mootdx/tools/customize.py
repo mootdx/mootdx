@@ -179,6 +179,7 @@ def _blocknew(tdxdir: str = None, name: str = None, symbol: list = None, blk_fil
     with open(block_file, "rb") as fp:
         names = fp.read().decode("gbk", "ignore")
         names = names.split("\x00")
+
         names = [x for x in names if x != ""]
         names = [v for i, v in enumerate(names) if i % 2 == 0]
 
@@ -195,6 +196,7 @@ def _blocknew(tdxdir: str = None, name: str = None, symbol: list = None, blk_fil
     with open(block_file, "ab") as fp:
         data = name + ((50 - len(name.encode("gbk", "ignore"))) * "\x00")
         data += blk_file + ((70 - len(blk_file.encode("gbk", "ignore"))) * "\x00")
+
         data = bytes(data.encode("gbk", "ignore"))
         fp.write(data)
 

@@ -163,6 +163,7 @@ class Financial(BaseFinancial):
 
         header_size = calcsize(header_pack_format)
         stock_item_size = calcsize("<6s1c1L")
+
         data_header = dat_file.read(header_size)
         stock_header = unpack(header_pack_format, data_header)
 

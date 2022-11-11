@@ -48,6 +48,7 @@ class BaseParse:
         t = self.read_text(path)
         m = [x for x in t.split("######")]
         v = [n.split() for n in m if n.strip()]
+
         d = {i[0]: [c.split("|") for c in i[1:]] for i in v}
         d = {key: dict([vv for vv in val if len(vv) == 2]) for key, val in d.items()}
 

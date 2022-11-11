@@ -3,7 +3,7 @@ import pytest
 from mootdx.utils.holiday import holiday, holiday_, holiday2
 
 
-# @pytest.mark.skip
+@pytest.mark.skip
 class TestHoliday:
     def test_holiday_exists(self):
         assert holiday("2022-01-23")
@@ -47,7 +47,7 @@ class Testholiday0:
         with pytest.raises(ValueError):
             holiday_("2022-01-26", "%Y-%m-%d", country="巴西")
 
-
+@pytest.mark.skip
 class Testholiday2:
     def test_holiday_exists(self):
         assert holiday2("2022-01-23")

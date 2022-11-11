@@ -96,6 +96,7 @@ class StdReader(ReaderBase):
         """
         reader = MooTdxDailyBarReader()
         vipdoc = self.find_path(symbol=symbol, subdir="lday", suffix="day")
+
         result = reader.get_df(str(vipdoc)) if vipdoc else None
         return to_data(result, symbol=symbol, client=self, **kwargs)
 
