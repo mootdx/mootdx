@@ -1,6 +1,6 @@
 import asyncio
 import functools
-import simplejson as json
+import json
 import socket
 import time
 from functools import partial

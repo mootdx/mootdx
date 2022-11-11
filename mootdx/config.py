@@ -5,7 +5,7 @@
 import copy
 from pathlib import Path
 
-import simplejson as json
+import  json
 
 from mootdx.consts import EX_HOSTS
 from mootdx.consts import GP_HOSTS

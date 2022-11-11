@@ -7,7 +7,7 @@ from pathlib import Path
 
 import httpx
 import pandas as pd
-import simplejson as json
+import json
 from tenacity import retry
 from tenacity import stop_after_attempt
 from tenacity import wait_fixed
