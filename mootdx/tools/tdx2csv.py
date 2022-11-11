@@ -25,12 +25,10 @@ def txt2csv(infile: str, outfile: str = None) -> pd.DataFrame:
 
         return df
     except FileNotFoundError as ex:
-        logger.exception(ex)
-        logger.warning(f"输入文件不存在: {infile}")
+        logger.exception(f"输入文件不存在: {infile}")
         raise ex
-    except ValueError as ex:
-        logger.exception(ex)
-        logger.warning(f"无法解析输入文件: {infile}")
+    except (ValueError, TypeError) as ex:
+        logger.exception(f"无法解析输入文件: {infile}")
         raise ex
 
 
