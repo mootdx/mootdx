@@ -1,11 +1,8 @@
 # 通达信数据读取接口
 
 [![image](https://badge.fury.io/py/mootdx.svg)](http://badge.fury.io/py/mootdx)
-
 [![image](https://img.shields.io/travis/bopo/mootdx.svg)](https://travis-ci.org/mootdx/mootdx)
-
 [![Documentation Status](https://readthedocs.org/projects/mootdx/badge/?version=latest)](https://mootdx.readthedocs.io/zh/latest/?badge=latest)
-
 [![Updates](https://pyup.io/repos/github/mootdx/mootdx/shield.svg)](https://pyup.io/repos/github/mootdx/mootdx/)
 
 如果喜欢本项目可以在右上角给颗⭐！你的支持是我最大的动力😎！
