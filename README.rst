@@ -23,6 +23,7 @@
 * 在线文档: https://www.mootdx.com
 * 国内镜像: https://gitee.com/ibopo/mootdx
 * 项目仓库: https://github.com/mootdx/mootdx
+* 问题交流: https://github.com/mootdx/mootdx/issues
 
 版本更新(倒序)
 --------------
