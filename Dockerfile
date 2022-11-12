@@ -14,8 +14,7 @@ COPY ./tests/requirements.txt /requirements.dev
 # COPY ./entrypoint.sh /entrypoint.sh
 
 # RUN /usr/local/bin/pip install -U pip setuptools_scm meinheld uvicorn -i https://mirrors.aliyun.com/pypi/simple/
-RUN /usr/local/bin/pip install -r /requirements.txt -i https://mirrors.aliyun.com/pypi/simple/
-RUN /usr/local/bin/pip install -r /requirements.dev -i https://mirrors.aliyun.com/pypi/simple/
+RUN /usr/local/bin/pip install -r /requirements.txt -r /requirements.dev
 
 # RUN sed -i 's/\r//' /entrypoint.sh
 # RUN chmod +x /entrypoint.sh
