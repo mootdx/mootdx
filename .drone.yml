@@ -6,6 +6,6 @@ steps:
   - name: test
     image: mootdx:ci
     commands:
-      - pip install -r requirements.txt -r tests/requirements.txt
+      - pip install -r requirements.txt -r tests/requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
       - pip install tdxpy
       - pytest -v
