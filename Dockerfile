@@ -14,7 +14,7 @@ COPY ./tests/requirements.txt /requirements.dev
 # COPY ./entrypoint.sh /entrypoint.sh
 
 # RUN /usr/local/bin/pip install -U pip setuptools_scm meinheld uvicorn -i https://mirrors.aliyun.com/pypi/simple/
-RUN pip install -r requirements.txt -r tests/requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
+RUN pip install -r requirements.txt -r requirements.dev -i https://pypi.tuna.tsinghua.edu.cn/simple
 RUN pip install tdxpy
 
 # RUN sed -i 's/\r//' /entrypoint.sh
