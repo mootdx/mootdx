@@ -11,14 +11,14 @@ RUN apk add py3-pandas
 
 COPY ./requirements.txt /requirements.txt
 COPY ./requirements.dev /requirements.dev
-COPY ./entrypoint.sh /entrypoint.sh
+# COPY ./entrypoint.sh /entrypoint.sh
 
-RUN /usr/bin/pip install -U pip setuptools_scm meinheld uvicorn -i https://mirrors.aliyun.com/pypi/simple/
-RUN /usr/bin/pip install -r /requirements.txt -i https://mirrors.aliyun.com/pypi/simple/
-RUN /usr/bin/pip install -r /requirements.dev -i https://mirrors.aliyun.com/pypi/simple/
+RUN /usr/local/bin/pip install -U pip setuptools_scm meinheld uvicorn -i https://mirrors.aliyun.com/pypi/simple/
+RUN /usr/local/bin/pip install -r /requirements.txt -i https://mirrors.aliyun.com/pypi/simple/
+RUN /usr/local/bin/pip install -r /requirements.dev -i https://mirrors.aliyun.com/pypi/simple/
 
-RUN sed -i 's/\r//' /entrypoint.sh
-RUN chmod +x /entrypoint.sh
+# RUN sed -i 's/\r//' /entrypoint.sh
+# RUN chmod +x /entrypoint.sh
 RUN apk del .build-deps
 RUN mkdir /app
 
