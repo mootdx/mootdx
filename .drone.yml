@@ -4,7 +4,7 @@ name: default
 
 steps:
   - name: test
-    image: python:3.8
+    image: mootdx:ci
     commands:
       - pip install -r requirements.txt -r tests/requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
       - pytest -v
