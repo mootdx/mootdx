@@ -1,9 +1,10 @@
+---
 kind: pipeline
 name: default
 
 steps:
-- name: test
-  image: django:ci
-  commands:
-  - pip install -r requirements.txt -r tests/requirements.txt
-  - pytest
+  - name: test
+    image: python:3.8
+    commands:
+      - pip install -r requirements.txt -r tests/requirements.txt
+      - pytest
