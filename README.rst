@@ -143,8 +143,8 @@
 -----------
 
 .. image:: docs/img/IMG_2851.JPG
-        :width: 130 px
-        :align: left
+        :width: 230 px
+        :align: center
 
 常见问题
 -------
