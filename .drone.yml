@@ -1,4 +1,3 @@
----
 kind: pipeline
 name: default
 
@@ -8,4 +7,23 @@ steps:
     commands:
       - pip install -r requirements.txt -r tests/requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
       - pip install -U tdxpy
-      - pytest -v
+      - mootdx bestip -v
+      - pytest -v tests
+
+  - name: deploy
+    image: mootdx:ci
+    environment:
+      SSH_KEY:
+        from_secret: ssh_key
+    commands:
+      - echo $SSH_KEY > ~/.ssh/id_rsa
+      - git remote add gitee git@gitee.com:ibopo/mootdx.git
+      - git remote add github git@github.com:mootdx/mootdx.git
+      - git checkout develop
+      - git push gitee develop
+      - git push github develop
+    when:
+      event:
+        - promote
+      target:
+        - production
