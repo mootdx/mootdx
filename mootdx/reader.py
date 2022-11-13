@@ -58,6 +58,9 @@ class ReaderBase(ABC):
         # 判断市场, 带#扩展市场
         if "#" in symbol:
             market = "ds"
+        # 通达信特有的板块指数88****开头的日线数据放在 sh 文件夹下
+        elif symbol.startswith('88'):
+            market = 'sh'
         else:
             # 判断是sh还是sz
             market = get_stock_market(symbol, True)

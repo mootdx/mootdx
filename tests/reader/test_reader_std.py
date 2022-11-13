@@ -23,6 +23,13 @@ class TestReader(unittest.TestCase):
         result = self.reader.daily(symbol="000000")
         assert is_empty(result), result
 
+    def test_daily_88(self):
+        result = self.reader.daily(symbol="sh881478")
+        assert not is_empty(result), result
+
+        result = self.reader.daily(symbol="881478")
+        assert not is_empty(result), result
+
     def test_minute1(self):
         result = self.reader.minute(symbol="688001", suffix="1")
         self.assertFalse(result.empty, result)
