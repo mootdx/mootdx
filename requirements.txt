@@ -7,7 +7,7 @@ prettytable>=2.2.0
 tenacity>=8.0.1
 tqdm>=4.37.0
 pyyaml
-py_mini_racer>=0.6.0
+# py_mini_racer>=0.6.0
 cache3
 # tdxpy
 cryptography

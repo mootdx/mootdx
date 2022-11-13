@@ -6,20 +6,20 @@ import pytest
 from mootdx import config
 
 
-# @pytest.mark.skip
+@pytest.mark.skip
 class TestBestIP:
     config = ""
 
-    @staticmethod
-    def setup_class(cls):
-        logging.info("setup_class")
-        cls.config = Path.home() / ".mootdx" / "config.json"
-        cls.config.exists() and cls.config.unlink()
-
-    @staticmethod
-    def teardown_class(cls):
-        logging.info("teardown_class")
-        cls.config.exists() and cls.config.unlink()
+    # @staticmethod
+    # def setup_class(cls):
+    #     logging.info("setup_class")
+    #     cls.config = Path.home() / ".mootdx" / "config.json"
+    #     cls.config.exists() and cls.config.unlink()
+    #
+    # @staticmethod
+    # def teardown_class(cls):
+    #     logging.info("teardown_class")
+    #     cls.config.exists() and cls.config.unlink()
 
     @pytest.mark.skip("skip")
     def test_config(self, caplog):
