@@ -18,7 +18,7 @@ def lp(branch=repo.active_branch.name):
     push()
 
 
-@task(alias="up")
+@task(alias="gp")
 def push(branch=repo.active_branch.name):
     """# push github rev"""
     local(f"git push gitee {branch} --tags")
@@ -26,12 +26,20 @@ def push(branch=repo.active_branch.name):
     local(f"git push github {branch} --tags")
 
 
-@task(alias="pl")
+@task(alias="gl")
 def pull(branch=repo.active_branch.name):
     """# push github rev"""
     local(f"git pull gitee {branch} --tags")
     local(f"git pull origin {branch} --tags")
     local(f"git pull github {branch} --tags")
+
+
+@task
+def fetch(branch=repo.active_branch.name):
+    """# push github rev"""
+    local(f"git fetch gitee {branch}")
+    local(f"git fetch origin {branch}")
+    local(f"git fetch github {branch}")
 
 
 @task
