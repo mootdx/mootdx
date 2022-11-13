@@ -1,11 +1,11 @@
 from pathlib import Path
 
 import pandas as pd
-from mootdx.logger import logger
 from tdxpy.reader import BlockReader
 
 from mootdx.consts import TYPE_FLATS
 from mootdx.consts import TYPE_GROUP
+from mootdx.logger import logger
 
 
 class BaseParse:
@@ -26,10 +26,10 @@ class BaseParse:
         suffix = Path(symbol).suffix or ".dat"
         symbol = Path(symbol).stem
 
-        vipdoc = (Path("T0002", "hq_cache"), "")["incon" in symbol]
-        vipdoc = Path(self.tdxdir, vipdoc) / f"{symbol}{suffix}"
+        vipdoc = (Path("T0002", "hq_cache"), "T0002")["incon" in symbol]
+        vipdoc = Path(vipdoc, f"{symbol}{suffix}")
 
-        if not vipdoc.exists():
+        if not Path(self.tdxdir, vipdoc).exists():
             logger.error(f"文件不存在: {vipdoc}")
             return None
 
@@ -37,7 +37,7 @@ class BaseParse:
             return self.__incon(vipdoc)
 
         if "block_" in symbol and suffix == ".dat":
-            return BlockReader().get_df(str(vipdoc), (TYPE_FLATS, TYPE_GROUP)[bool(group)])
+            return BlockReader().get_df(str(Path(self.tdxdir, vipdoc)), (TYPE_FLATS, TYPE_GROUP)[bool(group)])
 
         return self.cfg(vipdoc)
 

@@ -8,10 +8,10 @@ from mootdx.tools.tdx2csv import txt2csv
 
 class TestTdx2csv(unittest.TestCase):
     def test_batch(self):
-        batch(src="../fixtures/export", dst="output")
+        batch(src="tests/fixtures/export", dst="output")
 
     def test_success(self):
-        result = txt2csv(infile="../fixtures/export/SH#601003.txt")
+        result = txt2csv(infile="tests/fixtures/export/SH#601003.txt")
         assert not result.empty
 
     def test_exception(self):

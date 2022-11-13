@@ -1,3 +1,4 @@
+import logging
 import os
 from pathlib import Path
 
@@ -6,7 +7,6 @@ from prettytable import PrettyTable
 
 from mootdx import __version__
 from mootdx.logger import logger
-from mootdx.logger import reset as logger_reset
 from mootdx.utils import get_config_path
 from mootdx.utils import to_file
 
@@ -96,8 +96,7 @@ def channel(server, verbose):
 @click.option("-v", "--verbose", count=True, help="详细模式")
 def server(limit, verbose):
     from mootdx.server import bestip
-
-    logger_reset(verbose=verbose)
+    logger.setLevel(logging.DEBUG)
     config = get_config_path("config.json")
     bestip(limit=limit, console=True, sync=False)
     logger.info("[√] 已经将最优服务器IP写入配置文件 {}".format(config))
@@ -115,7 +114,7 @@ def server(limit, verbose):
 def affair(parse, fetch, downdir, output, downall, verbose, listfile):
     from mootdx.affair import Affair
 
-    logger_reset(verbose=verbose)
+    logger.setLevel(logging.DEBUG)
 
     files = Affair.files()
 

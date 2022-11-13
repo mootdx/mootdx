@@ -153,9 +153,10 @@ class StdReader(ReaderBase):
         :param group:   分组解析
         :return: pd.dataFrame or None
         """
-        from mootdx.block import BlockParse
+        # from mootdx.block import BlockParse
+        from mootdx.parse import BaseParse
 
-        return BlockParse(self.tdxdir).parse(symbol, group=group, **kwargs)
+        return BaseParse(self.tdxdir).parse(symbol, group=group, **kwargs)
 
 
 class ExtReader(ReaderBase):

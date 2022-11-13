@@ -4,12 +4,13 @@ from mootdx.reader import Reader
 from tests.conftest import is_empty
 
 
+# @pytest.mark.skip
 class TestExReader(unittest.TestCase):
     reader = None
 
     # 初始化工作
     def setUp(self):
-        self.reader = Reader.factory(market="ext", tdxdir="../fixtures")
+        self.reader = Reader.factory(market="ext", tdxdir="tests/fixtures")
 
     # 退出清理工作
     def tearDown(self):

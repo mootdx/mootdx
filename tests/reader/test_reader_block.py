@@ -2,7 +2,7 @@ import pytest
 
 from mootdx.reader import Reader
 
-tdxdir = "../fixtures"
+tdxdir = "tests/fixtures"
 
 
 # def setup_module():
@@ -54,14 +54,11 @@ def test_incon(reader, parse, symbol, expected):
     assert result, f"result => {result}"
 
 
-@pytest.mark.parametrize(
-    "symbol,expected",
-    [
-        ("hkblock.dat", "T0002/hq_cache/hkblock.dat"),
-        ("tdxhy.cfg", "T0002/hq_cache/tdxhy.cfg"),
-        ("tdxzs.cfg", "T0002/hq_cache/tdxzs.cfg"),
-    ],
-)
+@pytest.mark.parametrize("symbol,expected", [
+    ("hkblock.dat", "T0002/hq_cache/hkblock.dat"),
+    ("tdxhy.cfg", "T0002/hq_cache/tdxhy.cfg"),
+    ("tdxzs.cfg", "T0002/hq_cache/tdxzs.cfg"),
+])
 def test_cfg(parse, symbol, expected):
     result = parse.cfg(expected)
     assert not result.empty

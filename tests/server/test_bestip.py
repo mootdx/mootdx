@@ -6,7 +6,7 @@ import pytest
 from mootdx import config
 
 
-@pytest.mark.skip
+# @pytest.mark.skip
 class TestBestIP:
     config = ""
 

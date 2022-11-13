@@ -10,7 +10,7 @@ tdxdir = "tests/fixtures"
 
 def setup_module():
     blocknew = Path(tdxdir, "T0002", "blocknew")
-    blocknew.exists() or blocknew.mkdir(parents=True)
+    blocknew.exists() or blocknew.mkdir(parents=True, exist_ok=True)
 
 
 def teardown_module():

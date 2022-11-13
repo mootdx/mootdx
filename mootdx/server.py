@@ -54,12 +54,12 @@ def connect(proxy: dict) -> dict:
 
         proxy["time"] = (time.perf_counter() - start) * 1000
 
-        logger.info("{addr}:{port} 验证通过，响应时间：{time} ms.".format(**proxy))
+        logger.debug("{addr}:{port} 验证通过，响应时间：{time} ms.".format(**proxy))
     except socket.timeout as ex:
-        logger.info("{addr},{port} time out.".format(**proxy))
+        logger.debug("{addr},{port} time out.".format(**proxy))
         proxy["time"] = None
     except ConnectionRefusedError as ex:
-        logger.info("{addr},{port} 验证失败.".format(**proxy))
+        logger.debug("{addr},{port} 验证失败.".format(**proxy))
         proxy["time"] = None
 
     return proxy
@@ -106,7 +106,7 @@ def server(index=None, limit=5, console=False, sync=True):
         from prettytable import PrettyTable
 
         server.sort(key=lambda item: item["time"])
-        print("[√] 最优服务器:")
+        logger.debug("[√] 最优服务器:")
 
         t = PrettyTable(["Name", "Addr", "Port", "Time"])
         t.align["Name"] = "l"
@@ -125,7 +125,7 @@ def server(index=None, limit=5, console=False, sync=True):
                 ]
             )
 
-        print(t)
+        logger.debug(t)
 
     return [(item["addr"], item["port"]) for item in server]
 

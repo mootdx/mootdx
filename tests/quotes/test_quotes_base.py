@@ -1,8 +1,11 @@
 import unittest
 
+import pytest
+
 from mootdx.quotes import Quotes
 
 
+@pytest.mark.skip
 class TestStdQuotes(unittest.TestCase):
     client = None
     server = ("39.100.68.59", 7709)
