@@ -4,12 +4,12 @@ import json
 import socket
 import time
 from functools import partial
+
 from tdxpy.constants import hq_hosts
 
 from mootdx.consts import CONFIG
 from mootdx.consts import EX_HOSTS
 from mootdx.consts import GP_HOSTS
-from mootdx.consts import HQ_HOSTS
 from mootdx.logger import logger
 from mootdx.utils import get_config_path
 
@@ -34,7 +34,7 @@ def callback(res, key):
     if result.get("time"):
         results[key].append(result)
 
-    logger.debug("callback: {}", res.result())
+    # logger.debug(f"callback: {res.result()}")
 
 
 def connect(proxy: dict) -> dict:
@@ -126,7 +126,7 @@ def server(index=None, limit=5, console=False, sync=True):
                 ]
             )
 
-        logger.debug(t)
+        logger.debug("\n" + str(t))
 
     return [(item["addr"], item["port"]) for item in server]
 
