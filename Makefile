@@ -56,8 +56,8 @@ clean-test: ## remove test and coverage artifacts
 lint: ## check style with flake8
 	flake8 --max-line-length=200
 
-cov:
-	py.test --cov=mootdx -v
+cov: clean-test
+	py.test -v --cov=mootdx --cov-report=html
 
 fmt:
 	black -l 120 -t py36 -t py37 -t py38 -t py39 -t py310 .
