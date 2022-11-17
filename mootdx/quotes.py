@@ -1,4 +1,5 @@
 import math
+
 import pandas
 import pandas as pd
 from tdxpy.exhq import TdxExHq_API
@@ -7,11 +8,13 @@ from tenacity import retry
 from tenacity import retry_if_exception_type
 from tenacity import retry_if_result
 from tenacity import stop_after_attempt
+from tenacity import wait_random
 from tqdm import tqdm
 
 from mootdx import config
 from mootdx.consts import MARKET_SH
 from mootdx.consts import return_last_value
+from mootdx.exceptions import MootdxValidationException
 from mootdx.logger import logger
 from mootdx.server import check_server
 from mootdx.utils import get_frequency
@@ -58,7 +61,7 @@ class BaseQuotes(object):
     bestip = None
     server = None
 
-    def __init__(self, server=None, bestip: bool = False, timeout: int = None, verbose=0, **kwargs) -> None:
+    def __init__(self, server=None, bestip: bool = False, timeout: int = None, **kwargs) -> None:
 
         logger.debug(f"server => {server}")
         self.server = valid_server(server)
@@ -110,8 +113,8 @@ def check_empty(value):
 
     # 判断状态空，则重连接
     if instance and _empty:
-        logger.info("重新连接服务器")
-        instance.client.connect(*instance.server)
+        logger.warning("返回数据空, 重新连接服务器...")
+        # instance.client.connect(*instance.server)
 
     return _empty
 
@@ -139,29 +142,31 @@ class StdQuotes(BaseQuotes):
             default = config.get("SERVER").get("HQ")[0][1:]
             self.server = config.get("BESTIP").get("HQ", default)
 
-        for x in ["verbose", "server", "quiet"]:
+        for x in ["verbose", "server", "quiet", "multithread", "auto_retry"]:
             if x in kwargs.keys():
                 del kwargs[x]
 
-        self.client = TdxHq_API(raise_exception=False, auto_retry=True, **kwargs)
+        self.client = TdxHq_API(heartbeat=False, auto_retry=True, raise_exception=True, **kwargs)
         self.client.connect(*self.server, time_out=timeout)
 
         global instance
         instance = self
 
-    @retry(
-        stop=stop_after_attempt(3),
-        retry_error_callback=return_last_value,
-        retry=(retry_if_exception_type() | retry_if_result(check_empty)),
-    )
+    # @retry(
+    #     wait=wait_random(min=1, max=10),
+    #     stop=stop_after_attempt(3),
+    #     retry_error_callback=return_last_value,
+    #     retry=(retry_if_exception_type() | retry_if_result(check_empty)),
+    # )
     def traffic(self):
         return self.client.get_traffic_stats()
 
-    @retry(
-        stop=stop_after_attempt(3),
-        retry_error_callback=return_last_value,
-        retry=(retry_if_exception_type() | retry_if_result(check_empty)),
-    )
+    # @retry(
+    #     wait=wait_random(min=1, max=10),
+    #     stop=stop_after_attempt(3),
+    #     retry_error_callback=return_last_value,
+    #     retry=(retry_if_exception_type() | retry_if_result(check_empty)),
+    # )
     def quotes(self, symbol=None, **kwargs):
         """
         获取实时日行情数据
@@ -181,11 +186,12 @@ class StdQuotes(BaseQuotes):
 
         return to_data(result, symbol=symbol, client=self, **kwargs)
 
-    @retry(
-        stop=stop_after_attempt(3),
-        retry_error_callback=return_last_value,
-        retry=(retry_if_exception_type() | retry_if_result(check_empty)),
-    )
+    # @retry(
+    #     wait=wait_random(min=1, max=10),
+    #     stop=stop_after_attempt(3),
+    #     retry_error_callback=return_last_value,
+    #     retry=(retry_if_exception_type() | retry_if_result(check_empty)),
+    # )
     def bars(self, symbol="000001", frequency=9, start=0, offset=100, **kwargs):
         """
         获取实时日K线数据
@@ -203,11 +209,12 @@ class StdQuotes(BaseQuotes):
 
         return to_data(result, symbol=symbol, client=self, **kwargs)
 
-    @retry(
-        stop=stop_after_attempt(3),
-        retry_error_callback=return_last_value,
-        retry=(retry_if_exception_type() | retry_if_result(check_empty)),
-    )
+    # @retry(
+    #     wait=wait_random(min=1, max=10),
+    #     stop=stop_after_attempt(3),
+    #     retry_error_callback=return_last_value,
+    #     retry=(retry_if_exception_type() | retry_if_result(check_empty)),
+    # )
     def stock_count(self, market=MARKET_SH):
         """
         获取市场股票数量
@@ -215,16 +222,19 @@ class StdQuotes(BaseQuotes):
         :param market: 股票市场代码 sh 上海， sz 深圳
         :return: pd.dataFrame or None
         """
+        if market not in [0, 1, 2]:
+            raise MootdxValidationException("市场代码错误")
 
         result = self.client.get_security_count(market=market)
 
         return result
 
-    @retry(
-        stop=stop_after_attempt(3),
-        retry_error_callback=return_last_value,
-        retry=(retry_if_exception_type() | retry_if_result(check_empty)),
-    )
+    # @retry(
+    #     wait=wait_random(min=1, max=10),
+    #     stop=stop_after_attempt(3),
+    #     retry_error_callback=return_last_value,
+    #     retry=(retry_if_exception_type() | retry_if_result(check_empty)),
+    # )
     def stocks(self, market=MARKET_SH):
         """
         获取股票列表
@@ -233,20 +243,25 @@ class StdQuotes(BaseQuotes):
         :return:
         """
 
-        counts = self.client.get_security_count(market=market)
+        if market not in [0, 1]:
+            raise MootdxValidationException("市场代码错误, 目前只支持沪深市场")
+
+        counts = self.stock_count(market=market)
         stocks = None
 
-        for start in tqdm(range(0, counts, 1000)):
-            result = self.client.get_security_list(market=market, start=start)
-            stocks = pandas.concat([stocks, to_data(result)], ignore_index=True) if start > 1 else to_data(result)
+        if counts > 0:
+            for start in tqdm(range(0, counts, 1000)):
+                result = self.client.get_security_list(market=market, start=start)
+                stocks = pandas.concat([stocks, to_data(result)], ignore_index=True) if start > 1 else to_data(result)
 
         return stocks
 
-    @retry(
-        stop=stop_after_attempt(3),
-        retry_error_callback=return_last_value,
-        retry=(retry_if_exception_type() | retry_if_result(check_empty)),
-    )
+    # @retry(
+    #     wait=wait_random(min=1, max=10),
+    #     stop=stop_after_attempt(3),
+    #     retry_error_callback=return_last_value,
+    #     retry=(retry_if_exception_type() | retry_if_result(check_empty)),
+    # )
     def index_bars(self, symbol="000001", frequency=9, start=0, offset=100, **kwargs):
         """
         获取指数k线
@@ -265,11 +280,12 @@ class StdQuotes(BaseQuotes):
 
         return to_data(result, symbol=symbol, client=self, **kwargs)
 
-    @retry(
-        stop=stop_after_attempt(3),
-        retry_error_callback=return_last_value,
-        retry=(retry_if_exception_type() | retry_if_result(check_empty)),
-    )
+    # @retry(
+    #     wait=wait_random(min=1, max=10),
+    #     stop=stop_after_attempt(3),
+    #     retry_error_callback=return_last_value,
+    #     retry=(retry_if_exception_type() | retry_if_result(check_empty)),
+    # )
     def minute(self, symbol="", **kwargs):
         """
         获取实时分时数据
@@ -283,11 +299,12 @@ class StdQuotes(BaseQuotes):
 
         return to_data(result, symbol=symbol, client=self, **kwargs)
 
-    @retry(
-        stop=stop_after_attempt(3),
-        retry_error_callback=return_last_value,
-        retry=(retry_if_exception_type() | retry_if_result(check_empty)),
-    )
+    # @retry(
+    #     wait=wait_random(min=1, max=10),
+    #     stop=stop_after_attempt(3),
+    #     retry_error_callback=return_last_value,
+    #     retry=(retry_if_exception_type() | retry_if_result(check_empty)),
+    # )
     def minutes(self, symbol="", date="20191023", **kwargs):
         """
         分时历史数据
@@ -298,15 +315,20 @@ class StdQuotes(BaseQuotes):
         """
 
         market = get_stock_market(symbol)
+
+        if market not in [0, 1]:
+            raise MootdxValidationException("市场代码错误, 目前只支持沪深市场")
+
         result = self.client.get_history_minute_time_data(market=market, code=symbol, date=date)
 
         return to_data(result, symbol=symbol, client=self, **kwargs)
 
-    @retry(
-        stop=stop_after_attempt(3),
-        retry_error_callback=return_last_value,
-        retry=(retry_if_exception_type() | retry_if_result(check_empty)),
-    )
+    # @retry(
+    #     wait=wait_random(min=1, max=10),
+    #     stop=stop_after_attempt(3),
+    #     retry_error_callback=return_last_value,
+    #     retry=(retry_if_exception_type() | retry_if_result(check_empty)),
+    # )
     def transaction(self, symbol="", start=0, offset=10, **kwargs):
         """
         查询分笔成交
@@ -322,11 +344,12 @@ class StdQuotes(BaseQuotes):
 
         return to_data(result, symbol=symbol, client=self, **kwargs)
 
-    @retry(
-        stop=stop_after_attempt(3),
-        retry_error_callback=return_last_value,
-        retry=(retry_if_exception_type() | retry_if_result(check_empty)),
-    )
+    # @retry(
+    #     wait=wait_random(min=1, max=10),
+    #     stop=stop_after_attempt(3),
+    #     retry_error_callback=return_last_value,
+    #     retry=(retry_if_exception_type() | retry_if_result(check_empty)),
+    # )
     def transactions(self, symbol="", start=0, offset=10, date="20170209", **kwargs):
         """
         查询历史分笔成交
@@ -339,17 +362,22 @@ class StdQuotes(BaseQuotes):
         """
 
         market = get_stock_market(symbol, string=False)
+
+        if market not in [0, 1]:
+            raise MootdxValidationException("市场代码错误, 目前只支持沪深市场")
+
         result = self.client.get_history_transaction_data(
             market=market, code=symbol, start=start, count=offset, date=int(date)
         )
 
         return to_data(result, symbol=symbol, client=self, **kwargs)
 
-    @retry(
-        stop=stop_after_attempt(3),
-        retry_error_callback=return_last_value,
-        retry=(retry_if_exception_type() | retry_if_result(check_empty)),
-    )
+    # @retry(
+    #     wait=wait_random(min=1, max=10),
+    #     stop=stop_after_attempt(3),
+    #     retry_error_callback=return_last_value,
+    #     retry=(retry_if_exception_type() | retry_if_result(check_empty)),
+    # )
     def F10C(self, symbol=""):  # noqa
         """
         查询公司信息目录
@@ -359,15 +387,20 @@ class StdQuotes(BaseQuotes):
         """
 
         market = int(get_stock_market(symbol))
+
+        if market not in [0, 1]:
+            raise MootdxValidationException("市场代码错误, 目前只支持沪深市场")
+
         result = self.client.get_company_info_category(market, symbol)
 
         return result
 
-    @retry(
-        stop=stop_after_attempt(3),
-        retry_error_callback=return_last_value,
-        retry=(retry_if_exception_type() | retry_if_result(check_empty)),
-    )
+    # @retry(
+    #     wait=wait_random(min=1, max=10),
+    #     stop=stop_after_attempt(3),
+    #     retry_error_callback=return_last_value,
+    #     retry=(retry_if_exception_type() | retry_if_result(check_empty)),
+    # )
     def F10(self, symbol="", name=""):  # noqa
         """
         读取公司信息详情
@@ -379,6 +412,9 @@ class StdQuotes(BaseQuotes):
 
         result = {}
         market = int(get_stock_market(symbol, string=False))
+
+        if market not in [0, 1]:
+            raise MootdxValidationException("市场代码错误, 目前只支持沪深市场")
 
         category = self.client.get_company_info_category(market, symbol)
 
@@ -403,11 +439,12 @@ class StdQuotes(BaseQuotes):
 
         return result
 
-    @retry(
-        stop=stop_after_attempt(3),
-        retry_error_callback=return_last_value,
-        retry=(retry_if_exception_type() | retry_if_result(check_empty)),
-    )
+    # @retry(
+    #     wait=wait_random(min=1, max=10),
+    #     stop=stop_after_attempt(3),
+    #     retry_error_callback=return_last_value,
+    #     retry=(retry_if_exception_type() | retry_if_result(check_empty)),
+    # )
     def xdxr(self, symbol="", **kwargs):
         """
         读取除权除息信息
@@ -421,11 +458,12 @@ class StdQuotes(BaseQuotes):
 
         return to_data(result, symbol=symbol, client=self, **kwargs)
 
-    @retry(
-        stop=stop_after_attempt(3),
-        retry_error_callback=return_last_value,
-        retry=(retry_if_exception_type() | retry_if_result(check_empty)),
-    )
+    # @retry(
+    #     wait=wait_random(min=1, max=10),
+    #     stop=stop_after_attempt(3),
+    #     retry_error_callback=return_last_value,
+    #     retry=(retry_if_exception_type() | retry_if_result(check_empty)),
+    # )
     def finance(self, symbol="000001", **kwargs):
         """
         读取财务信息
@@ -439,11 +477,12 @@ class StdQuotes(BaseQuotes):
 
         return to_data(result, symbol=symbol, client=self, **kwargs)
 
-    @retry(
-        stop=stop_after_attempt(3),
-        retry_error_callback=return_last_value,
-        retry=(retry_if_exception_type() | retry_if_result(check_empty)),
-    )
+    # @retry(
+    #     wait=wait_random(min=1, max=10),
+    #     stop=stop_after_attempt(3),
+    #     retry_error_callback=return_last_value,
+    #     retry=(retry_if_exception_type() | retry_if_result(check_empty)),
+    # )
     def k(self, symbol="", begin=None, end=None):
         """
         读取k线信息
@@ -478,6 +517,7 @@ class StdQuotes(BaseQuotes):
         return data
 
     @retry(
+        wait=wait_random(min=1, max=10),
         stop=stop_after_attempt(3),
         retry_error_callback=return_last_value,
         retry=(retry_if_exception_type() | retry_if_result(check_empty)),
@@ -513,6 +553,7 @@ class StdQuotes(BaseQuotes):
         return to_data(result, symbol=symbol, client=self, **kwargs)
 
     @retry(
+        wait=wait_random(min=1, max=10),
         stop=stop_after_attempt(3),
         retry_error_callback=return_last_value,
         retry=(retry_if_exception_type() | retry_if_result(check_empty)),
@@ -589,6 +630,7 @@ class ExtQuotes(BaseQuotes):
         return int(market), symbol
 
     @retry(
+        wait=wait_random(min=1, max=10),
         stop=stop_after_attempt(3),
         retry_error_callback=return_last_value,
         retry=(retry_if_exception_type() | retry_if_result(check_empty)),
@@ -604,6 +646,7 @@ class ExtQuotes(BaseQuotes):
         return to_data(result, **kwargs)
 
     @retry(
+        wait=wait_random(min=1, max=10),
         stop=stop_after_attempt(3),
         retry_error_callback=return_last_value,
         retry=(retry_if_exception_type() | retry_if_result(check_empty)),
@@ -621,6 +664,7 @@ class ExtQuotes(BaseQuotes):
         return to_data(result, **kwargs)
 
     @retry(
+        wait=wait_random(min=1, max=10),
         stop=stop_after_attempt(3),
         retry_error_callback=return_last_value,
         retry=(retry_if_exception_type() | retry_if_result(check_empty)),
@@ -637,6 +681,7 @@ class ExtQuotes(BaseQuotes):
         return result
 
     @retry(
+        wait=wait_random(min=1, max=10),
         stop=stop_after_attempt(3),
         retry_error_callback=return_last_value,
         retry=(retry_if_exception_type() | retry_if_result(check_empty)),
@@ -659,6 +704,7 @@ class ExtQuotes(BaseQuotes):
         return to_data(result, **kwargs)
 
     @retry(
+        wait=wait_random(min=1, max=10),
         stop=stop_after_attempt(3),
         retry_error_callback=return_last_value,
         retry=(retry_if_exception_type() | retry_if_result(check_empty)),
@@ -678,6 +724,7 @@ class ExtQuotes(BaseQuotes):
         return to_data(result, symbol=symbol, client=self, **kwargs)
 
     @retry(
+        wait=wait_random(min=1, max=10),
         stop=stop_after_attempt(3),
         retry_error_callback=return_last_value,
         retry=(retry_if_exception_type() | retry_if_result(check_empty)),
@@ -697,6 +744,7 @@ class ExtQuotes(BaseQuotes):
         return to_data(result, symbol=symbol, client=self, **kwargs)
 
     @retry(
+        wait=wait_random(min=1, max=10),
         stop=stop_after_attempt(3),
         retry_error_callback=return_last_value,
         retry=(retry_if_exception_type() | retry_if_result(check_empty)),
@@ -717,6 +765,7 @@ class ExtQuotes(BaseQuotes):
         return to_data(result, symbol=symbol, client=self, **kwargs)
 
     @retry(
+        wait=wait_random(min=1, max=10),
         stop=stop_after_attempt(3),
         retry_error_callback=return_last_value,
         retry=(retry_if_exception_type() | retry_if_result(check_empty)),
@@ -742,6 +791,7 @@ class ExtQuotes(BaseQuotes):
         return to_data(result, symbol=symbol, **kwargs)
 
     @retry(
+        wait=wait_random(min=1, max=10),
         stop=stop_after_attempt(3),
         retry_error_callback=return_last_value,
         retry=(retry_if_exception_type() | retry_if_result(check_empty)),
@@ -763,6 +813,7 @@ class ExtQuotes(BaseQuotes):
         return to_data(result, symbol=symbol, client=self, **kwargs)
 
     @retry(
+        wait=wait_random(min=1, max=10),
         stop=stop_after_attempt(3),
         retry_error_callback=return_last_value,
         retry=(retry_if_exception_type() | retry_if_result(check_empty)),

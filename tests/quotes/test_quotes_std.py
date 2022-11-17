@@ -1,6 +1,9 @@
 import unittest
 
+import pytest
+
 from mootdx.consts import MARKET_SH
+from mootdx.exceptions import MootdxValidationException
 from mootdx.logger import logger
 from mootdx.quotes import Quotes
 
@@ -79,6 +82,7 @@ class TestStdQuotes(unittest.TestCase):
 
     def test_retry_last_value(self):
         data = self.client.minutes("159995", "20200130")
+        logger.debug(f"result => {data}")
         self.assertEqual(data.empty, True)
 
     def test_bj_quotes(self):
@@ -94,3 +98,25 @@ class TestStdQuotes(unittest.TestCase):
         data = self.client.transaction(symbol="430090")
         print(data)
         self.assertEqual(data.empty, False)
+
+
+class TestStdRaises(unittest.TestCase):
+    client = None
+
+    # 初始化工作
+    def setup_class(self):
+        self.client = Quotes.factory(market="std", timeout=10, verbose=2)  # 标准市场
+
+    def test_stock_count_raises(self):
+        with pytest.raises(MootdxValidationException) as e:
+            self.client.stock_count(3)
+
+        exec_msg = e.value.args[0]
+        assert exec_msg == '市场代码错误'
+
+    def test_stocks_raises(self):
+        with pytest.raises(MootdxValidationException) as e:
+            self.client.stocks(2)
+
+        exec_msg = e.value.args[0]
+        assert exec_msg == '市场代码错误, 目前只支持沪深市场'

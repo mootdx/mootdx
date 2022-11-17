@@ -17,3 +17,8 @@ class MootdxException(Exception):
 
     def __repr__(self):
         return f"<MOOTDXError: {self.message}>"
+
+
+class MootdxValidationException(Exception):
+    def __init__(self, *args, **kwargs):  # real signature unknown
+        pass

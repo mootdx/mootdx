@@ -7,4 +7,4 @@ console.setFormatter(formatter)
 
 logger = logging.getLogger("mootdx")
 logger.addHandler(console)
-logger.setLevel(logging.INFO)
+logger.setLevel(logging.DEBUG)

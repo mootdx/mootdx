@@ -8,7 +8,7 @@ from mootdx.affair import Affair
 from mootdx.logger import logger
 
 
-# @pytest.mark.skip
+@pytest.mark.skip
 class TestAffair(unittest.TestCase):
     files = []
 

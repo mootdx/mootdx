@@ -30,8 +30,7 @@ class FinancialReader(object):
         with open(filename, "rb") as fp:
             data = crawler.parse(download_file=fp)
 
-        data = crawler.to_df(data, **kwargs)
-        return data
+        return crawler.to_df(data, **kwargs)
 
 
 class FinancialList(BaseFinancial):
@@ -221,6 +220,6 @@ class Financial(BaseFinancial):
         if header == "zh":
             df.columns = columns
 
-        logger.debug(df)
+        logger.debug(df.shape)
 
         return df

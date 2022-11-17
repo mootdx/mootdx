@@ -27,6 +27,7 @@ httpx = "*"
 tqdm = "*"
 click = "*"
 pytdx = "*"
+tdxpy = "*"
 
 [requires]
 python_version = "3.9"

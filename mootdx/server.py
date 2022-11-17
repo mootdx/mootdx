@@ -4,6 +4,7 @@ import json
 import socket
 import time
 from functools import partial
+from tdxpy.constants import hq_hosts
 
 from mootdx.consts import CONFIG
 from mootdx.consts import EX_HOSTS
@@ -13,7 +14,7 @@ from mootdx.logger import logger
 from mootdx.utils import get_config_path
 
 hosts = {
-    "HQ": [{"addr": hs[1], "port": hs[2], "time": 0, "site": hs[0]} for hs in HQ_HOSTS],
+    "HQ": [{"addr": hs[1], "port": hs[2], "time": 0, "site": hs[0]} for hs in hq_hosts + GP_HOSTS],
     "EX": [{"addr": hs[1], "port": hs[2], "time": 0, "site": hs[0]} for hs in EX_HOSTS],
     "GP": [{"addr": hs[1], "port": hs[2], "time": 0, "site": hs[0]} for hs in GP_HOSTS],
 }
@@ -115,7 +116,7 @@ def server(index=None, limit=5, console=False, sync=True):
         t.align["Time"] = "r"
         t.padding_width = 1
 
-        for host in server[: int(limit)]:
+        for host in server:
             t.add_row(
                 [
                     host["site"],

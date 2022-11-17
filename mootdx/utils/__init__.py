@@ -56,7 +56,7 @@ def get_stock_market(symbol="", string=False):
     elif symbol.startswith(("4", "8")):
         market = "bj"
 
-    logger.debug(f"market => {market}")
+    # logger.debug(f"market => {market}")
 
     if string is False:
         if market == "sh":
@@ -68,7 +68,7 @@ def get_stock_market(symbol="", string=False):
         if market == "bj":
             market = MARKET_BJ
 
-    logger.debug(f"market => {market}")
+    # logger.debug(f"market => {market}")
 
     return market
 
@@ -112,8 +112,7 @@ def md5sum(downfile):
         md5_l.update(Path(downfile).read_bytes())
         return md5_l.hexdigest()
     except (IOError, FileNotFoundError) as e:
-        logger.error(f"无法读取文件: {downfile}")
-        logger.debug(e)
+        logger.warning(e)
         return None
 
 
@@ -164,7 +163,8 @@ def to_data(v, **kwargs):
 
     if "datetime" in result.columns:
         result.index = pd.to_datetime(result.datetime)
-    elif "date" in result.columns:
+
+    if "date" in result.columns:
         result.index = pd.to_datetime(result.date)
 
     if "vol" in result.columns:

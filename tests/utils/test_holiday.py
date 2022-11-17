@@ -1,12 +1,19 @@
+from pathlib import Path
+
 import pytest
 
-from mootdx.utils.holiday import holiday, holiday_, holiday2
+from mootdx import get_config_path
+from mootdx.utils.holiday import holiday, holiday2
 
 
-@pytest.mark.skip
 class TestHoliday:
+    # 初始化工作
+    cache_file = get_config_path('holiday.plk')
+
     def test_holiday_exists(self):
-        assert holiday("2022-01-23")
+        Path(self.cache_file).unlink()
+        result = holiday("2022-01-23")
+        assert result, result
 
     def test_holiday_country(self):
         assert holiday("2022-01-23", "%Y-%m-%d", "法国")
@@ -18,38 +25,19 @@ class TestHoliday:
             holiday("2022-01-26", "%Y-%m-%d", country="巴西")
 
     def test_holiday_not(self):
-        assert not holiday("2022-01-26")
+        result = holiday("2022-01-26")
+        assert result is False, result
 
     def test_holiday_fmt(self):
         assert holiday("2022-01-23", "%Y-%m-%d")
+        assert holiday("20220123", "%Y%m%d")
 
 
-@pytest.mark.skip
-class Testholiday0:
+class TestHoliday2:
+    cache_file = get_config_path('holiday2.plk')
+
     def test_holiday_exists(self):
-        assert holiday_("2022-01-23").empty
-
-    def test_holiday_today(self):
-        assert holiday_().empty
-
-    def test_holiday_not(self):
-        assert holiday_("2022-01-26").empty
-
-    def test_holiday_fmt(self):
-        assert holiday_("2022-01-23", "%Y-%m-%d").empty
-
-    def test_holiday_country(self):
-        assert holiday_("2022-01-23", "%Y-%m-%d", "法国").empty
-
-        with pytest.raises(ValueError):
-            holiday_("20220126")
-
-        with pytest.raises(ValueError):
-            holiday_("2022-01-26", "%Y-%m-%d", country="巴西")
-
-@pytest.mark.skip
-class Testholiday2:
-    def test_holiday_exists(self):
+        Path(self.cache_file).unlink()
         assert holiday2("2022-01-23")
 
     def test_holiday_today(self):
