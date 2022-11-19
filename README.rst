@@ -144,9 +144,9 @@
 
 .. image:: docs/img/IMG_2851.JPG
         :width: 230 px
-        :align: center
+        :align: left
 
 常见问题
--------
+---------
 
 M1 mac 系统PyMiniRacer不能使用，访问: https://github.com/sqreen/PyMiniRacer/issues/143
