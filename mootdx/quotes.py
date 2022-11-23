@@ -142,7 +142,7 @@ class StdQuotes(BaseQuotes):
             default = config.get("SERVER").get("HQ")[0][1:]
             self.server = config.get("BESTIP").get("HQ", default)
 
-        for x in ["verbose", "server", "quiet", "multithread", "auto_retry"]:
+        for x in ["verbose", "server", "quiet", "heartbeat", "multithread", "auto_retry"]:
             if x in kwargs.keys():
                 del kwargs[x]
 
