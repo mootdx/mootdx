@@ -6,6 +6,8 @@ import time
 from functools import partial
 
 from tdxpy.constants import hq_hosts
+from tdxpy.exhq import TdxExHq_API
+from tdxpy.hq import TdxHq_API
 
 from mootdx.consts import CONFIG
 from mootdx.consts import EX_HOSTS
@@ -66,14 +68,42 @@ def connect(proxy: dict) -> dict:
     return proxy
 
 
-async def verify(proxy: dict):
+def connect2(proxy, index='HQ'):
+    if index == 'GP':
+        return connect(proxy)
+
+    api = (TdxHq_API(), TdxExHq_API())[index != 'HQ']
+    fun = ('get_security_count', 'get_instrument_count')[index != 'HQ']
+    tms = time.perf_counter()
+
+    proxy["time"] = None
+
+    try:
+        with api.connect(proxy.get("addr"), int(proxy.get("port")), time_out=0.7):
+            if getattr(api, fun)():
+                proxy["time"] = (time.perf_counter() - tms) * 1000
+                logger.debug("{addr}:{port} 验证通过，响应时间：{time} ms.".format(**proxy))
+            else:
+                logger.debug("{addr},{port} 验证失败.".format(**proxy))
+    except socket.timeout as ex:
+        logger.debug("{addr},{port} time out.".format(**proxy))
+        proxy["time"] = None
+    except Exception:
+        logger.debug("{addr},{port} 验证失败.".format(**proxy))
+    finally:
+        logger.debug("{addr},{port} connect2.".format(**proxy))
+
+    return proxy
+
+
+async def verify(proxy: dict, index):
     """
     检验代理连通性函数
 
     :param proxy: 代理IP信息
     :return:
     """
-    return await asyncio.get_event_loop().run_in_executor(None, functools.partial(connect, proxy=proxy))
+    return await asyncio.get_event_loop().run_in_executor(None, functools.partial(connect2, proxy=proxy, index=index))
 
 
 def server(index=None, limit=5, console=False, sync=True):
@@ -84,7 +114,7 @@ def server(index=None, limit=5, console=False, sync=True):
         tasks = []
 
         while len(_hosts) > 0:
-            task = event.create_task(verify(_hosts.pop(0)))
+            task = event.create_task(verify(_hosts.pop(0), index))
             task.add_done_callback(partial(callback, key=index))
             tasks.append(task)
 
@@ -107,6 +137,10 @@ def server(index=None, limit=5, console=False, sync=True):
         from prettytable import PrettyTable
 
         server.sort(key=lambda item: item["time"])
+
+        if limit:
+            server = server[:limit]
+
         logger.debug("[√] 最优服务器:")
 
         t = PrettyTable(["Name", "Addr", "Port", "Time"])
@@ -153,4 +187,4 @@ def bestip(console=False, limit=5, sync=True) -> None:
 
 
 if __name__ == "__main__":
-    bestip()
+    bestip(sync=False, limit=5, console=True)
