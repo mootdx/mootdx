@@ -173,6 +173,8 @@ def bestip(console=False, limit=5, sync=True) -> None:
     config_ = get_config_path("config.json")
     default = dict(CONFIG)
 
+    logger.info("[-] 选择最快的服务器...")
+
     for index in ["HQ", "EX", "GP"]:
         try:
             data = server(index=index, limit=limit, console=console, sync=sync)
