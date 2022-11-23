@@ -11,7 +11,7 @@ class TestHoliday:
     cache_file = get_config_path('holiday.plk')
 
     def test_holiday_exists(self):
-        Path(self.cache_file).unlink()
+        Path(self.cache_file).unlink(missing_ok=True)
         result = holiday("2022-01-23")
         assert result, result
 
@@ -37,7 +37,7 @@ class TestHoliday2:
     cache_file = get_config_path('holiday2.plk')
 
     def test_holiday_exists(self):
-        Path(self.cache_file).unlink()
+        Path(self.cache_file).unlink(missing_ok=True)
         assert holiday2("2022-01-23")
 
     def test_holiday_today(self):
