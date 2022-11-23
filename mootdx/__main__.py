@@ -30,12 +30,7 @@ def entry():
 @click.help_option("-h", "--help")
 @click.option("-o", "--output", default=None, help="输出文件, 支持CSV, HDF5, Excel等格式.")
 @click.option("-s", "--symbol", default="600000", help="股票代码.")
-@click.option(
-    "-a",
-    "--action",
-    default="bars",
-    help="操作类型 (daily: 日线, minute: 一分钟线, fzline: 五分钟线).",
-)
+@click.option("-a", "--action", default="bars", help="操作类型 (daily: 日线, minute: 一分钟线, fzline: 五分钟线).", )
 @click.option("-m", "--market", default="std", help="证券市场, 默认 std (std: 标准股票市场, ext: 扩展市场).")
 def quotes(symbol, action, market, output):
     from mootdx.quotes import Quotes
@@ -85,7 +80,6 @@ def reader(symbol, action, market, tdxdir, output):
 @click.option("-v", "--verbose", count=True, help="详细模式")
 @click.argument("server")
 def channel(server, verbose):
-    logger_reset(verbose=verbose)
     config = get_config_path("config.json")
     logger.info("[√] 已经将最优服务器IP写入配置文件 {} {}".format(config, server))
 
@@ -96,9 +90,17 @@ def channel(server, verbose):
 @click.option("-v", "--verbose", count=True, help="详细模式")
 def server(limit, verbose):
     from mootdx.server import bestip
-    logger.setLevel(logging.DEBUG)
-    config = get_config_path("config.json")
+
+    if verbose:
+        ch = logging.StreamHandler()
+        ch.setLevel(logging.DEBUG)
+
+        logger.addHandler(ch)
+        logger.setLevel(logging.DEBUG)
+
     bestip(limit=limit, console=True, sync=False)
+
+    config = get_config_path("config.json")
     logger.info("[√] 已经将最优服务器IP写入配置文件 {}".format(config))
 
 
@@ -114,7 +116,12 @@ def server(limit, verbose):
 def affair(parse, fetch, downdir, output, downall, verbose, listfile):
     from mootdx.affair import Affair
 
-    logger.setLevel(logging.DEBUG)
+    if verbose:
+        ch = logging.StreamHandler()
+        ch.setLevel(logging.DEBUG)
+
+        logger.addHandler(ch)
+        logger.setLevel(logging.DEBUG)
 
     files = Affair.files()
 

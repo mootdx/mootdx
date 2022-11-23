@@ -165,15 +165,16 @@ def server(index=None, limit=5, console=False, sync=True):
     return [(item["addr"], item["port"]) for item in server]
 
 
-def check_server(console=False, limit=5, sync=True) -> None:
+def check_server(console=False, limit=5, sync=False) -> None:
     return bestip(console=console, limit=limit, sync=sync)
 
 
-def bestip(console=False, limit=5, sync=True) -> None:
+def bestip(console=False, limit=5, sync=False) -> None:
     config_ = get_config_path("config.json")
     default = dict(CONFIG)
 
     logger.info("[-] 选择最快的服务器...")
+    logger.debug(f'sync => {sync}')
 
     for index in ["HQ", "EX", "GP"]:
         try:

@@ -67,7 +67,7 @@ class BaseQuotes(object):
         self.server = valid_server(server)
 
         logger.debug(f"bestip => {bestip}")
-        (bestip or (not config.get("BESTIP"))) and check_server()
+        (bestip or (not config.get("BESTIP"))) and check_server(sync=False)
 
         logger.debug(f"timeout => {timeout}")
         self.timeout = timeout if timeout else 15
@@ -145,6 +145,8 @@ class StdQuotes(BaseQuotes):
         for x in ["verbose", "server", "quiet", "heartbeat", "multithread", "auto_retry"]:
             if x in kwargs.keys():
                 del kwargs[x]
+
+        logger.debug(f"server: {self.server}")
 
         self.client = TdxHq_API(heartbeat=False, auto_retry=True, raise_exception=True, **kwargs)
         self.client.connect(*self.server, time_out=timeout)
@@ -276,7 +278,7 @@ class StdQuotes(BaseQuotes):
         frequency = get_frequency(frequency)
 
         market = get_stock_market(symbol)
-        result = self.client.get_index_bars(frequency=frequency, market=market, code=symbol, start=start, count=offset)
+        result = self.client.get_index_bars(int(frequency), int(market), str(symbol), int(start), int(offset))
 
         return to_data(result, symbol=symbol, client=self, **kwargs)
 
@@ -516,12 +518,12 @@ class StdQuotes(BaseQuotes):
 
         return data
 
-    @retry(
-        wait=wait_random(min=1, max=10),
-        stop=stop_after_attempt(3),
-        retry_error_callback=return_last_value,
-        retry=(retry_if_exception_type() | retry_if_result(check_empty)),
-    )
+    # @retry(
+    #     wait=wait_random(min=1, max=10),
+    #     stop=stop_after_attempt(3),
+    #     retry_error_callback=return_last_value,
+    #     retry=(retry_if_exception_type() | retry_if_result(check_empty)),
+    # )
     def index(self, symbol="000001", market=MARKET_SH, frequency=9, start=1, offset=2, **kwargs):
         """
         获取指数k线
@@ -552,12 +554,12 @@ class StdQuotes(BaseQuotes):
 
         return to_data(result, symbol=symbol, client=self, **kwargs)
 
-    @retry(
-        wait=wait_random(min=1, max=10),
-        stop=stop_after_attempt(3),
-        retry_error_callback=return_last_value,
-        retry=(retry_if_exception_type() | retry_if_result(check_empty)),
-    )
+    # @retry(
+    #     wait=wait_random(min=1, max=10),
+    #     stop=stop_after_attempt(3),
+    #     retry_error_callback=return_last_value,
+    #     retry=(retry_if_exception_type() | retry_if_result(check_empty)),
+    # )
     def block(self, tofile="block.dat", **kwargs):
         """
         获取证券板块信息

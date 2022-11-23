@@ -3,9 +3,8 @@
 使用前必须先调用 init() 。
 """
 import copy
+import json
 from pathlib import Path
-
-import  json
 
 from mootdx.consts import EX_HOSTS
 from mootdx.consts import GP_HOSTS
@@ -39,7 +38,7 @@ def setup():
         settings.update(options)
     except (json.JSONDecodeError, FileNotFoundError):
         logger.warning(f"未找到配置文件 {CONF}, 正在生成配置文件.")
-        bestip() and setup()
+        bestip(console=False, limit=5, sync=False) and setup()
 
     return True if settings else False
 

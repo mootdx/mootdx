@@ -259,6 +259,8 @@ def get_frequency(frequency) -> int:
     try:
         if isinstance(frequency, str):
             frequency = FREQUENCY.index(frequency)
+        if isinstance(frequency, int):
+            frequency = frequency
     except ValueError:
         frequency = 0
 
