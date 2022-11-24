@@ -58,7 +58,7 @@ lint: ## check style with flake8
 	flake8 --max-line-length=200
 
 cov: clean-test
-	py.test -v --cov=mootdx --cov-report=html
+	poetry run py.test -v --cov=mootdx --cov-report=html
 
 fmt:
 	black -l 120 -t py36 -t py37 -t py38 -t py39 -t py310 .
@@ -87,7 +87,7 @@ servedocs: docs ## compile the docs watching for changes
 	watchmedo shell-command -p '*.rst' -c '$(MAKE) -C docs html' -R -D .
 
 release: dist ## package and upload a release
-	twine upload dist/* --verbose
+	poetry run twine upload dist/* --verbose
 
 archive: clean
 	git archive --format zip --output ../mootdx-master.zip master
@@ -115,3 +115,10 @@ push: pull
 
 bestip:
 	@poetry run python -m mootdx bestip -v
+
+patch:
+	poetry run bumpversion patch
+	poetry run python setup.py sdist
+	poetry run python setup.py bdist_wheel
+	poetry run twine upload dist/* --verbose
+
