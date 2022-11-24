@@ -22,6 +22,7 @@ for line in sys.stdin:
 endef
 export PRINT_HELP_PYSCRIPT
 BROWSER := python -c "$$BROWSER_PYSCRIPT"
+BRANCH := `git symbolic-ref --short -q HEAD`
 
 help:
 	@python -c "$$PRINT_HELP_PYSCRIPT" < $(MAKEFILE_LIST)
@@ -103,11 +104,11 @@ requirements:
 	python -m pip install -r requirements.dev -r requirements.txt -r tests/requirements.txt
 
 pull:
-	git pull origin develop --tags
-	git pull github develop --tags
-	git pull gitee develop --tags
+	git pull origin $(BRANCH) --tags
+	git pull github $(BRANCH) --tags
+	git pull gitee $(BRANCH) --tags
 
-push: pull 
-	git push origin develop --tags
-	git push github develop --tags
-	git push gitee develop --tags
+push: pull
+	git push origin $(BRANCH) --tags
+	git push github $(BRANCH) --tags
+	git push gitee $(BRANCH) --tags
