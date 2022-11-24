@@ -1,9 +1,9 @@
-click>=6.7
+click
 httpx
-pandas>=0.23.3
-prettytable>=2.2.0
-tenacity>=8.0.1
-tqdm>=4.37.0
+pandas
+prettytable
+tenacity
+tqdm
 pyyaml
 tdxpy
-# py_mini_racer>=0.6.0
+py_mini_racer

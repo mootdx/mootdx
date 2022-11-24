@@ -63,7 +63,7 @@ fmt:
 	black -l 120 -t py36 -t py37 -t py38 -t py39 -t py310 .
 
 test: ## run tests quickly with the default Python
-	py.test tests -v
+	poetry run py.test tests -v
 
 test-all: ## run tests on every Python version with tox
 	tox
@@ -85,17 +85,15 @@ docs: ## generate Sphinx HTML documentation, including API docs
 servedocs: docs ## compile the docs watching for changes
 	watchmedo shell-command -p '*.rst' -c '$(MAKE) -C docs html' -R -D .
 
-release: clean ## package and upload a release
-	python setup.py sdist
-	python setup.py bdist_wheel
+release: dist ## package and upload a release
 	twine upload dist/* --verbose
 
 archive: clean
 	git archive --format zip --output ../mootdx-master.zip master
 
 dist: clean ## builds source and wheel package
-	python setup.py sdist
-	python setup.py bdist_wheel
+	poetry run python setup.py sdist
+	poetry run python setup.py bdist_wheel
 	ls -lh dist
 
 install: clean ## install the package to the active Python's site-packages
