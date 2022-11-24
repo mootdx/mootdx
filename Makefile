@@ -101,3 +101,13 @@ install: clean ## install the package to the active Python's site-packages
 
 requirements:
 	python -m pip install -r requirements.dev -r requirements.txt -r tests/requirements.txt
+
+pull:
+	git pull origin develop --tags
+	git pull github develop --tags
+	git pull gitee develop --tags
+
+push: pull 
+	git push origin develop --tags
+	git push github develop --tags
+	git push gitee develop --tags
