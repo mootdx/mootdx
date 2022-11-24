@@ -48,7 +48,7 @@ def connect(proxy: dict) -> dict:
     """
     try:
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        sock.settimeout(3)
+        sock.settimeout(.7)
 
         start = time.perf_counter()
 
@@ -74,22 +74,22 @@ def connect2(proxy, index='HQ'):
 
     api = (TdxHq_API(), TdxExHq_API())[index != 'HQ']
     fun = ('get_security_count', 'get_instrument_count')[index != 'HQ']
-    tms = time.perf_counter()
 
     proxy["time"] = None
 
     try:
         with api.connect(proxy.get("addr"), int(proxy.get("port")), time_out=0.7):
+            tms = time.perf_counter()
             if getattr(api, fun)():
                 proxy["time"] = (time.perf_counter() - tms) * 1000
                 logger.debug("{addr}:{port} 验证通过，响应时间：{time} ms.".format(**proxy))
             else:
-                logger.debug("{addr},{port} 验证失败.".format(**proxy))
+                logger.debug("{addr}:{port} 验证失败.".format(**proxy))
     except socket.timeout as ex:
-        logger.debug("{addr},{port} time out.".format(**proxy))
+        logger.debug("{addr}:{port} time out.".format(**proxy))
         proxy["time"] = None
-    except Exception:
-        logger.debug("{addr},{port} 验证失败.".format(**proxy))
+    except Exception as e:
+        logger.debug("{addr}:{port} 验证失败.".format(**proxy))
 
     return proxy
 
