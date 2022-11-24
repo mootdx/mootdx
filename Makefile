@@ -112,3 +112,6 @@ push: pull
 	git push origin $(BRANCH) --tags
 	git push github $(BRANCH) --tags
 	git push gitee $(BRANCH) --tags
+
+bestip:
+	@poetry run python -m mootdx bestip -v

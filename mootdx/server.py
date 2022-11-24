@@ -90,8 +90,6 @@ def connect2(proxy, index='HQ'):
         proxy["time"] = None
     except Exception:
         logger.debug("{addr},{port} 验证失败.".format(**proxy))
-    finally:
-        logger.debug("{addr},{port} connect2.".format(**proxy))
 
     return proxy
 
