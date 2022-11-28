@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "mootdx"
-version = "0.9.7"
+version = "0.9.8"
 description = ""
 authors = ["bopo <ibopo@126.com>"]
 readme = "README.md"
