@@ -3,7 +3,7 @@ name = "mootdx"
 version = "0.9.8"
 description = ""
 authors = ["bopo <ibopo@126.com>"]
-readme = "README.md"
+readme = "README.rst"
 
 [tool.poetry.dependencies]
 python = "^3.9"
