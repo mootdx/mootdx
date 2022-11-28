@@ -147,9 +147,10 @@ class StdQuotes(BaseQuotes):
                 del kwargs[x]
 
         logger.debug(f"server: {self.server}")
+        ip, port = self.server
 
-        self.client = TdxHq_API(heartbeat=False, auto_retry=True, raise_exception=True, **kwargs)
-        self.client.connect(*self.server, time_out=timeout)
+        self.client = TdxHq_API(heartbeat=False, auto_retry=True, raise_exception=False, **kwargs)
+        self.client.connect(ip, int(port), time_out=timeout)
 
         global instance
         instance = self

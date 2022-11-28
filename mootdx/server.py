@@ -163,7 +163,7 @@ def server(index=None, limit=5, console=False, sync=True):
 
         logger.debug("\n" + str(t))
 
-    return [(item["addr"], item["port"]) for item in server]
+    return [(item["addr"], int(item["port"])) for item in server]
 
 
 def check_server(console=False, limit=5, sync=False) -> None:
