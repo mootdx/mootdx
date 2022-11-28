@@ -12,14 +12,17 @@ from tdxpy.hq import TdxHq_API
 from mootdx.consts import CONFIG
 from mootdx.consts import EX_HOSTS
 from mootdx.consts import GP_HOSTS
+from mootdx.consts import HQ_HOSTS
 from mootdx.logger import logger
 from mootdx.utils import get_config_path
 
 hosts = {
-    "HQ": [{"addr": hs[1], "port": hs[2], "time": 0, "site": hs[0]} for hs in hq_hosts + GP_HOSTS],
+    "HQ": [{"addr": hs[1], "port": hs[2], "time": 0, "site": hs[0]} for hs in hq_hosts + HQ_HOSTS],
     "EX": [{"addr": hs[1], "port": hs[2], "time": 0, "site": hs[0]} for hs in EX_HOSTS],
     "GP": [{"addr": hs[1], "port": hs[2], "time": 0, "site": hs[0]} for hs in GP_HOSTS],
 }
+
+
 
 results = {k: [] for k in hosts}
 
