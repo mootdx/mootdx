@@ -13,11 +13,12 @@ class TestAffair(unittest.TestCase):
     downdir = "tests/fixtures/tmp"
 
     def setup_class(self) -> None:
-        logger.info("获取文件列表")
+        logger.debug("setup_class: 获取文件列表")
         self.files = [x["filename"] for x in Affair.files()]
         Path(self.downdir).is_file() or Path(self.downdir).mkdir()
 
     def teardown_class(self):
+        logger.debug("teardown_class: 删除测试数据")
         [Path(x).unlink() for x in glob.glob(f"{self.downdir}/*.*")]
         Path(self.downdir).rmdir()
 

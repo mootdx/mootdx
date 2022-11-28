@@ -1,9 +1,8 @@
-click
-httpx
-pandas
+py_mini_racer
 prettytable
 tenacity
-tqdm
 pyyaml
 tdxpy
-py_mini_racer
+httpx
+click
+tqdm

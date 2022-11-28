@@ -14,13 +14,13 @@ class TestStdQuotes(unittest.TestCase):
     # 初始化工作
     def setup_class(self):
         self.client = Quotes.factory(market="std", timeout=10, verbose=2)  # 标准市场
-        logger.info("初始化工作")
+        logger.debug("初始化工作")
 
     # 退出清理工作
     def teardown_class(self):
         self.client.client.close()
         del self.client
-        logger.info("退出清理工作")
+        logger.debug("退出清理工作")
 
     def test_quotes(self):
         data = self.client.quotes(symbol="600036")
