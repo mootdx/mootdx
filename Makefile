@@ -65,6 +65,7 @@ fmt:
 	black -l 120 -t py36 -t py37 -t py38 -t py39 -t py310 .
 
 test: ## run tests quickly with the default Python
+# 	unset https_proxy http_proxy all_proxy
 	poetry run py.test tests -v
 
 test-all: ## run tests on every Python version with tox
@@ -87,7 +88,7 @@ docs: ## generate Sphinx HTML documentation, including API docs
 servedocs: docs ## compile the docs watching for changes
 	watchmedo shell-command -p '*.rst' -c '$(MAKE) -C docs html' -R -D .
 
-release: test dist ## package and upload a release
+release: test dist changelog ## package and upload a release
 	poetry run twine upload dist/* --verbose
 
 archive: clean
