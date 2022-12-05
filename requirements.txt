@@ -2,7 +2,7 @@ py_mini_racer
 prettytable
 tenacity
 pyyaml
-tdxpy
+tdxpy>=0.1.9
 httpx
 click
 tqdm

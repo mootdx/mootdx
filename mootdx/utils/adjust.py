@@ -2,17 +2,19 @@
 # @Time    : 2021/10/11 17:28
 # @Function:
 import datetime
+import json
 import time
 from pathlib import Path
 
 import httpx
 import pandas as pd
-import json
 from tenacity import retry
 from tenacity import stop_after_attempt
 from tenacity import wait_fixed
 
+from mootdx import get_config_path
 from mootdx.consts import return_last_value
+from mootdx.quotes import Quotes
 
 
 @retry(wait=wait_fixed(2), retry_error_callback=return_last_value, stop=stop_after_attempt(5))
@@ -56,30 +58,25 @@ def fq_factor(method: str, symbol: str) -> pd.DataFrame:
         return qfq_factor_df
 
 
-def get_xdxr(symbol, client):
-    from mootdx import get_config_path
-
-    cache_file = Path(get_config_path(f"xdxr/{symbol}.plk"))
-    cache_file.parent.mkdir(exist_ok=True)
+def get_xdxr(symbol):
+    xdxr_file = Path(get_config_path(f"xdxr/{symbol}.plk"))
+    xdxr_file.parent.mkdir(exist_ok=True)
 
     # 判断数据是否存在, 判断修改时间是否今天
     today = time.mktime(datetime.date.today().timetuple())
-    if cache_file.is_file() and cache_file.stat().st_mtime > today:
-        xdxr = pd.read_pickle(cache_file)
+
+    if xdxr_file.is_file() and xdxr_file.stat().st_mtime > today:
+        xdxr = pd.read_pickle(xdxr_file)
     else:
-        xdxr = client.xdxr(symbol=symbol)
-        xdxr.to_pickle(cache_file)
+        xdxr = Quotes.factory('std').xdxr(symbol=symbol)
+        xdxr.to_pickle(xdxr_file)
 
     return xdxr
 
 
 def to_adjust(temp_df, symbol=None, adjust=None):
     from mootdx.tools.reversion import reversion
-    from mootdx.quotes import Quotes
-
-    # xdxr_data = get_xdxr(symbol=symbol, client=client)
-    xdxr_data = Quotes.factory('std').xdxr(symbol=symbol)
-    return reversion(temp_df, xdxr_data, adjust)
+    return reversion(temp_df, get_xdxr(symbol), adjust)
 
 
 def to_adjust2(temp_df, symbol=None, adjust=None):
