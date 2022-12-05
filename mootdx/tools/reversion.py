@@ -1,4 +1,4 @@
-from ..contrib.compat import pd
+import pandas as pd
 
 
 def _reversion(bfq_data, xdxr_data, type_):
