@@ -24,7 +24,7 @@ test_requirements = requirements
 
 setup(
     name="mootdx",
-    version="0.9.9",
+    version="0.9.10",
     description="通达信数据读取接口.",
     long_description=readme,
     author="bopo.wang",
