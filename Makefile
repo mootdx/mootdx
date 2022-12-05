@@ -21,8 +21,9 @@ for line in sys.stdin:
 		print("%-20s %s" % (target, help))
 endef
 export PRINT_HELP_PYSCRIPT
+
 BROWSER := python -c "$$BROWSER_PYSCRIPT"
-BRANCH := `git symbolic-ref --short -q HEAD`
+VERSION := 0.9.11
 
 help:
 	@python -c "$$PRINT_HELP_PYSCRIPT" < $(MAKEFILE_LIST)
@@ -104,14 +105,14 @@ requirements:
 	python -m pip install -r requirements.dev -r requirements.txt -r tests/requirements.txt
 
 pull:
-	git pull origin $(BRANCH) --tags
-	git pull github $(BRANCH) --tags
-	git pull gitee $(BRANCH) --tags
+	git pull origin `git symbolic-ref --short -q HEAD` --tags
+	git pull github `git symbolic-ref --short -q HEAD` --tags
+	git pull gitee `git symbolic-ref --short -q HEAD` --tags
 
 push: pull
-	git push origin $(BRANCH) --tags
-	git push github $(BRANCH) --tags
-	git push gitee $(BRANCH) --tags
+	git push origin `git symbolic-ref --short -q HEAD` --tags
+	git push github `git symbolic-ref --short -q HEAD` --tags
+	git push gitee `git symbolic-ref --short -q HEAD` --tags
 
 bestip:
 	@poetry run python -m mootdx bestip -v
@@ -122,3 +123,5 @@ patch:
 	poetry run python setup.py bdist_wheel
 	poetry run twine upload dist/* --verbose
 
+changelog:
+	gitchangelog v$(VERSION)
