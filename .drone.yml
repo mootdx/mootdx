@@ -3,6 +3,9 @@ kind: pipeline
 name: default
 type: docker
 
+clone:
+  ssh_key: 'ssh_key'
+
 steps:
   - name: test
     image: mootdx:ci
@@ -17,7 +20,7 @@ steps:
       SSH_KEY:
         from_secret: ssh_key
     commands:
-      - echo $SSH_KEY > ~/.ssh/id_rsa
+      - echo "$SSH_KEY" > ~/.ssh/id_rsa
       - git remote add github git@github.com:mootdx/mootdx.git
       - git remote add gitee git@gitee.com:ibopo/mootdx.git
       - git checkout develop
@@ -25,7 +28,12 @@ steps:
       - git push gitee develop
       - git pull github develop
       - git push github develop
-
+    when:
+      event:
+        - promote
+      target:
+        - development
+        -
   - name: publish
     image: mootdx:ci
     environment:
@@ -34,7 +42,7 @@ steps:
       PASSWORD:
         from_secret: password
     commands:
-      - make history
+      - make history USERNAME=$USERNAME PASSWORD=$PASSWORD
       - make publish USERNAME=$USERNAME PASSWORD=$PASSWORD
     when:
       event:
