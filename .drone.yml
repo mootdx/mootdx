@@ -1,5 +1,7 @@
+---
 kind: pipeline
 name: default
+type: docker
 
 steps:
   - name: test
@@ -9,18 +11,31 @@ steps:
       - pip install -U tdxpy
       - pytest -v tests
 
-  - name: deploy
+  - name: sync
     image: mootdx:ci
     environment:
       SSH_KEY:
         from_secret: ssh_key
     commands:
       - echo $SSH_KEY > ~/.ssh/id_rsa
-      - git remote add gitee git@gitee.com:ibopo/mootdx.git
       - git remote add github git@github.com:mootdx/mootdx.git
+      - git remote add gitee git@gitee.com:ibopo/mootdx.git
       - git checkout develop
+      - git pull gitee develop
       - git push gitee develop
+      - git pull github develop
       - git push github develop
+
+  - name: publish
+    image: mootdx:ci
+    environment:
+      USERNAME:
+        from_secret: username
+      PASSWORD:
+        from_secret: password
+    commands:
+      - make history
+      - make publish USERNAME=$USERNAME PASSWORD=$PASSWORD
     when:
       event:
         - promote
