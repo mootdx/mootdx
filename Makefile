@@ -124,3 +124,6 @@ history: ## show commit incremental changelog
 
 publish: clean ## package and upload a release
 	poetry publish --build --dry-run -vvv
+
+bump: ## bump version
+	cz bump --increment patch --dry-run

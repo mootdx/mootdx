@@ -33,12 +33,17 @@ def setup():
     """
     global settings
 
-    try:
+    def load_config(settings):
         options = json.load(open(CONF, "r", encoding="utf-8"))
         settings.update(options)
+
+    try:
+        load_config(settings)
     except (json.JSONDecodeError, FileNotFoundError):
         logger.warning(f"未找到配置文件 {CONF}, 正在生成配置文件.")
-        bestip(console=False, limit=5, sync=False) and setup()
+        bestip(console=False, limit=5, sync=False)
+    finally:
+        load_config(settings)
 
     return True if settings else False
 

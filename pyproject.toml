@@ -33,7 +33,7 @@ prettytable = "^3.5.0"
 tenacity = "^8.1.0"
 tqdm = "^4.64.1"
 PyYAML = "^6.0"
-tdxpy = "^0.1.7"
+tdxpy = "^0.1.10"
 py-mini-racer = "^0.6.0"
 
 
@@ -46,3 +46,17 @@ twine = "^4.0.1"
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.commitizen]
+version = "0.9.11"
+tag_format = "v$version"
+version_files = [
+    "mootdx/__init__.py:__version__",
+    "setup.cfg:current_version = ",
+    "pyproject.toml:version",
+    "Makefile:VERSION := ",
+]
+
+update_changelog_on_bump = true
+annotated_tag = true
+changelog_file = "HISTORY.md"
