@@ -69,7 +69,6 @@ test: ## run tests quickly with the default Python
 	# poetry run py.test tests -v
 	coverage run -m py.test tests -v
 
-
 coverage: ## check code coverage quickly with the default Python
 	coverage report -m
 	coverage html
@@ -125,3 +124,5 @@ history: ## show commit incremental changelog
 publish: clean ## package and upload a release
 	poetry publish --build --username="$(USERNAME)" --password="$(PASSWORD)" --skip-existing --dry-run
 
+docker: ## build docker image of CI/CD.
+	docker build . -t mootdx:$(VERSION)
