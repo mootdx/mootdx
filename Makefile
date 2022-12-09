@@ -121,3 +121,6 @@ patch:
 history: ## show commit incremental changelog
 	# pip install -U commitizen
 	cz ch --dry-run --incremental
+
+publish: clean ## package and upload a release
+	poetry publish --build --dry-run -vvv

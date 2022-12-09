@@ -1,9 +1,28 @@
 [tool.poetry]
 name = "mootdx"
 version = "0.9.11"
-description = ""
+description = "通达信数据读取接口."
 authors = ["bopo <ibopo@126.com>"]
 readme = "README.rst"
+classifiers = [
+    "Development Status :: 2 - Pre-Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Natural Language :: English",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.6",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+]
+license = "MIT license"
+homepage = "https://www.mootdx.com"
+repository = "https://github.com/mootdx/mootdx"
+
+[tool.poetry.scripts]
+mootdx = "mootdx.__main__:entry"
 
 [tool.poetry.dependencies]
 python = "^3.9"

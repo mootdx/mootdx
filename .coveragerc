@@ -1,0 +1,9 @@
+[report]
+include= =
+    mootdx/*.py
+omit =
+    mootdx/parser/ext/*.py
+    mootdx/exhq.py
+
+skip_covered = true
+sort = -cover
