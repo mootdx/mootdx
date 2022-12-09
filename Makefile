@@ -119,9 +119,9 @@ patch:
 	poetry run twine upload dist/* --verbose
 
 history: ## show commit incremental changelog
-	# pip install -U commitizen
-	cz ch --dry-run --incremental patch
+	pip install commitizen -i https://pypi.tuna.tsinghua.edu.cn/simple
+	cz bump --dry-run --increment patch
 
 publish: clean ## package and upload a release
-	poetry publish --build --dry-run -vvv
+	poetry publish --build --username="$(USERNAME)" --password="$(PASSWORD)" --skip-existing --dry-run
 
