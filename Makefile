@@ -65,38 +65,32 @@ fmt:
 	black -l 120 -t py36 -t py37 -t py38 -t py39 -t py310 .
 
 test: ## run tests quickly with the default Python
-# 	unset https_proxy http_proxy all_proxy
-	poetry run py.test tests -v
+	# unset https_proxy http_proxy all_proxy
+	# poetry run py.test tests -v
+	coverage run -m py.test tests -v
 
-test-all: ## run tests on every Python version with tox
-	tox
 
 coverage: ## check code coverage quickly with the default Python
-	coverage run --source mootdx -m pytest
 	coverage report -m
 	coverage html
 	$(BROWSER) htmlcov/index.html
 
-docs: ## generate Sphinx HTML documentation, including API docs
-	rm -f docs/mootdx.rst
-	rm -f docs/modules.rst
-	sphinx-apidoc -o docs/ mootdx
-	$(MAKE) -C docs clean
-	$(MAKE) -C docs html
-	$(BROWSER) docs/_build/html/index.html
+test-all: ## run tests on every Python version with tox
+	tox
 
-servedocs: docs ## compile the docs watching for changes
-	watchmedo shell-command -p '*.rst' -c '$(MAKE) -C docs html' -R -D .
+docs: ## generate Mkdocs HTML documentation, including API docs
+	poetry run mkdocs serve
 
-release: test dist changelog ## package and upload a release
+release: test dist history ## package and upload a release
 	poetry run twine upload dist/* --verbose
 
 archive: clean
 	git archive --format zip --output ../mootdx-master.zip master
 
 dist: clean ## builds source and wheel package
-	poetry run python setup.py sdist
-	poetry run python setup.py bdist_wheel
+	#poetry run python setup.py sdist
+	#poetry run python setup.py bdist_wheel
+	@poetry build -vv
 	ls -lh dist
 
 install: clean ## install the package to the active Python's site-packages
@@ -124,5 +118,6 @@ patch:
 	poetry run python setup.py bdist_wheel
 	poetry run twine upload dist/* --verbose
 
-changelog:
-	gitchangelog v$(VERSION)
+history: ## show commit incremental changelog
+	# pip install -U commitizen
+	cz ch --dry-run --incremental
