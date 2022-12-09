@@ -4,12 +4,12 @@ name: default
 type: docker
 
 steps:
-  - name: test
-    image: mootdx:ci
-    commands:
-      - pip install -r requirements.txt -r tests/requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
-      - pip install -U tdxpy
-      - pytest -v tests
+#  - name: test
+#    image: mootdx:ci
+#    commands:
+#      - pip install -r requirements.txt -r tests/requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
+#      - pip install -U tdxpy
+#      - pytest -v tests
 
   # https://plugins.drone.io/plugins/git-push
 #  - name: push_github
