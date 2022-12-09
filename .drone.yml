@@ -3,9 +3,6 @@ kind: pipeline
 name: default
 type: docker
 
-clone:
-  ssh_key: 'ssh_key'
-
 steps:
   - name: test
     image: mootdx:ci
@@ -15,17 +12,17 @@ steps:
       - pytest -v tests
 
   # https://plugins.drone.io/plugins/git-push
-  - name: push_github
-    image: appleboy/drone-git-push'
-    settings:
-      branch: develop
-      remote: git@github.com:mootdx/mootdx.git
-      force: false
-      commit: false
-      ssh_key:
-        from_secret: ssh_key
+#  - name: push_github
+#    image: appleboy/drone-git-push'
+#    settings:
+#      branch: develop
+#      remote: git@github.com:mootdx/mootdx.git
+#      force: false
+#      commit: false
+#      ssh_key:
+#        from_secret: ssh_key
 
-  - name: push_gitee
+  - name: push
     image: appleboy/drone-git-push'
     settings:
       branch: develop
