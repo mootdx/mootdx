@@ -118,7 +118,7 @@ patch:
 	poetry run twine upload dist/* --verbose
 
 history: ## show commit incremental changelog
-	pip install commitizen -i https://pypi.tuna.tsinghua.edu.cn/simple
+	#pip install commitizen -i https://pypi.tuna.tsinghua.edu.cn/simple
 	cz bump --dry-run --increment patch
 
 publish: clean ## package and upload a release
