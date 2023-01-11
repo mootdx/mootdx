@@ -8,10 +8,10 @@ class MootdxException(Exception):
         :param kwargs: Exception kwargs
         """
         self.provider = kwargs.get("provider")
-        self.message = kwargs.get("message")
-
-        self.data = kwargs.get("data")
         self.response = kwargs.get("response")
+    
+        self.message = kwargs.get("message")
+        self.data = kwargs.get("data")
 
         super().__init__(self.message)
 

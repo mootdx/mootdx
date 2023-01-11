@@ -33,17 +33,17 @@ def setup():
     """
     global settings
 
-    def load_config(settings):
+    def load_config():
         options = json.load(open(CONF, "r", encoding="utf-8"))
         settings.update(options)
 
     try:
-        load_config(settings)
+        load_config()
     except (json.JSONDecodeError, FileNotFoundError):
         logger.warning(f"未找到配置文件 {CONF}, 正在生成配置文件.")
         bestip(console=False, limit=5, sync=False)
     finally:
-        load_config(settings)
+        load_config()
 
     return True if settings else False
 
@@ -60,7 +60,7 @@ def has(key, value):
     return value in settings[key]
 
 
-def set(key, value):
+def set(key, value):  # noqa
     """
     通过 key 设置某一项值
 

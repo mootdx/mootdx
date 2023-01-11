@@ -43,6 +43,12 @@ pytest-cov = "^4.0.0"
 bumpversion = "^0.6.0"
 twine = "^4.0.1"
 
+[[tool.poetry.source]]
+name = "tuna"
+url = "https://pypi.tuna.tsinghua.edu.cn/simple"
+default = true
+secondary = false
+
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"

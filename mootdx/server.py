@@ -22,8 +22,6 @@ hosts = {
     "GP": [{"addr": hs[1], "port": hs[2], "time": 0, "site": hs[0]} for hs in GP_HOSTS],
 }
 
-
-
 results = {k: [] for k in hosts}
 
 
@@ -61,10 +59,10 @@ def connect(proxy: dict) -> dict:
         proxy["time"] = (time.perf_counter() - start) * 1000
 
         logger.debug("{addr}:{port} 验证通过，响应时间：{time} ms.".format(**proxy))
-    except socket.timeout as ex:
+    except socket.timeout as ex:  # noqa
         logger.debug("{addr},{port} time out.".format(**proxy))
         proxy["time"] = None
-    except ConnectionRefusedError as ex:
+    except ConnectionRefusedError as ex:  # noqa
         logger.debug("{addr},{port} 验证失败.".format(**proxy))
         proxy["time"] = None
 
@@ -88,10 +86,10 @@ def connect2(proxy, index='HQ'):
                 logger.debug("{addr}:{port} 验证通过，响应时间：{time} ms.".format(**proxy))
             else:
                 logger.debug("{addr}:{port} 验证失败.".format(**proxy))
-    except socket.timeout as ex:
+    except socket.timeout:  # noqa
         logger.debug("{addr}:{port} time out.".format(**proxy))
         proxy["time"] = None
-    except Exception as e:
+    except Exception:  # noqa
         logger.debug("{addr}:{port} 验证失败.".format(**proxy))
 
     return proxy
@@ -101,6 +99,7 @@ async def verify(proxy: dict, index):
     """
     检验代理连通性函数
 
+    :param index:
     :param proxy: 代理IP信息
     :return:
     """
@@ -131,16 +130,16 @@ def server(index=None, limit=5, console=False, sync=True):
     else:
         async_event()
 
-    server = results[index]
+    servers = results[index]
 
     # 结果按响应时间从小到大排序
     if console:
         from prettytable import PrettyTable
 
-        server.sort(key=lambda item: item["time"])
+        servers.sort(key=lambda item: item["time"])
 
         if limit:
-            server = server[:limit]
+            servers = servers[:limit]
 
         logger.debug("[√] 最优服务器:")
 
@@ -151,7 +150,7 @@ def server(index=None, limit=5, console=False, sync=True):
         t.align["Time"] = "r"
         t.padding_width = 1
 
-        for host in server:
+        for host in servers:
             t.add_row(
                 [
                     host["site"],
@@ -163,7 +162,7 @@ def server(index=None, limit=5, console=False, sync=True):
 
         logger.debug("\n" + str(t))
 
-    return [(item["addr"], int(item["port"])) for item in server]
+    return [(item["addr"], int(item["port"])) for item in servers]
 
 
 def check_server(console=False, limit=5, sync=False) -> None:
@@ -183,7 +182,7 @@ def bestip(console=False, limit=5, sync=False) -> None:
 
             if data:
                 default["BESTIP"][index] = data[0]
-        except RuntimeError as ex:
+        except RuntimeError:
             logger.error("请手动运行`python -m mootdx bestip`")
             break
 

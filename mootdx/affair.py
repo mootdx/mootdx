@@ -85,7 +85,7 @@ class Affair(object):
         return results
 
     @staticmethod
-    def fetch(downdir: str = None, filename: str = None):
+    def fetch(downdir: str = None, filename: str = None):  # noqa
         """
         财务数据下载
 
@@ -96,7 +96,7 @@ class Affair(object):
 
         history = financial.FinancialList()
         crawler = financial.Financial()
-        downdir = downdir or "."
+        downdir = downdir or "."  # noqa
 
         if not Path(downdir).is_dir():
             logger.warning("下载目录不存在, 进行创建.")

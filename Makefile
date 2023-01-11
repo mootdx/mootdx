@@ -67,11 +67,11 @@ fmt:
 test: ## run tests quickly with the default Python
 	# unset https_proxy http_proxy all_proxy
 	# poetry run py.test tests -v
-	coverage run -m py.test tests -v
+	poetry run coverage run -m pytest tests -v
 
 coverage: ## check code coverage quickly with the default Python
-	coverage report -m
-	coverage html
+	poetry run coverage report -m
+	poetry run coverage html
 	$(BROWSER) htmlcov/index.html
 
 test-all: ## run tests on every Python version with tox

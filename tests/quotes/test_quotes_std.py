@@ -72,6 +72,10 @@ class TestStdQuotes(unittest.TestCase):
         data = self.client.k(symbol="000001", begin="2019-07-03", end="2019-07-10")
         self.assertEqual(data.empty, False)
 
+    def test_get_k_data(self):
+        data = self.client.get_k_data(code="600036", start_date="2007-07-03", end_date="2019-07-10")
+        self.assertEqual(data.empty, False)
+
     def test_block(self):
         data = self.client.block()
         self.assertEqual(data.empty, False)

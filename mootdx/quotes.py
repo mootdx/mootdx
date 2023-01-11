@@ -1,4 +1,5 @@
 import math
+from datetime import datetime
 
 import pandas
 import pandas as pd
@@ -503,19 +504,28 @@ class StdQuotes(BaseQuotes):
         return self.k(**kwargs)
 
     def get_k_data(self, code, start_date, end_date):
-
         # !! todo
-        data = pd.concat(
-            [
-                self.client.to_df(self.client.get_security_bars(9, get_stock_market(code), code, (9 - i) * 800, 800))
-                for i in range(10)
-            ],
-            axis=0,
-        )
+        first = (pd.to_datetime(end_date) - pd.to_datetime(datetime.now().date())).days
+        first = (abs(first), 0)[first >= 0]
+
+        last = (pd.to_datetime(start_date) - pd.to_datetime(datetime.now().date())).days
+        last = (abs(last), 0)[last >= 0]
+
+        first -= int(first / 2.8)  # 非交易日大概是全年的1/3
+        last -= int(last / 3.5)  # 非交易日大概是全年的1/3
+
+        temp = []
+
+        for i in range(math.ceil((last - first) / 800)):
+            temp.append(self.client.to_df(self.client.get_security_bars(9, get_stock_market(code), code, (first + i * 800), 800)))
+
+        data = pd.concat(temp)
         data = data.assign(date=data["datetime"].apply(lambda x: str(x)[0:10])).assign(code=str(code))
         data = data.set_index("date", drop=False, inplace=False)
-        data = data.drop(["year", "month", "day", "hour", "minute", "datetime"], axis=1)[start_date:end_date]
-        data = data.assign(date=data["date"].apply(lambda x: str(x)[0:10]))
+        # data = data.drop(["year", "month", "day", "hour", "minute", "datetime"], axis=1)[start_date:end_date]
+        # data = data.assign(date=data["date"].apply(lambda x: str(x)[0:10]))
+        data = data.loc[(data.date >= start_date) & (data.date < end_date)]
+        data = data.sort_index()
 
         return data
 
@@ -606,7 +616,7 @@ class ExtQuotes(BaseQuotes):
         try:
             self.client = TdxExHq_API(raise_exception=False, auto_retry=True, **kwargs)
             self.client.connect(*self.server)
-        except Exception:
+        except Exception:  # noqa
             logger.error('服务器连接超时.')
 
         global instance

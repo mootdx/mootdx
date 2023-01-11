@@ -309,7 +309,7 @@ function d(t) {
 
 
 @retry(wait=wait_fixed(2), retry_error_callback=return_last_value, stop=stop_after_attempt(5))
-def holiday2(date=False) -> pd.DataFrame:
+def holiday2(date: str = None) -> pd.DataFrame:
     """交易日历-历史数据
     :return: 交易日历
     :rtype: pandas.DataFrame
@@ -349,7 +349,6 @@ def holiday2(date=False) -> pd.DataFrame:
         temp_df.to_pickle(cache_file)
 
     if date:
-
         try:
             date = datetime.datetime.strptime(date, "%Y-%m-%d").date()
         except ValueError:
@@ -383,7 +382,7 @@ def holiday(date=None, format_=None, country=None, result=False):
         res = httpx.get("https://www.tdx.com.cn/url/holiday/")
         res.encoding = "gbk"
 
-        ret = re.findall(r'<textarea id="data" style="display:none;">([\s\w\d\W]+)</textarea>', res.text, re.M)[0].strip()
+        ret = re.findall(r'<textarea id="data" style="display:none;">([\s\w\W]+)</textarea>', res.text, re.M)[0].strip()
         day = [d.split("|")[:4] for d in ret.split("\n")]
 
         df = pd.DataFrame(day, columns=["日期", "节日", "国家", "交易所"], dtype=str)

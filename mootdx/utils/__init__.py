@@ -250,7 +250,10 @@ def get_config_path(config="config.json"):
     return str(filename)
 
 
+# days 的 vol 比 day 大 100 倍
 FREQUENCY = ["5m", "15m", "30m", "1h", "days", "week", "mon", "ex_1m", "1m", "day", "3mon", "year"]
+# FREQUEN = [48,    16,   8,     4,     1,     "1/5",  "1/30", "ex_1m", 240, "1",   "1/90", "1/365"]
+# FREQUENCY = ["5m", "15m", "30m", "1h", "days", "week", "mon", "ex_1m", "1m", "day", "3mon", "year"]
 
 
 def get_frequency(frequency) -> int:

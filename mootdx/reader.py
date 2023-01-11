@@ -103,7 +103,7 @@ class StdReader(ReaderBase):
         result = reader.get_df(str(vipdoc)) if vipdoc else None
         return to_data(result, symbol=symbol, client=self, **kwargs)
 
-    def minute(self, symbol=None, suffix=1, **kwargs):
+    def minute(self, symbol=None, suffix=1, **kwargs):  # noqa
         """
         获取1, 5分钟线
 
