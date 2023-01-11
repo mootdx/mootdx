@@ -522,8 +522,7 @@ class StdQuotes(BaseQuotes):
         data = pd.concat(temp)
         data = data.assign(date=data["datetime"].apply(lambda x: str(x)[0:10])).assign(code=str(code))
         data = data.set_index("date", drop=False, inplace=False)
-        # data = data.drop(["year", "month", "day", "hour", "minute", "datetime"], axis=1)[start_date:end_date]
-        # data = data.assign(date=data["date"].apply(lambda x: str(x)[0:10]))
+        data = data.drop(["year", "month", "day", "hour", "minute", "datetime"], axis=1)
         data = data.loc[(data.date >= start_date) & (data.date < end_date)]
         data = data.sort_index()
 
