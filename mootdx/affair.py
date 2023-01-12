@@ -103,7 +103,7 @@ class Affair(object):
             Path(downdir).mkdir(parents=True)
 
         if filename:
-            logger.debug("下载文件 {}.".format(filename))
+            logger.debug(f"下载文件 {filename}.")
 
             with TqdmUpTo(unit="B", unit_scale=True, miniters=1, ascii=True) as t:
                 crawler.fetch_only(report_hook=t.update_to, filename=filename, downdir=downdir)

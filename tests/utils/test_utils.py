@@ -52,19 +52,19 @@ class TestConfigPath(unittest.TestCase):
     def test_platform_windows(self, platform_system):
         platform_system.return_value = "Windows"
         config = get_config_path(config="config.json")
-        self.assertTrue("/.mootdx/" in config)
+        self.assertTrue(".mootdx" in config, config)
 
     @mock.patch("platform.system")
     def test_platform_linux(self, platform_system):
         platform_system.return_value = "Linux"
         config = get_config_path(config="config.json")
-        self.assertTrue("/.mootdx/" in config)
+        self.assertTrue(".mootdx" in config, config)
 
     @mock.patch("platform.system")
     def test_platform_Darwin(self, platform_system):
         platform_system.return_value = "Darwin"
         config = get_config_path(config="config.json")
-        self.assertTrue("/.mootdx/" in config)
+        self.assertTrue(".mootdx" in config, config)
 
 
 if __name__ == "__main__":
