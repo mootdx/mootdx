@@ -10,8 +10,11 @@ def _reversion(bfq_data, xdxr_data, type_):
         # 有除权数据
         data = pd.concat([bfq_data, info.loc[bfq_data.index[0]: bfq_data.index[-1], ["category"]]], axis=1)
         data["if_trade"].fillna(value=0, inplace=True)
+
         data = data.fillna(method="ffill")
-        data = pd.concat([data, info.loc[bfq_data.index[0]: bfq_data.index[-1], ["fenhong", "peigu", "peigujia", "songzhuangu"]]], axis=1)
+        data = pd.concat(
+            [data, info.loc[bfq_data.index[0]: bfq_data.index[-1], ["fenhong", "peigu", "peigujia", "songzhuangu"]]],
+            axis=1)
     else:
         data = pd.concat([bfq_data, info.loc[:, ["category", "fenhong", "peigu", "peigujia", "songzhuangu"]]], axis=1)
 
@@ -19,7 +22,8 @@ def _reversion(bfq_data, xdxr_data, type_):
     data = data.fillna(0)
 
     # 计算前日收盘
-    data["preclose"] = (data["close"].shift(1) * 10 - data["fenhong"] + data["peigu"] * data["peigujia"]) / (10 + data["peigu"] + data["songzhuangu"])
+    data["preclose"] = (data["close"].shift(1) * 10 - data["fenhong"] + data["peigu"] * data["peigujia"]) / (
+            10 + data["peigu"] + data["songzhuangu"])
 
     # 前复权
     if type_ in ["01", "qfq"]:
@@ -44,7 +48,10 @@ def _reversion(bfq_data, xdxr_data, type_):
     except:
         pass
 
-    return data.query("if_trade==1 and open != 0").drop(["fenhong", "peigu", "peigujia", "songzhuangu", "if_trade", "category"], axis=1, errors="ignore")
+    data = data.query("if_trade==1 and open != 0")
+    data = data.drop(["fenhong", "peigu", "peigujia", "songzhuangu", "if_trade", "category"], axis=1, errors="ignore")
+
+    return data
 
 
 def reversion(stock_data, xdxr, type_="01"):
@@ -70,25 +77,37 @@ def reversion(stock_data, xdxr, type_="01"):
         ]
 
         try:
-            data = pd.DataFrame([item for item in collections.find({"code": symbol})]).drop(["_id"], axis=1)
-            data["date"] = pd.to_datetime(data["date"], utc=False)
-            return data.set_index(["date", "code"], drop=False)
+            collections["date"] = pd.to_datetime(collections[["year", "month", "day"]], utc=False)
+            data = collections.set_index(["date"])
+            data = data.drop(["year", "month", "day", ], axis=1)
+
+            # data = pd.DataFrame([item for item in collections.find({"code": symbol})]).drop(["_id"], axis=1)
+            # data = collections
+            # data["date"] = pd.to_datetime(data["date"], utc=False)
+            # data["date"] = pd.to_datetime(xdxr[["year", "month", "day"]], utc=False)
+            # return data.set_index(["date", "code"], drop=False)
+            return data
         except:
             return pd.DataFrame(data=[], columns=columns)
 
     # '股票 日线/分钟线 动态复权接口'
-    symbol = (
-        stock_data.index.remove_unused_levels().levels[1][0]
-        if isinstance(stock_data.index, pd.MultiIndex)
-        else stock_data["code"][0]
-    )
+    if isinstance(stock_data.index, pd.MultiIndex):
+        symbol = stock_data.index.remove_unused_levels().levels[1][0]
+    else:
+        symbol = stock_data["code"][0]
+
+    # symbol = (
+    #     stock_data.index.remove_unused_levels().levels[1][0]
+    #     if isinstance(stock_data.index, pd.MultiIndex)
+    #     else stock_data["code"][0]
+    # )
     return _reversion(bfq_data=stock_data, xdxr_data=_fetch_xdxr(symbol, xdxr), type_=type_)
 
 
 # 算法一样
 def baoli_qfq(df, xdxr):
-    fenhong = xdxr["fenhong"]  # 分红
     peigu = xdxr["peigu"]  # 配股
+    fenhong = xdxr["fenhong"]  # 分红
     peigujia = xdxr["peigujia"]  # 配股价
     songzhuangu = xdxr["songzhuangu"]  # 送转股
 
@@ -99,8 +118,8 @@ def baoli_qfq(df, xdxr):
         szg = songzhuangu[i]
         date = xdxr.index[i]
 
-        df.loc[df.index < date, "open"] = (df["open"][df.index < date] * 10 - fh + pg * pgj) / (10 + pg + szg)
         df.loc[df.index < date, "close"] = (df["close"][df.index < date] * 10 - fh + pg * pgj) / (10 + pg + szg)
+        df.loc[df.index < date, "open"] = (df["open"][df.index < date] * 10 - fh + pg * pgj) / (10 + pg + szg)
         df.loc[df.index < date, "high"] = (df["high"][df.index < date] * 10 - fh + pg * pgj) / (10 + pg + szg)
         df.loc[df.index < date, "low"] = (df["low"][df.index < date] * 10 - fh + pg * pgj) / (10 + pg + szg)
 

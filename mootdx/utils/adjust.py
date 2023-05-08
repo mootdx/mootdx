@@ -71,6 +71,10 @@ def get_xdxr(symbol):
         xdxr = Quotes.factory('std').xdxr(symbol=symbol)
         xdxr.to_pickle(xdxr_file)
 
+    xdxr["code"] = symbol
+    xdxr["date"] = pd.to_datetime(xdxr[["year", "month", "day"]], utc=False)
+    xdxr = xdxr.set_index(["date"])
+
     return xdxr
 
 
