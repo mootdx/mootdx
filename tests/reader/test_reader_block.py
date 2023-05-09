@@ -5,17 +5,6 @@ from mootdx.reader import Reader
 tdxdir = "tests/fixtures"
 
 
-# def setup_module():
-#     blocknew = Path(tdxdir, 'T0002', 'blocknew')
-#     blocknew.exists() or blocknew.mkdir(parents=True)
-#
-#
-# def teardown_module():
-#     parent = Path(tdxdir, 'T0002', 'blocknew', 'blocknew.cfg').parent
-#     [Path(x).unlink() for x in glob.glob(f'{parent}/*.*')] and Path(parent).rmdir()
-#
-
-
 @pytest.fixture(scope="function")
 def reader():
     return Reader.factory(market="std", tdxdir=tdxdir)
@@ -40,15 +29,9 @@ def parse():
 def test_block(reader, symbol, expected):
     result = reader.block(symbol=symbol, debug=False)
     assert not result.empty, f"result => {result}"
-    print(result)
 
 
-@pytest.mark.parametrize(
-    "symbol,expected",
-    [
-        ("incon.dat", "incon.dat"),
-    ],
-)
+@pytest.mark.parametrize("symbol,expected", [("incon.dat", "incon.dat")])
 def test_incon(reader, parse, symbol, expected):
     result = reader.block(symbol=symbol, debug=False)
     assert result, f"result => {result}"
@@ -62,4 +45,3 @@ def test_incon(reader, parse, symbol, expected):
 def test_cfg(parse, symbol, expected):
     result = parse.cfg(expected)
     assert not result.empty
-    print(result)
