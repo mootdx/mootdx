@@ -35,7 +35,7 @@
 ---------
 
 * 操作系统: Windows / MacOS / Linux 都可以运行.
-* Python: 3.5 以及以上版本, 不支持 python2.
+* Python: 3.8 以及以上版本, 不支持 python2.
 * 依赖库: PyTdx>=1.67
 
 
