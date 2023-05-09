@@ -55,10 +55,10 @@ for i in range(0, len(xdxr)):
 - 修正前复权问题 (qfq, test, docs)
     - [x] tests/tools/test_reversion.py
     - [x] tests/test_xdxr.py
-- [ ] 调整 changlog 凌乱问题
+- [x] 调整 changlog 凌乱问题
 
 # 下一个版本
-- 读取通达信本地数据复权问题
+- [x] 读取通达信本地数据复权问题
 - 增加缓存加速二次使用 (手动实现一个 cache)
 
 # 下一个版本
