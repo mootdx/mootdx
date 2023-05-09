@@ -5,7 +5,7 @@ from ..logger import logger
 
 
 def reporthook(downloaded, total_size):
-    print("Downloaded {}, Total is {}".format(downloaded, total_size))
+    print('Downloaded {}, Total is {}'.format(downloaded, total_size))
 
 
 class BaseReader(object):
@@ -31,21 +31,21 @@ class BaseReader(object):
         :return:
         """
 
-        raise NotImplementedError("not yet")
+        raise NotImplementedError('not yet')
 
 
 class BaseFinancial:
-    def __init__(self, mode="content"):
+    def __init__(self, mode='content'):
         self.mode = mode
 
         config.setup()
 
         try:
-            default = config.get("SERVER").get("GP")[0][1:]
-            self.bestip = config.get("BESTIP").get("GP", default)
+            default = config.get('SERVER').get('GP')[0][1:]
+            self.bestip = config.get('BESTIP').get('GP', default)
         except ValueError as ex:
             logger.error(ex)
-            self.bestip = ("106.14.95.149", 7727)
+            self.bestip = ('106.14.95.149', 7727)
 
     def fetch_and_parse(self, report_hook=None, downdir=None, chunk_size=51200, *args, **kwargs):
         """
@@ -74,7 +74,7 @@ class BaseFinancial:
         return file.close()
 
     def content(self, report_hook=None, downdir=None, proxies=None, chunk_size=1024 * 50, *args, **kwargs):
-        raise NotImplementedError("will impl in subclass")
+        raise NotImplementedError('will impl in subclass')
 
     def parse(self, download_file, *args, **kwargs):
-        raise NotImplementedError("will impl in subclass")
+        raise NotImplementedError('will impl in subclass')

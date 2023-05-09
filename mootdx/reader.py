@@ -6,13 +6,14 @@ from tdxpy.reader import TdxLCMinBarReader
 from tdxpy.reader import TdxMinBarReader
 
 from mootdx.contrib.compat import MooTdxDailyBarReader
-from mootdx.utils import get_stock_market, to_data
+from mootdx.utils import get_stock_market
+from mootdx.utils import to_data
 
 
 # 股票市场
 class Reader(object):
     @staticmethod
-    def factory(market="std", **kwargs):
+    def factory(market='std', **kwargs):
         """
         Reader 工厂方法
 
@@ -21,7 +22,7 @@ class Reader(object):
         :return:
         """
 
-        if market == "ext":
+        if market == 'ext':
             return ExtReader(**kwargs)
 
         return StdReader(**kwargs)
@@ -31,7 +32,7 @@ class ReaderBase(ABC):
     """股票市场"""
 
     # 默认通达信安装目录
-    tdxdir = "C:/new_tdx"
+    tdxdir = 'C:/new_tdx'
 
     def __init__(self, tdxdir=None):
         """
@@ -41,11 +42,11 @@ class ReaderBase(ABC):
         """
 
         if not Path(tdxdir).is_dir():
-            raise Exception("tdxdir 目录不存在")
+            raise Exception('tdxdir 目录不存在')
 
         self.tdxdir = tdxdir
 
-    def find_path(self, symbol=None, subdir="lday", suffix=None, **kwargs):
+    def find_path(self, symbol=None, subdir='lday', suffix=None, **kwargs):
         """
         自动匹配文件路径，辅助函数
 
@@ -56,8 +57,8 @@ class ReaderBase(ABC):
         """
 
         # 判断市场, 带#扩展市场
-        if "#" in symbol:
-            market = "ds"
+        if '#' in symbol:
+            market = 'ds'
         # 通达信特有的板块指数88****开头的日线数据放在 sh 文件夹下
         elif symbol.startswith('88'):
             market = 'sh'
@@ -66,20 +67,20 @@ class ReaderBase(ABC):
             market = get_stock_market(symbol, True)
 
         # 判断前缀(市场是sh和sz重置前缀)
-        if market.lower() in ["sh", "sz"]:
-            symbol = market + symbol.lower().replace(market, "")
+        if market.lower() in ['sh', 'sz']:
+            symbol = market + symbol.lower().replace(market, '')
 
         # 判断后缀
         suffix = suffix if isinstance(suffix, list) else [suffix]
 
         # 调试使用
-        if kwargs.get("debug"):
+        if kwargs.get('debug'):
             return market, symbol, suffix
 
         # 遍历扩展名
         for ex_ in suffix:
-            ex_ = ex_.strip(".")
-            vipdoc = Path(self.tdxdir) / "vipdoc" / market / subdir / f"{symbol}.{ex_}"
+            ex_ = ex_.strip('.')
+            vipdoc = Path(self.tdxdir) / 'vipdoc' / market / subdir / f'{symbol}.{ex_}'
 
             if Path(vipdoc).exists():
                 return vipdoc
@@ -99,7 +100,7 @@ class StdReader(ReaderBase):
         """
         symbol = Path(symbol).stem
         reader = MooTdxDailyBarReader()
-        vipdoc = self.find_path(symbol=symbol, subdir="lday", suffix="day")
+        vipdoc = self.find_path(symbol=symbol, subdir='lday', suffix='day')
 
         result = reader.get_df(str(vipdoc)) if vipdoc else None
         return to_data(result, symbol=symbol, **kwargs)
@@ -113,12 +114,12 @@ class StdReader(ReaderBase):
         :return: pd.dataFrame or None
         """
         symbol = Path(symbol).stem
-        subdir = "fzline" if str(suffix) == "5" else "minline"
-        suffix = ["lc5", "5"] if str(suffix) == "5" else ["lc1", "1"]
+        subdir = 'fzline' if str(suffix) == '5' else 'minline'
+        suffix = ['lc5', '5'] if str(suffix) == '5' else ['lc1', '1']
         symbol = self.find_path(symbol, subdir=subdir, suffix=suffix)
 
         if symbol is not None:
-            reader = TdxMinBarReader() if "lc" not in symbol.suffix else TdxLCMinBarReader()
+            reader = TdxMinBarReader() if 'lc' not in symbol.suffix else TdxLCMinBarReader()
             return reader.get_df(str(symbol))
 
         return None
@@ -150,7 +151,7 @@ class StdReader(ReaderBase):
 
         return reader.search(name=name, group=group)
 
-    def block(self, symbol="", group=False, **kwargs):
+    def block(self, symbol='', group=False, **kwargs):
         """
         获取板块数据
 
@@ -178,7 +179,7 @@ class ExtReader(ReaderBase):
         :return: pd.dataFrame or None
         """
 
-        vipdoc = self.find_path(symbol=symbol, subdir="lday", suffix="day")
+        vipdoc = self.find_path(symbol=symbol, subdir='lday', suffix='day')
         return self.reader.get_df(str(vipdoc)) if vipdoc else None
 
     def minute(self, symbol=None):
@@ -191,7 +192,7 @@ class ExtReader(ReaderBase):
         if not symbol:
             return None
 
-        vipdoc = self.find_path(symbol=symbol, subdir="minline", suffix=["lc1", "1"])
+        vipdoc = self.find_path(symbol=symbol, subdir='minline', suffix=['lc1', '1'])
         return self.reader.get_df(str(vipdoc)) if vipdoc else None
 
     def fzline(self, symbol=None):
@@ -201,5 +202,5 @@ class ExtReader(ReaderBase):
         :return: pd.dataFrame or None
         """
 
-        vipdoc = self.find_path(symbol=symbol, subdir="fzline", suffix="lc5")
+        vipdoc = self.find_path(symbol=symbol, subdir='fzline', suffix='lc5')
         return self.reader.get_df(str(vipdoc)) if symbol else None

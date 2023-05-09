@@ -7,16 +7,16 @@ class MootdxException(Exception):
         :param args: Exception arguments
         :param kwargs: Exception kwargs
         """
-        self.provider = kwargs.get("provider")
-        self.response = kwargs.get("response")
-    
-        self.message = kwargs.get("message")
-        self.data = kwargs.get("data")
+        self.provider = kwargs.get('provider')
+        self.response = kwargs.get('response')
+
+        self.message = kwargs.get('message')
+        self.data = kwargs.get('data')
 
         super().__init__(self.message)
 
     def __repr__(self):
-        return f"<MOOTDXError: {self.message}>"
+        return f'<MOOTDXError: {self.message}>'
 
 
 class MootdxValidationException(Exception):

@@ -328,41 +328,41 @@ def holiday2(date: str = None) -> pd.DataFrame:
     if Path(cache_file).exists():
         df = pd.read_pickle(cache_file)
         if not df.loc[df['year'] == datetime.datetime.now().year].empty:
-            logger.debug("调用缓存")
+            logger.debug('调用缓存')
             temp_df = df
 
     if type(temp_df) is not pd.DataFrame:
-        logger.debug("调用远程接口")
+        logger.debug('调用远程接口')
         client = httpx.Client(verify=False)
 
-        url = "https://finance.sina.com.cn/realstock/company/klc_td_sh.txt"
+        url = 'https://finance.sina.com.cn/realstock/company/klc_td_sh.txt'
         res = client.get(url)
 
         js_code = py_mini_racer.MiniRacer()
         js_code.eval(hk_js_decode)
 
         # 执行js解密代码
-        dict_list = js_code.call("d", res.text.split("=")[1].split(";")[0].replace('"', ""))
+        dict_list = js_code.call('d', res.text.split('=')[1].split(';')[0].replace('"', ''))
 
         temp_df = pd.DataFrame(dict_list)
-        temp_df.columns = ["date"]
-        temp_df["date"] = pd.to_datetime(temp_df["date"]).dt.date
+        temp_df.columns = ['date']
+        temp_df['date'] = pd.to_datetime(temp_df['date']).dt.date
 
-        temp_list = temp_df["date"].to_list()
+        temp_list = temp_df['date'].to_list()
         temp_list.append(datetime.date(1992, 5, 4))  # 是交易日但是交易日历缺失该日期
         temp_list.sort()
 
-        temp_df = pd.DataFrame(temp_list, columns=["date"])
-        temp_df["year"] = pd.DatetimeIndex(temp_df["date"]).year
+        temp_df = pd.DataFrame(temp_list, columns=['date'])
+        temp_df['year'] = pd.DatetimeIndex(temp_df['date']).year
         temp_df.to_pickle(cache_file)
 
     if date:
         try:
-            date = datetime.datetime.strptime(date, "%Y-%m-%d").date()
+            date = datetime.datetime.strptime(date, '%Y-%m-%d').date()
         except ValueError:
             date = datetime.datetime.now().date()
 
-        return temp_df.loc[temp_df["date"] == date].all().any()
+        return temp_df.loc[temp_df['date'] == date].all().any()
 
     return temp_df
 
@@ -370,8 +370,8 @@ def holiday2(date: str = None) -> pd.DataFrame:
 def holiday(date=None, format_=None, country=None, result=False):
     cache_file = get_config_path('holiday.plk')
 
-    format_ = format_ if format_ else "%Y-%m-%d"
-    country = country if country else "中国"
+    format_ = format_ if format_ else '%Y-%m-%d'
+    country = country if country else '中国'
 
     try:
         if date:
@@ -379,30 +379,30 @@ def holiday(date=None, format_=None, country=None, result=False):
         else:
             date = datetime.datetime.now().date()
     except ValueError as ex:
-        logger.error("日期或者日期格式错误!")
+        logger.error('日期或者日期格式错误!')
         return None
 
     if Path(cache_file).exists() and time.localtime(Path(cache_file).stat().st_mtime).tm_year == time.localtime(
         time.time()).tm_year:
         df = pd.read_pickle(cache_file)
-        logger.debug("调用缓存")
+        logger.debug('调用缓存')
     else:
-        logger.debug("调用远程接口")
-        res = httpx.get("https://www.tdx.com.cn/url/holiday/")
-        res.encoding = "gbk"
+        logger.debug('调用远程接口')
+        res = httpx.get('https://www.tdx.com.cn/url/holiday/')
+        res.encoding = 'gbk'
 
         ret = re.findall(r'<textarea id="data" style="display:none;">([\s\w\W]+)</textarea>', res.text, re.M)[0].strip()
-        day = [d.split("|")[:4] for d in ret.split("\n")]
+        day = [d.split('|')[:4] for d in ret.split('\n')]
 
-        df = pd.DataFrame(day, columns=["日期", "节日", "国家", "交易所"], dtype=str)
-        df.index = pd.to_datetime(df["日期"].astype("str"), format="%Y%m%d")
+        df = pd.DataFrame(day, columns=['日期', '节日', '国家', '交易所'], dtype=str)
+        df.index = pd.to_datetime(df['日期'].astype('str'), format='%Y%m%d')
         df.to_pickle(cache_file)
 
-    if country not in list(set(df["国家"].values)):
-        logger.error(f"没有该国家`{country}`的交易日数据")
+    if country not in list(set(df['国家'].values)):
+        logger.error(f'没有该国家`{country}`的交易日数据')
         return None
 
-    df = df[df["国家"] == country]
+    df = df[df['国家'] == country]
     df = df[df.index.isin([date])]
 
     logger.debug(date)

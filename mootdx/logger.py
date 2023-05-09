@@ -5,6 +5,6 @@ console = logging.StreamHandler()
 console.setLevel(logging.INFO)
 console.setFormatter(formatter)
 
-logger = logging.getLogger("mootdx")
+logger = logging.getLogger('mootdx')
 logger.addHandler(console)
 logger.setLevel(logging.INFO)

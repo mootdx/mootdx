@@ -16,16 +16,16 @@ from mootdx.logger import logger
 def get_stock_markets(symbols=None):
     results = []
 
-    assert isinstance(symbols, list), "stock code need list type"
+    assert isinstance(symbols, list), 'stock code need list type'
 
     if isinstance(symbols, list):
         for symbol in symbols:
-            results.append([get_stock_market(symbol, string=False), symbol.strip("sh").strip("sz")])
+            results.append([get_stock_market(symbol, string=False), symbol.strip('sh').strip('sz')])
 
     return results
 
 
-def get_stock_market(symbol="", string=False):
+def get_stock_market(symbol='', string=False):
     """判断股票ID对应的证券市场匹配规则
 
     ['50', '51', '60', '90', '110'] 为 sh
@@ -37,35 +37,35 @@ def get_stock_market(symbol="", string=False):
     :return 'sh' or 'sz'
     """
 
-    assert isinstance(symbol, str), "stock code need str type"
+    assert isinstance(symbol, str), 'stock code need str type'
 
-    market = "sh"
+    market = 'sh'
 
-    if symbol.startswith(("sh", "sz", "SH", "SZ")):
+    if symbol.startswith(('sh', 'sz', 'SH', 'SZ')):
         market = symbol[:2].lower()
 
-    elif symbol.startswith(("50", "51", "60", "68", "90", "110", "113", "132", "204")):
-        market = "sh"
+    elif symbol.startswith(('50', '51', '60', '68', '90', '110', '113', '132', '204')):
+        market = 'sh'
 
-    elif symbol.startswith(("00", "12", "13", "18", "15", "16", "18", "20", "30", "39", "115", "1318")):
-        market = "sz"
+    elif symbol.startswith(('00', '12', '13', '18', '15', '16', '18', '20', '30', '39', '115', '1318')):
+        market = 'sz'
 
-    elif symbol.startswith(("5", "6", "9", "7")):
-        market = "sh"
+    elif symbol.startswith(('5', '6', '9', '7')):
+        market = 'sh'
 
-    elif symbol.startswith(("4", "8")):
-        market = "bj"
+    elif symbol.startswith(('4', '8')):
+        market = 'bj'
 
     # logger.debug(f"market => {market}")
 
     if string is False:
-        if market == "sh":
+        if market == 'sh':
             market = MARKET_SH
 
-        if market == "sz":
+        if market == 'sz':
             market = MARKET_SZ
 
-        if market == "bj":
+        if market == 'bj':
             market = MARKET_BJ
 
     # logger.debug(f"market => {market}")
@@ -74,28 +74,28 @@ def get_stock_market(symbol="", string=False):
 
 
 def gpcw(filepath):
-    cw_file = open(filepath, "rb")
+    cw_file = open(filepath, 'rb')
 
-    header_size = calcsize("<3h1H3L")
-    stock_item_size = calcsize("<6s1c1L")
+    header_size = calcsize('<3h1H3L')
+    stock_item_size = calcsize('<6s1c1L')
 
     data_header = cw_file.read(header_size)
-    stock_header = unpack("<3h1H3L", data_header)
+    stock_header = unpack('<3h1H3L', data_header)
 
     max_count = stock_header[3]
 
     for idx in range(0, max_count):
-        cw_file.seek(header_size + idx * calcsize("<6s1c1L"))
+        cw_file.seek(header_size + idx * calcsize('<6s1c1L'))
         si = cw_file.read(stock_item_size)
-        stock_item = unpack("<6s1c1L", si)
+        stock_item = unpack('<6s1c1L', si)
         code = stock_item[0].decode()
         foa = stock_item[2]
         cw_file.seek(foa)
 
-        info_data = cw_file.read(calcsize("<264f"))
-        cw_info = unpack("<264f", info_data)
+        info_data = cw_file.read(calcsize('<264f'))
+        cw_info = unpack('<264f', info_data)
 
-        logger.debug(f"{code}, {cw_info}")
+        logger.debug(f'{code}, {cw_info}')
         return code, cw_info
 
 
@@ -124,14 +124,14 @@ def to_data(v, **kwargs):
     :return: pd.DataFrame
     """
 
-    symbol = kwargs.get("symbol")
-    adjust = kwargs.get("adjust", '').lower()
+    symbol = kwargs.get('symbol')
+    adjust = kwargs.get('adjust', '').lower()
     # client = kwargs.get("client", None)
 
-    if adjust in ["01", "qfq", "before"]:
-        adjust = "qfq"
-    elif adjust in ["02", "hfq", "after"]:
-        adjust = "hfq"
+    if adjust in ['01', 'qfq', 'before']:
+        adjust = 'qfq'
+    elif adjust in ['02', 'hfq', 'after']:
+        adjust = 'hfq'
     else:
         adjust = None
 
@@ -155,16 +155,16 @@ def to_data(v, **kwargs):
     else:
         result = pd.DataFrame(data=[])
 
-    if "datetime" in result.columns:
+    if 'datetime' in result.columns:
         result.index = pd.to_datetime(result.datetime)
 
-    if "date" in result.columns:
+    if 'date' in result.columns:
         result.index = pd.to_datetime(result.date)
 
-    if "vol" in result.columns:
-        result["volume"] = result.vol
+    if 'vol' in result.columns:
+        result['volume'] = result.vol
 
-    if adjust and adjust in ["qfq", "hfq"] and symbol:
+    if adjust and adjust in ['qfq', 'hfq'] and symbol:
         from mootdx.utils.adjust import to_adjust
 
         result = to_adjust(result, symbol=symbol, adjust=adjust)
@@ -193,19 +193,19 @@ def to_file(df, filename=None):
     # method = [k for k, v in methods if extension in v][0]
     # getattr(pd, method)(filename)
 
-    if extension == ".csv":
-        return df.to_csv(filename, encoding="utf-8", index=False)
+    if extension == '.csv':
+        return df.to_csv(filename, encoding='utf-8', index=False)
 
-    if extension == ".xlsx" or extension == ".xls":
+    if extension == '.xlsx' or extension == '.xls':
         # openpyxl, xlwt
         return df.to_excel(filename, index=False)
 
-    if extension == ".h5":
+    if extension == '.h5':
         # tables
-        return df.to_hdf(filename, "df", index=False)
+        return df.to_hdf(filename, 'df', index=False)
 
-    if extension == ".json":
-        return df.to_json(filename, orient="records")
+    if extension == '.json':
+        return df.to_json(filename, orient='records')
 
     return None
 
@@ -233,14 +233,14 @@ class TqdmUpTo(tqdm):
         self.update(downloaded - self.n)  # will also set self.n = b * bsize
 
 
-def get_config_path(config="config.json"):
+def get_config_path(config='config.json'):
     """
     获取配置文件路径
 
     :param config: 配置文件名称
     :return: filename
     """
-    filename = Path.home() / ".mootdx" / config
+    filename = Path.home() / '.mootdx' / config
     pathname = Path(filename).parent
 
     Path(pathname).exists() or Path(pathname).mkdir(parents=True)
@@ -250,7 +250,7 @@ def get_config_path(config="config.json"):
 
 
 # days 的 vol 比 day 大 100 倍
-FREQUENCY = ["5m", "15m", "30m", "1h", "days", "week", "mon", "ex_1m", "1m", "day", "3mon", "year"]
+FREQUENCY = ['5m', '15m', '30m', '1h', 'days', 'week', 'mon', 'ex_1m', '1m', 'day', '3mon', 'year']
 
 
 # FREQUEN = [48,    16,   8,     4,     1,     "1/5",  "1/30", "ex_1m", 240, "1",   "1/90", "1/365"]

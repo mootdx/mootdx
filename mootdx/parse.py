@@ -24,41 +24,41 @@ class BaseParse:
         :return: pd.dataFrame or None
         """
 
-        suffix = Path(symbol).suffix or ".dat"
+        suffix = Path(symbol).suffix or '.dat'
         symbol = Path(symbol).stem
 
-        vipdoc = (Path("T0002", "hq_cache"), "")["incon" in symbol]  # noqa
-        vipdoc = Path(vipdoc, f"{symbol}{suffix}")  # noqa
+        vipdoc = (Path('T0002', 'hq_cache'), '')['incon' in symbol]  # noqa
+        vipdoc = Path(vipdoc, f'{symbol}{suffix}')  # noqa
 
         # logging.debug(vipdoc)
 
         if not Path(self.tdxdir, vipdoc).exists():
-            logger.error(f"文件不存在: {vipdoc}")
+            logger.error(f'文件不存在: {vipdoc}')
             return None
 
-        if "incon" in symbol:  # noqa
+        if 'incon' in symbol:  # noqa
             return self.__incon(vipdoc)
 
-        if "block_" in symbol and suffix == ".dat":
+        if 'block_' in symbol and suffix == '.dat':
             return BlockReader().get_df(str(Path(self.tdxdir, vipdoc)), (TYPE_FLATS, TYPE_GROUP)[bool(group)])
 
         return self.cfg(vipdoc)
 
     def read_text(self, path):
-        return Path(self.tdxdir, path).read_text(encoding="gbk").strip()
+        return Path(self.tdxdir, path).read_text(encoding='gbk').strip()
 
     def __incon(self, path):  # noqa
         t = self.read_text(path)
-        m = [x for x in t.split("######")]
+        m = [x for x in t.split('######')]
         v = [n.split() for n in m if n.strip()]
 
-        d = {i[0]: [c.split("|") for c in i[1:]] for i in v}
+        d = {i[0]: [c.split('|') for c in i[1:]] for i in v}
         d = {key: dict([vv for vv in val if len(vv) == 2]) for key, val in d.items()}
 
         return d
 
     def cfg(self, path):
         ts = self.read_text(path)
-        ls = [ll.split("|") for ll in ts.split()]
+        ls = [ll.split('|') for ll in ts.split()]
 
         return pd.DataFrame(ls)

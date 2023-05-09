@@ -16,7 +16,7 @@ def download(downdir, filename):
     :return:
     """
 
-    with TqdmUpTo(unit="B", unit_scale=True, miniters=1, ascii=True) as t:
+    with TqdmUpTo(unit='B', unit_scale=True, miniters=1, ascii=True) as t:
         financial.Financial().fetch_only(report_hook=t.update_to, filename=filename, downdir=downdir)
 
     return True
@@ -31,16 +31,16 @@ async def fetch_file(downdir, file_obj):
     :return:
     """
 
-    filepath = Path(downdir) / file_obj["filename"]
+    filepath = Path(downdir) / file_obj['filename']
 
     # 判断文件是否存在, 验证文件名和哈希值
-    if filepath.exists() and file_obj["hash"] == hashlib.md5(open(filepath, "rb").read()).hexdigest():
-        logger.warning(f"文件已经存在: {filepath}")
+    if filepath.exists() and file_obj['hash'] == hashlib.md5(open(filepath, 'rb').read()).hexdigest():
+        logger.warning(f'文件已经存在: {filepath}')
         return None
 
     result = await asyncio.get_event_loop().run_in_executor(
         None,
-        partial(financial.Financial().fetch_only, report_hook=None, filename=file_obj["filename"], downdir=downdir),
+        partial(financial.Financial().fetch_only, report_hook=None, filename=file_obj['filename'], downdir=downdir),
     )
 
     return result
@@ -48,7 +48,7 @@ async def fetch_file(downdir, file_obj):
 
 class Affair(object):
     @staticmethod
-    def parse(downdir=".", filename=None, **kwargs):
+    def parse(downdir='.', filename=None, **kwargs):
         """
         按目录解析文件
 
@@ -58,7 +58,7 @@ class Affair(object):
         """
 
         if not filename:
-            logger.critical("文件名不能为空!")
+            logger.critical('文件名不能为空!')
             return None
 
         filepath = Path(downdir) / filename
@@ -67,7 +67,7 @@ class Affair(object):
         if Path(filepath).exists():
             return financial.FinancialReader().to_data(filepath, **kwargs)
 
-        logger.warning(f"文件不存在：{filename}")
+        logger.warning(f'文件不存在：{filename}')
 
         return None
 
@@ -96,16 +96,16 @@ class Affair(object):
 
         history = financial.FinancialList()
         crawler = financial.Financial()
-        downdir = downdir or "."  # noqa
+        downdir = downdir or '.'  # noqa
 
         if not Path(downdir).is_dir():
-            logger.warning("下载目录不存在, 进行创建.")
+            logger.warning('下载目录不存在, 进行创建.')
             Path(downdir).mkdir(parents=True)
 
         if filename:
-            logger.debug(f"下载文件 {filename}.")
+            logger.debug(f'下载文件 {filename}.')
 
-            with TqdmUpTo(unit="B", unit_scale=True, miniters=1, ascii=True) as t:
+            with TqdmUpTo(unit='B', unit_scale=True, miniters=1, ascii=True) as t:
                 crawler.fetch_only(report_hook=t.update_to, filename=filename, downdir=downdir)
 
             return True

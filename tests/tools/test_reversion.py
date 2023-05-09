@@ -7,11 +7,11 @@ from mootdx.utils.adjust import get_xdxr
 
 class TestReversion(unittest.TestCase):
     client = None
-    symbol = "600000"
+    symbol = '600000'
 
     # 初始化工作
     def setup_class(self):
-        self.client = Quotes.factory(market="std", timeout=10)  # 标准市场
+        self.client = Quotes.factory(market='std', timeout=10)  # 标准市场
 
     # 退出清理工作
     def teardown_class(self):
@@ -39,7 +39,7 @@ class TestReversion(unittest.TestCase):
         data0 = reversion(data, xdxr, 'qfq')
         assert data0.empty is False
 
-        data1 = self.client.bars(symbol=self.symbol, offset=800, adjust="Qfq")
+        data1 = self.client.bars(symbol=self.symbol, offset=800, adjust='Qfq')
         assert data1.empty is False
         assert data1.equals(data0)
 
@@ -50,6 +50,6 @@ class TestReversion(unittest.TestCase):
         data0 = reversion(data, xdxr, 'hfq')
         assert data.empty is False
 
-        data1 = self.client.bars(symbol=self.symbol, offset=800, adjust="HFQ")
+        data1 = self.client.bars(symbol=self.symbol, offset=800, adjust='HFQ')
         assert data1.empty is False
         assert data1.equals(data0)

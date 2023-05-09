@@ -26,7 +26,7 @@ from mootdx.utils import to_data
 
 class Quotes(object):
     @staticmethod
-    def factory(market="std", **kwargs):
+    def factory(market='std', **kwargs):
         """
         股票市场 工厂方法
 
@@ -37,7 +37,7 @@ class Quotes(object):
 
         logger.debug(kwargs)
 
-        if market == "ext":
+        if market == 'ext':
             return ExtQuotes(**kwargs)
 
         return StdQuotes(**kwargs)
@@ -64,34 +64,34 @@ class BaseQuotes(object):
 
     def __init__(self, server=None, bestip: bool = False, timeout: int = None, **kwargs) -> None:
 
-        logger.debug(f"server => {server}")
+        logger.debug(f'server => {server}')
         self.server = valid_server(server)
 
-        logger.debug(f"bestip => {bestip}")
-        (bestip or (not config.get("BESTIP"))) and check_server(sync=False)
+        logger.debug(f'bestip => {bestip}')
+        (bestip or (not config.get('BESTIP'))) and check_server(sync=False)
 
-        logger.debug(f"timeout => {timeout}")
+        logger.debug(f'timeout => {timeout}')
         self.timeout = timeout if timeout else 15
 
-        logger.debug("config.setup()")
+        logger.debug('config.setup()')
         config.setup()
 
     def __del__(self):
-        logger.debug("call __del__")
+        logger.debug('call __del__')
         self.close()
 
     def reconnect(self):
         if self.closed:
-            logger.debug("服务器连接已断开，正进行重新连接...")
+            logger.debug('服务器连接已断开，正进行重新连接...')
             self.client.connect(*self.bestip)
 
     def close(self):
-        logger.debug("close")
-        hasattr(self.client, "close") and self.client.close()
+        logger.debug('close')
+        hasattr(self.client, 'close') and self.client.close()
 
     @property
     def closed(self) -> bool:
-        if not hasattr(self.client.client, "_closed") or getattr(self.client.client, "_closed"):
+        if not hasattr(self.client.client, '_closed') or getattr(self.client.client, '_closed'):
             return True
 
         return False
@@ -114,7 +114,7 @@ def check_empty(value):
 
     # 判断状态空，则重连接
     if instance and _empty:
-        logger.warning("返回数据空, 重新连接服务器...")
+        logger.warning('返回数据空, 重新连接服务器...')
         # instance.client.connect(*instance.server)
 
     return _empty
@@ -133,21 +133,21 @@ class StdQuotes(BaseQuotes):
         """
 
         super().__init__(bestip=bestip, timeout=timeout, server=server, **kwargs)
-        self.server and config.set("BESTIP", {"HQ": self.server})
+        self.server and config.set('BESTIP', {'HQ': self.server})
 
         try:
-            config.get("SERVER").get("HQ")[0]
+            config.get('SERVER').get('HQ')[0]
         except ValueError as ex:
             logger.warning(ex)
         finally:
-            default = config.get("SERVER").get("HQ")[0][1:]
-            self.server = config.get("BESTIP").get("HQ", default)
+            default = config.get('SERVER').get('HQ')[0][1:]
+            self.server = config.get('BESTIP').get('HQ', default)
 
-        for x in ["verbose", "server", "quiet", "heartbeat", "multithread", "auto_retry"]:
+        for x in ['verbose', 'server', 'quiet', 'heartbeat', 'multithread', 'auto_retry']:
             if x in kwargs.keys():
                 del kwargs[x]
 
-        logger.debug(f"server: {self.server}")
+        logger.debug(f'server: {self.server}')
         ip, port = self.server
 
         self.client = TdxHq_API(heartbeat=False, auto_retry=True, raise_exception=False, **kwargs)
@@ -196,7 +196,7 @@ class StdQuotes(BaseQuotes):
     #     retry_error_callback=return_last_value,
     #     retry=(retry_if_exception_type() | retry_if_result(check_empty)),
     # )
-    def bars(self, symbol="000001", frequency=9, start=0, offset=100, **kwargs):
+    def bars(self, symbol='000001', frequency=9, start=0, offset=100, **kwargs):
         """
         获取实时日K线数据
 
@@ -227,7 +227,7 @@ class StdQuotes(BaseQuotes):
         :return: pd.dataFrame or None
         """
         if market not in [0, 1, 2]:
-            raise MootdxValidationException("市场代码错误")
+            raise MootdxValidationException('市场代码错误')
 
         result = self.client.get_security_count(market=market)
 
@@ -248,7 +248,7 @@ class StdQuotes(BaseQuotes):
         """
 
         if market not in [0, 1]:
-            raise MootdxValidationException("市场代码错误, 目前只支持沪深市场")
+            raise MootdxValidationException('市场代码错误, 目前只支持沪深市场')
 
         counts = self.stock_count(market=market)
         stocks = None
@@ -266,7 +266,7 @@ class StdQuotes(BaseQuotes):
     #     retry_error_callback=return_last_value,
     #     retry=(retry_if_exception_type() | retry_if_result(check_empty)),
     # )
-    def index_bars(self, symbol="000001", frequency=9, start=0, offset=100, **kwargs):
+    def index_bars(self, symbol='000001', frequency=9, start=0, offset=100, **kwargs):
         """
         获取指数k线
 
@@ -290,7 +290,7 @@ class StdQuotes(BaseQuotes):
     #     retry_error_callback=return_last_value,
     #     retry=(retry_if_exception_type() | retry_if_result(check_empty)),
     # )
-    def minute(self, symbol="", **kwargs):
+    def minute(self, symbol='', **kwargs):
         """
         获取实时分时数据
 
@@ -309,7 +309,7 @@ class StdQuotes(BaseQuotes):
     #     retry_error_callback=return_last_value,
     #     retry=(retry_if_exception_type() | retry_if_result(check_empty)),
     # )
-    def minutes(self, symbol="", date="20191023", **kwargs):
+    def minutes(self, symbol='', date='20191023', **kwargs):
         """
         分时历史数据
 
@@ -321,7 +321,7 @@ class StdQuotes(BaseQuotes):
         market = get_stock_market(symbol)
 
         if market not in [0, 1]:
-            raise MootdxValidationException("市场代码错误, 目前只支持沪深市场")
+            raise MootdxValidationException('市场代码错误, 目前只支持沪深市场')
 
         result = self.client.get_history_minute_time_data(market=market, code=symbol, date=date)
 
@@ -333,7 +333,7 @@ class StdQuotes(BaseQuotes):
     #     retry_error_callback=return_last_value,
     #     retry=(retry_if_exception_type() | retry_if_result(check_empty)),
     # )
-    def transaction(self, symbol="", start=0, offset=10, **kwargs):
+    def transaction(self, symbol='', start=0, offset=10, **kwargs):
         """
         查询分笔成交
 
@@ -354,7 +354,7 @@ class StdQuotes(BaseQuotes):
     #     retry_error_callback=return_last_value,
     #     retry=(retry_if_exception_type() | retry_if_result(check_empty)),
     # )
-    def transactions(self, symbol="", start=0, offset=10, date="20170209", **kwargs):
+    def transactions(self, symbol='', start=0, offset=10, date='20170209', **kwargs):
         """
         查询历史分笔成交
 
@@ -368,7 +368,7 @@ class StdQuotes(BaseQuotes):
         market = get_stock_market(symbol, string=False)
 
         if market not in [0, 1]:
-            raise MootdxValidationException("市场代码错误, 目前只支持沪深市场")
+            raise MootdxValidationException('市场代码错误, 目前只支持沪深市场')
 
         result = self.client.get_history_transaction_data(
             market=market, code=symbol, start=start, count=offset, date=int(date)
@@ -382,7 +382,7 @@ class StdQuotes(BaseQuotes):
     #     retry_error_callback=return_last_value,
     #     retry=(retry_if_exception_type() | retry_if_result(check_empty)),
     # )
-    def F10C(self, symbol=""):  # noqa
+    def F10C(self, symbol=''):  # noqa
         """
         查询公司信息目录
 
@@ -393,7 +393,7 @@ class StdQuotes(BaseQuotes):
         market = int(get_stock_market(symbol))
 
         if market not in [0, 1]:
-            raise MootdxValidationException("市场代码错误, 目前只支持沪深市场")
+            raise MootdxValidationException('市场代码错误, 目前只支持沪深市场')
 
         result = self.client.get_company_info_category(market, symbol)
 
@@ -405,7 +405,7 @@ class StdQuotes(BaseQuotes):
     #     retry_error_callback=return_last_value,
     #     retry=(retry_if_exception_type() | retry_if_result(check_empty)),
     # )
-    def F10(self, symbol="", name=""):  # noqa
+    def F10(self, symbol='', name=''):  # noqa
         """
         读取公司信息详情
 
@@ -418,7 +418,7 @@ class StdQuotes(BaseQuotes):
         market = int(get_stock_market(symbol, string=False))
 
         if market not in [0, 1]:
-            raise MootdxValidationException("市场代码错误, 目前只支持沪深市场")
+            raise MootdxValidationException('市场代码错误, 目前只支持沪深市场')
 
         category = self.client.get_company_info_category(market, symbol)
 
@@ -427,18 +427,18 @@ class StdQuotes(BaseQuotes):
 
         if name:
             for x in category:
-                if x["name"] == name:
+                if x['name'] == name:
                     return self.client.get_company_info_content(
                         market=market,
                         code=symbol,
-                        filename=x["filename"],
-                        start=x["start"],
-                        length=x["length"],
+                        filename=x['filename'],
+                        start=x['start'],
+                        length=x['length'],
                     )
 
         for x in category:
-            result[x["name"]] = self.client.get_company_info_content(
-                market=market, code=symbol, filename=x["filename"], start=x["start"], length=x["length"]
+            result[x['name']] = self.client.get_company_info_content(
+                market=market, code=symbol, filename=x['filename'], start=x['start'], length=x['length']
             )
 
         return result
@@ -449,7 +449,7 @@ class StdQuotes(BaseQuotes):
     #     retry_error_callback=return_last_value,
     #     retry=(retry_if_exception_type() | retry_if_result(check_empty)),
     # )
-    def xdxr(self, symbol="", **kwargs):
+    def xdxr(self, symbol='', **kwargs):
         """
         读取除权除息信息
 
@@ -468,7 +468,7 @@ class StdQuotes(BaseQuotes):
     #     retry_error_callback=return_last_value,
     #     retry=(retry_if_exception_type() | retry_if_result(check_empty)),
     # )
-    def finance(self, symbol="000001", **kwargs):
+    def finance(self, symbol='000001', **kwargs):
         """
         读取财务信息
 
@@ -487,7 +487,7 @@ class StdQuotes(BaseQuotes):
     #     retry_error_callback=return_last_value,
     #     retry=(retry_if_exception_type() | retry_if_result(check_empty)),
     # )
-    def k(self, symbol="", begin=None, end=None):
+    def k(self, symbol='', begin=None, end=None):
         """
         读取k线信息
 
@@ -520,9 +520,9 @@ class StdQuotes(BaseQuotes):
             temp.append(self.client.to_df(self.client.get_security_bars(9, get_stock_market(code), code, (first + i * 800), 800)))
 
         data = pd.concat(temp)
-        data = data.assign(date=data["datetime"].apply(lambda x: str(x)[0:10])).assign(code=str(code))
-        data = data.set_index("date", drop=False, inplace=False)
-        data = data.drop(["year", "month", "day", "hour", "minute", "datetime"], axis=1)
+        data = data.assign(date=data['datetime'].apply(lambda x: str(x)[0:10])).assign(code=str(code))
+        data = data.set_index('date', drop=False, inplace=False)
+        data = data.drop(['year', 'month', 'day', 'hour', 'minute', 'datetime'], axis=1)
         data = data.loc[(data.date >= start_date) & (data.date < end_date)]
         data = data.sort_index()
 
@@ -534,7 +534,7 @@ class StdQuotes(BaseQuotes):
     #     retry_error_callback=return_last_value,
     #     retry=(retry_if_exception_type() | retry_if_result(check_empty)),
     # )
-    def index(self, symbol="000001", market=MARKET_SH, frequency=9, start=1, offset=2, **kwargs):
+    def index(self, symbol='000001', market=MARKET_SH, frequency=9, start=1, offset=2, **kwargs):
         """
         获取指数k线
 
@@ -570,7 +570,7 @@ class StdQuotes(BaseQuotes):
     #     retry_error_callback=return_last_value,
     #     retry=(retry_if_exception_type() | retry_if_result(check_empty)),
     # )
-    def block(self, tofile="block.dat", **kwargs):
+    def block(self, tofile='block.dat', **kwargs):
         """
         获取证券板块信息
 
@@ -596,19 +596,19 @@ class ExtQuotes(BaseQuotes):
         :param kwargs:  可变参数
         """
         super().__init__(bestip=bestip, timeout=timeout, server=server, **kwargs)
-        self.server and config.set("BESTIP", {"EX": self.server})
+        self.server and config.set('BESTIP', {'EX': self.server})
 
-        logger.warning("目前扩展市场行情接口已经失效, 后期有望修复.")
+        logger.warning('目前扩展市场行情接口已经失效, 后期有望修复.')
 
         try:
-            config.get("SERVER").get("EX")[0]
+            config.get('SERVER').get('EX')[0]
         except ValueError as ex:
             logger.warning(ex)
         finally:
-            default = config.get("SERVER").get("EX")[0]
-            self.server = config.get("BESTIP").get("EX", default)
+            default = config.get('SERVER').get('EX')[0]
+            self.server = config.get('BESTIP').get('EX', default)
 
-        for x in ["verbose", "server", "quiet"]:
+        for x in ['verbose', 'server', 'quiet']:
             if x in kwargs.keys():
                 del kwargs[x]
 
@@ -632,12 +632,12 @@ class ExtQuotes(BaseQuotes):
         """
 
         if not market:
-            if len(symbol.split("#")) > 1:
-                market = symbol.split("#")[0]
-                symbol = symbol.split("#")[1]
+            if len(symbol.split('#')) > 1:
+                market = symbol.split('#')[0]
+                symbol = symbol.split('#')[1]
 
         if not market:
-            raise ValueError("市场参数错误, 市场参数不能为空.")
+            raise ValueError('市场参数错误, 市场参数不能为空.')
 
         return int(market), symbol
 
@@ -721,7 +721,7 @@ class ExtQuotes(BaseQuotes):
         retry_error_callback=return_last_value,
         retry=(retry_if_exception_type() | retry_if_result(check_empty)),
     )
-    def quote(self, market="", symbol="", **kwargs):
+    def quote(self, market='', symbol='', **kwargs):
         """
         查询五档行情
 
@@ -741,7 +741,7 @@ class ExtQuotes(BaseQuotes):
         retry_error_callback=return_last_value,
         retry=(retry_if_exception_type() | retry_if_result(check_empty)),
     )
-    def minute(self, market="", symbol="", **kwargs):
+    def minute(self, market='', symbol='', **kwargs):
         """
         查询分时行情
 
@@ -761,7 +761,7 @@ class ExtQuotes(BaseQuotes):
         retry_error_callback=return_last_value,
         retry=(retry_if_exception_type() | retry_if_result(check_empty)),
     )
-    def minutes(self, market=None, symbol="", date="", **kwargs):
+    def minutes(self, market=None, symbol='', date='', **kwargs):
         """
         查询历史分时行情
 
@@ -782,7 +782,7 @@ class ExtQuotes(BaseQuotes):
         retry_error_callback=return_last_value,
         retry=(retry_if_exception_type() | retry_if_result(check_empty)),
     )
-    def bars(self, frequency="", market="", symbol="", start=0, offset=100, **kwargs):
+    def bars(self, frequency='', market='', symbol='', start=0, offset=100, **kwargs):
         """
         查询k线数据
 
@@ -808,7 +808,7 @@ class ExtQuotes(BaseQuotes):
         retry_error_callback=return_last_value,
         retry=(retry_if_exception_type() | retry_if_result(check_empty)),
     )
-    def transaction(self, market=None, symbol="", start=0, offset=1800, **kwargs):
+    def transaction(self, market=None, symbol='', start=0, offset=1800, **kwargs):
         """
         查询分笔成交
 
@@ -830,7 +830,7 @@ class ExtQuotes(BaseQuotes):
         retry_error_callback=return_last_value,
         retry=(retry_if_exception_type() | retry_if_result(check_empty)),
     )
-    def transactions(self, market=None, symbol="", date="", start=0, offset=1800, **kwargs):
+    def transactions(self, market=None, symbol='', date='', start=0, offset=1800, **kwargs):
         """
         查询历史分笔成交
 

@@ -12,26 +12,26 @@ from mootdx.contrib.adjust import get_adjust_year
 from mootdx.utils.adjust import get_xdxr
 
 
-@pytest.mark.skip(reason="暂时不做重复测试")
+@pytest.mark.skip(reason='暂时不做重复测试')
 class TestAdjust(unittest.TestCase):
     def test_adjust_before0(self):
-        data = get_adjust_year(symbol="600000", year="2018", factor="before")
+        data = get_adjust_year(symbol='600000', year='2018', factor='before')
         self.assertFalse(data.empty)
 
     def test_adjust_before1(self):
-        data = get_adjust_year(symbol="600000", year="2018", factor="01")
+        data = get_adjust_year(symbol='600000', year='2018', factor='01')
         self.assertFalse(data.empty)
 
     def test_adjust_before2(self):
-        data = get_adjust_year(symbol="600000", year="2018", factor="aa")
+        data = get_adjust_year(symbol='600000', year='2018', factor='aa')
         self.assertTrue(data.empty)
 
     def test_adjust_after0(self):
-        data = get_adjust_year(symbol="600000", year="2018", factor="after")
+        data = get_adjust_year(symbol='600000', year='2018', factor='after')
         self.assertFalse(data.empty)
 
     def test_adjust_after1(self):
-        data = get_adjust_year(symbol="600000", year="2018", factor="02")
+        data = get_adjust_year(symbol='600000', year='2018', factor='02')
         self.assertFalse(data.empty)
 
 
@@ -39,16 +39,16 @@ class TestAdjustUtil(unittest.TestCase):
     symbol = '600036'
 
     def setUp(self) -> None:
-        xdxr_file = Path(get_config_path(f"xdxr/{self.symbol}.plk"))
+        xdxr_file = Path(get_config_path(f'xdxr/{self.symbol}.plk'))
         xdxr_file.parent.mkdir(exist_ok=True)
         xdxr_file.unlink(missing_ok=True)
 
     def tearDown(self) -> None:
-        xdxr_file = Path(get_config_path(f"xdxr/{self.symbol}.plk"))
+        xdxr_file = Path(get_config_path(f'xdxr/{self.symbol}.plk'))
         xdxr_file.unlink(missing_ok=True)
 
     def test_get_xdxr(self):
-        xdxr_file = Path(get_config_path(f"xdxr/{self.symbol}.plk"))
+        xdxr_file = Path(get_config_path(f'xdxr/{self.symbol}.plk'))
         self.assertFalse(xdxr_file.exists())
         get_xdxr(self.symbol)
         xdxr_time = xdxr_file.stat().st_mtime
@@ -59,7 +59,7 @@ class TestAdjustUtil(unittest.TestCase):
 
     def test_get_xdxr_expired(self):
         expire_time = time.mktime((datetime.date.today() + timedelta(days=-1)).timetuple())
-        xdxr_file = Path(get_config_path(f"xdxr/{self.symbol}.plk"))
+        xdxr_file = Path(get_config_path(f'xdxr/{self.symbol}.plk'))
 
         get_xdxr(self.symbol)
 

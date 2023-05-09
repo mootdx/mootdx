@@ -16,19 +16,19 @@ def txt2csv(infile: str, outfile: str = None) -> pd.DataFrame:
     """
 
     try:
-        names = ["date", "open", "high", "low", "close", "volume", "amount"]
-        df = pd.read_csv(infile, names=names, header=2, skipfooter=1, index_col="date", engine="python", encoding="gbk")
+        names = ['date', 'open', 'high', 'low', 'close', 'volume', 'amount']
+        df = pd.read_csv(infile, names=names, header=2, skipfooter=1, index_col='date', engine='python', encoding='gbk')
 
         # 传参 outfile 目录存在则写文件
-        outfile = outfile if outfile else infile.replace(".txt", ".csv")
+        outfile = outfile if outfile else infile.replace('.txt', '.csv')
         Path(outfile).parent.is_dir() and df.to_csv(outfile)
 
         return df
     except FileNotFoundError as ex:
-        logger.error(f"输入文件不存在: {infile}")
+        logger.error(f'输入文件不存在: {infile}')
         return pd.DataFrame(None)
     except (ValueError, TypeError) as ex:
-        logger.error(f"无法解析输入文件: {infile}")
+        logger.error(f'无法解析输入文件: {infile}')
         return pd.DataFrame(None)
 
 
@@ -47,9 +47,9 @@ def batch(src, dst):
     event = asyncio.get_event_loop()
 
     # 分配任务
-    for x in glob.glob1(src, "*.txt"):
+    for x in glob.glob1(src, '*.txt'):
         src_ = str(Path(src, x))
-        dst_ = src_.replace(".txt", ".csv")
+        dst_ = src_.replace('.txt', '.csv')
 
         task = event.create_task(covert(src=src_, dst=dst_))
         tasks.append(task)
@@ -58,4 +58,4 @@ def batch(src, dst):
     event.run_until_complete(asyncio.wait(tasks))
 
 
-__all__ = ("txt2csv", "batch")
+__all__ = ('txt2csv', 'batch')

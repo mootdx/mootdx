@@ -6,10 +6,10 @@ from tests.conftest import is_empty
 
 @pytest.fixture()
 def reader():
-    return Reader.factory(market="std", tdxdir="tests/fixtures")
+    return Reader.factory(market='std', tdxdir='tests/fixtures')
 
 
-@pytest.mark.parametrize("symbol,adjust,empty", [
+@pytest.mark.parametrize('symbol,adjust,empty', [
     ('127021', '', False),
     ('000000', '', True),
     ('sh881478', '', False),
@@ -23,7 +23,7 @@ def test_daily(reader, symbol, adjust, empty):
     assert is_empty(result) is empty
 
 
-@pytest.mark.parametrize("symbol", ['688001', '688001.5', '688001.loc1'])
+@pytest.mark.parametrize('symbol', ['688001', '688001.5', '688001.loc1'])
 def test_minute(reader, symbol):
     for suffix in ('1', '5'):
         result = reader.minute(symbol=symbol, suffix=suffix)
