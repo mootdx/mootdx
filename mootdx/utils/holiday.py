@@ -2,13 +2,14 @@
 # @Time    : 2021/10/9 10:56
 # @Function:
 import datetime
+import logging
 import re
 import time
+import warnings
 from pathlib import Path
 
 import httpx
 import pandas as pd
-from py_mini_racer import py_mini_racer
 from tenacity import retry
 from tenacity import stop_after_attempt
 from tenacity import wait_fixed
@@ -314,6 +315,13 @@ def holiday2(date: str = None) -> pd.DataFrame:
     :return: 交易日历
     :rtype: pandas.DataFrame
     """
+    try:
+        from py_mini_racer import py_mini_racer
+    except (ImportError, ModuleNotFoundError):
+        warnings.warn('!!! 缺少依赖, 请使用次命令进行安装: pip install py_mini_racer', DeprecationWarning)
+        logging.warning('!!! 缺少依赖, 请使用次命令进行安装: pip install py_mini_racer')
+        return pd.DataFrame([])
+
     cache_file = get_config_path('holiday2.plk')
     temp_df = None
 
@@ -374,7 +382,8 @@ def holiday(date=None, format_=None, country=None, result=False):
         logger.exception("日期或者日期格式错误!")
         raise ex
 
-    if Path(cache_file).exists() and time.localtime(Path(cache_file).stat().st_mtime).tm_year == time.localtime(time.time()).tm_year:
+    if Path(cache_file).exists() and time.localtime(Path(cache_file).stat().st_mtime).tm_year == time.localtime(
+        time.time()).tm_year:
         df = pd.read_pickle(cache_file)
         logger.debug("调用缓存")
     else:

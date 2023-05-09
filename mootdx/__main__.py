@@ -1,14 +1,21 @@
 import logging
 import os
+import warnings
 from pathlib import Path
-
-import click
-from prettytable import PrettyTable
 
 from mootdx import __version__
 from mootdx.logger import logger
 from mootdx.utils import get_config_path
 from mootdx.utils import to_file
+
+try:
+    import click
+    from prettytable import PrettyTable
+except (ImportError, ModuleNotFoundError):
+    logging.basicConfig(level=logging.WARNING)
+    warnings.warn('!!! 缺少命令行依赖, 请使用次命令进行安装: pip install "mootdx[cli]"', DeprecationWarning)
+    logging.warning('!!! 缺少命令行依赖, 请使用次命令进行安装: pip install "mootdx[cli]"')
+    exit(-1)
 
 
 # @click.group()
