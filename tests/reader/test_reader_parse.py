@@ -24,5 +24,4 @@ def reader():
 ])
 def test_block(reader, symbol, expected):
     result = reader.block(symbol=symbol, debug=False)
-    print(f"result => {result}")
     assert not is_empty(result), f"result => {symbol}"

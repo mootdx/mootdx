@@ -26,7 +26,7 @@ def reader():
 def test_blocknew_01(reader):
     result = reader.block_new(name="最优盈利板块", symbol=["600001", "600002", "600003", "600004"])
     assert result
-    print(result)
+    # print(result)
 
 
 def test_blocknew_02(reader):

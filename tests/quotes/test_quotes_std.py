@@ -93,14 +93,11 @@ class TestStdQuotes(unittest.TestCase):
         # todo 无法使用 minutes, F10, F10C, transactions
         data = self.client.minute(symbol="430090")
         self.assertEqual(data.empty, False)
-        print(data)
 
         data = self.client.bars(symbol="430090")
-        print(data)
         self.assertEqual(data.empty, False)
 
         data = self.client.transaction(symbol="430090")
-        print(data)
         self.assertEqual(data.empty, False)
 
 

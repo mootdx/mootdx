@@ -17,15 +17,12 @@ def parse():
     return BaseParse(tdxdir=tdxdir)
 
 
-@pytest.mark.parametrize(
-    "symbol,expected",
-    [
-        # ("block.dat", "T0002/hq_cache/block.dat"),
-        ("block_gn.dat", "T0002/hq_cache/block_gn.dat"),
-        ("block_fg.dat", "T0002/hq_cache/block_fg.dat"),
-        ("block_zs.dat", "T0002/hq_cache/block_zs.dat"),
-    ],
-)
+@pytest.mark.parametrize("symbol,expected", [
+    # ("block.dat", "T0002/hq_cache/block.dat"),
+    ("block_gn.dat", "T0002/hq_cache/block_gn.dat"),
+    ("block_fg.dat", "T0002/hq_cache/block_fg.dat"),
+    ("block_zs.dat", "T0002/hq_cache/block_zs.dat"),
+])
 def test_block(reader, symbol, expected):
     result = reader.block(symbol=symbol, debug=False)
     assert not result.empty, f"result => {result}"

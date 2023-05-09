@@ -30,7 +30,7 @@ class BaseParse:
         vipdoc = (Path("T0002", "hq_cache"), "")["incon" in symbol]  # noqa
         vipdoc = Path(vipdoc, f"{symbol}{suffix}")  # noqa
 
-        logging.warning(vipdoc)
+        # logging.debug(vipdoc)
 
         if not Path(self.tdxdir, vipdoc).exists():
             logger.error(f"文件不存在: {vipdoc}")

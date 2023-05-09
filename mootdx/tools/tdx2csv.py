@@ -25,15 +25,14 @@ def txt2csv(infile: str, outfile: str = None) -> pd.DataFrame:
 
         return df
     except FileNotFoundError as ex:
-        logger.exception(f"输入文件不存在: {infile}")
-        raise ex
+        logger.error(f"输入文件不存在: {infile}")
+        return pd.DataFrame(None)
     except (ValueError, TypeError) as ex:
-        logger.exception(f"无法解析输入文件: {infile}")
-        raise ex
+        logger.error(f"无法解析输入文件: {infile}")
+        return pd.DataFrame(None)
 
 
 async def covert(src, dst):
-    logger.info("covert {}...", src)
     return await asyncio.get_event_loop().run_in_executor(None, partial(txt2csv, infile=src, outfile=dst))
 
 
@@ -50,7 +49,7 @@ def batch(src, dst):
     # 分配任务
     for x in glob.glob1(src, "*.txt"):
         src_ = str(Path(src, x))
-        dst_ = str(Path(dst, x.replace(".txt", ".csv")))
+        dst_ = src_.replace(".txt", ".csv")
 
         task = event.create_task(covert(src=src_, dst=dst_))
         tasks.append(task)

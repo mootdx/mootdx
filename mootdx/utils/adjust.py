@@ -67,17 +67,15 @@ def get_xdxr(symbol):
 
     # 文件存在, 并且文件创建时间大于今日零点
     if xdxr_file.is_file():
-        logging.info(today)
-        logging.info(xdxr_file.stat().st_mtime)
-        logging.info(xdxr_file.stat().st_mtime > today)
         if xdxr_file.stat().st_mtime > today:
-            logging.info('pd.read_pickle(xdxr_file)')
             return pd.read_pickle(xdxr_file)
 
-    logging.info('no cached')
     # 创建目录, 目录存在则跳过
     xdxr_file.parent.mkdir(exist_ok=True, parents=True)
     xdxr = Quotes.factory('std').xdxr(symbol=symbol)
+
+    if xdxr.empty:
+        return xdxr
 
     xdxr["code"] = symbol
     xdxr["date"] = pd.to_datetime(xdxr[["year", "month", "day"]], utc=False)

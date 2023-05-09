@@ -62,7 +62,3 @@ class TestExtQuotes(unittest.TestCase):
     def test_transactions(self):
         data = self.client.transactions(market=47, symbol="IFL0", date="20170810", start=1800)
         self.assertEqual(data.empty, False)
-
-
-if __name__ == "__main__":
-    unittest.main()

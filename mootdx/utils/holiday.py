@@ -379,8 +379,8 @@ def holiday(date=None, format_=None, country=None, result=False):
         else:
             date = datetime.datetime.now().date()
     except ValueError as ex:
-        logger.exception("日期或者日期格式错误!")
-        raise ex
+        logger.error("日期或者日期格式错误!")
+        return None
 
     if Path(cache_file).exists() and time.localtime(Path(cache_file).stat().st_mtime).tm_year == time.localtime(
         time.time()).tm_year:
@@ -399,7 +399,8 @@ def holiday(date=None, format_=None, country=None, result=False):
         df.to_pickle(cache_file)
 
     if country not in list(set(df["国家"].values)):
-        raise ValueError(f"没有该国家`{country}`的交易日数据")
+        logger.error(f"没有该国家`{country}`的交易日数据")
+        return None
 
     df = df[df["国家"] == country]
     df = df[df.index.isin([date])]

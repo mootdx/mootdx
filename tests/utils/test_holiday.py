@@ -25,12 +25,8 @@ class TestHoliday:
     def test_holiday_country(self):
         from mootdx.utils.holiday import holiday
         assert holiday("2022-01-23", "%Y-%m-%d", "法国")
-
-        with pytest.raises(ValueError):
-            holiday("20220126")
-
-        with pytest.raises(ValueError):
-            holiday("2022-01-26", "%Y-%m-%d", country="巴西")
+        assert not holiday("20220126")
+        assert not holiday("2022-01-26", "%Y-%m-%d", country="巴西")
 
     def test_holiday_not(self):
         from mootdx.utils.holiday import holiday

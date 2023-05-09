@@ -97,11 +97,12 @@ class StdReader(ReaderBase):
         :param symbol: 证券代码
         :return: pd.dataFrame or None
         """
+        symbol = Path(symbol).stem
         reader = MooTdxDailyBarReader()
         vipdoc = self.find_path(symbol=symbol, subdir="lday", suffix="day")
 
         result = reader.get_df(str(vipdoc)) if vipdoc else None
-        return to_data(result, symbol=symbol, client=self, **kwargs)
+        return to_data(result, symbol=symbol, **kwargs)
 
     def minute(self, symbol=None, suffix=1, **kwargs):  # noqa
         """
@@ -111,6 +112,7 @@ class StdReader(ReaderBase):
         :param symbol: 证券代码
         :return: pd.dataFrame or None
         """
+        symbol = Path(symbol).stem
         subdir = "fzline" if str(suffix) == "5" else "minline"
         suffix = ["lc5", "5"] if str(suffix) == "5" else ["lc1", "1"]
         symbol = self.find_path(symbol, subdir=subdir, suffix=suffix)
