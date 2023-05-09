@@ -125,7 +125,7 @@ def to_data(v, **kwargs):
     """
 
     symbol = kwargs.get("symbol")
-    adjust = kwargs.get("adjust", None)
+    adjust = kwargs.get("adjust", '').lower()
     # client = kwargs.get("client", None)
 
     if adjust in ["01", "qfq", "before"]:
@@ -155,12 +155,6 @@ def to_data(v, **kwargs):
     else:
         result = pd.DataFrame(data=[])
 
-    if adjust and adjust in ["qfq", "hfq"] and symbol:
-        from mootdx.utils.adjust import to_adjust
-
-        result["code"] = symbol
-        result = to_adjust(result, symbol=symbol, adjust=adjust)
-
     if "datetime" in result.columns:
         result.index = pd.to_datetime(result.datetime)
 
@@ -169,6 +163,11 @@ def to_data(v, **kwargs):
 
     if "vol" in result.columns:
         result["volume"] = result.vol
+
+    if adjust and adjust in ["qfq", "hfq"] and symbol:
+        from mootdx.utils.adjust import to_adjust
+
+        result = to_adjust(result, symbol=symbol, adjust=adjust)
 
     return result
 
@@ -252,6 +251,8 @@ def get_config_path(config="config.json"):
 
 # days 的 vol 比 day 大 100 倍
 FREQUENCY = ["5m", "15m", "30m", "1h", "days", "week", "mon", "ex_1m", "1m", "day", "3mon", "year"]
+
+
 # FREQUEN = [48,    16,   8,     4,     1,     "1/5",  "1/30", "ex_1m", 240, "1",   "1/90", "1/365"]
 # FREQUENCY = ["5m", "15m", "30m", "1h", "days", "week", "mon", "ex_1m", "1m", "day", "3mon", "year"]
 

@@ -12,9 +12,7 @@ def _reversion(bfq_data, xdxr_data, type_):
         data["if_trade"].fillna(value=0, inplace=True)
 
         data = data.fillna(method="ffill")
-        data = pd.concat(
-            [data, info.loc[bfq_data.index[0]: bfq_data.index[-1], ["fenhong", "peigu", "peigujia", "songzhuangu"]]],
-            axis=1)
+        data = pd.concat([data, info.loc[bfq_data.index[0]: bfq_data.index[-1], ["fenhong", "peigu", "peigujia", "songzhuangu"]]], axis=1)
     else:
         data = pd.concat([bfq_data, info.loc[:, ["category", "fenhong", "peigu", "peigujia", "songzhuangu"]]], axis=1)
 
@@ -22,22 +20,21 @@ def _reversion(bfq_data, xdxr_data, type_):
     data = data.fillna(0)
 
     # 计算前日收盘
-    data["preclose"] = (data["close"].shift(1) * 10 - data["fenhong"] + data["peigu"] * data["peigujia"]) / (
-            10 + data["peigu"] + data["songzhuangu"])
+    data["preclose"] = (data["close"].shift(1) * 10 - data["fenhong"] + data["peigu"] * data["peigujia"]) / (10 + data["peigu"] + data["songzhuangu"])
 
     # 前复权
-    if type_ in ["01", "qfq"]:
+    if type_.lower() in ["01", "qfq"]:
         data["adj"] = (data["preclose"].shift(-1) / data["close"]).fillna(1)[::-1].cumprod()
 
     # 后复权
-    if type_ in ["02", "hfq"]:
+    if type_.lower() in ["02", "hfq"]:
         data["adj"] = (data["close"] / data["preclose"].shift(-1)).cumprod().shift(1).fillna(1)
 
     # ohlc 数据进行复权计算
     for col in ["open", "high", "low", "close", "preclose"]:
         data[col] = data[col] * data["adj"]
 
-    data["volume"] = data.get("volume", data.get("vol"))
+    # data["volume"] = data.get("volume", data.get("vol"))
     data['volume'] = data['volume'] / data['adj']
     # data['volume'] = data['volume'] / data['adj'] if 'volume' in data.columns else data['vol'] / data['adj']
 
@@ -55,12 +52,11 @@ def _reversion(bfq_data, xdxr_data, type_):
 
 
 def reversion(stock_data, xdxr, type_="01"):
-    def _fetch_xdxr(symbol, collections=None):
+    def _fetch_xdxr(collections=None):
         """获取股票除权信息/数据库"""
         columns = [
             "category",
             "category_meaning",
-            "code",
             "date",
             "fenhong",
             "fenshu",
@@ -91,17 +87,17 @@ def reversion(stock_data, xdxr, type_="01"):
             return pd.DataFrame(data=[], columns=columns)
 
     # '股票 日线/分钟线 动态复权接口'
-    if isinstance(stock_data.index, pd.MultiIndex):
-        symbol = stock_data.index.remove_unused_levels().levels[1][0]
-    else:
-        symbol = stock_data["code"][0]
-
+    # if isinstance(stock_data.index, pd.MultiIndex):
+    #     symbol = stock_data.index.remove_unused_levels().levels[1][0]
+    # else:
+    #     symbol = stock_data["code"][0]
+    symbol = ''
     # symbol = (
     #     stock_data.index.remove_unused_levels().levels[1][0]
     #     if isinstance(stock_data.index, pd.MultiIndex)
     #     else stock_data["code"][0]
     # )
-    return _reversion(bfq_data=stock_data, xdxr_data=_fetch_xdxr(symbol, xdxr), type_=type_)
+    return _reversion(bfq_data=stock_data, xdxr_data=_fetch_xdxr(xdxr), type_=type_)
 
 
 # 算法一样

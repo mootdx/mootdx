@@ -3,6 +3,7 @@
 # @Function:
 import datetime
 import json
+import logging
 import time
 from pathlib import Path
 
@@ -60,20 +61,30 @@ def fq_factor(method: str, symbol: str) -> pd.DataFrame:
 
 def get_xdxr(symbol):
     xdxr_file = Path(get_config_path(f"xdxr/{symbol}.plk"))
-    xdxr_file.parent.mkdir(exist_ok=True)
 
     # 判断数据是否存在, 判断修改时间是否今天
     today = time.mktime(datetime.date.today().timetuple())
 
-    if xdxr_file.is_file() and xdxr_file.stat().st_mtime > today:
-        xdxr = pd.read_pickle(xdxr_file)
-    else:
-        xdxr = Quotes.factory('std').xdxr(symbol=symbol)
-        xdxr.to_pickle(xdxr_file)
+    # 文件存在, 并且文件创建时间大于今日零点
+    if xdxr_file.is_file():
+        logging.info(today)
+        logging.info(xdxr_file.stat().st_mtime)
+        logging.info(xdxr_file.stat().st_mtime > today)
+        if xdxr_file.stat().st_mtime > today:
+            logging.info('pd.read_pickle(xdxr_file)')
+            return pd.read_pickle(xdxr_file)
+
+    logging.info('no cached')
+    # 创建目录, 目录存在则跳过
+    xdxr_file.parent.mkdir(exist_ok=True, parents=True)
+    xdxr = Quotes.factory('std').xdxr(symbol=symbol)
 
     xdxr["code"] = symbol
     xdxr["date"] = pd.to_datetime(xdxr[["year", "month", "day"]], utc=False)
+
+    # 设置索引并写缓存文件
     xdxr = xdxr.set_index(["date"])
+    xdxr.to_pickle(xdxr_file)
 
     return xdxr
 
@@ -107,7 +118,7 @@ def to_adjust2(temp_df, symbol=None, adjust=None):
         temp_df.drop_duplicates(subset=["open", "high", "low", "close", "volume"], inplace=True)
 
         for field in ["open", "high", "low", "close"]:
-            temp_df[field] = round(temp_df[field] * temp_df["hfq_factor"], 2)
+            temp_df[field] = temp_df[field] * temp_df["hfq_factor"]
 
         temp_df = temp_df.iloc[:, :-1]
         # temp_df = temp_df[start_date:end_date]
@@ -138,13 +149,12 @@ def to_adjust2(temp_df, symbol=None, adjust=None):
         temp_df.drop_duplicates(subset=["open", "high", "low", "close", "volume"], inplace=True)
 
         for field in ["open", "high", "low", "close"]:
-            temp_df[field] = round(temp_df[field] / temp_df["qfq_factor"], 2)
+            temp_df[field] = temp_df[field] / temp_df["qfq_factor"]
 
         temp_df = temp_df.iloc[:, :-1]
         temp_df.dropna(inplace=True)
         temp_df.reset_index(inplace=True)
 
-        print(temp_df)
         return temp_df
 
     return temp_df

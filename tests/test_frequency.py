@@ -1,5 +1,4 @@
 import pytest
-import unittest
 
 from mootdx.quotes import Quotes
 from mootdx.utils import FREQUENCY
