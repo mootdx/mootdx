@@ -5,7 +5,7 @@ import pytest
 from mootdx.quotes import Quotes
 
 
-@pytest.mark.skip
+@pytest.mark.skip(reason="暂时不做重复测试")
 class TestStdQuotes(unittest.TestCase):
     client = None
     server = ("39.100.68.59", 7709)

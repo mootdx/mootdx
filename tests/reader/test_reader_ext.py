@@ -4,7 +4,6 @@ from mootdx.reader import Reader
 from tests.conftest import is_empty
 
 
-# @pytest.mark.skip
 class TestExReader(unittest.TestCase):
     reader = None
 
@@ -27,7 +26,3 @@ class TestExReader(unittest.TestCase):
     def test_minute(self):
         data = self.reader.minute(symbol="4#CF7D0LAO")
         assert is_empty(data) is True
-
-
-if __name__ == "__main__":
-    unittest.main()

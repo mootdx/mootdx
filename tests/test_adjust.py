@@ -12,7 +12,7 @@ from mootdx.contrib.adjust import get_adjust_year
 from mootdx.utils.adjust import get_xdxr
 
 
-@pytest.mark.skip
+@pytest.mark.skip(reason="暂时不做重复测试")
 class TestAdjust(unittest.TestCase):
     def test_adjust_before0(self):
         data = get_adjust_year(symbol="600000", year="2018", factor="before")
@@ -70,7 +70,3 @@ class TestAdjustUtil(unittest.TestCase):
 
         self.assertTrue(xdxr_file.exists())
         self.assertNotEqual(xdxr_file.stat().st_mtime, xdxr_time)
-
-
-if __name__ == "__main__":
-    unittest.main()

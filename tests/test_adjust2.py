@@ -22,7 +22,3 @@ class TestAdjust2(unittest.TestCase):
     def test_to_hfq(self):
         result = self.client.bars(symbol="600036", adjust="hfq")
         self.assertFalse(result.empty)
-
-
-if __name__ == "__main__":
-    unittest.main()

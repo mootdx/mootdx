@@ -67,7 +67,7 @@ fmt:
 test: ## run tests quickly with the default Python
 	# unset https_proxy http_proxy all_proxy
 	# poetry run py.test tests -v
-	poetry run coverage run -m pytest tests -v
+	poetry run pytest tests -v
 
 coverage: ## check code coverage quickly with the default Python
 	poetry run coverage report -m

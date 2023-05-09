@@ -37,7 +37,3 @@ class TestReader(unittest.TestCase):
     def test_minute5(self):
         result = self.reader.minute(symbol="688001", suffix="5")
         self.assertFalse(result.empty, result)
-
-
-if __name__ == "__main__":
-    unittest.main()

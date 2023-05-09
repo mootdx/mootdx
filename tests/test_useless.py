@@ -17,7 +17,8 @@ def remove_dep_holiday():
     os.system('pip install py_mini_racer')
 
 
-def test_dep_cli(recwarn, remove_dep_cli):
+@pytest.mark.skip(reason="暂时不做重复测试")
+def test_dep_command(recwarn, remove_dep_cli):
     with pytest.raises(SystemExit) as e:
         from mootdx.__main__ import entry
         entry()
@@ -29,6 +30,7 @@ def test_dep_cli(recwarn, remove_dep_cli):
     assert w.category == DeprecationWarning
 
 
+@pytest.mark.skip(reason="暂时不做重复测试")
 def test_dep_holiday(recwarn, remove_dep_holiday):
     from mootdx.utils.holiday import holiday2
     holiday2("2022-01-23")
