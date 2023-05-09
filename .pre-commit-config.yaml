@@ -1,6 +1,6 @@
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.1.0
+    rev: v4.4.0
     hooks:
       - id: trailing-whitespace  # Trim trailing whitespace
       - id: check-merge-conflict  # Check for files that contain merge conflict strings
@@ -32,6 +32,23 @@ repos:
       - id: remove-tabs
 
   - repo: https://github.com/asottile/reorder_python_imports
-    rev: v2.6.0
+    rev: v3.9.0
     hooks:
       - id: reorder-python-imports
+
+exclude: |
+  (?x)^(
+    docs\/.*|
+    .*migrations\/.*|
+    sample\/.*|
+    notebooks\/.*|
+    \.ipynb_checkpoints|
+    setup\.cfg|
+    fabfile\.py|
+    .*?proto.*|
+    .*?\.yaml|
+    .*?\.yml|
+    .*?\.dat|
+    .*?\.txt|
+    .*?\.md
+  )
