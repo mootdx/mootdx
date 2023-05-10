@@ -170,12 +170,6 @@ from mootdx.quotes import Quotes
 
 client = Quotes.factory(market='std')
 client.minute(symbol='000001')
-
-# 前复权
-client.minute(symbol='000001', adjust='qfq')
-
-# 后复权
-client.minute(symbol='000001', adjust='hfq')
 ```
 
 ## 07. 历史分时行情
@@ -193,13 +187,6 @@ from mootdx.quotes import Quotes
 
 client = Quotes.factory(market='std')
 client.minutes(symbol='000001', date='20171010')
-
-# 前复权
-client.minutes(symbol='000001', date='20171010', adjust='qfq')
-
-# 后复权
-client.minutes(symbol='000001', date='20171010', adjust='hfq')
-
 ```
 
 注意，在引入 consts 之后， （`from mootdx import consts`） 我们可以使用 consts.MARKET_SH , consts.MARKET_SZ 常量来代替 1 和 0 作为参数
@@ -312,6 +299,7 @@ client.finance(symbol="600300")
 - symbol: 股票代码.
 - begin: 开始时间.
 - end: 结束时间.
+- adjust: 复权.
 
 **调用方法：**
 
@@ -320,4 +308,19 @@ from mootdx.quotes import Quotes
 
 client = Quotes.factory(market='std')
 client.k(symbol="600300", begin="2017-07-03", end="2017-07-10")
+
+# 前复权
+client.k(symbol="600300", begin="2017-07-03", end="2017-07-10", adjust='qfq')
+
+# 后复权
+client.k(symbol="600300", begin="2017-07-03", end="2017-07-10", adjust='hfq')
+
+# ohlc 是k的别名, 功能相同
+client.ohlc(symbol="600300", begin="2017-07-03", end="2017-07-10")
+
+# 前复权
+client.ohlc(symbol="600300", begin="2017-07-03", end="2017-07-10", adjust='qfq')
+
+# 后复权
+client.ohlc(symbol="600300", begin="2017-07-03", end="2017-07-10", adjust='hfq')
 ```
