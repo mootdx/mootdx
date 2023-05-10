@@ -22,3 +22,7 @@ class MootdxException(Exception):
 class MootdxValidationException(Exception):
     def __init__(self, *args, **kwargs):  # real signature unknown
         pass
+
+
+class FileNeedRefresh(FileNotFoundError):
+    pass
