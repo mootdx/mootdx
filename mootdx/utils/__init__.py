@@ -7,6 +7,7 @@ import pandas as pd
 from pandas import DataFrame
 from tqdm import tqdm
 
+from mootdx.cache import file_cache
 from mootdx.consts import MARKET_BJ
 from mootdx.consts import MARKET_SH
 from mootdx.consts import MARKET_SZ
@@ -126,7 +127,6 @@ def to_data(v, **kwargs):
 
     symbol = kwargs.get('symbol')
     adjust = kwargs.get('adjust', '').lower()
-    # client = kwargs.get("client", None)
 
     if adjust in ['01', 'qfq', 'before']:
         adjust = 'qfq'
@@ -168,6 +168,10 @@ def to_data(v, **kwargs):
         from mootdx.utils.adjust import to_adjust
 
         result = to_adjust(result, symbol=symbol, adjust=adjust)
+
+    @file_cache(refresh_time=3600 * 24, filepath=get_config_path('cache/'))
+    def cache_data(data):
+        return data
 
     return result
 

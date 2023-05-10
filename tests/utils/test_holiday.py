@@ -1,4 +1,5 @@
 from pathlib import Path
+from unittest import TestCase
 
 import pytest
 
@@ -12,13 +13,13 @@ except ImportError:
     mini_racer = True
 
 
-class TestHoliday:
+class TestHoliday(TestCase):
     # 初始化工作
-    cache_file = get_config_path('holiday.plk')
+    # def setUp(self) -> None:
+    #     Path(get_config_path('holiday.plk')).unlink(missing_ok=True)
 
     def test_holiday_exists(self):
         from mootdx.utils.holiday import holiday
-        Path(self.cache_file).unlink(missing_ok=True)
         result = holiday('2022-01-23')
         assert result, result
 
@@ -40,13 +41,13 @@ class TestHoliday:
 
 
 @pytest.mark.xfail(mini_racer, reason='py_mini_racer not installed')
-class TestHoliday2:
-    cache_file = get_config_path('holiday2.plk')
+class TestHoliday2(TestCase):
+    # def setUp(self) -> None:
+    #     Path(get_config_path('holidays.plk')).unlink(missing_ok=True)
 
-    def test_holiday_exists(self):
+    def test_holiday_not_exists(self):
         from mootdx.utils.holiday import holiday2
-        Path(self.cache_file).unlink(missing_ok=True)
-        assert holiday2('2022-01-23')
+        assert holiday2('2022-01-23').empty
 
     def test_holiday_today(self):
         from mootdx.utils.holiday import holiday2
@@ -54,4 +55,9 @@ class TestHoliday2:
 
     def test_holiday2not(self):
         from mootdx.utils.holiday import holiday2
-        assert holiday2('2022-01-26')
+        assert not holiday2('2022-01-26').empty
+
+
+def test_holidays():
+    from mootdx.utils.holiday import holidays
+    assert not holidays().empty

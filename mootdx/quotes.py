@@ -342,6 +342,7 @@ class StdQuotes(BaseQuotes):
         """
 
         market = get_stock_market(symbol)
+
         result = self.client.get_transaction_data(int(market), symbol, start, offset)
 
         return to_data(result, symbol=symbol, client=self, **kwargs)
