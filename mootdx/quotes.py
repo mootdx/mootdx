@@ -290,7 +290,7 @@ class StdQuotes(BaseQuotes):
     #     retry_error_callback=return_last_value,
     #     retry=(retry_if_exception_type() | retry_if_result(check_empty)),
     # )
-    def minute(self, symbol='', **kwargs):
+    def minute(self, symbol=None, **kwargs):
         """
         获取实时分时数据
 
@@ -298,10 +298,8 @@ class StdQuotes(BaseQuotes):
         :return: pd.DataFrame
         """
 
-        market = get_stock_market(symbol)
-        result = self.client.get_minute_time_data(market=market, code=symbol)
-
-        return to_data(result, symbol=symbol, client=self, **kwargs)
+        today = datetime.now().strftime('%Y%m%d')
+        return self.minutes(symbol=symbol, date=today, **kwargs)
 
     # @retry(
     #     wait=wait_random(min=1, max=10),
@@ -309,7 +307,7 @@ class StdQuotes(BaseQuotes):
     #     retry_error_callback=return_last_value,
     #     retry=(retry_if_exception_type() | retry_if_result(check_empty)),
     # )
-    def minutes(self, symbol='', date='20191023', **kwargs):
+    def minutes(self, symbol=None, date='20191023', **kwargs):
         """
         分时历史数据
 
@@ -517,7 +515,8 @@ class StdQuotes(BaseQuotes):
         temp = []
 
         for i in range(math.ceil((last - first) / 800)):
-            temp.append(self.client.to_df(self.client.get_security_bars(9, get_stock_market(code), code, (first + i * 800), 800)))
+            temp.append(self.client.to_df(
+                self.client.get_security_bars(9, get_stock_market(code), code, (first + i * 800), 800)))
 
         data = pd.concat(temp)
         data = data.assign(date=data['datetime'].apply(lambda x: str(x)[0:10])).assign(code=str(code))

@@ -1,4 +1,5 @@
 import unittest
+from datetime import datetime
 
 import pytest
 
@@ -41,8 +42,14 @@ class TestStdQuotes(unittest.TestCase):
         self.assertEqual(data.empty, False)
 
     def test_minute(self):
-        data = self.client.minute(symbol='000001')
-        self.assertEqual(data.empty, False)
+        today = datetime.now().strftime('%Y%m%d')
+        data0 = self.client.minute(symbol='000001')
+        data1 = self.client.minutes(symbol='000001', date=today)
+        print(today)
+        print(data0)
+        print(data1)
+
+        self.assertTrue(data1.equals(data0))
 
     def test_minutes(self):
         data = self.client.minutes(symbol='000001', date='20171010')
