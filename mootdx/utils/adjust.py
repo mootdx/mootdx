@@ -1,10 +1,7 @@
 # @Author  : BoPo
 # @Time    : 2021/10/11 17:28
 # @Function:
-import datetime
 import json
-import logging
-import time
 from pathlib import Path
 
 import httpx
@@ -14,6 +11,7 @@ from tenacity import stop_after_attempt
 from tenacity import wait_fixed
 
 from mootdx import get_config_path
+from mootdx.cache import file_cache
 from mootdx.consts import return_last_value
 from mootdx.quotes import Quotes
 
@@ -60,31 +58,19 @@ def fq_factor(method: str, symbol: str) -> pd.DataFrame:
 
 
 def get_xdxr(symbol):
-    xdxr_file = Path(get_config_path(f'xdxr/{symbol}.plk'))
+    @file_cache(filepath=Path(get_config_path(f'xdxr/{symbol}.plk')), refresh_time=3600 * 24)
+    def _xdxr(symbol):
+        xdxr = Quotes.factory('std').xdxr(symbol=symbol)
 
-    # 判断数据是否存在, 判断修改时间是否今天
-    today = time.mktime(datetime.date.today().timetuple())
+        if xdxr.empty:
+            return xdxr
 
-    # 文件存在, 并且文件创建时间大于今日零点
-    if xdxr_file.is_file():
-        if xdxr_file.stat().st_mtime > today:
-            return pd.read_pickle(xdxr_file)
+        xdxr['code'] = symbol
+        xdxr['date'] = pd.to_datetime(xdxr[['year', 'month', 'day']], utc=False)
 
-    # 创建目录, 目录存在则跳过
-    xdxr_file.parent.mkdir(exist_ok=True, parents=True)
-    xdxr = Quotes.factory('std').xdxr(symbol=symbol)
+        return xdxr.set_index(['date'])
 
-    if xdxr.empty:
-        return xdxr
-
-    xdxr['code'] = symbol
-    xdxr['date'] = pd.to_datetime(xdxr[['year', 'month', 'day']], utc=False)
-
-    # 设置索引并写缓存文件
-    xdxr = xdxr.set_index(['date'])
-    xdxr.to_pickle(xdxr_file)
-
-    return xdxr
+    return _xdxr(symbol)
 
 
 def to_adjust(temp_df, symbol=None, adjust=None):

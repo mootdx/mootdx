@@ -12,7 +12,9 @@ def _reversion(bfq_data, xdxr_data, type_):
         data['if_trade'].fillna(value=0, inplace=True)
 
         data = data.fillna(method='ffill')
-        data = pd.concat([data, info.loc[bfq_data.index[0]: bfq_data.index[-1], ['fenhong', 'peigu', 'peigujia', 'songzhuangu']]], axis=1)
+        data = pd.concat(
+            [data, info.loc[bfq_data.index[0]: bfq_data.index[-1], ['fenhong', 'peigu', 'peigujia', 'songzhuangu']]],
+            axis=1)
     else:
         data = pd.concat([bfq_data, info.loc[:, ['category', 'fenhong', 'peigu', 'peigujia', 'songzhuangu']]], axis=1)
 
@@ -20,19 +22,21 @@ def _reversion(bfq_data, xdxr_data, type_):
     data = data.fillna(0)
 
     # 计算前日收盘
-    data['preclose'] = (data['close'].shift(1) * 10 - data['fenhong'] + data['peigu'] * data['peigujia']) / (10 + data['peigu'] + data['songzhuangu'])
+    data['preclose'] = (data['close'].shift(1) * 10 - data['fenhong'] + data['peigu'] * data['peigujia']) / (
+            10 + data['peigu'] + data['songzhuangu'])
 
     # 前复权
     if type_.lower() in ['01', 'qfq']:
         data['adj'] = (data['preclose'].shift(-1) / data['close']).fillna(1)[::-1].cumprod()
+        # ohlc 数据进行复权计算
+        for col in ['open', 'high', 'low', 'close', 'preclose']:
+            data[col] = data[col] * data['adj']
 
     # 后复权
     if type_.lower() in ['02', 'hfq']:
-        data['adj'] = (data['close'] / data['preclose'].shift(-1)).cumprod().shift(1).fillna(1)
-
-    # ohlc 数据进行复权计算
-    for col in ['open', 'high', 'low', 'close', 'preclose']:
-        data[col] = data[col] * data['adj']
+        data['adj'] = (data['preclose'].shift(-1) / data['close']).fillna(1).cumprod()
+        for col in ['open', 'high', 'low', 'close', 'preclose']:
+            data[col] = data[col] / data['adj']
 
     # data["volume"] = data.get("volume", data.get("vol"))
     data['volume'] = data['volume'] / data['adj']
