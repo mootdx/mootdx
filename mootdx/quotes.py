@@ -480,13 +480,7 @@ class StdQuotes(BaseQuotes):
 
         return to_data(result, symbol=symbol, client=self, **kwargs)
 
-    # @retry(
-    #     wait=wait_random(min=1, max=10),
-    #     stop=stop_after_attempt(3),
-    #     retry_error_callback=return_last_value,
-    #     retry=(retry_if_exception_type() | retry_if_result(check_empty)),
-    # )
-    def k(self, symbol='', begin=None, end=None):
+    def k(self, symbol='', begin=None, end=None, **kwargs):
         """
         读取k线信息
 
@@ -497,7 +491,7 @@ class StdQuotes(BaseQuotes):
         """
 
         result = self.get_k_data(symbol, begin, end)
-        return result
+        return to_data(result, symbol=symbol, **kwargs)
 
     def ohlc(self, **kwargs):
         return self.k(**kwargs)
