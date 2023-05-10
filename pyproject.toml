@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "mootdx"
-version = "0.10.0"
+version = "0.10.1"
 description = "通达信数据读取接口."
 authors = ["bopo <ibopo@126.com>"]
 readme = "README.rst"
@@ -64,7 +64,7 @@ build-backend = "poetry.core.masonry.api"
 
 
 [tool.commitizen]
-version = "0.10.0"
+version = "0.10.1"
 tag_format = "v$version"
 update_changelog_on_bump = true
 annotated_tag = true
