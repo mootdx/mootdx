@@ -1,3 +1,5 @@
+--index-url https://mirrors.ustc.edu.cn/pypi/web/simple
+
 anyio==3.6.2 ; python_version >= "3.8" and python_version < "4.0"
 certifi==2023.5.7 ; python_version >= "3.8" and python_version < "4.0"
 cffi==1.15.1 ; python_version >= "3.8" and python_version < "4.0"
