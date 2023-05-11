@@ -1,7 +1,3 @@
-"""
-用于管理缓存的配置数据
-使用前必须先调用 init() 。
-"""
 import copy
 import json
 from pathlib import Path

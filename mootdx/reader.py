@@ -10,7 +10,6 @@ from mootdx.utils import get_stock_market
 from mootdx.utils import to_data
 
 
-# 股票市场
 class Reader(object):
     @staticmethod
     def factory(market='std', **kwargs):
@@ -29,8 +28,6 @@ class Reader(object):
 
 
 class ReaderBase(ABC):
-    """股票市场"""
-
     # 默认通达信安装目录
     tdxdir = 'C:/new_tdx'
 

@@ -1,6 +1,3 @@
-# @Author  : BoPo
-# @Time    : 2021/10/9 10:56
-# @Function:
 import datetime
 import logging
 import re

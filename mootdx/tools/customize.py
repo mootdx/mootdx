@@ -1,6 +1,3 @@
-# @Author  : BoPo
-# @Time    : 2022/2/17 14:49
-# @Function:
 import time
 from datetime import datetime
 from pathlib import Path

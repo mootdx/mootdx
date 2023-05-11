@@ -4,6 +4,7 @@ from git import Repo
 
 repo = Repo(".")
 
+# pip install fabric3 gitpython
 
 @task(alias="t")
 def test():

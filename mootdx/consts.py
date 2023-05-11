@@ -113,16 +113,3 @@ CONFIG = {
 def return_last_value(retry_state):
     """return the result of the last call attempt"""
     return retry_state.outcome.result()
-
-# 5MIN = 0
-# 15MIN = 1
-# 30MIN = 2
-# 1HOUR = 3
-# DAILY = 4
-# WEEKLY = 5
-# MONTHLY = 6
-# EX_1MIN = 7
-# 1MIN = 8
-# RI_K = 9
-# 3MONTH = 10
-# YEARLY = 11

@@ -18,14 +18,6 @@ except (ImportError, ModuleNotFoundError):
     exit(-1)
 
 
-# @click.group()
-# @click.option('--debug/--no-debug', default=False)
-# @click.pass_context
-# def cli(ctx, debug):
-#     ctx.obj['DEBUG'] = debug
-#     ctx.obj['DEBUG'] and logging.basicConfig(level=logging.DEBUG)
-
-
 @click.group()
 @click.version_option(__version__, '-V', '--version', prog_name='Mootdx', message='%(prog)s: v%(version)s')
 @click.help_option('-h', '--help')
@@ -82,15 +74,6 @@ def reader(symbol, action, market, tdxdir, output):
         raise e
 
 
-@entry.command(help='添加行情服务器.', name='remote')
-@click.help_option('-h', '--help')
-@click.option('-v', '--verbose', count=True, help='详细模式')
-@click.argument('server')
-def channel(server, verbose):
-    config = get_config_path('config.json')
-    logger.info('[√] 已经将最优服务器IP写入配置文件 {} {}'.format(config, server))
-
-
 @entry.command(help='测试行情服务器.', name='bestip')
 @click.help_option('-h', '--help')
 @click.option('-l', '--limit', default=5, help='显示最快前几个，默认 5.')
@@ -108,7 +91,7 @@ def server(limit, verbose):
     bestip(limit=limit, console=True, sync=False)
 
     config = get_config_path('config.json')
-    logger.info('[√] 已经将最优服务器IP写入配置文件 {}'.format(config))
+    logger.info(f'[√] 已经将最优服务器IP写入配置文件 {config}')
 
 
 @entry.command(help='财务文件下载&解析.')
@@ -203,7 +186,7 @@ def bundle(symbol, action, market, output, extension):
         except Exception as e:
             raise e
 
-    click.echo('[√] 下载文件到 "{}"'.format(os.path.realpath(output)))
+    click.echo(f'[√] 下载文件到 "{os.path.realpath(output)}"')
 
 
 if __name__ == '__main__':

@@ -5,7 +5,7 @@ from ..logger import logger
 
 
 def reporthook(downloaded, total_size):
-    print('Downloaded {}, Total is {}'.format(downloaded, total_size))
+    print(f'Downloaded {downloaded}, Total is {total_size}')
 
 
 class BaseReader(object):

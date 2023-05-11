@@ -20,7 +20,7 @@ class MootdxException(Exception):
 
 
 class MootdxValidationException(Exception):
-    def __init__(self, *args, **kwargs):  # real signature unknown
+    def __init__(self, *args, **kwargs):
         pass
 
 
