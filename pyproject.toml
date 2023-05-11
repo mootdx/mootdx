@@ -71,13 +71,13 @@ log_cli = 0
 log_cli_level = "DEBUG"
 
 [tool.commitizen]
-version = "0.10.3"
 tag_format = "v$version"
-update_changelog_on_bump = true
 annotated_tag = true
-changelog_file = "HISTORY.md"
+changelog_file = "docs/chlog.md"
+changelog_incremental = true
+update_changelog_on_bump = true
+version_provider = "poetry"
 version_files = [
     "mootdx/__init__.py:__version__",
-    "pyproject.toml:version",
     "Makefile:VERSION := ",
 ]

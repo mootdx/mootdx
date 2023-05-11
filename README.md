@@ -114,7 +114,7 @@ Affair.parse(downdir='tmp')
 加微信交流
 ----------
 
-![image](docs/img/IMG_2851.JPG){.align-left width="230px"}
+![](docs/img/IMG_2851.JPG)
 
 常见问题
 --------

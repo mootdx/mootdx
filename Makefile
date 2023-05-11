@@ -65,9 +65,7 @@ fmt:
 	black -l 120 -t py36 -t py37 -t py38 -t py39 -t py310 .
 
 test: ## run tests quickly with the default Python
-	# unset https_proxy http_proxy all_proxy
-	# poetry run py.test tests -v
-	poetry run pytest tests -v
+	@poetry run pytest tests
 
 coverage: ## check code coverage quickly with the default Python
 	poetry run coverage report -m
@@ -123,13 +121,15 @@ history: ## show commit incremental changelog
 	#cz bump --dry-run --increment patch
 	cz changelog 0.10.0..$(VERSION) --dry-run
 
-publish: clean ## package and upload a release
-	poetry publish --build --skip-existing
+pypi: clean ## package and upload a release
+	cz bump --yes -ch -cc --increment patch --dry-run
+	poetry publish --build --skip-existing --dry-run
 
 docker: ## build docker image of CI/CD.
 	docker build . -t mootdx:$(VERSION)
 
 bump: ## bump version.
 	# https://commitizen-tools.github.io/commitizen/
+	# https://keepachangelog.com/zh-CN/
 	#cz bump --dry-run --yes -ch -cc --increment {MAJOR,MINOR,PATCH}
-	@cz bump --dry-run --yes -ch -cc --increment patch
+	@cz bump --yes -ch -cc --increment patch --dry-run
