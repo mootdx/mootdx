@@ -29,7 +29,7 @@ class TestMd5sum(unittest.TestCase):
         self.assertIsNone(md5sum('/ad/sd/sd'))
 
     def test_md5sum_success(self):
-        self.assertIsNotNone(md5sum('./setup.cfg'))
+        self.assertIsNotNone(md5sum('./README.md'))
 
 
 class TestToData(unittest.TestCase):

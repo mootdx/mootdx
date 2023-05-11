@@ -3,7 +3,7 @@ name = "mootdx"
 version = "0.10.3"
 description = "通达信数据读取接口."
 authors = ["bopo <ibopo@126.com>"]
-readme = "README.rst"
+readme = "README.md"
 license = "MIT license"
 homepage = "https://www.mootdx.com"
 repository = "https://github.com/mootdx/mootdx"
@@ -64,6 +64,11 @@ secondary = false
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
+[tool.pytest.ini_options]
+testpaths = "tests"
+addopts = "-p no:warnings"
+log_cli = 0
+log_cli_level = "DEBUG"
 
 [tool.commitizen]
 version = "0.10.3"
@@ -73,7 +78,6 @@ annotated_tag = true
 changelog_file = "HISTORY.md"
 version_files = [
     "mootdx/__init__.py:__version__",
-    "setup.cfg:current_version = ",
     "pyproject.toml:version",
     "Makefile:VERSION := ",
 ]
