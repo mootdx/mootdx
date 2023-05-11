@@ -25,25 +25,30 @@
 --------
 
 -   操作系统: Windows / MacOS / Linux 都可以运行.
--   Python: 3.8 以及以上版本, 不支持 python2.
--   依赖库: PyTdx\>=1.67
+-   Python: 3.8 以及以上版本.
 
 安装方法
 --------
 
 > 新手建议使用 `pip install -U 'mootdx[all]'` 安装
 
-# PIP 安装方法
+### PIP 安装方法
 ```shell
 
 # 包含核心依赖安装
-pip install -U 'mootdx'
+pip install 'mootdx'
 
 # 包含命令行依赖安装, 如果使用命令行工具可以使用这种方式安装
-pip install -U 'mootdx[cli]'
+pip install 'mootdx[cli]'
 
 # 包含所有扩展依赖安装, 如果不清楚各种依赖关系就用这个命令
-pip install -U 'mootdx[all]'
+pip install 'mootdx[all]'
+```
+
+### 升级安装
+
+```shell
+pip install -U tdxpy mootdx
 ```
 
 > 如果不清楚各种依赖关系就用这个命令 `pip install -U 'mootdx[all]'`

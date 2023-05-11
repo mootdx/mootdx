@@ -75,6 +75,7 @@ coverage: ## check code coverage quickly with the default Python
 	$(BROWSER) htmlcov/index.html
 
 test-all: ## run tests on every Python version with tox
+	poetry export --without-hashes --without-urls -o requirements.txt
 	tox
 
 docs: ## generate Mkdocs HTML documentation, including API docs

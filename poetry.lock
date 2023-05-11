@@ -302,6 +302,26 @@ url = "https://mirrors.ustc.edu.cn/pypi/web/simple"
 reference = "mirrors"
 
 [[package]]
+name = "freezegun"
+version = "1.2.2"
+description = "Let your Python tests travel through time"
+category = "dev"
+optional = false
+python-versions = ">=3.6"
+files = [
+    {file = "freezegun-1.2.2-py3-none-any.whl", hash = "sha256:ea1b963b993cb9ea195adbd893a48d573fda951b0da64f60883d7e988b606c9f"},
+    {file = "freezegun-1.2.2.tar.gz", hash = "sha256:cd22d1ba06941384410cd967d8a99d5ae2442f57dfafeff2fda5de8dc5c05446"},
+]
+
+[package.dependencies]
+python-dateutil = ">=2.7"
+
+[package.source]
+type = "legacy"
+url = "https://mirrors.ustc.edu.cn/pypi/web/simple"
+reference = "mirrors"
+
+[[package]]
 name = "h11"
 version = "0.14.0"
 description = "A pure-Python, bring-your-own-I/O implementation of HTTP/1.1"
@@ -850,6 +870,23 @@ url = "https://mirrors.ustc.edu.cn/pypi/web/simple"
 reference = "mirrors"
 
 [[package]]
+name = "typing-extensions"
+version = "4.5.0"
+description = "Backported and Experimental Type Hints for Python 3.7+"
+category = "main"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "typing_extensions-4.5.0-py3-none-any.whl", hash = "sha256:fb33085c39dd998ac16d1431ebc293a8b3eedd00fd4a32de0ff79002c19511b4"},
+    {file = "typing_extensions-4.5.0.tar.gz", hash = "sha256:5cb5f4a79139d699607b3ef622a1dedafa84e115ab0024e0d9c044a9479ca7cb"},
+]
+
+[package.source]
+type = "legacy"
+url = "https://mirrors.ustc.edu.cn/pypi/web/simple"
+reference = "mirrors"
+
+[[package]]
 name = "wcwidth"
 version = "0.2.6"
 description = "Measures the displayed width of unicode strings in a terminal"
@@ -873,5 +910,5 @@ fetch = ["py-mini-racer"]
 
 [metadata]
 lock-version = "2.0"
-python-versions = "^3.9"
-content-hash = "4bd7f2511351f9d12aed3bf2e384a4dc408e10faa1d6a61015ed2aa3f48377d2"
+python-versions = "^3.8"
+content-hash = "ca0e19fd819e673404b2698980a325c544ec40992a771585e0a3a501ff67ad85"
