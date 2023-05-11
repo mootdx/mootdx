@@ -5,5 +5,5 @@ from mootdx.consts import HQ_HOSTS
 from mootdx.server import server
 from mootdx.utils import get_config_path
 
-__version__ = '0.10.2'
+__version__ = '0.10.3'
 __author__ = 'bopo.wang <ibopo@126.com>'
