@@ -309,10 +309,7 @@ class StdQuotes(BaseQuotes):
         if market not in [0, 1]:
             raise MootdxValidationException('市场代码错误, 目前只支持沪深市场')
 
-        result = self.client.get_history_transaction_data(
-            market=market, code=symbol, start=start, count=offset, date=int(date)
-        )
-
+        result = self.client.get_history_transaction_data(market, symbol, start, offset, int(date))
         return to_data(result, symbol=symbol, client=self, **kwargs)
 
     def F10C(self, symbol=''):  # noqa
