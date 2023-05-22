@@ -410,21 +410,24 @@ class StdQuotes(BaseQuotes):
         return self.k(**kwargs)
 
     def get_k_data(self, code, start_date, end_date):
-        # !! todo
+        # 开始时间离现在有几天
         first = (pd.to_datetime(end_date) - pd.to_datetime(datetime.now().date())).days
         first = (abs(first), 0)[first >= 0]
 
+        # 结束时间离现在有几天
         last = (pd.to_datetime(start_date) - pd.to_datetime(datetime.now().date())).days
         last = (abs(last), 0)[last >= 0]
 
+        # 去除节假日
         first -= int(first / 2.8)  # 非交易日大概是全年的1/3
         last -= int(last / 3.5)  # 非交易日大概是全年的1/3
 
         temp = []
+        market = get_stock_market(code)
 
         for i in range(math.ceil((last - first) / 800)):
-            temp.append(self.client.to_df(
-                self.client.get_security_bars(9, get_stock_market(code), code, (first + i * 800), 800)))
+            data = self.client.get_security_bars(9, market, code, (first + i * 800), 800)
+            temp.append(self.client.to_df(data))
 
         data = pd.concat(temp)
         data = data.assign(date=data['datetime'].apply(lambda x: str(x)[0:10])).assign(code=str(code))
