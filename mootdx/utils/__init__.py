@@ -169,9 +169,9 @@ def to_data(v, **kwargs):
 
         result = to_adjust(result, symbol=symbol, adjust=adjust)
 
-    @file_cache(refresh_time=3600 * 24, filepath=get_config_path('cache/'))
-    def cache_data(data):
-        return data
+    # @file_cache(refresh_time=3600 * 24, filepath=get_config_path('cache/'))
+    # def cache_data(data):
+    #     return data
 
     return result
 

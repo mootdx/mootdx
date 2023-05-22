@@ -23,7 +23,7 @@ def _reversion(bfq_data, xdxr_data, type_):
 
     # 计算前日收盘
     data['preclose'] = (data['close'].shift(1) * 10 - data['fenhong'] + data['peigu'] * data['peigujia']) / (
-            10 + data['peigu'] + data['songzhuangu'])
+        10 + data['peigu'] + data['songzhuangu'])
 
     # 前复权
     if type_.lower() in ['01', 'qfq']:
@@ -57,7 +57,7 @@ def _reversion(bfq_data, xdxr_data, type_):
 
 def reversion(stock_data, xdxr, type_='01'):
     def _fetch_xdxr(collections=None):
-        """获取股票除权信息/数据库"""
+        """获取股票除权信息数据"""
         columns = [
             'category',
             'category_meaning',
@@ -77,10 +77,11 @@ def reversion(stock_data, xdxr, type_='01'):
         ]
 
         try:
-            collections['date'] = pd.to_datetime(collections[['year', 'month', 'day']], utc=False)
-            data = collections.set_index(['date'])
-            data = data.drop(['year', 'month', 'day', ], axis=1)
+            data = collections[['category', 'fenhong', 'peigu', 'peigujia', 'songzhuangu']]
+            data['date'] = pd.to_datetime(data[['year', 'month', 'day']], utc=False)
+            data = data.set_index(['date'])
 
+            # data = data.drop(['year', 'month', 'day', ], axis=1)
             # data = pd.DataFrame([item for item in collections.find({"code": symbol})]).drop(["_id"], axis=1)
             # data = collections
             # data["date"] = pd.to_datetime(data["date"], utc=False)
@@ -95,7 +96,7 @@ def reversion(stock_data, xdxr, type_='01'):
     #     symbol = stock_data.index.remove_unused_levels().levels[1][0]
     # else:
     #     symbol = stock_data["code"][0]
-    symbol = ''
+    # symbol = ''
     # symbol = (
     #     stock_data.index.remove_unused_levels().levels[1][0]
     #     if isinstance(stock_data.index, pd.MultiIndex)
