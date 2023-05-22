@@ -25,7 +25,7 @@ def file_cache(filepath: PathLike, refresh_time: Optional[float] = None):
                 if refresh_time is not None and os.path.getmtime(filepath) + int(refresh_time) < time.time():
                     raise FileNeedRefresh(f'{filepath} 太旧，需要刷新')
                 dataframe: pd.DataFrame = pd.read_pickle(filepath)
-            except FileNotFoundError:
+            except (FileNotFoundError, EOFError):
                 pathlib.Path(filepath).parent.mkdir(exist_ok=True, parents=True)
 
                 dataframe = func(*args, **kwargs)

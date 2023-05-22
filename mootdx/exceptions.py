@@ -24,5 +24,10 @@ class MootdxValidationException(Exception):
         pass
 
 
+class MootdxModuleNotFoundError(Exception):
+    def __init__(self, *args, **kwargs):
+        pass
+
+
 class FileNeedRefresh(FileNotFoundError):
     pass

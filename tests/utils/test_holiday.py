@@ -8,9 +8,9 @@ from mootdx import get_config_path
 try:
     import py_mini_racer
 
-    mini_racer = False
+    not_mini_racer = False
 except ImportError:
-    mini_racer = True
+    not_mini_racer = True
 
 
 class TestHoliday(TestCase):
@@ -40,10 +40,10 @@ class TestHoliday(TestCase):
         assert holiday('20220123', '%Y%m%d')
 
 
-@pytest.mark.xfail(mini_racer, reason='py_mini_racer not installed')
+@pytest.mark.skipif(not_mini_racer, reason='py_mini_racer not installed')
 class TestHoliday2(TestCase):
-    # def setUp(self) -> None:
-    #     Path(get_config_path('holidays.plk')).unlink(missing_ok=True)
+    def setUp(self) -> None:
+        Path(get_config_path('caches/holidays.plk')).write_text('')
 
     def test_holiday_not_exists(self):
         from mootdx.utils.holiday import holiday2
@@ -58,6 +58,7 @@ class TestHoliday2(TestCase):
         assert not holiday2('2022-01-26').empty
 
 
+@pytest.mark.skipif(not_mini_racer, reason='py_mini_racer not installed')
 def test_holidays():
     from mootdx.utils.holiday import holidays
     assert not holidays().empty
