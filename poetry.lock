@@ -911,4 +911,4 @@ fetch = ["py-mini-racer"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.8"
-content-hash = "ca0e19fd819e673404b2698980a325c544ec40992a771585e0a3a501ff67ad85"
+content-hash = "447728c4816151226be716fd823cf0f90b26599677a6c6d9358cb025e8134268"

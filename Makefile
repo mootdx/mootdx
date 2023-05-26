@@ -126,7 +126,9 @@ pypi: clean ## package and upload a release
 	poetry publish --build --skip-existing --dry-run
 
 docker: ## build docker image of CI/CD.
-	docker build . -t mootdx:$(VERSION)
+	poetry export --without-hashes --with test -E all -o requirements.txt
+	docker build . -t mootdx:build
+	docker-squash mootdx:build -t mootdx:squash
 
 bump: ## bump version.
 	# https://commitizen-tools.github.io/commitizen/

@@ -47,11 +47,12 @@ all = ["prettytable", "click", "py-mini-racer"]
 
 
 [tool.poetry.group.dev.dependencies]
-pytest = "^7.3.1"
-pytest-cov = "^4.0.0"
 pip = "^23.1.2"
-freezegun = "^1.2.2"
 
+[tool.poetry.group.test.dependencies]
+pytest-cov = "^4.0.0"
+freezegun = "^1.2.2"
+pytest = "^7.3.1"
 
 [[tool.poetry.source]]
 name = "mirrors"
