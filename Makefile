@@ -41,6 +41,7 @@ clean-build:
 	rm -fr build/
 	rm -fr dist/
 	rm -fr .eggs/
+	rm -fr .temp/
 	find . -name '*.egg-info' -exec rm -fr {} +
 	find . -name '*.egg' -exec rm -f {} +
 
@@ -120,7 +121,8 @@ publish: clean ## 打包并发布
 	poetry publish --build --skip-existing --dry-run
 
 docker: # build docker image of CI/CD.
-	poetry export --without-hashes --with test -E all -o requirements.txt
+	mkdir -p .temp
+	poetry export --without-hashes --with test -E all -o .temp/requirements.txt
 	docker build . -t mootdx:build
 	docker-squash mootdx:build -t mootdx:squash
 
