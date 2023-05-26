@@ -19,7 +19,7 @@
 版本更新(倒序)
 --------------
 
-版本更新日志: <https://mootdx.readthedocs.io/zh_CN/latest/chlog/>
+版本更新日志: <https://mootdx.readthedocs.io/zh_CN/latest/history/>
 
 运行环境
 --------

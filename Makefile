@@ -23,12 +23,12 @@ endef
 export PRINT_HELP_PYSCRIPT
 
 BROWSER := python -c "$$BROWSER_PYSCRIPT"
-VERSION := 0.10.4
+VERSION := 0.10.5
 
 help:
 	@python -c "$$PRINT_HELP_PYSCRIPT" < $(MAKEFILE_LIST)
 
-clean: clean-build clean-pyc clean-test ## remove all build, test, coverage and Python artifacts
+clean: clean-build clean-pyc clean-test # remove all build, test, coverage and Python artifacts
 
 
 unix:
@@ -37,25 +37,26 @@ unix:
 	find . "*.py" | xargs dos2unix
 	dos2unix Makefile
 
-clean-build: ## remove build artifacts
+clean-build:
 	rm -fr build/
 	rm -fr dist/
 	rm -fr .eggs/
+	rm -fr .temp/
 	find . -name '*.egg-info' -exec rm -fr {} +
 	find . -name '*.egg' -exec rm -f {} +
 
-clean-pyc: ## remove Python file artifacts
+clean-pyc:
 	find . -name '*.pyc' -exec rm -f {} +
 	find . -name '*.pyo' -exec rm -f {} +
 	find . -name '*.~' -exec rm -f {} +
 	find . -name '__pycache__' -exec rm -fr {} +
 
-clean-test: ## remove test and coverage artifacts
+clean-test:
 	rm -fr .tox/
 	rm -f .coverage
 	rm -fr htmlcov/
 
-lint: ## check style with flake8
+lint:
 	flake8 --max-line-length=200
 
 cov: clean-test
@@ -64,74 +65,64 @@ cov: clean-test
 fmt:
 	black -l 120 -t py36 -t py37 -t py38 -t py39 -t py310 .
 
-test: ## run tests quickly with the default Python
+test: # run tests quickly with the default Python
 	@poetry run pytest tests
 
-coverage: ## check code coverage quickly with the default Python
-	poetry run coverage report -m
-	poetry run coverage html
-	$(BROWSER) htmlcov/index.html
-
-test-all: requirements ## run tests on every Python version with tox
+test-all:
 	tox
 
-docs: ## generate Mkdocs HTML documentation, including API docs
-	poetry run mkdocs serve
-
-release: test dist history ## package and upload a release
-	poetry run twine upload dist/* --verbose
+docs:
+	poetry run mkdocs serve -a 0.0.0.0:8000
 
 archive: clean
 	git archive --format zip --output ../mootdx-master.zip master
 
-dist: clean ## builds source and wheel package
-	#poetry run python setup.py sdist
-	#poetry run python setup.py bdist_wheel
+#poetry run python setup.py sdist
+#poetry run python setup.py bdist_wheel
+package: clean ## 编译并打包
 	@poetry build -vv
 	ls -lh dist
 
-install: clean ## install the package to the active Python's site-packages
+cleanup: ## 清理开发环境
+	poetry env remove 3.9
+
+prepare: clean ## 准备开发环境
+	git config user.email ibopo@126.com
+	git config pull.rebase false
+	git config user.name bopo
 	poetry install --sync
 
-requirements:
-	poetry export --without-hashes --without-urls -o requirements.txt
+pull:
+	git pull origin `git symbolic-ref --short -q HEAD` --tags
+	#git pull github `git symbolic-ref --short -q HEAD` --tags
+	#git pull gitee `git symbolic-ref --short -q HEAD` --tags
 
-#pull:
-#	git pull origin `git symbolic-ref --short -q HEAD` --tags
-#	git pull github `git symbolic-ref --short -q HEAD` --tags
-#	git pull gitee `git symbolic-ref --short -q HEAD` --tags
-#
-#push: pull
-#	git push origin `git symbolic-ref --short -q HEAD` --tags
-#	git push github `git symbolic-ref --short -q HEAD` --tags
-#	git push gitee `git symbolic-ref --short -q HEAD` --tags
+sync: pull
+	git push origin `git symbolic-ref --short -q HEAD` --tags
+	#git push github `git symbolic-ref --short -q HEAD` --tags
+	#git push gitee `git symbolic-ref --short -q HEAD` --tags
 
 bestip:
 	@poetry run python -m mootdx bestip -v
 
-#patch:
-#	poetry run bumpversion patch
-#	poetry run python setup.py sdist
-#	poetry run python setup.py bdist_wheel
-#	poetry run twine upload dist/* --verbose
+# https://commitizen-tools.github.io/commitizen/
+# pip install commitizen -i https://pypi.tuna.tsinghua.edu.cn/simple
+history: ## 显示增量修改日志
+	@cz changelog --incremental --dry-run
 
-history: ## show commit incremental changelog
-	# https://commitizen-tools.github.io/commitizen/
-	#pip install commitizen -i https://pypi.tuna.tsinghua.edu.cn/simple
-	#cz bump --dry-run --increment patch
-	cz changelog 0.10.0..$(VERSION) --dry-run
-
-pypi: clean ## package and upload a release
-	cz bump --yes -ch -cc --increment patch --dry-run
+#cz bump --dry-run --increment patch
+#cz bump --yes -ch -cc --increment patch --dry-run
+publish: clean ## 打包并发布
 	poetry publish --build --skip-existing --dry-run
 
-docker: ## build docker image of CI/CD.
-	poetry export --without-hashes --with test -E all -o requirements.txt
+docker: # build docker image of CI/CD.
+	mkdir -p .temp
+	poetry export --without-hashes --with test -E all -o .temp/requirements.txt
 	docker build . -t mootdx:build
 	docker-squash mootdx:build -t mootdx:squash
 
-bump: ## bump version.
-	# https://commitizen-tools.github.io/commitizen/
-	# https://keepachangelog.com/zh-CN/
-	#cz bump --dry-run --yes -ch -cc --increment {MAJOR,MINOR,PATCH}
+# https://commitizen-tools.github.io/commitizen/
+# https://keepachangelog.com/zh-CN/
+#cz bump --dry-run --yes -ch -cc --increment {MAJOR,MINOR,PATCH}
+release: ## 发布版本并生成修改日志.
 	@cz bump --yes -ch -cc --increment patch --dry-run
