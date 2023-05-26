@@ -15,31 +15,31 @@ class MooTdxDailyBarReader(TdxDailyBarReader):
     """感谢 bopomofo 的鼎力支持"""
 
     SECURITY_TYPE = [
-        "SH_A_STOCK",
-        "SH_B_STOCK",
-        "SH_STAR_STOCK",
-        "SH_INDEX",
-        "SH_FUND",
-        "SH_BOND",
-        "SZ_A_STOCK",
-        "SZ_B_STOCK",
-        "SZ_INDEX",
-        "SZ_FUND",
-        "SZ_BOND",
+        'SH_A_STOCK',
+        'SH_B_STOCK',
+        'SH_STAR_STOCK',
+        'SH_INDEX',
+        'SH_FUND',
+        'SH_BOND',
+        'SZ_A_STOCK',
+        'SZ_B_STOCK',
+        'SZ_INDEX',
+        'SZ_FUND',
+        'SZ_BOND',
     ]
 
     SECURITY_COEFFICIENT = {
-        "SH_A_STOCK": [0.01, 0.01],
-        "SH_B_STOCK": [0.001, 0.01],
-        "SH_STAR_STOCK": [0.01, 0.01],
-        "SH_INDEX": [0.01, 1.0],
-        "SH_FUND": [0.001, 1.0],
-        "SH_BOND": [0.001, 1.0],
-        "SZ_A_STOCK": [0.01, 0.01],
-        "SZ_B_STOCK": [0.01, 0.01],
-        "SZ_INDEX": [0.01, 1.0],
-        "SZ_FUND": [0.001, 0.01],
-        "SZ_BOND": [0.001, 0.01],
+        'SH_A_STOCK': [0.01, 0.01],
+        'SH_B_STOCK': [0.001, 0.01],
+        'SH_STAR_STOCK': [0.01, 0.01],
+        'SH_INDEX': [0.01, 1.0],
+        'SH_FUND': [0.001, 1.0],
+        'SH_BOND': [0.001, 1.0],
+        'SZ_A_STOCK': [0.01, 0.01],
+        'SZ_B_STOCK': [0.01, 0.01],
+        'SZ_INDEX': [0.01, 1.0],
+        'SZ_FUND': [0.001, 0.01],
+        'SZ_BOND': [0.001, 0.01],
     }
 
     def get_security_type(self, fname):
@@ -48,40 +48,40 @@ class MooTdxDailyBarReader(TdxDailyBarReader):
         code_head = fname[-10:-8]
 
         if exchange == self.SECURITY_EXCHANGE[0]:
-            if code_head in ["00", "30"]:
-                return "SZ_A_STOCK"
+            if code_head in ['00', '30']:
+                return 'SZ_A_STOCK'
 
-            if code_head in ["20"]:
-                return "SZ_B_STOCK"
+            if code_head in ['20']:
+                return 'SZ_B_STOCK'
 
-            if code_head in ["39"]:
-                return "SZ_INDEX"
+            if code_head in ['39']:
+                return 'SZ_INDEX'
 
-            if code_head in ["15", "16"]:
-                return "SZ_FUND"
+            if code_head in ['15', '16']:
+                return 'SZ_FUND'
 
-            if code_head in ["10", "11", "12", "13", "14"]:
-                return "SZ_BOND"
+            if code_head in ['10', '11', '12', '13', '14']:
+                return 'SZ_BOND'
         elif exchange == self.SECURITY_EXCHANGE[1]:
-            if code_head in ["60"]:
-                return "SH_A_STOCK"
+            if code_head in ['60']:
+                return 'SH_A_STOCK'
 
-            if code_head in ["90"]:
-                return "SH_B_STOCK"
+            if code_head in ['90']:
+                return 'SH_B_STOCK'
 
-            if code_head in ["68"]:
-                return "SH_STAR_STOCK"
+            if code_head in ['68']:
+                return 'SH_STAR_STOCK'
 
-            if code_head in ["00", "88", "99"]:
-                return "SH_INDEX"
+            if code_head in ['00', '88', '99']:
+                return 'SH_INDEX'
 
-            if code_head in ["50", "51", "58"]:
-                return "SH_FUND"
+            if code_head in ['50', '51', '58']:
+                return 'SH_FUND'
 
-            if code_head in ["01", "10", "11", "12", "13", "14"]:
-                return "SH_BOND"
+            if code_head in ['01', '10', '11', '12', '13', '14']:
+                return 'SH_BOND'
         else:
-            logger.error("Unknown security exchange !\n")
+            logger.error('Unknown security exchange !\n')
             raise NotImplementedError
 
 
@@ -90,7 +90,7 @@ class MooBaseSocketClient(BaseSocketClient):
         super().__init__()
         self.client = None
 
-    def connect(self, ip="101.227.73.20", port=7709, time_out=CONNECT_TIMEOUT, bindport=None, bindip="0.0.0.0"):
+    def connect(self, ip='101.227.73.20', port=7709, time_out=CONNECT_TIMEOUT, bindport=None, bindip='0.0.0.0'):
         """
 
         :param ip:  服务器ip 地址
@@ -104,7 +104,7 @@ class MooBaseSocketClient(BaseSocketClient):
         self.client = TrafficStatSocket(socket.AF_INET, socket.SOCK_STREAM)
         self.client.settimeout(time_out)
 
-        logger.debug("connecting to server : %s on port :%d" % (ip, port))
+        logger.debug('connecting to server : %s on port :%d' % (ip, port))
 
         try:
             self.ip = ip
@@ -116,27 +116,27 @@ class MooBaseSocketClient(BaseSocketClient):
             self.client.connect((ip, port))
         except socket.timeout as e:
             logger.debug(e)
-            logger.debug("connection expired")
+            logger.debug('connection expired')
 
             if self.raise_exception:
-                raise TdxConnectionError("connection timeout error")
+                raise TdxConnectionError('connection timeout error')
 
             return False
         except Exception as e:
             logger.debug(e)
             if self.raise_exception:
-                raise TdxConnectionError("other errors")
+                raise TdxConnectionError('other errors')
 
             return False
 
-        logger.debug("connected!")
+        logger.debug('connected!')
 
         if self.need_setup:
             self.setup()
 
         if self.heartbeat:
             self.stop_event = threading.Event()
-            self.heartbeat_thread = HqHeartBeatThread(self, self.stop_event, self.heartbeat_interval)
+            self.heartbeat_thread = HeartBeatThread(self, self.stop_event, self.heartbeat_interval)
             self.heartbeat_thread.start()
 
         return self
@@ -147,7 +147,7 @@ class MooBaseSocketClient(BaseSocketClient):
             self.stop_event.set()
 
         if self.client:
-            logger.debug("disconnecting")
+            logger.debug('disconnecting')
 
             try:
                 self.client.shutdown(socket.SHUT_RDWR)
@@ -157,9 +157,9 @@ class MooBaseSocketClient(BaseSocketClient):
                 logger.debug(str(e))
 
                 if self.raise_exception:
-                    raise TdxConnectionError("disconnect err")
+                    raise TdxConnectionError('disconnect err')
 
-            logger.debug("disconnected")
+            logger.debug('disconnected')
 
     def setup(self):
         pass

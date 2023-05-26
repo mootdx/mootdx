@@ -13,4 +13,8 @@ def is_empty(obj):
 
 @pytest.fixture()
 def quotes():
-    return Quotes.factory("std")
+    return Quotes.factory('std')
+
+# @pytest.fixture()
+# def reader():
+#     return Reader.factory("std")

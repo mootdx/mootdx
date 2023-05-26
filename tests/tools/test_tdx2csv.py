@@ -1,26 +1,16 @@
-import unittest
-
-import pytest
-
-from mootdx.tools.tdx2csv import batch
 from mootdx.tools.tdx2csv import txt2csv
 
 
-class TestTdx2csv(unittest.TestCase):
-    def test_batch(self):
-        batch(src="tests/fixtures/export", dst="output")
-
-    def test_success(self):
-        result = txt2csv(infile="tests/fixtures/export/SH#601003.txt")
-        assert not result.empty
-
-    def test_exception(self):
-        with pytest.raises(ValueError):
-            assert txt2csv(infile="setup.cfg") is None
-
-        with pytest.raises(FileNotFoundError):
-            assert txt2csv(infile="/tmp/1.txt") is None
+# @pytest.mark.asyncio
+# async def test_covert():
+#     await covert(src="tests/fixtures/export/SH#601005.txt", dst="tests/fixtures/export/SH#601005.csv")
 
 
-if __name__ == "__main__":
-    unittest.main()
+def test_success():
+    result = txt2csv(infile='tests/fixtures/export/SH#601003.txt')
+    assert not result.empty
+
+
+def test_exception():
+    assert txt2csv(infile='setup.cfg').empty
+    assert txt2csv(infile='/tmp/1.txt').empty

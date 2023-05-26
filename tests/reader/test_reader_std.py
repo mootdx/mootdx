@@ -1,43 +1,53 @@
-import unittest
+import pytest
 
 from mootdx.reader import Reader
 from tests.conftest import is_empty
 
 
-# @pytest.mark.skip
-class TestReader(unittest.TestCase):
-    reader = None
-
-    # 初始化工作
-    def setup_class(self):
-        self.reader = Reader.factory(market="std", tdxdir="tests/fixtures")
-
-    # 退出清理工作
-    def teardown_class(self):
-        self.reader = None
-
-    def test_daily(self):
-        result = self.reader.daily(symbol="127021")
-        assert not is_empty(result), "股票代码不存在"
-
-        result = self.reader.daily(symbol="000000")
-        assert is_empty(result), result
-
-    def test_daily_88(self):
-        result = self.reader.daily(symbol="sh881478")
-        assert not is_empty(result), result
-
-        result = self.reader.daily(symbol="881478")
-        assert not is_empty(result), result
-
-    def test_minute1(self):
-        result = self.reader.minute(symbol="688001", suffix="1")
-        self.assertFalse(result.empty, result)
-
-    def test_minute5(self):
-        result = self.reader.minute(symbol="688001", suffix="5")
-        self.assertFalse(result.empty, result)
+@pytest.fixture()
+def reader():
+    return Reader.factory(market='std', tdxdir='tests/fixtures')
 
 
-if __name__ == "__main__":
-    unittest.main()
+@pytest.mark.parametrize(
+    'symbol,adjust,empty', [
+        ('127021', '', False),
+        ('000000', '', True),
+        ('sh881478', '', False),
+        ('881478', '', False),
+        ('688001', 'qfq', False),
+        ('000001', 'qfq', False),
+        ('127021', 'qfq', False),
+    ])
+def test_daily(reader, symbol, adjust, empty):
+    result = reader.daily(symbol=symbol, adjust=adjust)
+    assert is_empty(result) is empty
+
+
+@pytest.mark.parametrize(
+    'symbol,adjust,empty', [
+        ('688001', 'qfq', False),
+        ('000001', 'qfq', False),
+        ('127021', 'qfq', False),
+    ])
+def test_daily_qfq(reader, symbol, adjust, empty):
+    result = reader.daily(symbol=symbol, adjust=adjust)
+    assert is_empty(result) is empty
+
+
+@pytest.mark.parametrize(
+    'symbol,adjust,empty', [
+        ('688001', '02', False),
+        ('000001', 'hfq', False),
+        ('127021', 'hfq', False),
+    ])
+def test_daily_hfq(reader, symbol, adjust, empty):
+    result = reader.daily(symbol=symbol, adjust=adjust)
+    assert is_empty(result) is empty
+
+
+@pytest.mark.parametrize('symbol', ['688001', '688001.5', '688001.loc1'])
+def test_minute(reader, symbol):
+    for suffix in ('1', '5'):
+        result = reader.minute(symbol=symbol, suffix=suffix)
+        assert not result.empty

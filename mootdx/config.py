@@ -1,7 +1,3 @@
-"""
-用于管理缓存的配置数据
-使用前必须先调用 init() 。
-"""
 import copy
 import json
 from pathlib import Path
@@ -13,16 +9,16 @@ from mootdx.logger import logger
 from mootdx.server import bestip
 from mootdx.utils import get_config_path
 
-__all__ = ["set", "get", "copy", "update", "settings"]
+__all__ = ['set', 'get', 'copy', 'update', 'settings']
 
 settings = {
-    "SERVER": {"HQ": HQ_HOSTS, "EX": EX_HOSTS, "GP": GP_HOSTS},
-    "BESTIP": {"HQ": "", "EX": "", "GP": ""},
-    "TDXDIR": "C:/new_tdx",
+    'SERVER': {'HQ': HQ_HOSTS, 'EX': EX_HOSTS, 'GP': GP_HOSTS},
+    'BESTIP': {'HQ': '', 'EX': '', 'GP': ''},
+    'TDXDIR': 'C:/new_tdx',
 }
 
 BASE = Path(__file__).parent.parent
-CONF = get_config_path("config.json")
+CONF = get_config_path('config.json')
 
 
 def setup():
@@ -33,17 +29,17 @@ def setup():
     """
     global settings
 
-    def load_config(settings):
-        options = json.load(open(CONF, "r", encoding="utf-8"))
+    def load_config():
+        options = json.load(open(CONF, 'r', encoding='utf-8'))
         settings.update(options)
 
     try:
-        load_config(settings)
+        load_config()
     except (json.JSONDecodeError, FileNotFoundError):
-        logger.warning(f"未找到配置文件 {CONF}, 正在生成配置文件.")
+        logger.warning(f'未找到配置文件 {CONF}, 正在生成配置文件.')
         bestip(console=False, limit=5, sync=False)
     finally:
-        load_config(settings)
+        load_config()
 
     return True if settings else False
 
@@ -60,7 +56,7 @@ def has(key, value):
     return value in settings[key]
 
 
-def set(key, value):
+def set(key, value):  # noqa
     """
     通过 key 设置某一项值
 
@@ -81,7 +77,7 @@ def get(key, default=None):
     :return:
     """
 
-    key = key.split(".")
+    key = key.split('.')
     cfg = settings.get(key[0])
 
     if len(key) > 1:

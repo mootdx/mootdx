@@ -7,18 +7,27 @@ class MootdxException(Exception):
         :param args: Exception arguments
         :param kwargs: Exception kwargs
         """
-        self.provider = kwargs.get("provider")
-        self.message = kwargs.get("message")
+        self.provider = kwargs.get('provider')
+        self.response = kwargs.get('response')
 
-        self.data = kwargs.get("data")
-        self.response = kwargs.get("response")
+        self.message = kwargs.get('message')
+        self.data = kwargs.get('data')
 
         super().__init__(self.message)
 
     def __repr__(self):
-        return f"<MOOTDXError: {self.message}>"
+        return f'<MOOTDXError: {self.message}>'
 
 
 class MootdxValidationException(Exception):
-    def __init__(self, *args, **kwargs):  # real signature unknown
+    def __init__(self, *args, **kwargs):
         pass
+
+
+class MootdxModuleNotFoundError(Exception):
+    def __init__(self, *args, **kwargs):
+        pass
+
+
+class FileNeedRefresh(FileNotFoundError):
+    pass

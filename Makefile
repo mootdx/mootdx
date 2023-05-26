@@ -23,7 +23,7 @@ endef
 export PRINT_HELP_PYSCRIPT
 
 BROWSER := python -c "$$BROWSER_PYSCRIPT"
-VERSION := 0.9.11
+VERSION := 0.10.4
 
 help:
 	@python -c "$$PRINT_HELP_PYSCRIPT" < $(MAKEFILE_LIST)
@@ -65,16 +65,14 @@ fmt:
 	black -l 120 -t py36 -t py37 -t py38 -t py39 -t py310 .
 
 test: ## run tests quickly with the default Python
-	# unset https_proxy http_proxy all_proxy
-	# poetry run py.test tests -v
-	coverage run -m py.test tests -v
+	@poetry run pytest tests
 
 coverage: ## check code coverage quickly with the default Python
-	coverage report -m
-	coverage html
+	poetry run coverage report -m
+	poetry run coverage html
 	$(BROWSER) htmlcov/index.html
 
-test-all: ## run tests on every Python version with tox
+test-all: requirements ## run tests on every Python version with tox
 	tox
 
 docs: ## generate Mkdocs HTML documentation, including API docs
@@ -93,36 +91,47 @@ dist: clean ## builds source and wheel package
 	ls -lh dist
 
 install: clean ## install the package to the active Python's site-packages
-	python setup.py install
+	poetry install --sync
 
 requirements:
-	python -m pip install -r requirements.dev -r requirements.txt -r tests/requirements.txt
+	poetry export --without-hashes --without-urls -o requirements.txt
 
-pull:
-	git pull origin `git symbolic-ref --short -q HEAD` --tags
-	git pull github `git symbolic-ref --short -q HEAD` --tags
-	git pull gitee `git symbolic-ref --short -q HEAD` --tags
-
-push: pull
-	git push origin `git symbolic-ref --short -q HEAD` --tags
-	git push github `git symbolic-ref --short -q HEAD` --tags
-	git push gitee `git symbolic-ref --short -q HEAD` --tags
+#pull:
+#	git pull origin `git symbolic-ref --short -q HEAD` --tags
+#	git pull github `git symbolic-ref --short -q HEAD` --tags
+#	git pull gitee `git symbolic-ref --short -q HEAD` --tags
+#
+#push: pull
+#	git push origin `git symbolic-ref --short -q HEAD` --tags
+#	git push github `git symbolic-ref --short -q HEAD` --tags
+#	git push gitee `git symbolic-ref --short -q HEAD` --tags
 
 bestip:
 	@poetry run python -m mootdx bestip -v
 
-patch:
-	poetry run bumpversion patch
-	poetry run python setup.py sdist
-	poetry run python setup.py bdist_wheel
-	poetry run twine upload dist/* --verbose
+#patch:
+#	poetry run bumpversion patch
+#	poetry run python setup.py sdist
+#	poetry run python setup.py bdist_wheel
+#	poetry run twine upload dist/* --verbose
 
 history: ## show commit incremental changelog
+	# https://commitizen-tools.github.io/commitizen/
 	#pip install commitizen -i https://pypi.tuna.tsinghua.edu.cn/simple
-	cz bump --dry-run --increment patch
+	#cz bump --dry-run --increment patch
+	cz changelog 0.10.0..$(VERSION) --dry-run
 
-publish: clean ## package and upload a release
-	poetry publish --build --username="$(USERNAME)" --password="$(PASSWORD)" --skip-existing --dry-run
+pypi: clean ## package and upload a release
+	cz bump --yes -ch -cc --increment patch --dry-run
+	poetry publish --build --skip-existing --dry-run
 
 docker: ## build docker image of CI/CD.
-	docker build . -t mootdx:$(VERSION)
+	poetry export --without-hashes --with test -E all -o requirements.txt
+	docker build . -t mootdx:build
+	docker-squash mootdx:build -t mootdx:squash
+
+bump: ## bump version.
+	# https://commitizen-tools.github.io/commitizen/
+	# https://keepachangelog.com/zh-CN/
+	#cz bump --dry-run --yes -ch -cc --increment {MAJOR,MINOR,PATCH}
+	@cz bump --yes -ch -cc --increment patch --dry-run
