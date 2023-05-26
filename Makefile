@@ -87,6 +87,9 @@ cleanup: ## 清理开发环境
 	poetry env remove 3.9
 
 prepare: clean ## 准备开发环境
+	git config user.email ibopo@126.com
+	git config pull.rebase false
+	git config user.name bopo
 	poetry install --sync
 
 
