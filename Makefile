@@ -72,7 +72,7 @@ test-all:
 	tox
 
 docs:
-	poetry run mkdocs serve
+	poetry run mkdocs serve -a 0.0.0.0:8000
 
 archive: clean
 	git archive --format zip --output ../mootdx-master.zip master
