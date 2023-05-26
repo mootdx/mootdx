@@ -77,9 +77,9 @@ docs:
 archive: clean
 	git archive --format zip --output ../mootdx-master.zip master
 
+#poetry run python setup.py sdist
+#poetry run python setup.py bdist_wheel
 package: clean ## 编译并打包
-	#poetry run python setup.py sdist
-	#poetry run python setup.py bdist_wheel
 	@poetry build -vv
 	ls -lh dist
 
@@ -92,35 +92,27 @@ prepare: clean ## 准备开发环境
 	git config user.name bopo
 	poetry install --sync
 
+pull:
+	git pull origin `git symbolic-ref --short -q HEAD` --tags
+	#git pull github `git symbolic-ref --short -q HEAD` --tags
+	#git pull gitee `git symbolic-ref --short -q HEAD` --tags
 
-#pull:
-#	git pull origin `git symbolic-ref --short -q HEAD` --tags
-#	git pull github `git symbolic-ref --short -q HEAD` --tags
-#	git pull gitee `git symbolic-ref --short -q HEAD` --tags
-#
-#push: pull
-#	git push origin `git symbolic-ref --short -q HEAD` --tags
-#	git push github `git symbolic-ref --short -q HEAD` --tags
-#	git push gitee `git symbolic-ref --short -q HEAD` --tags
+sync: pull
+	git push origin `git symbolic-ref --short -q HEAD` --tags
+	#git push github `git symbolic-ref --short -q HEAD` --tags
+	#git push gitee `git symbolic-ref --short -q HEAD` --tags
 
 bestip:
 	@poetry run python -m mootdx bestip -v
 
-#patch:
-#	poetry run bumpversion patch
-#	poetry run python setup.py sdist
-#	poetry run python setup.py bdist_wheel
-#	poetry run twine upload dist/* --verbose
-
-
+# https://commitizen-tools.github.io/commitizen/
+# pip install commitizen -i https://pypi.tuna.tsinghua.edu.cn/simple
 history: ## 显示增量修改日志
-	# https://commitizen-tools.github.io/commitizen/
-	#pip install commitizen -i https://pypi.tuna.tsinghua.edu.cn/simple
-	cz changelog --incremental --dry-run
+	@cz changelog --incremental --dry-run
 
+#cz bump --dry-run --increment patch
+#cz bump --yes -ch -cc --increment patch --dry-run
 publish: clean ## 打包并发布
-	#cz bump --dry-run --increment patch
-	#cz bump --yes -ch -cc --increment patch --dry-run
 	poetry publish --build --skip-existing --dry-run
 
 docker: # build docker image of CI/CD.
@@ -129,8 +121,8 @@ docker: # build docker image of CI/CD.
 	docker build . -t mootdx:build
 	docker-squash mootdx:build -t mootdx:squash
 
+# https://commitizen-tools.github.io/commitizen/
+# https://keepachangelog.com/zh-CN/
+#cz bump --dry-run --yes -ch -cc --increment {MAJOR,MINOR,PATCH}
 release: ## 发布版本并生成修改日志.
-	# https://commitizen-tools.github.io/commitizen/
-	# https://keepachangelog.com/zh-CN/
-	#cz bump --dry-run --yes -ch -cc --increment {MAJOR,MINOR,PATCH}
-	cz bump --yes -ch -cc --increment patch --dry-run
+	@cz bump --yes -ch -cc --increment patch --dry-run

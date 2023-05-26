@@ -74,7 +74,7 @@ log_cli_level = "DEBUG"
 [tool.commitizen]
 tag_format = "v$version"
 annotated_tag = true
-changelog_file = "docs/chlog.md"
+changelog_file = "docs/history.md"
 changelog_incremental = true
 update_changelog_on_bump = true
 version_provider = "poetry"
