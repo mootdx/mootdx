@@ -84,7 +84,7 @@ package: clean ## 编译并打包
 	ls -lh dist
 
 cleanup: ## 清理开发环境
-	poetry env remove 3.9
+	poetry env remove `poetry env list | grep '(Activated)' | cut -d ' ' -f1 | sed 's/-py/ /g' | awk '{print $$NF}'`
 
 prepare: clean ## 准备开发环境
 	git config user.email ibopo@126.com
