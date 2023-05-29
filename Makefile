@@ -126,7 +126,7 @@ docker: # build docker image of CI/CD.
 # https://keepachangelog.com/zh-CN/
 #cz bump --dry-run --yes -ch -cc --increment {MAJOR,MINOR,PATCH}
 release: ## 发布版本并生成修改日志.
-	@cz bump --yes -ch -cc --increment patch --dry-run
+	cz bump --yes -ch -cc --increment patch --dry-run
 
 version: ## 打印项目当前版本
 	@echo $(VERSION)
