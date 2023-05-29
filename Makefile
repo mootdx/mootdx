@@ -1,4 +1,5 @@
-.PHONY: clean clean-test clean-pyc clean-build docs help
+.PHONY: cleanup prepare history publish release version clean test cov
+
 .DEFAULT_GOAL := help
 define BROWSER_PYSCRIPT
 import os, webbrowser, sys
@@ -23,7 +24,7 @@ endef
 export PRINT_HELP_PYSCRIPT
 
 BROWSER := python -c "$$BROWSER_PYSCRIPT"
-VERSION := 0.10.5
+VERSION := `poetry run python -m mootdx.version`
 
 help:
 	@python -c "$$PRINT_HELP_PYSCRIPT" < $(MAKEFILE_LIST)
@@ -84,7 +85,7 @@ package: clean ## 编译并打包
 	ls -lh dist
 
 cleanup: ## 清理开发环境
-	poetry env remove `poetry env list | grep '(Activated)' | cut -d ' ' -f1 | sed 's/-py/ /g' | awk '{print $$NF}'`
+	@poetry env remove `poetry env list | grep '(Activated)' | cut -d ' ' -f1 | sed 's/-py/ /g' | awk '{print $$NF}'`
 
 prepare: clean ## 准备开发环境
 	git config user.email ibopo@126.com
@@ -126,3 +127,6 @@ docker: # build docker image of CI/CD.
 #cz bump --dry-run --yes -ch -cc --increment {MAJOR,MINOR,PATCH}
 release: ## 发布版本并生成修改日志.
 	@cz bump --yes -ch -cc --increment patch --dry-run
+
+version: ## 打印项目当前版本
+	@echo $(VERSION)
