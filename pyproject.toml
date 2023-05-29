@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "mootdx"
-version = "0.10.5"
+version = "0.10.6"
 description = "通达信数据读取接口."
 authors = ["bopo <ibopo@126.com>"]
 readme = "README.md"
@@ -80,5 +80,4 @@ update_changelog_on_bump = true
 version_provider = "poetry"
 version_files = [
     "mootdx/__init__.py:__version__",
-    "Makefile:VERSION := ",
 ]
