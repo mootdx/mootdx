@@ -1,4 +1,8 @@
+import logging
+
 import pandas as pd
+
+logger = logging.getLogger(__name__)
 
 
 def _reversion(bfq_data, xdxr_data, type_):
@@ -77,9 +81,11 @@ def reversion(stock_data, xdxr, type_='01'):
         ]
 
         try:
-            data = collections[['category', 'fenhong', 'peigu', 'peigujia', 'songzhuangu']]
-            data['date'] = pd.to_datetime(data[['year', 'month', 'day']], utc=False)
-            data = data.set_index(['date'])
+            data = collections
+
+            if 'date' not in data.columns:
+                data['date'] = pd.to_datetime(data[['year', 'month', 'day']], utc=False)
+                data = data.set_index(['date'])
 
             # data = data.drop(['year', 'month', 'day', ], axis=1)
             # data = pd.DataFrame([item for item in collections.find({"code": symbol})]).drop(["_id"], axis=1)
@@ -87,8 +93,9 @@ def reversion(stock_data, xdxr, type_='01'):
             # data["date"] = pd.to_datetime(data["date"], utc=False)
             # data["date"] = pd.to_datetime(xdxr[["year", "month", "day"]], utc=False)
             # return data.set_index(["date", "code"], drop=False)
-            return data
-        except:
+            return data[['category', 'fenhong', 'peigu', 'peigujia', 'songzhuangu']]
+        except Exception as ex:
+            logger.error(ex)
             return pd.DataFrame(data=[], columns=columns)
 
     # '股票 日线/分钟线 动态复权接口'

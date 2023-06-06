@@ -27,7 +27,7 @@ class TestReversion(unittest.TestCase):
 
     def test_reversion(self):
         data = self.client.bars(symbol=self.symbol)
-        xdxr = self.client.xdxr(symbol=self.symbol)
+        xdxr = get_xdxr(symbol=self.symbol)
 
         reversion(data, xdxr, 'qfq')
         # self.assertFalse(result.empty)
