@@ -83,6 +83,7 @@ def etf_reversion(data, xdxr, adjust='01'):
     if adjust.lower() in ['02', 'hfq']:
         data['suogu'] = data['suogu'].fillna(method='ffill')
         data['suogu'] = data['suogu'].fillna(1)
+
         for col in ['open', 'high', 'low', 'close']:
             data[col] = data[col] * data['suogu']
 
@@ -144,7 +145,7 @@ def reversion(symbol, stock_data, xdxr, type_='01'):
     # )
 
     if symbol[:2] in ['15', '16', '50', '51']:
-        return etf_reversion(data=stock_data, xdxr=_fetch_xdxr(xdxr), adjust=type_)
+        stock_data = etf_reversion(data=stock_data, xdxr=_fetch_xdxr(xdxr), adjust=type_)
 
     return _reversion(bfq_data=stock_data, xdxr_data=_fetch_xdxr(xdxr), type_=type_)
 
