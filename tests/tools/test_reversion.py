@@ -29,14 +29,14 @@ class TestReversion(unittest.TestCase):
         data = self.client.bars(symbol=self.symbol)
         xdxr = get_xdxr(symbol=self.symbol)
 
-        reversion(data, xdxr, 'qfq')
+        reversion(self.symbol, data, xdxr, 'qfq')
         # self.assertFalse(result.empty)
 
     def test_to_qfq(self):
         data = self.client.bars(symbol=self.symbol, offset=800)
         xdxr = get_xdxr(symbol=self.symbol)
 
-        data0 = reversion(data, xdxr, 'qfq')
+        data0 = reversion(self.symbol, data, xdxr, 'qfq')
         assert data0.empty is False
 
         data1 = self.client.bars(symbol=self.symbol, offset=800, adjust='Qfq')
@@ -47,7 +47,7 @@ class TestReversion(unittest.TestCase):
         data = self.client.bars(symbol=self.symbol, offset=800)
         xdxr = get_xdxr(symbol=self.symbol)
 
-        data0 = reversion(data, xdxr, 'hfq')
+        data0 = reversion(self.symbol, data, xdxr, 'hfq')
         assert data.empty is False
 
         data1 = self.client.bars(symbol=self.symbol, offset=800, adjust='HFQ')
