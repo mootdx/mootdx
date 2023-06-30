@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "mootdx"
-version = "0.10.8"
+version = "0.10.9"
 description = "通达信数据读取接口."
 authors = ["bopo <ibopo@126.com>"]
 readme = "README.md"
