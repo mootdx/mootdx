@@ -57,9 +57,12 @@ pytest = "^7.3.1"
 [[tool.poetry.source]]
 name = "mirrors"
 url = "https://mirrors.ustc.edu.cn/pypi/web/simple"
-default = true
-secondary = false
+priority = "default"
 
+
+[[tool.poetry.source]]
+name = "PyPI"
+priority = "explicit"
 
 [build-system]
 requires = ["poetry-core"]
