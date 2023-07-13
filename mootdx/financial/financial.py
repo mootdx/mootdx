@@ -219,6 +219,9 @@ class Financial(BaseFinancial):
         df.set_index('code', inplace=True)
 
         if header == 'zh':
+            missing_cols = len(df.columns) - len(columns)
+            if missing_cols > 0:
+                columns.extend(f'col{i}' for i in range(len(columns), len(df.columns)))
             df.columns = columns
 
         logger.debug(df.shape)
