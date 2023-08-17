@@ -84,3 +84,14 @@ version_provider = "poetry"
 version_files = [
     "mootdx/__init__.py:__version__",
 ]
+
+[tool.poe.tasks]
+venv = "poetry install --sync"
+lock = "poetry lock --no-update"
+
+test = "poetry run pytest"
+lint = "poetry run ruff check ./elegant/*.py --fix"
+
+dist = "poetry build -v"
+bump = "cz bump --yes -ch -cc --increment"
+#{MAJOR,MINOR,PATCH}

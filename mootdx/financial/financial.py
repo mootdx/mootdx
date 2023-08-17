@@ -1,17 +1,16 @@
 import os
+import pandas as pd
 import secrets
 import shutil
 import tempfile
 from pathlib import Path
 from struct import calcsize
 from struct import unpack
-
-import pandas as pd
 from tdxpy.hq import TdxHq_API
 
-from ..logger import logger
 from .base import BaseFinancial
 from .columns import columns
+from ..logger import logger
 
 
 class FinancialReader(object):
@@ -206,8 +205,7 @@ class Financial(BaseFinancial):
         :param header: 是否中文表头
         :return: DataFrame
         """
-
-        if len(data) == 0 or len(data[0]) == 0:
+        if not data or len(data) == 0 or len(data[0]) == 0:
             return pd.DataFrame(data=None)
 
         column = ['code', 'report_date']
@@ -219,6 +217,10 @@ class Financial(BaseFinancial):
         df.set_index('code', inplace=True)
 
         if header == 'zh':
+            for i, v in enumerate(df.columns):
+                if i >= len(columns):
+                    columns.append(v)
+
             df.columns = columns
 
         logger.debug(df.shape)
