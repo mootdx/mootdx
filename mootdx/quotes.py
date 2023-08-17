@@ -3,6 +3,7 @@ from datetime import datetime
 
 import pandas
 import pandas as pd
+from tdxpy.exceptions import ValidationException
 from tdxpy.exhq import TdxExHq_API
 from tdxpy.hq import TdxHq_API
 from tenacity import retry
@@ -173,8 +174,11 @@ class StdQuotes(BaseQuotes):
         if type(symbol) is str:
             symbol = [symbol]
 
-        symbol = get_stock_markets(symbol)
-        result = self.client.get_security_quotes(symbol)
+        try:
+            symbol = get_stock_markets(symbol)
+            result = self.client.get_security_quotes(symbol)
+        except ValidationException:
+            return to_data(None)
 
         return to_data(result, symbol=symbol, client=self, **kwargs)
 
