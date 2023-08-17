@@ -68,7 +68,7 @@ class BaseQuotes(object):
         self.server = valid_server(server)
 
         logger.debug(f'bestip => {bestip}')
-        (bestip or (not config.get('BESTIP'))) and check_server(sync=False)
+        (bestip or (not config.get('BESTIP'))) and check_server(sync=True)
 
         logger.debug(f'timeout => {timeout}')
         self.timeout = timeout if timeout else 15
