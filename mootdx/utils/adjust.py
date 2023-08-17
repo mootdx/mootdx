@@ -75,7 +75,7 @@ def get_xdxr(symbol):
 
 def to_adjust(temp_df, symbol=None, adjust=None):
     from mootdx.tools.reversion import reversion
-    return reversion(temp_df, get_xdxr(symbol), adjust)
+    return reversion(symbol, temp_df, get_xdxr(symbol), adjust)
 
 
 def to_adjust2(temp_df, symbol=None, adjust=None):

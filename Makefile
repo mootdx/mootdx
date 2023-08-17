@@ -95,13 +95,13 @@ prepare: clean ## 准备开发环境
 
 pull:
 	git pull origin `git symbolic-ref --short -q HEAD` --tags
-	#git pull github `git symbolic-ref --short -q HEAD` --tags
-	#git pull gitee `git symbolic-ref --short -q HEAD` --tags
+	git pull github `git symbolic-ref --short -q HEAD` --tags
+	git pull gitee `git symbolic-ref --short -q HEAD` --tags
 
 sync: pull
 	git push origin `git symbolic-ref --short -q HEAD` --tags
-	#git push github `git symbolic-ref --short -q HEAD` --tags
-	#git push gitee `git symbolic-ref --short -q HEAD` --tags
+	git push github `git symbolic-ref --short -q HEAD` --tags
+	git push gitee `git symbolic-ref --short -q HEAD` --tags
 
 bestip:
 	@poetry run python -m mootdx bestip -v

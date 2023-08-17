@@ -1,14 +1,13 @@
 import glob
+import pytest
 import unittest
 from pathlib import Path
-
-import pytest
 
 from mootdx.affair import Affair
 from mootdx.logger import logger
 
 
-@pytest.mark.skip(reason='暂时不做重复测试')
+# @pytest.mark.skip(reason='暂时不做重复测试')
 class TestAffair(unittest.TestCase):
     files = []
 
@@ -16,7 +15,7 @@ class TestAffair(unittest.TestCase):
 
     def setup_class(self) -> None:
         logger.debug('setup_class: 获取文件列表')
-        self.files = [x['filename'] for x in Affair.files()]
+        self.files = [x['filename'] for x in Affair.files() if x['filesize'] > 165]
         Path(self.downdir).is_file() or Path(self.downdir).mkdir()
 
     def teardown_class(self):
@@ -29,6 +28,7 @@ class TestAffair(unittest.TestCase):
         self.assertIsNone(data, data)
 
     def test_parse_one(self):
+        Affair.parse(filename='gpcw20220331.zip', downdir='output')
         data = Affair.parse(downdir=self.downdir, filename=self.files[1])
         self.assertIsNotNone(data, data)
 

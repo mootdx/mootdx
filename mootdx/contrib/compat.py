@@ -4,6 +4,7 @@ import threading
 from tdxpy.base_socket_client import BaseSocketClient
 from tdxpy.base_socket_client import CONNECT_TIMEOUT
 from tdxpy.base_socket_client import TrafficStatSocket
+from tdxpy.constants import SECURITY_EXCHANGE
 from tdxpy.exceptions import TdxConnectionError
 from tdxpy.heartbeat import HeartBeatThread
 from tdxpy.reader import TdxDailyBarReader
@@ -47,7 +48,7 @@ class MooTdxDailyBarReader(TdxDailyBarReader):
         exchange = str(fname[-12:-10]).lower()
         code_head = fname[-10:-8]
 
-        if exchange == self.SECURITY_EXCHANGE[0]:
+        if exchange == SECURITY_EXCHANGE[0]:
             if code_head in ['00', '30']:
                 return 'SZ_A_STOCK'
 
@@ -62,7 +63,7 @@ class MooTdxDailyBarReader(TdxDailyBarReader):
 
             if code_head in ['10', '11', '12', '13', '14']:
                 return 'SZ_BOND'
-        elif exchange == self.SECURITY_EXCHANGE[1]:
+        elif exchange == SECURITY_EXCHANGE[1]:
             if code_head in ['60']:
                 return 'SH_A_STOCK'
 

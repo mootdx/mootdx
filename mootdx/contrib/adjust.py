@@ -30,7 +30,8 @@ def get_adjust_year(symbol=None, year=None, factor='00'):
     year = datetime.datetime.now().year if not year else year
 
     headers = {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.212 Safari/537.36',
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) '
+                      'Chrome/90.0.4430.212 Safari/537.36',
         'Referer': 'http://stockpage.10jqka.com.cn/',
         'DNT': '1',
     }
