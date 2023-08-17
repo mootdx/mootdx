@@ -103,6 +103,7 @@ sync: pull
 	git push github `git symbolic-ref --short -q HEAD` --tags
 	git push gitee `git symbolic-ref --short -q HEAD` --tags
 
+hook:
 	curl -i -X POST https://readthedocs.org/api/v2/webhook/mootdx/247616/ -d '{"token": "3a3340e27ddf6996e37f83efc8942f9397108d48"}' -H "Content-Type: application/json"
 
 bestip:
