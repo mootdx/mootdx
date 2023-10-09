@@ -14,7 +14,7 @@ steps:
     settings:
       username: john
       password: secret
- 
+
    - name: dingtalk
     image: lddsb/drone-dingtalk-message
     settings:
@@ -31,7 +31,7 @@ steps:
       script:
         - cd ~/packages
         - md5sum -c app.jar.md5
-      
+
   # https://plugins.drone.io/plugins/git-push
 #  - name: push_github
 #    image: appleboy/drone-git-push'
