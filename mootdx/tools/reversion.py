@@ -2,7 +2,30 @@ import logging
 
 import pandas as pd
 
+from mootdx.utils.factor import fq_factor
+
 logger = logging.getLogger(__name__)
+
+
+def factor_reversion(symbol: str, method: str = 'qfq', raw: pd.DataFrame = None) -> pd.DataFrame:
+    factor = fq_factor(symbol, method)
+    raw['date'] = pd.to_datetime(raw[['year', 'month', 'day']], utc=False)
+    raw.set_index(['date'], inplace=True)
+    raw = raw.sort_index(ascending=True)
+    factor = factor.sort_index(ascending=True)
+
+    if not factor.empty:
+        data = pd.concat([raw, factor.loc[raw.index[0]: raw.index[-1], ['factor']]], axis=1)
+        data.factor = data.factor.fillna(method=('ffill', 'bfill')[method == 'qfq'], axis=0)
+        data.factor = data.factor.fillna(1.0, axis=0)
+        data.factor = data.factor.astype(float)
+
+        for col in ['open', 'high', 'low', 'close', ]:
+            data[col] = data[col] * data['factor']
+
+        return data
+
+    return pd.DataFrame(None)
 
 
 def _reversion(bfq_data, xdxr_data, type_):
@@ -147,7 +170,8 @@ def reversion(symbol, stock_data, xdxr, type_='01'):
     if symbol[:2] in ['15', '16', '50', '51']:
         stock_data = etf_reversion(data=stock_data, xdxr=_fetch_xdxr(xdxr), adjust=type_)
 
-    return _reversion(bfq_data=stock_data, xdxr_data=_fetch_xdxr(xdxr), type_=type_)
+    return factor_reversion(symbol=symbol, raw=stock_data, method=type_)
+    # return _reversion(bfq_data=stock_data, xdxr_data=_fetch_xdxr(xdxr), type_=type_)
 
 
 # 算法一样

@@ -63,19 +63,24 @@ class BaseQuotes(object):
     bestip = None
     server = None
 
+    verbose = False
+    timeout = 15
+
     def __init__(self, server=None, bestip: bool = False, timeout: int = None, **kwargs) -> None:
+        logger.debug('config.setup()')
+        config.setup()
 
         logger.debug(f'server => {server}')
         self.server = valid_server(server)
 
         logger.debug(f'bestip => {bestip}')
-        (bestip or (not config.get('BESTIP'))) and check_server(sync=True)
+        bestip and check_server(sync=True)
 
-        logger.debug(f'timeout => {timeout}')
-        self.timeout = timeout if timeout else 15
+        self.timeout = timeout or 15
+        logger.debug(f'timeout => {self.timeout}')
 
-        logger.debug('config.setup()')
-        config.setup()
+        self.verbose = kwargs.get('verbose', False)
+        logger.debug(f'verbose => {self.verbose}')
 
     def __del__(self):
         logger.debug('call __del__')
@@ -125,7 +130,8 @@ class StdQuotes(BaseQuotes):
     """
     股票市场实时行情"""
 
-    def __init__(self, server=None, bestip=False, timeout=15, **kwargs):
+    def __init__(self, server=None, bestip=False, timeout=15, heartbeat=False, auto_retry=True, raise_exception=False,
+                 **kwargs):
         """构造函数
 
         :param bestip:  最佳 IP
@@ -144,14 +150,10 @@ class StdQuotes(BaseQuotes):
             default = config.get('SERVER').get('HQ')[0][1:]
             self.server = config.get('BESTIP').get('HQ', default)
 
-        for x in ['verbose', 'server', 'quiet', 'heartbeat', 'multithread', 'auto_retry']:
-            if x in kwargs.keys():
-                del kwargs[x]
-
         logger.debug(f'server: {self.server}')
         ip, port = self.server
 
-        self.client = TdxHq_API(heartbeat=False, auto_retry=True, raise_exception=False, **kwargs)
+        self.client = TdxHq_API(heartbeat=heartbeat, auto_retry=auto_retry, raise_exception=raise_exception, **kwargs)
         self.client.connect(ip, int(port), time_out=timeout)
 
         global instance
