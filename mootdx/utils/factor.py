@@ -1,9 +1,9 @@
+import httpx
 import pandas as pd
-import requests
 
 from mootdx.cache import file_cache
 from mootdx.utils import get_stock_market, get_config_path
-
+from mootdx.logger import logger
 
 def fq_factor(symbol: str, method: str, ) -> pd.DataFrame:
     symbol = symbol.replace('sh', '').replace('sz', '').replace('bj', '')
@@ -13,9 +13,14 @@ def fq_factor(symbol: str, method: str, ) -> pd.DataFrame:
 
     @file_cache(filepath=cache_file, refresh_time=3600 * 24)
     def _factor(symbol: str, method: str, ) -> pd.DataFrame:
-        url = "https://finance.sina.com.cn/realstock/company/{}/{}.js"
-        rsp = requests.get(url.format(symbol, method))
-        res = pd.DataFrame(eval(rsp.text.split("=")[1].split("\n")[0])["data"])
+
+        try:
+            url = "https://finance.sina.com.cn/realstock/company/{}/{}.js"
+            rsp = httpx.get(url.format(symbol, method))
+            res = pd.DataFrame(eval(rsp.text.split("=")[1].split("\n")[0])["data"])
+        except (SyntaxError, httpx.ConnectError) as ex:
+            logger.error(ex)
+            return pd.DataFrame(None)
 
         if res.shape[0] == 0:
             raise ValueError(f"sina {method} factor not available")

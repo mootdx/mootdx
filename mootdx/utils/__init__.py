@@ -4,7 +4,7 @@ from struct import calcsize
 from struct import unpack
 
 import pandas as pd
-import requests
+import httpx
 from pandas import DataFrame
 from tqdm import tqdm
 
@@ -297,7 +297,7 @@ def stock_bj_a() -> pd.DataFrame:
         "_": "1623833739532",
     }
 
-    r = requests.get(url, params=params)
+    r = httpx.get(url, params=params)
     data_json = r.json()
 
     if not data_json["data"]["diff"]:

@@ -9,12 +9,11 @@ logger = logging.getLogger(__name__)
 
 def factor_reversion(symbol: str, method: str = 'qfq', raw: pd.DataFrame = None) -> pd.DataFrame:
     factor = fq_factor(symbol, method)
-    raw['date'] = pd.to_datetime(raw[['year', 'month', 'day']], utc=False)
-    raw.set_index(['date'], inplace=True)
-    raw = raw.sort_index(ascending=True)
-    factor = factor.sort_index(ascending=True)
 
     if not factor.empty:
+        factor = factor.sort_index(ascending=True)
+        raw = raw.sort_index(ascending=True)
+
         data = pd.concat([raw, factor.loc[raw.index[0]: raw.index[-1], ['factor']]], axis=1)
         data.factor = data.factor.fillna(method=('ffill', 'bfill')[method == 'qfq'], axis=0)
         data.factor = data.factor.fillna(1.0, axis=0)
@@ -25,7 +24,7 @@ def factor_reversion(symbol: str, method: str = 'qfq', raw: pd.DataFrame = None)
 
         return data
 
-    return pd.DataFrame(None)
+    return raw
 
 
 def _reversion(bfq_data, xdxr_data, type_):

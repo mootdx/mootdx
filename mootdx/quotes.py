@@ -153,7 +153,7 @@ class StdQuotes(BaseQuotes):
         logger.debug(f'server: {self.server}')
         ip, port = self.server
 
-        self.client = TdxHq_API(heartbeat=heartbeat, auto_retry=auto_retry, raise_exception=raise_exception, **kwargs)
+        self.client = TdxHq_API(heartbeat=heartbeat, auto_retry=auto_retry, raise_exception=raise_exception)
         self.client.connect(ip, int(port), time_out=timeout)
 
         global instance
