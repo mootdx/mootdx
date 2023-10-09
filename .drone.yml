@@ -9,7 +9,29 @@ steps:
     commands:
       - pytest -v tests
 
+  - name: pypi_publish
+    image: plugins/pypi
+    settings:
+      username: john
+      password: secret
+ 
+   - name: dingtalk
+    image: lddsb/drone-dingtalk-message
+    settings:
+      token: your-dingtalk-robot-access-token
+      type: markdown
 
+  - name: deploy
+    image: drillster/drone-rsync
+    settings:
+      hosts: [ "server-prod1", "server-prod2" ]
+      source: ./target
+      target: ~/packages
+      include: [ "app.jar", "app.jar.md5" ]
+      script:
+        - cd ~/packages
+        - md5sum -c app.jar.md5
+      
   # https://plugins.drone.io/plugins/git-push
 #  - name: push_github
 #    image: appleboy/drone-git-push'

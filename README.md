@@ -121,3 +121,8 @@ Affair.parse(downdir='tmp')
 
 M1 mac 系统PyMiniRacer不能使用，访问:
 <https://github.com/sqreen/PyMiniRacer/issues/143>
+
+
+## Stargazers over time
+
+[![Stargazers over time](https://starchart.cc/mootdx/mootdx.svg)](https://starchart.cc/mootdx/mootdx)

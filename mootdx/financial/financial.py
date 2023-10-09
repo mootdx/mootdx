@@ -219,6 +219,10 @@ class Financial(BaseFinancial):
         df.set_index('code', inplace=True)
 
         if header == 'zh':
+            for i, v in enumerate(df.columns):
+                if i >= len(columns):
+                    columns.append(v)
+
             df.columns = columns
 
         logger.debug(df.shape)

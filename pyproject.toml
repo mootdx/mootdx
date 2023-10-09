@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "mootdx"
-version = "0.10.10"
+version = "0.10.11"
 description = "通达信数据读取接口."
 authors = ["bopo <ibopo@126.com>"]
 readme = "README.md"
@@ -29,7 +29,7 @@ mootdx = "mootdx.__main__:entry"
 [tool.poetry.dependencies]
 python = "^3.8"
 httpx = "^0.23.1"
-pandas = "^1.5.2"
+pandas = "^1.3.5"
 tenacity = "^8.1.0"
 tdxpy = "^0.2.1"
 tqdm = "^4.65.0"
@@ -84,3 +84,14 @@ version_provider = "poetry"
 version_files = [
     "mootdx/__init__.py:__version__",
 ]
+
+[tool.poe.tasks]
+venv = "poetry install --sync"
+lock = "poetry lock --no-update"
+
+test = "poetry run pytest"
+lint = "poetry run ruff check ./elegant/*.py --fix"
+
+dist = "poetry build -v"
+bump = "cz bump --yes -ch -cc --increment"
+#{MAJOR,MINOR,PATCH}

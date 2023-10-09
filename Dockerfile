@@ -51,3 +51,4 @@ RUN pip install --no-cache-dir --no-index --find-links=/wheels/ /wheels/* && rm 
 WORKDIR ${APP_HOME}
 
 #ENTRYPOINT ["/entrypoint.sh"]
+
