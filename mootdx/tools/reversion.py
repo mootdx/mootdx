@@ -28,6 +28,9 @@ def factor_reversion(symbol: str, method: str = 'qfq', raw: pd.DataFrame = None)
 
 
 def _reversion(bfq_data, xdxr_data, type_):
+    if len(xdxr_data) <= 0:
+        return bfq_data
+
     """使用数据库数据进行复权"""
     info = xdxr_data.query('category==1')
     bfq_data = bfq_data.assign(if_trade=1)
@@ -82,6 +85,9 @@ def _reversion(bfq_data, xdxr_data, type_):
 
 
 def etf_reversion(data, xdxr, adjust='01'):
+    if len(xdxr) <= 0:
+        return data
+
     xdxr = xdxr.query('category==11')
 
     if len(xdxr) <= 0:
@@ -138,6 +144,9 @@ def reversion(symbol, stock_data, xdxr, type_='01'):
 
         try:
             data = collections
+
+            if len(data) <= 0:
+                return data
 
             if 'date' not in data.columns:
                 data['date'] = pd.to_datetime(data[['year', 'month', 'day']], utc=False)
