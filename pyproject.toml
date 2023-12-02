@@ -94,4 +94,8 @@ lint = "ruff check ./mootdx/*.py"
 
 dist = "poetry build -v"
 bump = "cz bump --yes -ch -cc --increment"
+
+sync = "make sync"
+pypi = "poetry publish --build --skip-existing"
+
 #{MAJOR,MINOR,PATCH}
