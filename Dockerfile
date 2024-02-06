@@ -10,7 +10,7 @@ FROM python as python-build-stage
 # RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.ustc.edu.cn/g' /etc/apk/repositories
 # RUN apk add openssl-dev make autoconf automake gcc g++ zlib-dev linux-headers git libffi-dev libevent
 
-COPY ./.temp/requirements.txt .
+COPY ./requirements.txt .
 # COPY ./tests/requirements.txt ./requirements.dev
 
 # Create Python Dependency and Sub-Dependency Wheels.
