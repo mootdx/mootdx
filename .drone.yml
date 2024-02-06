@@ -1,36 +1,42 @@
 ---
 kind: pipeline
-type: docker
 name: default
+type: docker
 
 steps:
   - name: test
     image: mootdx:squash
     commands:
-      - pytest -v tests
+      - pytest -vs
 
   - name: pypi_publish
     image: plugins/pypi
     settings:
-      username: john
-      password: secret
+      username: __token__
+      password:
+        from_secret: pypi_password
+    when:
+      event:
+        - promote
+      target:
+        - production
 
-   - name: dingtalk
-    image: lddsb/drone-dingtalk-message
-    settings:
-      token: your-dingtalk-robot-access-token
-      type: markdown
+#   - name: dingtalk
+#    image: lddsb/drone-dingtalk-message
+#    settings:
+#      token: your-dingtalk-robot-access-token
+#      type: markdown
 
-  - name: deploy
-    image: drillster/drone-rsync
-    settings:
-      hosts: [ "server-prod1", "server-prod2" ]
-      source: ./target
-      target: ~/packages
-      include: [ "app.jar", "app.jar.md5" ]
-      script:
-        - cd ~/packages
-        - md5sum -c app.jar.md5
+#  - name: deploy
+#    image: drillster/drone-rsync
+#    settings:
+#      hosts: [ "server-prod1", "server-prod2" ]
+#      source: ./target
+#      target: ~/packages
+#      include: [ "app.jar", "app.jar.md5" ]
+#      script:
+#        - cd ~/packages
+#        - md5sum -c app.jar.md5
 
   # https://plugins.drone.io/plugins/git-push
 #  - name: push_github
@@ -111,7 +117,7 @@ steps:
 #        - promote
 #      target:
 #        - production
-#
+
 #  # https://plugins.drone.io/plugins/ansible
 #  - name: check ansible syntax
 #    image: plugins/ansible:3
