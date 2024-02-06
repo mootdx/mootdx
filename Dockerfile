@@ -15,12 +15,12 @@ COPY ./tests/requirements.txt ./requirements.dev
 
 # Create Python Dependency and Sub-Dependency Wheels.
 #  py3-pandas py3-numpy py3-click py3-schedule
-RUN pip wheel --wheel-dir /usr/src/app/wheels -r requirements.txt -r requirements.dev -i https://pypi.tuna.tsinghua.edu.cn/simple
+RUN pip wheel --wheel-dir /usr/src/app/wheels -r requirements.txt -r requirements.dev
 # RUN pip wheel --wheel-dir /usr/src/app/wheels -r requirements.dev -i https://mirrors.ustc.edu.cn/pypi/web/simple
 # RUN pip wheel --wheel-dir /usr/src/app/wheels -i https://mirrors.ustc.edu.cn/pypi/web/simple 'mootdx[all]'
 RUN rm -rf /usr/src/app/wheels/setuptools*
 
-RUN pip install 'mootdx[cli]' -i https://pypi.tuna.tsinghua.edu.cn/simple
+RUN pip install 'mootdx[cli]'
 RUN mootdx bestip -v
 
 # Python 'run' stage
