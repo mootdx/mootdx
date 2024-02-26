@@ -16,10 +16,9 @@ steps:
       password:
         from_secret: pypi_password
     when:
-      event:
-        - promote
-      target:
-        - production
+      ref:
+        include:
+        - refs/tags/**
 
 #   - name: dingtalk
 #    image: lddsb/drone-dingtalk-message
