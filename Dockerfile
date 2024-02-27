@@ -6,7 +6,7 @@ FROM python:${PYTHON_VERSION} as python
 # Python build stage
 FROM python as python-build-stage
 # RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
-#RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.tuna.tsinghua.edu.cn/g' /etc/apk/repositories
+# RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.tuna.tsinghua.edu.cn/g' /etc/apk/repositories
 # RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.ustc.edu.cn/g' /etc/apk/repositories
 # RUN apk add openssl-dev make autoconf automake gcc g++ zlib-dev linux-headers git libffi-dev libevent
 
@@ -43,12 +43,4 @@ COPY --from=python-build-stage /root/.mootdx/config.json  /root/.mootdx/config.j
 
 # use wheels to install python dependencies
 RUN pip install --no-cache-dir --no-index --find-links=/wheels/ /wheels/* && rm -rf /wheels/
-
-
-# copy application code to WORKDIR
-# COPY . ${APP_HOME}
-
-WORKDIR ${APP_HOME}
-
-#ENTRYPOINT ["/entrypoint.sh"]
-
+RUN pip install --no-cache-dir poetry
