@@ -12,7 +12,8 @@ steps:
   - name: pypi
     image: mootdx:squash
     commands:
-      - poetry publish --no-cache --build --username=__token__ --password=$PYPI_PASSWORD
+      - python -m pip install poetry
+      - python -m poetry publish --no-cache --build --username=__token__ --password=$PYPI_PASSWORD
     environment:
       PYPI_PASSWORD:
         from_secret: pypi_password
