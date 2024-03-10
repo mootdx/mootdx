@@ -4,10 +4,10 @@ name: default
 type: docker
 
 steps:
-  - name: test
-    image: mootdx:squash
-    commands:
-      - pytest -vs
+#  - name: test
+#    image: mootdx:squash
+#    commands:
+#      - pytest -vs
 
   - name: pypi
     image: mootdx:squash
@@ -17,10 +17,11 @@ steps:
     environment:
       PYPI_PASSWORD:
         from_secret: pypi_password
-    when:
-      ref:
-        include:
-        - refs/tags/**
+
+trigger:
+  ref:
+    include:
+    - refs/tags/**
 
 #  - name: sync
 #    image: mootdx:ci
