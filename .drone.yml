@@ -5,12 +5,12 @@ type: docker
 
 steps:
   - name: test
-    image: mootdx:squash
+    image: mootdx:ci
     commands:
       - pytest -vs
 
   - name: pypi
-    image: mootdx:squash
+    image: mootdx:ci
     commands:
       - python -m pip install poetry
       - python -m poetry publish --no-cache --build --username=__token__ --password=$PYPI_PASSWORD
