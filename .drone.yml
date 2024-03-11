@@ -4,24 +4,23 @@ name: default
 type: docker
 
 steps:
-#  - name: test
-#    image: mootdx:squash
-#    commands:
-#      - pytest -vs
+  - name: test
+    image: mootdx:ci
+    commands:
+      - pytest -vs
 
   - name: pypi
-    image: mootdx:squash
+    image: mootdx:ci
     commands:
       - python -m pip install poetry
       - python -m poetry publish --no-cache --build --username=__token__ --password=$PYPI_PASSWORD
     environment:
       PYPI_PASSWORD:
         from_secret: pypi_password
-
-trigger:
-  ref:
-    include:
-    - refs/tags/**
+    when:
+      ref:
+        include:
+        - refs/tags/**
 
 #  - name: sync
 #    image: mootdx:ci
