@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "mootdx"
-version = "0.11.1"
+version = "0.11.4"
 description = "通达信数据读取接口."
 authors = ["bopo <ibopo@126.com>"]
 readme = "README.md"
@@ -94,4 +94,8 @@ lint = "ruff check ./mootdx/*.py"
 
 dist = "poetry build -v"
 bump = "cz bump --yes -ch -cc --increment"
+
+sync = "make sync"
+pypi = "poetry publish --build --skip-existing"
+
 #{MAJOR,MINOR,PATCH}

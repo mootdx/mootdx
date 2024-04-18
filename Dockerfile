@@ -6,21 +6,21 @@ FROM python:${PYTHON_VERSION} as python
 # Python build stage
 FROM python as python-build-stage
 # RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
-#RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.tuna.tsinghua.edu.cn/g' /etc/apk/repositories
+# RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.tuna.tsinghua.edu.cn/g' /etc/apk/repositories
 # RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.ustc.edu.cn/g' /etc/apk/repositories
 # RUN apk add openssl-dev make autoconf automake gcc g++ zlib-dev linux-headers git libffi-dev libevent
 
-COPY ./.temp/requirements.txt .
-# COPY ./tests/requirements.txt ./requirements.dev
+COPY ./requirements.txt .
+COPY ./tests/requirements.txt ./requirements.dev
 
 # Create Python Dependency and Sub-Dependency Wheels.
 #  py3-pandas py3-numpy py3-click py3-schedule
-RUN pip wheel --wheel-dir /usr/src/app/wheels -r requirements.txt -i https://mirrors.ustc.edu.cn/pypi/web/simple
+RUN pip wheel --wheel-dir /usr/src/app/wheels -r requirements.txt -r requirements.dev
 # RUN pip wheel --wheel-dir /usr/src/app/wheels -r requirements.dev -i https://mirrors.ustc.edu.cn/pypi/web/simple
 # RUN pip wheel --wheel-dir /usr/src/app/wheels -i https://mirrors.ustc.edu.cn/pypi/web/simple 'mootdx[all]'
 RUN rm -rf /usr/src/app/wheels/setuptools*
 
-RUN pip install 'mootdx[cli]' -i https://mirrors.ustc.edu.cn/pypi/web/simple
+RUN pip install 'mootdx[cli]'
 RUN mootdx bestip -v
 
 # Python 'run' stage
@@ -43,12 +43,4 @@ COPY --from=python-build-stage /root/.mootdx/config.json  /root/.mootdx/config.j
 
 # use wheels to install python dependencies
 RUN pip install --no-cache-dir --no-index --find-links=/wheels/ /wheels/* && rm -rf /wheels/
-
-
-# copy application code to WORKDIR
-# COPY . ${APP_HOME}
-
-WORKDIR ${APP_HOME}
-
-#ENTRYPOINT ["/entrypoint.sh"]
-
+RUN pip install --no-cache-dir poetry
