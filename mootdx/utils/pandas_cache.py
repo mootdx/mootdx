@@ -1,93 +1,95 @@
-"""
-Implements on disk caching of transformed dataframes
-
-Used on a function that returns a single pandas object,
-this decorator will execute the function, cache the dataframe as a pickle
-file using the hash of the raw code as a unique identifier.
-The next time the function runs, if the hash of the raw code matches
-what is on disk, the decoratored function will simply load and return
-the pickled pandas object.
-This can result in speedups of 10 to 100 times, or more, depending on the
-complexity of the function that creates the dataframe.
-
-If the function changes since the last hash, this decorator will automatically delete
-the previously cached pickle and save a new one, preventing disk pollutionself.
-The caveat is that if the function name changes or the function is deleted, previously
-cached dataframes will remain on disk. For this purpose there is a 'del_cached' function
-that is will simply delete any objects cached by this decorator.
-"""
-
 import hashlib
 import inspect
-import logging
-from functools import wraps
+import time
 from glob import glob
 from pathlib import Path
 
 import pandas as pd
 
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+from mootdx.cache import timeit
 
 
-def pd_cache(func):
-    cache_dir = Path('.pd_cache')
+def file_expired(file_path, expire_seconds=3600):
+    if not file_path.is_file():
+        return True
 
-    logger.info(f'created `{cache_dir} dir')
+    # 获取文件的stat信息
+    stat_info = file_path.stat()
+
+    # 在Unix系统中，st_ctime通常是文件的创建时间
+    creation_time = stat_info.st_ctime
+
+    # 获取当前时间
+    current_time = time.time()
+
+    # 计算文件是否过期
+    expired = (current_time - creation_time) > expire_seconds
+    print(f'{file_path} expired is {expired}')
+
+    expired and Path(file_path).unlink(missing_ok=True)
+    return expired
+
+
+def pd_cache(cache_dir=None, expired=0):
+    cache_dir = cache_dir or Path('.pd_cache')
     Path(cache_dir).mkdir(parents=True, exist_ok=True)
 
-    @wraps(func)
-    def cache(*args, **kw):
-        # Get raw code of function as str and hash it
-        func_code = ''.join(inspect.getsourcelines(func)[0])
+    def decorator(func):
 
-        key = (func_code + repr(args) + repr(kw)).encode('utf8')
-        hsh = hashlib.md5(key).hexdigest()[:6]
+        def wrapper(*args, **kw):
+            # Get raw code of function as str and hash it
+            func_code = ''.join(inspect.getsourcelines(func)[0])
 
-        f = f'.pd_cache/{func.__name__}_{hsh}.pkl'
+            key = (func_code + repr(args) + repr(kw)).encode('utf8')
+            hsh = hashlib.md5(key).hexdigest()[:6]
 
-        logger.info(f'\t | file {f}')
+            f = cache_dir / f'{func.__name__}_{hsh}.pkl'
 
-        if Path(f).exists():
-            df = pd.read_pickle(f)
-            logger.info(f'\t | read {f}')
-            return df
+            if not file_expired(f, expired):
+                print(f'{f} is cached')
+                df = pd.read_pickle(f)
+                return df
 
-        else:
-            # Delete any file name that has `cached_[func_name]_[6_chars]_.pkl`
-            for cached in glob(f'./.pd_cache/{func.__name__}_*.pkl'):
-                if (len(cached) - len(func.__name__)) == 20:
-                    Path(cached).unlink(missing_ok=True)
-                    logger.info(f'\t | removed', cached)
+            else:
+                # Delete any file name that has `cached_[func_name]_[6_chars]_.pkl`
+                for cached in glob(f'{cache_dir}/{func.__name__}_*.pkl'):
+                    if (len(cached) - len(func.__name__)) == 20:
+                        Path(cached).unlink(missing_ok=True)
 
-            # Write new
-            df = func(*args, **kw)
-
-            if isinstance(df, pd.DataFrame):
+                # Write new
+                df = func(*args, **kw)
                 df.to_pickle(f)
 
-            logger.info(f'\t | wrote {f}')
-            return df
+                return df
 
-    return cache
+        return wrapper
+
+    return decorator
 
 
-def del_cached(cache_dir=None):
+def pd_cached_delete(cache_dir=None):
     cache_dir = cache_dir or Path('.pd_cache')
     cached = glob(f'{cache_dir}/*.pkl')
 
     if len(cached) > 0:
         [Path(x).unlink(missing_ok=True) for x in cached]
-        return logger.info(f'removed {cached}')
+        return f'removed {cached}'
 
     return 'No cached DataFrames'
 
 
 if __name__ == '__main__':
-    @pd_cache
+    @timeit
+    @pd_cache(expired=3)
     def foo():
         return pd.DataFrame([5, 54])
 
+    @timeit
+    @pd_cache(expired=5)
+    def time_consuming_dataframe_operation():
+        x = {i: k for i, k in enumerate(range(2 ** 16))}
+        return pd.DataFrame([x])
 
-    foo()
-    del_cached()
+
+    time_consuming_dataframe_operation()
+    # pd_cached_delete()

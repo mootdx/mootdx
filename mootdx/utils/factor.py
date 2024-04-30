@@ -2,8 +2,9 @@ import httpx
 import pandas as pd
 
 from mootdx.cache import file_cache
-from mootdx.utils import get_stock_market, get_config_path
 from mootdx.logger import logger
+from mootdx.utils import get_stock_market, get_config_path
+
 
 def fq_factor(symbol: str, method: str, ) -> pd.DataFrame:
     symbol = symbol.replace('sh', '').replace('sz', '').replace('bj', '')
@@ -27,8 +28,8 @@ def fq_factor(symbol: str, method: str, ) -> pd.DataFrame:
 
         res.columns = ["date", "factor"]
         res.date = pd.to_datetime(res.date)
+
         res.set_index("date", inplace=True)
-        print('~~~')
         return res
 
     return _factor(symbol, method)
