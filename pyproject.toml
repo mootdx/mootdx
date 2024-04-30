@@ -50,16 +50,11 @@ freezegun = "^1.2.2"
 pytest = "^7.3.1"
 
 
+
 [[tool.poetry.source]]
 name = "mirrors"
-url = "https://mirrors.ustc.edu.cn/pypi/web/simple"
-priority = "default"
-
-
-[[tool.poetry.source]]
-name = "PyPI"
-priority = "explicit"
-
+url = "https://mirrors.cernet.edu.cn/pypi/web/simple/"
+priority = "primary"
 
 [build-system]
 requires = ["poetry-core"]
