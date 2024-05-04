@@ -58,12 +58,15 @@ class MooTdxDailyBarReader(TdxDailyBarReader):
             if code_head in ['39']:
                 return 'SZ_INDEX'
 
-            if code_head in ['15', '16']:
+            if code_head in ['15', '16', '18']:
                 return 'SZ_FUND'
 
             if code_head in ['10', '11', '12', '13', '14']:
                 return 'SZ_BOND'
-        elif exchange == SECURITY_EXCHANGE[1]:
+
+            return 'SZ_OTHER'
+
+        if exchange == SECURITY_EXCHANGE[1]:
             if code_head in ['60']:
                 return 'SH_A_STOCK'
 
@@ -79,11 +82,14 @@ class MooTdxDailyBarReader(TdxDailyBarReader):
             if code_head in ['50', '51', '58']:
                 return 'SH_FUND'
 
-            if code_head in ['01', '10', '11', '12', '13', '14']:
+            # if code_head in ['01', '10', '11', '12', '13', '14']:
+            if code_head in ['01', '02', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20']:
                 return 'SH_BOND'
-        else:
-            logger.error('Unknown security exchange !\n')
-            raise NotImplementedError
+
+            return 'SH_OTHER'
+
+        logger.error('Unknown security exchange !\n')
+        raise NotImplementedError
 
 
 class MooBaseSocketClient(BaseSocketClient):
