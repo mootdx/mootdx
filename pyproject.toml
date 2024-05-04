@@ -27,7 +27,7 @@ mootdx = "mootdx.__main__:entry"
 
 
 [tool.poetry.dependencies]
-python = "^3.9"
+python = "^3.8"
 httpx = "^0.25.0"
 tenacity = "^8.1.0"
 tdxpy = "^0.2.5"
