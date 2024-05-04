@@ -1,3 +1,15 @@
+## v0.11.5 (2024-05-04)
+
+### Feat
+
+- 增加几个文件 cache, timer demjson
+- 增加几个文件 cache, timer demjson
+- 增加几个文件 cache, timer demjson
+
+### Fix
+
+- 修改股票代码识别市场bug
+
 ## v0.11.4 (2024-03-10)
 
 ### Fix
