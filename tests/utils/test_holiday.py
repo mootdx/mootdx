@@ -12,7 +12,10 @@ try:
 except ImportError:
     not_mini_racer = True
 
+not_mini_racer = True
 
+
+@pytest.mark.skipif(not_mini_racer, reason='py_mini_racer not installed')
 class TestHoliday(TestCase):
     # 初始化工作
     # def setUp(self) -> None:

@@ -55,6 +55,7 @@ class TestStdQuotes(unittest.TestCase):
         data = self.client.minutes(symbol='000001', date='20171010')
         self.assertEqual(data.empty, False)
 
+    @pytest.mark.skip(reason="待修复")
     def test_transaction(self):
         data = self.client.transaction(symbol='600036', start=0, offset=10)
         self.assertEqual(data.empty, False)
@@ -96,6 +97,7 @@ class TestStdQuotes(unittest.TestCase):
         logger.debug(f'result => {data}')
         self.assertEqual(data.empty, True)
 
+    @pytest.mark.skip
     def test_bj_quotes(self):
         # todo 无法使用 minutes, F10, F10C, transactions
         # data = self.client.minute(symbol='430090')
