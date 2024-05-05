@@ -1,6 +1,7 @@
 import datetime
 import logging
 import re
+from io import StringIO
 from pathlib import Path
 
 import httpx
@@ -118,12 +119,14 @@ def holiday(date=None, format_=None, country=None, result=False):
 def _holiday():
     logger.debug('调用远程接口')
     res = httpx.get('https://www.tdx.com.cn/url/holiday/')
+
     res.encoding = 'gbk'
-
     ret = re.findall(r'<textarea id="data" style="display:none;">([\s\w\W]+)</textarea>', res.text, re.M)[0].strip()
-    day = [d.split('|')[:4] for d in ret.split('\n')]
 
-    df = pd.DataFrame(day, columns=['日期', '节日', '国家', '交易所'], dtype=str)
+    df = pd.read_csv(StringIO(ret), sep='|')
+    df = df.iloc[:, :4]
+
+    df.columns = ['日期', '节日', '国家', '交易所']
     df.index = pd.to_datetime(df['日期'].astype('str'), format='%Y%m%d')
 
     if df.empty:
