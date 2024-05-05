@@ -20,10 +20,10 @@ JS_DECODE = (Path(__file__).parent / 'holiday.js').read_text(encoding='utf-8')
 
 def holidays() -> pd.DataFrame:
     try:
-        from py_mini_racer import py_mini_racer
+        from py_mini_racer import MiniRacer
     except (ImportError, ModuleNotFoundError):
-        logging.warning('!!! 缺少依赖, 请使用次命令进行安装: pip install py_mini_racer')
-        raise MootdxModuleNotFoundError('!!! 缺少依赖, 请使用次命令进行安装: pip install py_mini_racer')
+        logging.warning('!!! 缺少依赖, 请使用次命令进行安装: pip install mini_racer')
+        raise MootdxModuleNotFoundError('!!! 缺少依赖, 请使用次命令进行安装: pip install mini_racer')
 
     cache_file = get_config_path('caches/holidays.plk')
 
@@ -37,7 +37,7 @@ def holidays() -> pd.DataFrame:
         url = 'https://finance.sina.com.cn/realstock/company/klc_td_sh.txt'
         res = client.get(url)
 
-        js_code = py_mini_racer.MiniRacer()
+        js_code = MiniRacer()
         js_code.eval(JS_DECODE)
 
         # 执行js解密代码

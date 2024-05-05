@@ -14,7 +14,8 @@ from tenacity import wait_random
 from tqdm import tqdm
 
 from mootdx import config
-from mootdx.consts import MARKET_SH, MARKET_SZ
+from mootdx.consts import MARKET_SH
+from mootdx.consts import MARKET_SZ
 from mootdx.consts import return_last_value
 from mootdx.exceptions import MootdxValidationException
 from mootdx.logger import logger
@@ -259,7 +260,7 @@ class StdQuotes(BaseQuotes):
         frequency = get_frequency(frequency)
         offset = (offset, 800)[offset > 800]
 
-        market = (MARKET_SZ, MARKET_SH)[symbol[:2] in ["00", "88", "99"]]
+        market = (MARKET_SZ, MARKET_SH)[symbol[:2] in ['00', '88', '99']]
         result = self.client.get_index_bars(int(frequency), int(market), str(symbol), int(start), int(offset))
 
         return to_data(result, symbol=symbol, client=self, **kwargs)
@@ -482,7 +483,7 @@ class StdQuotes(BaseQuotes):
         frequency = get_frequency(frequency)
 
         offset = (offset, 800)[offset > 800]
-        market = (MARKET_SZ, MARKET_SH)[symbol[:2] in ["00", "88", "99"]]
+        market = (MARKET_SZ, MARKET_SH)[symbol[:2] in ['00', '88', '99']]
         result = self.client.get_index_bars(int(frequency), int(market), str(symbol), int(start), int(offset))
 
         return to_data(result, symbol=symbol, client=self, **kwargs)

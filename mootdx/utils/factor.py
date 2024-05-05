@@ -3,7 +3,8 @@ import pandas as pd
 
 from mootdx.cache import file_cache
 from mootdx.logger import logger
-from mootdx.utils import get_stock_market, get_config_path
+from mootdx.utils import get_config_path
+from mootdx.utils import get_stock_market
 
 
 def fq_factor(symbol: str, method: str, ) -> pd.DataFrame:
@@ -16,20 +17,20 @@ def fq_factor(symbol: str, method: str, ) -> pd.DataFrame:
     def _factor(symbol: str, method: str, ) -> pd.DataFrame:
 
         try:
-            url = "https://finance.sina.com.cn/realstock/company/{}/{}.js"
+            url = 'https://finance.sina.com.cn/realstock/company/{}/{}.js'
             rsp = httpx.get(url.format(symbol, method))
-            res = pd.DataFrame(eval(rsp.text.split("=")[1].split("\n")[0])["data"])
+            res = pd.DataFrame(eval(rsp.text.split('=')[1].split('\n')[0])['data'])
         except (SyntaxError, httpx.ConnectError) as ex:
             logger.error(ex)
             return pd.DataFrame(None)
 
         if res.shape[0] == 0:
-            raise ValueError(f"sina {method} factor not available")
+            raise ValueError(f'sina {method} factor not available')
 
-        res.columns = ["date", "factor"]
+        res.columns = ['date', 'factor']
         res.date = pd.to_datetime(res.date)
 
-        res.set_index("date", inplace=True)
+        res.set_index('date', inplace=True)
         return res
 
     return _factor(symbol, method)

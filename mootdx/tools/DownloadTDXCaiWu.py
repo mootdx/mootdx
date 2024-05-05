@@ -4,7 +4,8 @@ from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime
 from hashlib import md5
 from itertools import repeat
-from mmap import mmap, ACCESS_READ
+from mmap import ACCESS_READ
+from mmap import mmap
 
 import requests
 from tqdm import tqdm
@@ -15,11 +16,11 @@ class DownloadTDXCaiWu(object):
     tdx_cw_dir = tdx_root_dir + '/vipdoc/cw'
     tmp_cw_dir = 'cw_tmp'  # 所有的文件处理都在这个文件夹下，不修改tdx本地的财务文件，确认无误后再同步回tdx目录下
 
-    hashlist_gpcw_url = "https://data.tdx.com.cn/tdxfin/gpcw.txt"
-    hashlist_gpsz_url = "https://data.tdx.com.cn/tdxgp/gpszsh.txt"
+    hashlist_gpcw_url = 'https://data.tdx.com.cn/tdxfin/gpcw.txt'
+    hashlist_gpsz_url = 'https://data.tdx.com.cn/tdxgp/gpszsh.txt'
 
-    one_gpcw_url = "https://data.tdx.com.cn/tdxfin/{file_name}"
-    one_gpsz_url = "https://data.tdx.com.cn/tdxgp/{file_name}"
+    one_gpcw_url = 'https://data.tdx.com.cn/tdxfin/{file_name}'
+    one_gpsz_url = 'https://data.tdx.com.cn/tdxgp/{file_name}'
 
     workerPool = None
 
@@ -31,18 +32,18 @@ class DownloadTDXCaiWu(object):
         response = requests.get(url)
 
         if len(save_file_name) < 5:
-            if "content-disposition" in response.headers:
-                content_disposition = response.headers["content-disposition"]
-                save_file_name = content_disposition.split("filename=")[1]
+            if 'content-disposition' in response.headers:
+                content_disposition = response.headers['content-disposition']
+                save_file_name = content_disposition.split('filename=')[1]
             else:
-                save_file_name = url.split("/")[-1]
+                save_file_name = url.split('/')[-1]
 
         file_loc = f'{save_dir}/{save_file_name}'
 
         if not os.path.exists(save_dir):
             os.mkdir(save_dir)
 
-        with open(file_loc, mode="wb") as file:
+        with open(file_loc, mode='wb') as file:
             file.write(response.content)
             # print(f"已下载文件: {file_loc}")
 
@@ -72,16 +73,16 @@ class DownloadTDXCaiWu(object):
         gpcw_tasks = list(tqdm(
             self.workerPool.map(self.download_file, gpcw_urls, repeat(self.tmp_cw_dir), repeat('')),
             total=(len(gpcw_urls)),
-            desc="下载财务数据包",
-            unit=" 文件",
+            desc='下载财务数据包',
+            unit=' 文件',
         ))
         print(f" {datetime.now().strftime('%X')} - 财务数据包[{len(gpcw_urls)}]条 下载完成! **")
 
         gpsz_tasks = list(tqdm(
             self.workerPool.map(self.download_file, gpsz_urls, repeat(self.tmp_cw_dir), repeat('')),
             total=(len(gpsz_urls)),
-            desc="下载股票数据包",
-            unit=" 文件",
+            desc='下载股票数据包',
+            unit=' 文件',
         ))
         print(f" {datetime.now().strftime('%X')} - 股票数据包[{len(gpsz_urls)}]条 下载完成! **")
 
@@ -108,7 +109,7 @@ class DownloadTDXCaiWu(object):
     def check_hashlist(self, hash_file_name, check_file_dir, is_eq, file_name_scope=[]):
         file_hashmap = {}
 
-        with open(f'{self.tmp_cw_dir}/{hash_file_name}', mode="r") as f:
+        with open(f'{self.tmp_cw_dir}/{hash_file_name}', mode='r') as f:
             lines = f.readlines()
             count = 0
 
@@ -142,9 +143,9 @@ class DownloadTDXCaiWu(object):
         if len(to_update_cw_files) > 0:
             print(f" {datetime.now().strftime('%X')} - TDX远程下载数据包到本地临时文件夹 {self.tmp_cw_dir} {len(to_update_cw_files)}条 完成！**")
         else:
-            print(f"\n\n######################################################### ")
-            print(f"!!!!!!!! TDX主目录已经是最新的财务数据，无需更新 !!!!!!!!")
-            print(f"#########################################################\n\n")
+            print(f'\n\n######################################################### ')
+            print(f'!!!!!!!! TDX主目录已经是最新的财务数据，无需更新 !!!!!!!!')
+            print(f'#########################################################\n\n')
 
         return to_update_cw_files
 
@@ -199,14 +200,14 @@ class DownloadTDXCaiWu(object):
         to_copy_cw_files = self.copy_right_cw_to_tdx(to_update_cw_files)
 
         if len(to_update_cw_files) == len(to_copy_cw_files):
-            print(f"\n\n######################################################### ")
+            print(f'\n\n######################################################### ')
             print(f" {datetime.now().strftime('%X')} - WELL DONE！")
-            print(f"#########################################################\n\n")
+            print(f'#########################################################\n\n')
         else:
-            print(f"\n\n######################################################### ")
+            print(f'\n\n######################################################### ')
             print(f" {datetime.now().strftime('%X')} - 下载的数据有异常！")
             print(f" {datetime.now().strftime('%X')} - {set(to_update_cw_files) - set(to_copy_cw_files)}！")
-            print(f"#########################################################\n\n")
+            print(f'#########################################################\n\n')
 
 
 if __name__ == '__main__':

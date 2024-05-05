@@ -1,14 +1,13 @@
 #!/usr/bin/env python
-# -*- coding:utf-8 -*-
 
-__author__ = "Deron Meranda <http://deron.meranda.us/>"
-__homepage__ = "http://deron.meranda.us/python/demjson/"
+__author__ = 'Deron Meranda <http://deron.meranda.us/>'
+__homepage__ = 'http://deron.meranda.us/python/demjson/'
 
-__date__ = "2015-12-22"
-__version__ = "2.2.4"
+__date__ = '2015-12-22'
+__version__ = '2.2.4'
 __version_info__ = (2, 2, 4)  # Will be converted into a namedtuple below
 
-__credits__ = "Short of demjson"
+__credits__ = 'Short of demjson'
 
 # Set demjson version
 try:
@@ -16,7 +15,7 @@ try:
 
     __version_info__ = _namedtuple('version_info', ['major', 'minor', 'micro'])(*__version_info__)
 except ImportError:
-    raise ImportError("demjson %s requires a Python 2.6 or later" % __version__)
+    raise ImportError('demjson %s requires a Python 2.6 or later' % __version__)
 
 version, version_info = __version__, __version_info__
 
@@ -130,7 +129,7 @@ def determine_float_limits(number_type=float):
         decimal_ctx = _dummy_context_manager
         is_zero_or_subnormal = lambda n: n == 0
     else:
-        raise TypeError("Expected a float type, e.g., float or decimal context")
+        raise TypeError('Expected a float type, e.g., float or decimal context')
 
     with decimal_ctx:
         zero = create_num('0.0')
@@ -261,13 +260,13 @@ del _undefined_class
 
 def _nonnumber_float_constants():
     """Try to return the Nan, Infinity, and -Infinity float values.
-    
+
     This is necessarily complex because there is no standard
     platform-independent way to do this in Python as the language
     (opposed to some implementation of it) doesn't discuss
     non-numbers.  We try various strategies from the best to the
     worst.
-    
+
     If this Python interpreter uses the IEEE 754 floating point
     standard then the returned values will probably be real instances
     of the 'float' type.  Otherwise a custom class object is returned
@@ -651,7 +650,7 @@ class json_int((1).__class__):  # Have to specify base this way to satisfy 2to3
             if number_format not in (
             NUMBER_FORMAT_DECIMAL, NUMBER_FORMAT_HEX, NUMBER_FORMAT_OCTAL, NUMBER_FORMAT_LEGACYOCTAL,
             NUMBER_FORMAT_BINARY):
-                raise TypeError("json_int(): Invalid value for number_format argument")
+                raise TypeError('json_int(): Invalid value for number_format argument')
         else:
             number_format = NUMBER_FORMAT_DECIMAL
         obj = super(json_int, cls).__new__(cls, *args, **kwargs)
@@ -846,7 +845,7 @@ class utf32(codecs.CodecInfo):
                     n = 0xFFFD
                 else:
                     raise UnicodeEncodeError('utf32', obj, pos, pos + 1,
-                                             "surrogate code points from U+D800 to U+DFFF are not allowed")
+                                             'surrogate code points from U+D800 to U+DFFF are not allowed')
             write(pack(packspec, n))
             num_chars += 1
 
@@ -929,13 +928,13 @@ class utf32(codecs.CodecInfo):
                     chars.append(chr(0xFFFD))
                 elif errors == 'backslashreplace':
                     if n > 0xffff:
-                        esc = "\\u%04x" % (n,)
+                        esc = '\\u%04x' % (n,)
                     else:
-                        esc = "\\U%08x" % (n,)
+                        esc = '\\U%08x' % (n,)
                     for esc_c in esc:
                         chars.append(esc_c)
                 elif errors == 'xmlcharrefreplace':
-                    esc = "&#%d;" % (n,)
+                    esc = '&#%d;' % (n,)
                     for esc_c in esc:
                         chars.append(esc_c)
                 else:  # ignore
@@ -1148,7 +1147,7 @@ class helpers(object):
 
         """
         if not s or len(s) == 0:
-            return "utf-8"
+            return 'utf-8'
 
         # Get the byte values of up to the first 4 bytes
         ords = []
@@ -1218,7 +1217,7 @@ class helpers(object):
             # First byte appears to be ASCII, so guess UTF-8.
             encoding = 'utf8'
         else:
-            raise ValueError("Can not determine the Unicode encoding for byte stream")
+            raise ValueError('Can not determine the Unicode encoding for byte stream')
 
         return encoding
 
@@ -1246,7 +1245,7 @@ class helpers(object):
 
             cdk = helpers.lookup_codec(encoding)
             if not cdk:
-                raise LookupError("Can not find codec for encoding %r" % encoding)
+                raise LookupError('Can not find codec for encoding %r' % encoding)
 
             try:
                 # Determine if codec takes arguments; try a decode of nothing
@@ -1263,7 +1262,7 @@ class helpers(object):
                 bom = cdk.encode(unitxt[0])[0]
                 unitxt = unitxt[1:]
             elif len(unitxt) > 0 and unitxt[0] == '\uFFFE':  # Reversed BOM
-                raise UnicodeDecodeError(cdk.name, txt, 0, 0, "Wrong byte order, found reversed BOM U+FFFE")
+                raise UnicodeDecodeError(cdk.name, txt, 0, 0, 'Wrong byte order, found reversed BOM U+FFFE')
             else:
                 bom = None
 
@@ -1536,27 +1535,27 @@ class position_marker(object):
         self.__text_after = value
 
     def __repr__(self):
-        s = "%s(offset=%r,line=%r,column=%r" \
+        s = '%s(offset=%r,line=%r,column=%r' \
             % (self.__class__.__name__,
                self.__char_position,
                self.__line,
                self.__column)
         if self.text_after:
-            s += ",text_after=%r" % (self.text_after,)
-        s += ")"
+            s += ',text_after=%r' % (self.text_after,)
+        s += ')'
         return s
 
     def describe(self, show_text=True):
         """Returns a human-readable description of the position, in English."""
-        s = "line %d, column %d, offset %d" % (self.__line,
+        s = 'line %d, column %d, offset %d' % (self.__line,
                                                self.__column,
                                                self.__char_position)
         if self.at_start:
-            s += " (AT-START)"
+            s += ' (AT-START)'
         elif self.at_end:
-            s += " (AT-END)"
+            s += ' (AT-END)'
         if show_text and self.text_after:
-            s += ", text %r" % (self.text_after)
+            s += ', text %r' % (self.text_after)
         return s
 
     def __str__(self):
@@ -1649,7 +1648,7 @@ class buffered_stream(object):
         try:
             old_pos = self.__saved_pos.pop()  # Can raise IndexError
         except IndexError as err:
-            raise IndexError("Attempt to restore buffer position that was never saved")
+            raise IndexError('Attempt to restore buffer position that was never saved')
         else:
             self.__pos = old_pos
             return True
@@ -1686,7 +1685,7 @@ class buffered_stream(object):
         except Exception as err:
             # Re-raise as a JSONDecodeError
             e2 = sys.exc_info()
-            newerr = JSONDecodeError("a Unicode decoding error occurred")
+            newerr = JSONDecodeError('a Unicode decoding error occurred')
             # Simulate Python 3's: "raise X from Y" exception chaining
             newerr.__cause__ = err
             newerr.__traceback__ = e2[2]
@@ -1815,7 +1814,7 @@ class buffered_stream(object):
         if not s:
             return ''
         if len(s) > context_size:
-            s = s[:context_size - 3] + "..."
+            s = s[:context_size - 3] + '...'
         return s
 
     def startswith(self, s):
@@ -2079,7 +2078,7 @@ class JSONError(JSONException):
         for kw, val in list(kwargs.items()):
             if kw == 'severity':
                 if val not in self.severities:
-                    raise TypeError("%s given invalid severity %r" % (self.__class__.__name__, val))
+                    raise TypeError('%s given invalid severity %r' % (self.__class__.__name__, val))
                 self.severity = val
             elif kw == 'position':
                 self.position = val
@@ -2088,7 +2087,7 @@ class JSONError(JSONException):
             elif kw == 'context_description' or kw == 'context':
                 self.context_description = val
             else:
-                raise TypeError("%s does not accept %r keyword argument" % (self.__class__.__name__, kw))
+                raise TypeError('%s does not accept %r keyword argument' % (self.__class__.__name__, kw))
         super(JSONError, self).__init__(message, *args)
         self.message = message
 
@@ -2104,14 +2103,14 @@ class JSONError(JSONException):
             self._position = pos
 
     def __repr__(self):
-        s = "%s(%r" % (self.__class__.__name__, self.message)
+        s = '%s(%r' % (self.__class__.__name__, self.message)
         for a in self.args[1:]:
-            s += ", %r" % (a,)
+            s += ', %r' % (a,)
         if self.position:
-            s += ", position=%r" % (self.position,)
+            s += ', position=%r' % (self.position,)
         if self.outer_position:
-            s += ", outer_position=%r" % (self.outer_position,)
-        s += ", severity=%r)" % (self.severity,)
+            s += ', outer_position=%r' % (self.outer_position,)
+        s += ', severity=%r)' % (self.severity,)
         return s
 
     def pretty_description(self, show_positions=True, filename=None):
@@ -2128,7 +2127,7 @@ class JSONError(JSONException):
         else:
             err += '    '
         # Print severity and main error message
-        err += " %s: %s" % (self.severity.capitalize(), self.message)
+        err += ' %s: %s' % (self.severity.capitalize(), self.message)
         if len(self.args) > 1:
             err += ': '
             for anum, a in enumerate(self.args[1:]):
@@ -2146,26 +2145,26 @@ class JSONError(JSONException):
                 e2desc = str(e2).strip()
                 if not e2desc:
                     e2desc = repr(e2).strip()
-                err += "\n   |  Cause: %s" % e2desc.strip().replace('\n', '\n   |         ')
+                err += '\n   |  Cause: %s' % e2desc.strip().replace('\n', '\n   |         ')
             else:
                 e2 = None
         # Show file position
         if show_positions and self.position is not None:
             if self.position == 0:
-                err += "\n   |  At start of input"
+                err += '\n   |  At start of input'
             else:
-                err += "\n   |  At %s" % (self.position.describe(show_text=False),)
+                err += '\n   |  At %s' % (self.position.describe(show_text=False),)
                 if self.position.text_after:
-                    err += "\n   |    near text: %r" % (self.position.text_after,)
+                    err += '\n   |    near text: %r' % (self.position.text_after,)
         # Show context
         if show_positions and self.outer_position:
             if self.context_description:
                 cdesc = self.context_description.capitalize()
             else:
-                cdesc = "Context"
-            err += "\n   |  %s started at %s" % (cdesc, self.outer_position.describe(show_text=False),)
+                cdesc = 'Context'
+            err += '\n   |  %s started at %s' % (cdesc, self.outer_position.describe(show_text=False),)
             if self.outer_position.text_after:
-                err += "\n   |    with text: %r" % (self.outer_position.text_after,)
+                err += '\n   |    with text: %r' % (self.outer_position.text_after,)
         return err
 
 
@@ -2176,7 +2175,7 @@ class JSONDecodeError(JSONError):
 
 class JSONDecodeHookError(JSONDecodeError):
     """An exception that occured within a decoder hook.
-    
+
     The original exception is available in the 'hook_exception' attribute.
     """
 
@@ -2186,10 +2185,10 @@ class JSONDecodeHookError(JSONDecodeError):
             exc_info = (None, None, None)
         exc_type, self.hook_exception, self.hook_traceback = exc_info
         self.object_type = type(encoded_obj)
-        msg = "Hook %s raised %r while decoding type <%s>" % (
+        msg = 'Hook %s raised %r while decoding type <%s>' % (
         hook_name, self.hook_exception.__class__.__name__, self.object_type.__name__)
         if len(args) >= 1:
-            msg += ": " + args[0]
+            msg += ': ' + args[0]
             args = args[1:]
         super(JSONDecodeHookError, self).__init__(msg, *args, **kwargs)
 
@@ -2201,7 +2200,7 @@ class JSONEncodeError(JSONError):
 
 class JSONEncodeHookError(JSONEncodeError):
     """An exception that occured within an encoder hook.
-    
+
     The original exception is available in the 'hook_exception' attribute.
     """
 
@@ -2211,10 +2210,10 @@ class JSONEncodeHookError(JSONEncodeError):
             exc_info = (None, None, None)
         exc_type, self.hook_exception, self.hook_traceback = exc_info
         self.object_type = type(encoded_obj)
-        msg = "Hook %s raised %r while encoding type <%s>" % (
+        msg = 'Hook %s raised %r while encoding type <%s>' % (
         self.hook_name, self.hook_exception.__class__.__name__, self.object_type.__name__)
         if len(args) >= 1:
-            msg += ": " + args[0]
+            msg += ': ' + args[0]
             args = args[1:]
         super(JSONEncodeHookError, self).__init__(msg, *args, **kwargs)
 
@@ -2334,30 +2333,30 @@ class decode_statistics(object):
     def pretty_description(self, prefix=''):
         import unicodedata
         lines = [
-            "Number of integers:",
-            "    8-bit:     %5d   (%d to %d)" % (self.num_ints_8bit, self.int8_min, self.int8_max),
-            "   16-bit:     %5d   (%d to %d)" % (self.num_ints_16bit, self.int16_min, self.int16_max),
-            "   32-bit:     %5d   (%d to %d)" % (self.num_ints_32bit, self.int32_min, self.int32_max),
-            " > 53-bit:     %5d   (%d to %d - overflows JavaScript)" % (
+            'Number of integers:',
+            '    8-bit:     %5d   (%d to %d)' % (self.num_ints_8bit, self.int8_min, self.int8_max),
+            '   16-bit:     %5d   (%d to %d)' % (self.num_ints_16bit, self.int16_min, self.int16_max),
+            '   32-bit:     %5d   (%d to %d)' % (self.num_ints_32bit, self.int32_min, self.int32_max),
+            ' > 53-bit:     %5d   (%d to %d - overflows JavaScript)' % (
             self.num_ints_53bit, self.double_int_min, self.double_int_max),
-            "   64-bit:     %5d   (%d to %d)" % (self.num_ints_64bit, self.int64_min, self.int64_max),
+            '   64-bit:     %5d   (%d to %d)' % (self.num_ints_64bit, self.int64_min, self.int64_max),
             " > 64 bit:     %5d   (not portable, may require a \"Big Num\" package)" % self.num_ints_long,
-            "   total ints: %5d" % self.num_ints,
-            "   Num -0:     %5d   (negative-zero integers are not portable)" % self.num_negative_zero_ints,
-            "Number of floats:",
-            "   doubles:    %5d" % self.num_floats,
-            " > doubles:    %5d   (will overflow IEEE doubles)" % self.num_floats_decimal,
-            "   total flts: %5d" % (self.num_floats + self.num_floats_decimal),
-            "   Num -0.0:   %5d   (negative-zero floats are usually portable)" % self.num_negative_zero_floats,
-            "Number of:",
-            "   nulls:      %5d" % self.num_nulls,
-            "   booleans:   %5d" % self.num_bools,
-            "   arrays:     %5d" % self.num_arrays,
-            "   objects:    %5d" % self.num_objects,
-            "Strings:",
-            "   number:         %5d strings" % self.num_strings,
-            "   max length:     %5d characters" % self.max_string_length,
-            "   total chars:    %5d across all strings" % self.total_string_length,
+            '   total ints: %5d' % self.num_ints,
+            '   Num -0:     %5d   (negative-zero integers are not portable)' % self.num_negative_zero_ints,
+            'Number of floats:',
+            '   doubles:    %5d' % self.num_floats,
+            ' > doubles:    %5d   (will overflow IEEE doubles)' % self.num_floats_decimal,
+            '   total flts: %5d' % (self.num_floats + self.num_floats_decimal),
+            '   Num -0.0:   %5d   (negative-zero floats are usually portable)' % self.num_negative_zero_floats,
+            'Number of:',
+            '   nulls:      %5d' % self.num_nulls,
+            '   booleans:   %5d' % self.num_bools,
+            '   arrays:     %5d' % self.num_arrays,
+            '   objects:    %5d' % self.num_objects,
+            'Strings:',
+            '   number:         %5d strings' % self.num_strings,
+            '   max length:     %5d characters' % self.max_string_length,
+            '   total chars:    %5d across all strings' % self.total_string_length,
         ]
 
         if self.min_codepoint is not None:
@@ -2366,9 +2365,9 @@ class decode_statistics(object):
                 charname = unicodedata.name(chr(self.min_codepoint))
             except ValueError:
                 charname = '? UNKNOWN CHARACTER'
-            lines.append("   min codepoint: %6s  (%s)" % (cp, charname))
+            lines.append('   min codepoint: %6s  (%s)' % (cp, charname))
         else:
-            lines.append("   min codepoint: %6s" % ('n/a',))
+            lines.append('   min codepoint: %6s' % ('n/a',))
 
         if self.max_codepoint is not None:
             cp = 'U+%04X' % self.max_codepoint
@@ -2376,26 +2375,26 @@ class decode_statistics(object):
                 charname = unicodedata.name(chr(self.max_codepoint))
             except ValueError:
                 charname = '? UNKNOWN CHARACTER'
-            lines.append("   max codepoint: %6s  (%s)" % (cp, charname))
+            lines.append('   max codepoint: %6s  (%s)' % (cp, charname))
         else:
-            lines.append("   max codepoint: %6s" % ('n/a',))
+            lines.append('   max codepoint: %6s' % ('n/a',))
 
         lines.extend([
-            "Other JavaScript items:",
-            "   NaN:         %5d" % self.num_nans,
-            "   Infinite:    %5d" % self.num_infinities,
-            "   undefined:   %5d" % self.num_undefineds,
-            "   Comments:    %5d" % self.num_comments,
-            "   Identifiers: %5d" % self.num_identifiers,
-            "Max items in any array: %5d" % self.max_items_in_array,
-            "Max keys in any object: %5d" % self.max_items_in_object,
-            "Max nesting depth:      %5d" % self.max_depth,
+            'Other JavaScript items:',
+            '   NaN:         %5d' % self.num_nans,
+            '   Infinite:    %5d' % self.num_infinities,
+            '   undefined:   %5d' % self.num_undefineds,
+            '   Comments:    %5d' % self.num_comments,
+            '   Identifiers: %5d' % self.num_identifiers,
+            'Max items in any array: %5d' % self.max_items_in_array,
+            'Max keys in any object: %5d' % self.max_items_in_object,
+            'Max nesting depth:      %5d' % self.max_depth,
         ])
         if self.total_chars == 0:
-            lines.append("Unnecessary whitespace:     0 of 0 characters")
+            lines.append('Unnecessary whitespace:     0 of 0 characters')
         else:
             lines.append(
-                "Unnecessary whitespace: %5d of %d characters (%.2f%%)" \
+                'Unnecessary whitespace: %5d of %d characters (%.2f%%)' \
                 % (self.num_excess_whitespace, self.total_chars,
                    self.num_excess_whitespace * 100.0 / self.total_chars))
         if prefix:
@@ -2458,16 +2457,16 @@ class decode_state(object):
         except Exception as err:
             # Re-raise as JSONDecodeError
             e2 = sys.exc_info()
-            newerr = JSONDecodeError("Error while reading input", position=0, severity='fatal')
+            newerr = JSONDecodeError('Error while reading input', position=0, severity='fatal')
             self.push_exception(err)
             self.buf = None
         else:
             if self.buf.bom:
                 self.push_cond(self.options.bom,
-                               "JSON document was prefixed by a BOM (Byte Order Mark)",
+                               'JSON document was prefixed by a BOM (Byte Order Mark)',
                                self.buf.bom)
         if not self.buf:
-            self.push_fatal("Aborting, can not read JSON document.", position=0)
+            self.push_fatal('Aborting, can not read JSON document.', position=0)
 
     def push_exception(self, exc):
         """Add an already-built exception to the error list."""
@@ -2538,7 +2537,7 @@ class decode_state(object):
         if not self._have_warned_max_depth and self.cur_depth > self.options.warn_max_depth:
             self._have_warned_max_depth = True
             self.push_cond(self.options.non_portable,
-                           "Arrays or objects nested deeper than %d levels may not be portable" \
+                           'Arrays or objects nested deeper than %d levels may not be portable' \
                            % self.options.warn_max_depth)
 
     def update_string_stats(self, s, **kwargs):
@@ -2550,7 +2549,7 @@ class decode_state(object):
                 s) > self.options.warn_string_length and not self._have_warned_long_string:
             self._have_warned_long_string = True
             self.push_cond(self.options.non_portable,
-                           "Strings longer than %d may not be portable" % self.options.warn_string_length,
+                           'Strings longer than %d may not be portable' % self.options.warn_string_length,
                            **kwargs)
         if len(s) > 0:
             mincp = ord(min(s))
@@ -2564,7 +2563,7 @@ class decode_state(object):
             if maxcp > 0xffff and not self._have_warned_nonbmp:
                 self._have_warned_nonbmp = True
                 self.push_cond(self.options.non_portable,
-                               "Strings containing non-BMP characters (U+%04X) may not be portable" % maxcp,
+                               'Strings containing non-BMP characters (U+%04X) may not be portable' % maxcp,
                                **kwargs)
 
     def update_negzero_int_stats(self, **kwargs):
@@ -2572,7 +2571,7 @@ class decode_state(object):
         st.num_negative_zero_ints += 1
         if st.num_negative_zero_ints == 1:  # Only warn once
             self.push_cond(self.options.non_portable,
-                           "Negative zero (-0) integers are usually not portable",
+                           'Negative zero (-0) integers are usually not portable',
                            **kwargs)
 
     def update_negzero_float_stats(self, **kwargs):
@@ -2580,7 +2579,7 @@ class decode_state(object):
         st.num_negative_zero_floats += 1
         if st.num_negative_zero_floats == 1:  # Only warn once
             self.push_cond(self.options.non_portable,
-                           "Negative zero (-0.0) numbers may not be portable",
+                           'Negative zero (-0.0) numbers may not be portable',
                            **kwargs)
 
     def update_float_stats(self, float_value, **kwargs):
@@ -2631,7 +2630,7 @@ class decode_state(object):
             st.num_ints_53bit += 1
             if st.num_ints_53bit == 1:  # Only warn once
                 self.push_cond(self.options.non_portable,
-                               "Integers larger than 53-bits are not portable",
+                               'Integers larger than 53-bits are not portable',
                                **kwargs)
 
 
@@ -2734,7 +2733,7 @@ class _behaviors_metaclass(type):
                 # method value_name()
                 fnset = lambda self, _name=name, _value=v: self.set_behavior(_name, _value)
                 fnset.__name__ = v + '_' + name
-                fnset.__doc__ = 'Set behavior ' + name + ' to ' + v + "."
+                fnset.__doc__ = 'Set behavior ' + name + ' to ' + v + '.'
                 attrs[fnset.__name__] = fnset
 
             def get_value_for_behavior(self, name=name):
@@ -2782,7 +2781,7 @@ class _behaviors_metaclass(type):
             # method set_all_value()
             setfn = lambda self, _value=v: set_all(self, _value)
             setfn.__name__ = 'set_all_' + v
-            setfn.__doc__ = 'Set all behaviors to value ' + v + "."
+            setfn.__doc__ = 'Set all behaviors to value ' + v + '.'
             attrs[setfn.__name__] = setfn
             # property is_all_value
             attrs['is_all_' + v] = property(lambda self, v=v: is_all(self, v),
@@ -2806,11 +2805,11 @@ SORT_ALPHA_CI = 'alpha_ci'
 SORT_SMART = 'smart'
 
 sorting_methods = {
-    SORT_NONE: "Do not sort, resulting order may be random",
-    SORT_PRESERVE: "Preserve original order when reformatting",
-    SORT_ALPHA: "Sort strictly alphabetically",
-    SORT_ALPHA_CI: "Sort alphabetically case-insensitive",
-    SORT_SMART: "Sort alphabetically and numerically (DEFAULT)"
+    SORT_NONE: 'Do not sort, resulting order may be random',
+    SORT_PRESERVE: 'Preserve original order when reformatting',
+    SORT_ALPHA: 'Sort strictly alphabetically',
+    SORT_ALPHA_CI: 'Sort alphabetically case-insensitive',
+    SORT_SMART: 'Sort alphabetically and numerically (DEFAULT)'
 }
 sorting_method_aliases = {
     'ci': SORT_ALPHA_CI
@@ -2862,62 +2861,62 @@ class json_options(object, metaclass=_behaviors_metaclass):
     """Options to determine how strict the decoder or encoder should be."""
     _behavior_values = (ALLOW, WARN, FORBID)
     _behaviors = (
-        ("all_numeric_signs",
+        ('all_numeric_signs',
          "Numbers may be prefixed by any \'+\' and \'-\', e.g., +4, -+-+77"),
-        ("any_type_at_start",
-         "A JSON document may start with any type, not just arrays or objects"),
-        ("comments",
-         "JavaScript comments, both /*...*/ and //... styles"),
-        ("control_char_in_string",
-         "Strings may contain raw control characters without \\u-escaping"),
-        ("hex_numbers",
-         "Hexadecimal numbers, e.g., 0x1f"),
-        ("binary_numbers",
-         "Binary numbers, e.g., 0b1001"),
-        ("octal_numbers",
-         "New-style octal numbers, e.g., 0o731  (see leading-zeros for legacy octals)"),
-        ("initial_decimal_point",
-         "Floating-point numbers may start with a decimal point (no units digit)"),
-        ("extended_unicode_escapes",
-         "Extended Unicode escape sequence \\u{..} for non-BMP characters"),
-        ("js_string_escapes",
-         "All JavaScript character \\-escape sequences may be in strings"),
-        ("leading_zeros",
-         "Numbers may have extra leading zeros (see --leading-zero-radix option)"),
-        ("non_numbers",
-         "Non-numbers may be used, such as NaN or Infinity"),
-        ("nonescape_characters",
+        ('any_type_at_start',
+         'A JSON document may start with any type, not just arrays or objects'),
+        ('comments',
+         'JavaScript comments, both /*...*/ and //... styles'),
+        ('control_char_in_string',
+         'Strings may contain raw control characters without \\u-escaping'),
+        ('hex_numbers',
+         'Hexadecimal numbers, e.g., 0x1f'),
+        ('binary_numbers',
+         'Binary numbers, e.g., 0b1001'),
+        ('octal_numbers',
+         'New-style octal numbers, e.g., 0o731  (see leading-zeros for legacy octals)'),
+        ('initial_decimal_point',
+         'Floating-point numbers may start with a decimal point (no units digit)'),
+        ('extended_unicode_escapes',
+         'Extended Unicode escape sequence \\u{..} for non-BMP characters'),
+        ('js_string_escapes',
+         'All JavaScript character \\-escape sequences may be in strings'),
+        ('leading_zeros',
+         'Numbers may have extra leading zeros (see --leading-zero-radix option)'),
+        ('non_numbers',
+         'Non-numbers may be used, such as NaN or Infinity'),
+        ('nonescape_characters',
          "Unknown character \\-escape sequences stand for that character (\\Q -> 'Q')"),
-        ("identifier_keys",
-         "JavaScript identifiers are converted to strings when used as object keys"),
-        ("nonstring_keys",
-         "Value types other than strings (or identifiers) may be used as object keys"),
-        ("omitted_array_elements",
-         "Arrays may have omitted/elided elements, e.g., [1,,3] == [1,undefined,3]"),
-        ("single_quoted_strings",
+        ('identifier_keys',
+         'JavaScript identifiers are converted to strings when used as object keys'),
+        ('nonstring_keys',
+         'Value types other than strings (or identifiers) may be used as object keys'),
+        ('omitted_array_elements',
+         'Arrays may have omitted/elided elements, e.g., [1,,3] == [1,undefined,3]'),
+        ('single_quoted_strings',
          "Strings may be delimited with both double (\") and single (\') quotation marks"),
-        ("trailing_comma",
-         "A final comma may end the list of array or object members"),
-        ("trailing_decimal_point",
-         "Floating-point number may end with a decimal point and no following fractional digits"),
-        ("undefined_values",
+        ('trailing_comma',
+         'A final comma may end the list of array or object members'),
+        ('trailing_decimal_point',
+         'Floating-point number may end with a decimal point and no following fractional digits'),
+        ('undefined_values',
          "The JavaScript 'undefined' value may be used"),
-        ("format_control_chars",
+        ('format_control_chars',
          "Unicode \"format control characters\" may appear in the input"),
-        ("unicode_whitespace",
-         "Treat any Unicode whitespace character as valid whitespace"),
+        ('unicode_whitespace',
+         'Treat any Unicode whitespace character as valid whitespace'),
         # Never legal
-        ("leading_zeros",
-         "Numbers may have leading zeros"),
+        ('leading_zeros',
+         'Numbers may have leading zeros'),
         # Normally warnings
-        ("duplicate_keys",
-         "Objects may have repeated keys"),
-        ("zero_byte",
-         "Strings may contain U+0000, which may not be safe for C-based programs"),
-        ("bom",
-         "A JSON document may start with a Unicode BOM (Byte Order Mark)"),
-        ("non_portable",
-         "Anything technically valid but likely to cause data portablibity issues"),
+        ('duplicate_keys',
+         'Objects may have repeated keys'),
+        ('zero_byte',
+         'Strings may contain U+0000, which may not be safe for C-based programs'),
+        ('bom',
+         'A JSON document may start with a Unicode BOM (Byte Order Mark)'),
+        ('non_portable',
+         'Anything technically valid but likely to cause data portablibity issues'),
     )  # end behavior list
 
     def reset_to_defaults(self):
@@ -3037,7 +3036,7 @@ class json_options(object, metaclass=_behaviors_metaclass):
                     self.float_type = val
                 else:
                     raise ValueError(
-                        "Unknown option %r for argument %r to initialize %s" % (val, kw, self.__class__.__name__))
+                        'Unknown option %r for argument %r to initialize %s' % (val, kw, self.__class__.__name__))
             elif kw == 'decimal' or kw == 'decimal_context':
                 if decimal:
                     if not val or val == 'default':
@@ -3082,7 +3081,7 @@ class json_options(object, metaclass=_behaviors_metaclass):
             elif kw in self._plain_attrs:
                 setattr(self, kw, val)
             else:
-                raise ValueError("Unknown keyword argument %r to initialize %s" % (kw, self.__class__.__name__))
+                raise ValueError('Unknown keyword argument %r to initialize %s' % (kw, self.__class__.__name__))
 
     def copy(self):
         other = self.__class__()
@@ -3143,7 +3142,7 @@ class json_options(object, metaclass=_behaviors_metaclass):
         """
         n = int(num_spaces)
         if n < 0:
-            raise ValueError("indentation amount can not be negative", n)
+            raise ValueError('indentation amount can not be negative', n)
         self.indent_amount = n
         self.indent_tab_width = tab_width
         self.indent_limit = limit
@@ -3167,7 +3166,7 @@ class json_options(object, metaclass=_behaviors_metaclass):
         elif method == True:
             self._sort_keys = SORT_ALPHA
         else:
-            raise ValueError("Not a valid sorting method: %r" % method)
+            raise ValueError('Not a valid sorting method: %r' % method)
 
     @property
     def encode_enum_as(self):
@@ -3359,7 +3358,7 @@ class json_options(object, metaclass=_behaviors_metaclass):
                 elif radix == 'decimal' or radix == 'dec':
                     radix = 10
         if radix not in (8, 10):
-            raise ValueError("Radix must either be 8 (octal) or 10 (decimal)")
+            raise ValueError('Radix must either be 8 (octal) or 10 (decimal)')
         self._leading_zero_radix = radix
 
     @property
@@ -3403,7 +3402,7 @@ class json_options(object, metaclass=_behaviors_metaclass):
             self.warn_bom()
             self.allow_non_portable()
         else:
-            raise ValueError("Unknown strictness options %r" % strict)
+            raise ValueError('Unknown strictness options %r' % strict)
         self.allow_any_type_at_start()
 
 
@@ -3429,7 +3428,7 @@ class JSON(object):
     Likewise the 'allowed_behaviors' and 'forbidden_behaviors' list which
     behaviors will be allowed and which will not.  Call the allow()
     or forbid() methods to adjust these.
-    
+
     """
     _string_quotes = '"\''
 
@@ -3610,10 +3609,10 @@ class JSON(object):
         if hookname in self.all_hook_names:
             att = hookname + '_hook'
             if function != None and not callable(function):
-                raise ValueError("Hook %r must be None or a callable function" % hookname)
+                raise ValueError('Hook %r must be None or a callable function' % hookname)
             setattr(self, att, function)
         else:
-            raise ValueError("Unknown hook name %r" % hookname)
+            raise ValueError('Unknown hook name %r' % hookname)
 
     def has_hook(self, hook_name):
         if not hook_name or hook_name not in self.all_hook_names:
@@ -3630,10 +3629,10 @@ class JSON(object):
         """
         import sys
         if hook_name not in self.all_hook_names:
-            raise AttributeError("No such hook %r" % hook_name)
+            raise AttributeError('No such hook %r' % hook_name)
         hook = getattr(self, hook_name + '_hook')
         if not callable(hook):
-            raise TypeError("Hook is not callable: %r" % (hook,))
+            raise TypeError('Hook is not callable: %r' % (hook,))
         try:
             rval = hook(input_object, *args, **kwargs)
         except JSONSkipHook:
@@ -3660,10 +3659,10 @@ class JSON(object):
 
     def isws(self, c):
         """Determines if the given character is considered as white space.
-        
+
         Note that Javscript is much more permissive on what it considers
         to be whitespace than does JSON.
-        
+
         Ref. ECMAScript section 7.2
 
         """
@@ -3696,9 +3695,9 @@ class JSON(object):
         stopchar = buf.peek()
         self.skipws(state)
         if buf.at_end:
-            state.push_info("Could not recover parsing after previous error", position=buf.position)
+            state.push_info('Could not recover parsing after previous error', position=buf.position)
         else:
-            state.push_info("Recovering parsing after character %r" % stopchar, position=buf.position)
+            state.push_info('Recovering parsing after character %r' % stopchar, position=buf.position)
         return stopchar
 
     def decode_null(self, state):
@@ -3861,10 +3860,10 @@ class JSON(object):
             prefix = buf.popstr(2)
             digits = buf.popwhile(helpers.is_octal_digit)
             state.push_cond(self.options.octal_numbers,
-                            "Octal literals are not allowed in strict JSON", prefix + digits,
+                            'Octal literals are not allowed in strict JSON', prefix + digits,
                             position=start_position)
             if len(digits) == 0:
-                state.push_error("Octal number is invalid", position=start_position)
+                state.push_error('Octal number is invalid', position=start_position)
                 self.recover_parser(state)
                 return undefined
             ival = helpers.decode_octal(digits)
@@ -3876,10 +3875,10 @@ class JSON(object):
             prefix = buf.popstr(2)
             digits = buf.popwhile(helpers.is_binary_digit)
             state.push_cond(self.options.binary_numbers,
-                            "Binary literals are not allowed in strict JSON", prefix + digits,
+                            'Binary literals are not allowed in strict JSON', prefix + digits,
                             position=start_position)
             if len(digits) == 0:
-                state.push_error("Binary number is invalid", position=start_position)
+                state.push_error('Binary number is invalid', position=start_position)
                 self.recover_parser(state)
                 return undefined
             ival = helpers.decode_binary(digits)
@@ -4026,14 +4025,14 @@ class JSON(object):
 
     def encode_number(self, n, state):
         """Encodes a Python numeric type into a JSON numeric literal.
-        
+
         The special non-numeric values of float('nan'), float('inf')
         and float('-inf') are translated into appropriate JSON
         literals.
-        
+
         Note that Python complex types are not handled, as there is no
         ECMAScript equivalent type.
-        
+
         """
         if isinstance(n, complex):
             if n.imag:
@@ -4129,7 +4128,7 @@ class JSON(object):
         should_stop = False
         while not saw_final_quote and not should_stop:
             if buf.at_end:
-                state.push_error("String literal is not terminated",
+                state.push_error('String literal is not terminated',
                                  outer_position=string_position, context='String')
                 break
             c = buf.peek()
@@ -4185,12 +4184,12 @@ class JSON(object):
                     if n == 0:
                         state.push_cond(self.options.zero_byte,
                                         'Zero-byte character (U+0000) in string may not be universally safe',
-                                        "\\" + digits, position=escape_position, outer_position=string_position,
+                                        '\\' + digits, position=escape_position, outer_position=string_position,
                                         context='String')
                     else:  # n != 0
                         state.push_cond(self.options.octal_numbers,
                                         "JSON does not allow octal character escapes other than \"\\0\"",
-                                        "\\" + digits, position=escape_position, outer_position=string_position,
+                                        '\\' + digits, position=escape_position, outer_position=string_position,
                                         context='String')
                     should_stop = state.should_stop
                     if n < 128:
@@ -4211,14 +4210,14 @@ class JSON(object):
                             esc_closer = '}'
                             maxdigits = None
                             state.push_cond(self.options.extended_unicode_escapes,
-                                            "JSON strings do not allow \\u{...} escapes",
+                                            'JSON strings do not allow \\u{...} escapes',
                                             position=escape_position, outer_position=string_position,
                                             context='String')
                         else:
                             maxdigits = 4
                     else:  # c== 'x'
                         state.push_cond(self.options.js_string_escapes,
-                                        "JSON strings may not use the \\x hex-escape",
+                                        'JSON strings may not use the \\x hex-escape',
                                         position=escape_position, outer_position=string_position,
                                         context='String')
                         should_stop = state.should_stop
@@ -4518,7 +4517,7 @@ class JSON(object):
         kw = buf.pop_identifier()
 
         if not kw:
-            state.push_error("Expected an identifier", position=start_position)
+            state.push_error('Expected an identifier', position=start_position)
         elif kw == 'null':
             obj = None
             state.stats.num_nulls += 1
@@ -4536,7 +4535,7 @@ class JSON(object):
             state.stats.num_undefineds += 1
         elif kw == 'NaN' or kw == 'Infinity':
             state.push_cond(self.options.non_numbers,
-                            "%s literals are not allowed in strict JSON" % kw,
+                            '%s literals are not allowed in strict JSON' % kw,
                             kw, position=start_position)
             if self.has_hook('decode_float'):
                 try:
@@ -4568,15 +4567,15 @@ class JSON(object):
             # Convert unknown identifiers into strings
             if identifier_as_string:
                 if kw in helpers.javascript_reserved_words:
-                    state.push_warning("Identifier is a JavaScript reserved word",
+                    state.push_warning('Identifier is a JavaScript reserved word',
                                        kw, position=start_position)
                 state.push_cond(self.options.identifier_keys,
-                                "JSON does not allow identifiers to be used as strings",
+                                'JSON does not allow identifiers to be used as strings',
                                 kw, position=start_position)
                 state.stats.num_identifiers += 1
                 obj = self.decode_javascript_identifier(kw)
             else:
-                state.push_error("Unknown identifier", kw, position=start_position)
+                state.push_error('Unknown identifier', kw, position=start_position)
                 obj = undefined
                 state.stats.num_identifiers += 1
         return obj
@@ -4933,7 +4932,7 @@ class JSON(object):
             except Exception as err:  # Mainly here to catch maximum recursion depth exceeded
                 e2 = sys.exc_info()
                 raise
-                newerr = JSONDecodeError("An unexpected failure occured", severity='fatal', position=state.buf.position)
+                newerr = JSONDecodeError('An unexpected failure occured', severity='fatal', position=state.buf.position)
                 newerr.__cause__ = err
                 newerr.__traceback__ = e2[2]
                 state.push_exception(newerr)
@@ -5147,7 +5146,7 @@ class JSON(object):
             try:
                 output, nchars = cdk.encode(JSON.json_syntax_characters)
             except UnicodeError as err:
-                raise JSONEncodeError("Output encoding %s is not sufficient to encode JSON" % cdk.name)
+                raise JSONEncodeError('Output encoding %s is not sufficient to encode JSON' % cdk.name)
 
         # Do the JSON encoding!
         self._do_encode(obj, state)
@@ -5164,7 +5163,7 @@ class JSON(object):
             except UnicodeEncodeError as err:
                 # Re-raise as a JSONDecodeError
                 e2 = sys.exc_info()
-                newerr = JSONEncodeError("a Unicode encoding error occurred")
+                newerr = JSONEncodeError('a Unicode encoding error occurred')
                 # Simulate Python 3's: "raise X from Y" exception chaining
                 newerr.__cause__ = err
                 newerr.__traceback__ = e2[2]
@@ -5280,7 +5279,7 @@ class JSON(object):
         elif fmt == 'hms':
             s = str(td)
         else:
-            raise ValueError("Unknown timedelta_format %r" % fmt)
+            raise ValueError('Unknown timedelta_format %r' % fmt)
         self.encode_string(s, state)
 
     def encode_composite(self, obj, state, obj_classification=None):
@@ -5496,7 +5495,7 @@ class JSON(object):
         If a caller wishes to disable the calling of json_equivalent()
         methods, then subclass this class and override this method
         to just return None.
-        
+
         """
         if hasattr(obj, 'json_equivalent') \
                 and callable(getattr(obj, 'json_equivalent')):
@@ -5686,14 +5685,14 @@ def decode(txt, encoding=None, **kwargs):
     This will be successful if the input was encoded in any of UTF-8,
     UTF-16 (BE or LE), or UTF-32 (BE or LE), and of course plain ASCII
     works too.
-    
+
     Note though that if you know the character encoding, then you
     should convert to a unicode string yourself, or pass it the name
     of the 'encoding' to avoid the guessing made by the auto
     detection, as with
 
         python_object = demjson.decode( input_bytes, encoding='utf8' )
-    
+
     Callback hooks:
     ---------------
     You may supply callback hooks by using the hook name as the
@@ -5715,19 +5714,19 @@ def decode(txt, encoding=None, **kwargs):
 
     todel = []
     for kw, val in list(kwargs.items()):
-        if kw == "return_errors":
+        if kw == 'return_errors':
             return_errors = bool(val)
             todel.append(kw)
         elif kw == 'return_stats':
             return_stats = bool(val)
             todel.append(kw)
-        elif kw == "write_errors":
+        elif kw == 'write_errors':
             write_errors = val
             todel.append(kw)
-        elif kw == "filename_for_errors":
+        elif kw == 'filename_for_errors':
             filename_for_errors = val
             todel.append(kw)
-        elif kw == "write_stats":
+        elif kw == 'write_stats':
             write_stats = val
             todel.append(kw)
     # next keyword argument
@@ -5747,16 +5746,16 @@ def decode(txt, encoding=None, **kwargs):
         if write_errors is True:
             write_errors = sys.stderr
         for err in result.errors:
-            write_errors.write(err.pretty_description(filename=filename_for_errors) + "\n")
+            write_errors.write(err.pretty_description(filename=filename_for_errors) + '\n')
 
     if write_stats:
         import sys
         if write_stats is True:
             write_stats = sys.stderr
         if result.stats:
-            write_stats.write("%s----- Begin JSON statistics\n" % filename_for_errors)
-            write_stats.write(result.stats.pretty_description(prefix="   | "))
-            write_stats.write("%s----- End of JSON statistics\n" % filename_for_errors)
+            write_stats.write('%s----- Begin JSON statistics\n' % filename_for_errors)
+            write_stats.write(result.stats.pretty_description(prefix='   | '))
+            write_stats.write('%s----- End of JSON statistics\n' % filename_for_errors)
     return result
 
 
@@ -5778,10 +5777,10 @@ def encode_to_file(filename, obj, encoding='utf-8', overwrite=False, **kwargs):
         encoding = 'utf-8'
 
     if not isinstance(filename, str) or not filename:
-        raise TypeError("Expected a file name")
+        raise TypeError('Expected a file name')
 
     if not overwrite and os.path.exists(filename):
-        raise IOError(errno.EEXIST, "File exists: %r" % filename)
+        raise IOError(errno.EEXIST, 'File exists: %r' % filename)
 
     jsondata = encode(obj, encoding=encoding, **kwargs)
 
@@ -5813,7 +5812,7 @@ def decode_file(filename, encoding=None, **kwargs):
             finally:
                 fp.close()
     else:
-        raise TypeError("Expected a file name")
+        raise TypeError('Expected a file name')
     return decode(jsondata, encoding=encoding, **kwargs)
 
 
@@ -5959,7 +5958,7 @@ MORE INFORMATION:
         """A multi-line string containing the program usage instructions.
         """
         sorthelp = '\n'.join([
-            "          %12s - %s" % (sm, sd)
+            '          %12s - %s' % (sm, sd)
             for sm, sd in sorted(sorting_methods.items()) if sm != SORT_NONE])
         return self._jsonlint_usage % {'program_name': self.program_name,
                                        'homepage': __homepage__,
@@ -6027,7 +6026,7 @@ MORE INFORMATION:
         import sys
         verbose_fp = None
 
-        if not filename or filename == "-":
+        if not filename or filename == '-':
             pfx = '<stdin>: '
             jsondata = self.stdin.read()
             if verbose:
@@ -6071,7 +6070,7 @@ MORE INFORMATION:
         elif success == self.SUCCESS_WARNING and verbose_fp:
             verbose_fp.write('%sok, with warnings\n' % pfx)
         elif verbose_fp:
-            verbose_fp.write("%shas errors\n" % pfx)
+            verbose_fp.write('%shas errors\n' % pfx)
 
         return success
 
@@ -6099,10 +6098,10 @@ MORE INFORMATION:
         output_encoding = 'utf-8'
 
         kwoptions = {  # Will be used to initialize json_options
-            "sort_keys": SORT_SMART,
-            "strict": STRICTNESS_WARN,
-            "keep_format": True,
-            "decimal_context": 100,
+            'sort_keys': SORT_SMART,
+            'strict': STRICTNESS_WARN,
+            'keep_format': True,
+            'decimal_context': 100,
         }
 
         try:
@@ -6154,9 +6153,9 @@ the options --allow, --warn, or --forbid ; for example:
 
     %(program_name)s --allow comments,hex-numbers --forbid duplicate-keys
 
-""" % {"program_name": self.program_name})
-                self.stdout.write("The default shown is for %s mode\n\n" % kwoptions['strict'])
-                self.stdout.write('%-7s %-25s %s\n' % ("Default", "Behavior_name", "Description"))
+""" % {'program_name': self.program_name})
+                self.stdout.write('The default shown is for %s mode\n\n' % kwoptions['strict'])
+                self.stdout.write('%-7s %-25s %s\n' % ('Default', 'Behavior_name', 'Description'))
                 self.stdout.write('-' * 7 + ' ' + '-' * 25 + ' ' + '-' * 50 + '\n')
                 j = json_options(**kwoptions)
                 for behavior in sorted(j.all_behaviors):
@@ -6190,7 +6189,7 @@ the options --allow, --warn, or --forbid ; for example:
             elif opt == '--copyright':
                 self.stdout.write("%s is distributed as part of the \"demjson\" python package.\n" \
                                   % (self.program_name,))
-                self.stdout.write("See %s\n\n\n" % (__homepage__,))
+                self.stdout.write('See %s\n\n\n' % (__homepage__,))
                 self.stdout.write(__credits__)
                 return 0
             elif opt in ('-v', '--verbose'):
@@ -6228,7 +6227,7 @@ the options --allow, --warn, or --forbid ; for example:
             elif opt in ('--allow', '--warn', '--forbid'):
                 action = opt[2:]
                 if action in kwoptions:
-                    kwoptions[action] += "," + val
+                    kwoptions[action] += ',' + val
                 else:
                     kwoptions[action] = val
             elif opt in ('--keep-format',):
@@ -6245,19 +6244,19 @@ the options --allow, --warn, or --forbid ; for example:
                     try:
                         kwoptions['indent_amount'] = int(val)
                     except ValueError:
-                        self.stderr.write("Indentation amount must be a number\n")
+                        self.stderr.write('Indentation amount must be a number\n')
                         return 1
             elif opt == 'indent-tab-width':
                 try:
                     kwoptions['indent_tab_width'] = int(val)
                 except ValueError:
-                    self.stderr.write("Indentation tab width must be a number\n")
+                    self.stderr.write('Indentation tab width must be a number\n')
                     return 1
             elif opt == '--max-items-per-line':
                 try:
                     kwoptions['max_items_per_line'] = int(val)
                 except ValueError:
-                    self.stderr.write("Max items per line must be a number\n")
+                    self.stderr.write('Max items per line must be a number\n')
                     return 1
             elif opt == '--sort':
                 val = val.lower()
@@ -6273,14 +6272,14 @@ the options --allow, --warn, or --forbid ; for example:
                 try:
                     recursion_limit = int(val)
                 except ValueError:
-                    self.stderr.write("Recursion limit must be a number: %r\n" % val)
+                    self.stderr.write('Recursion limit must be a number: %r\n' % val)
                     return 1
                 else:
                     max_limit = 100000
                     old_limit = sys.getrecursionlimit()
                     if recursion_limit > max_limit:
                         self.stderr.write(
-                            "Recursion limit must be a number between %d and %d\n" % (old_limit, max_limit))
+                            'Recursion limit must be a number between %d and %d\n' % (old_limit, max_limit))
                         return 1
                     elif recursion_limit > old_limit:
                         sys.setrecursionlimit(recursion_limit)
@@ -6311,7 +6310,7 @@ the options --allow, --warn, or --forbid ; for example:
                     # previous error back to ok.
                     success = False
             except KeyboardInterrupt as err:
-                sys.stderr.write("\njsonlint interrupted!\n")
+                sys.stderr.write('\njsonlint interrupted!\n')
                 sys.exit(1)
 
         if not success:

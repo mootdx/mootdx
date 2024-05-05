@@ -32,10 +32,10 @@ httpx = "^0.25.0"
 tenacity = "^8.1.0"
 tdxpy = "^0.2.5"
 tqdm = "*"
-py-mini-racer = "^0.6.0"
 prettytable = "^3.5.0"
 click = "^8.1.3"
 typing-extensions = "^4.5.0"
+mini-racer = "^0.12.0"
 
 [tool.poetry.group.test.dependencies]
 pytest-cov = "^4.0.0"

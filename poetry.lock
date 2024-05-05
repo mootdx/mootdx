@@ -23,13 +23,13 @@ trio = ["trio (<0.22)"]
 
 [[package]]
 name = "certifi"
-version = "2023.5.7"
+version = "2024.2.2"
 description = "Python package for providing Mozilla's CA Bundle."
 optional = false
 python-versions = ">=3.6"
 files = [
-    {file = "certifi-2023.5.7-py3-none-any.whl", hash = "sha256:c6c2e98f5c7869efca1f8916fed228dd91539f9f1b444c314c06eef02980c716"},
-    {file = "certifi-2023.5.7.tar.gz", hash = "sha256:0f0d56dc5a6ad56fd4ba36484d6cc34451e1c6548c61daad8c320169f91eddc7"},
+    {file = "certifi-2024.2.2-py3-none-any.whl", hash = "sha256:dc383c07b76109f368f6106eee2b593b04a011ea4d55f652c6ca24a754d1cdd1"},
+    {file = "certifi-2024.2.2.tar.gz", hash = "sha256:0569859f95fc761b18b45ef421b1290a0f65f147e92a1e5eb3e635f9a5e4e66f"},
 ]
 
 [[package]]
@@ -238,6 +238,23 @@ files = [
 ]
 
 [[package]]
+name = "mini-racer"
+version = "0.12.0"
+description = "Minimal, modern embedded V8 for Python."
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "mini_racer-0.12.0-py3-none-macosx_10_9_x86_64.whl", hash = "sha256:74ac7e6262f0a23c55cdab31628e88b52b257533565f914b8ca28e687b817f43"},
+    {file = "mini_racer-0.12.0-py3-none-macosx_11_0_arm64.whl", hash = "sha256:9461a6eca63733947e0291e8cbb7f264305ac0a06049539c71d9efa82c8f43fe"},
+    {file = "mini_racer-0.12.0-py3-none-manylinux_2_31_aarch64.whl", hash = "sha256:d7ee4ad4a5ba279584ca36ff615586bde6e003917a612101c482fabee2479831"},
+    {file = "mini_racer-0.12.0-py3-none-manylinux_2_31_x86_64.whl", hash = "sha256:a832fd582afaee3e5a879c533bd194200396f7e29f9f5f0b5f2a8a11637a57ef"},
+    {file = "mini_racer-0.12.0-py3-none-musllinux_1_2_aarch64.whl", hash = "sha256:4c15650a591e214b03d1673f0ee0365fac20f4d8d59898f37e78a9deb981075d"},
+    {file = "mini_racer-0.12.0-py3-none-musllinux_1_2_x86_64.whl", hash = "sha256:4fd55e77bdf9f33d1ee32408a4eb8fd7d741cea9d571b18cf36bd39e3b51d9a6"},
+    {file = "mini_racer-0.12.0-py3-none-win_amd64.whl", hash = "sha256:0192a6d8b866b0ffeb1c2a92f7b2b2c11d1bc5bc40d50dc927840499b837226f"},
+    {file = "mini_racer-0.12.0.tar.gz", hash = "sha256:6e6ebd3fc51ce10990fecc721741bedfdcedc82307e2568fd722f7a976b16e9b"},
+]
+
+[[package]]
 name = "numpy"
 version = "1.24.3"
 description = "Fundamental package for array computing in Python"
@@ -364,19 +381,6 @@ wcwidth = "*"
 
 [package.extras]
 tests = ["pytest", "pytest-cov", "pytest-lazy-fixture"]
-
-[[package]]
-name = "py-mini-racer"
-version = "0.6.0"
-description = "Minimal, modern embedded V8 for Python."
-optional = false
-python-versions = "*"
-files = [
-    {file = "py_mini_racer-0.6.0-py2.py3-none-macosx_10_10_x86_64.whl", hash = "sha256:346e73bb89a2024888244d487834be24a121089ceb0641dd0200cb96c4e24b57"},
-    {file = "py_mini_racer-0.6.0-py2.py3-none-manylinux1_x86_64.whl", hash = "sha256:42896c24968481dd953eeeb11de331f6870917811961c9b26ba09071e07180e2"},
-    {file = "py_mini_racer-0.6.0-py2.py3-none-win_amd64.whl", hash = "sha256:97cab31bbf63ce462ba4cd6e978c572c916d8b15586156c7c5e0b2e42c10baab"},
-    {file = "py_mini_racer-0.6.0.tar.gz", hash = "sha256:f71e36b643d947ba698c57cd9bd2232c83ca997b0802fc2f7f79582377040c11"},
-]
 
 [[package]]
 name = "pytest"
@@ -506,20 +510,20 @@ files = [
 
 [[package]]
 name = "tqdm"
-version = "4.65.0"
+version = "4.66.4"
 description = "Fast, Extensible Progress Meter"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "tqdm-4.65.0-py3-none-any.whl", hash = "sha256:c4f53a17fe37e132815abceec022631be8ffe1b9381c2e6e30aa70edc99e9671"},
-    {file = "tqdm-4.65.0.tar.gz", hash = "sha256:1871fb68a86b8fb3b59ca4cdd3dcccbc7e6d613eeed31f4c332531977b89beb5"},
+    {file = "tqdm-4.66.4-py3-none-any.whl", hash = "sha256:b75ca56b413b030bc3f00af51fd2c1a1a5eac6a0c1cca83cbb37a5c52abce644"},
+    {file = "tqdm-4.66.4.tar.gz", hash = "sha256:e4d936c9de8727928f3be6079590e97d9abfe8d39a590be678eb5919ffc186bb"},
 ]
 
 [package.dependencies]
 colorama = {version = "*", markers = "platform_system == \"Windows\""}
 
 [package.extras]
-dev = ["py-make (>=0.1.0)", "twine", "wheel"]
+dev = ["pytest (>=6)", "pytest-cov", "pytest-timeout", "pytest-xdist"]
 notebook = ["ipywidgets (>=6)"]
 slack = ["slack-sdk"]
 telegram = ["requests"]
@@ -548,5 +552,5 @@ files = [
 
 [metadata]
 lock-version = "2.0"
-python-versions = "^3.9"
-content-hash = "ed51c88dd898f2ab140163738ced48e8fff724113a91a6bccbf04369441f8aaa"
+python-versions = "^3.8"
+content-hash = "cd5f8ea8df541786c5f30417c28d93905deafcf5023ed92a6177d6a5698d5769"
