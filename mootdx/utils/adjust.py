@@ -96,7 +96,7 @@ def to_adjust2(temp_df, symbol=None, adjust=None):
         del hfq_factor_df['date']
 
         temp_df = pd.merge(temp_df, hfq_factor_df, left_index=True, right_index=True, how='outer')
-        temp_df.fillna(method='ffill', inplace=True)
+        temp_df.ffill(inplace=True)
         temp_df = temp_df.astype(float)
         temp_df.dropna(inplace=True)
         temp_df.drop_duplicates(subset=['open', 'high', 'low', 'close', 'volume'], inplace=True)
@@ -122,7 +122,7 @@ def to_adjust2(temp_df, symbol=None, adjust=None):
         # del qfq_factor_df["date"]
 
         temp_df = pd.merge(temp_df, qfq_factor_df, left_index=True, right_index=True, how='outer')
-        temp_df.fillna(method='ffill', inplace=True)
+        temp_df.ffill(inplace=True)
 
         # temp_df = temp_df.astype(float)
 
