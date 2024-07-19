@@ -159,7 +159,7 @@
 # #         data = pd.concat([bfq_data, info.loc[bfq_data.index[0]:bfq_data.index[-1], ['category']]], axis=1)
 # #         data['if_trade'].fillna(value=0, inplace=True)
 # #
-# #         data = data.fillna(method='ffill')
+# #         data = data.ffill()
 # #         data = pd.concat([data, info.loc[bfq_data.index[0]:bfq_data.index[-1], ['fenhong', 'peigu', 'peigujia', 'songzhuangu']]], axis=1)
 # #     else:
 # #         data = pd.concat([bfq_data, info.loc[:, ['category', 'fenhong', 'peigu', 'peigujia', 'songzhuangu']]], axis=1)
