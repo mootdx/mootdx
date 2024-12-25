@@ -42,19 +42,21 @@ def get_stock_market(symbol='', string=False):
 
     market = 'sh'
 
-    if symbol.startswith(('sh', 'sz', 'SH', 'SZ')):
+    if symbol.startswith(('sh', 'sz', 'SH', 'SZ', 'bj', 'BJ')):
         market = symbol[:2].lower()
-
-    elif symbol.startswith(('50', '51', '60', '68', '90', '110', '113', '132', '204')):
+    # 51ETF基金
+    elif symbol.startswith(('50', '51', '58', '60', '68', '90', '110', '111', '113', '118', '240')):
         market = 'sh'
-
-    elif symbol.startswith(('00', '12', '13', '18', '15', '16', '18', '20', '30', '39', '115', '1318')):
+    # 15ETF  16 lof
+    elif symbol.startswith(('00', '12', '13', '18', '15', '16', '18', '20', '30', '39', '115')):
         market = 'sz'
 
-    elif symbol.startswith(('5', '6', '9', '7')):
+    # 20 跟90 都是B股 88是指数 99上证指数
+    elif symbol.startswith(('5', '6', '7', '90', '88', '98', '99')):
         market = 'sh'
 
-    elif symbol.startswith(('4', '8')):
+    # 83 87 92 都是北交所
+    elif symbol.startswith(('20', '4', '82', '83', '87', '92')):
         market = 'bj'
 
     # logger.debug(f"market => {market}")
