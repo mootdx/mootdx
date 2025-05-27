@@ -15,7 +15,7 @@ def factor_reversion(symbol: str, method: str = 'qfq', raw: pd.DataFrame = None)
         raw = raw.sort_index(ascending=True)
 
         data = pd.concat([raw, factor.loc[raw.index[0]: raw.index[-1], ['factor']]], axis=1)
-        data.factor = data.factor.fillna(method=('ffill', 'bfill')[method == 'qfq'], axis=0)
+        data.factor = data.factor.ffill() if method == 'qfq' else data.factor.bfill()
         data.factor = data.factor.fillna(1.0, axis=0)
         data.factor = data.factor.astype(float)
 
