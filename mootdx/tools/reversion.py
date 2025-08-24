@@ -11,17 +11,27 @@ def factor_reversion(symbol: str, method: str = 'qfq', raw: pd.DataFrame = None)
     factor = fq_factor(symbol, method)
 
     if not factor.empty:
+        raw.index = pd.to_datetime(raw.index)
+        factor.index = pd.to_datetime(factor.index)
+
+        # 按日期升序排列复权因子
         factor = factor.sort_index(ascending=True)
         raw = raw.sort_index(ascending=True)
+        # 获取原始数据期间的复权因子
+        # 使用最近的可用的复权因子（向后填充）
+        factor = factor.reindex(raw.index, method='ffill')
 
         data = pd.concat([raw, factor.loc[raw.index[0]: raw.index[-1], ['factor']]], axis=1)
-        data.factor = data.factor.fillna(method=('ffill', 'bfill')[method == 'qfq'], axis=0)
+        # data.factor = data.factor.fillna(method=('ffill', 'bfill')[method == 'qfq'], axis=0)
+        # data.factor = data.factor.bfill() if method == 'qfq' else data.factor.ffill()
         data.factor = data.factor.fillna(1.0, axis=0)
         data.factor = data.factor.astype(float)
-
-        for col in ['open', 'high', 'low', 'close', ]:
-            data[col] = data[col] * data['factor']
-
+        if method == 'qfq':
+            for col in ['open', 'high', 'low', 'close', ]:
+                data[col] = data[col] / data['factor']
+        elif method == 'hfq':
+            for col in ['open', 'high', 'low', 'close', ]:
+                data[col] = data[col] * data['factor']
         return data
 
     return raw
