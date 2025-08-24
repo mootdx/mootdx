@@ -11,7 +11,7 @@ def fq_factor(symbol: str, method: str, ) -> pd.DataFrame:
     symbol = symbol.replace('sh', '').replace('sz', '').replace('bj', '')
     market = get_stock_market(symbol, string=True)
     symbol = f'{market}{symbol}'
-    cache_file = get_config_path(f'caches/factor/{symbol}.plk')
+    cache_file = get_config_path(f'caches/factor/{symbol}_{method}.plk')
 
     @file_cache(filepath=cache_file, refresh_time=3600 * 24)
     def _factor(symbol: str, method: str, ) -> pd.DataFrame:
