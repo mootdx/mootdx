@@ -42,20 +42,21 @@ def get_stock_market(symbol='', string=False):
 
     market = 'sh'
 
-    if symbol.startswith(('sh', 'sz', 'SH', 'SZ')):
+    if symbol.startswith(('sh', 'sz', 'SH', 'SZ', 'bj', 'BJ')):
         market = symbol[:2].lower()
+
+    elif symbol.startswith(('43', '82', '83', '87', '88', '92')):
+        market = 'bj'
 
     elif symbol.startswith(('50', '51', '60', '68', '90', '110', '113', '132', '204')):
         market = 'sh'
 
-    elif symbol.startswith(('00', '12', '13', '18', '15', '16', '18', '20', '30', '39', '115', '1318')):
+    elif symbol.startswith(('00', '12', '13', '15', '16', '18', '20', '30', '39', '115', '1318')):
         market = 'sz'
 
-    elif symbol.startswith(('5', '6', '9', '7')):
+    elif symbol.startswith(('5', '6', '7')):
         market = 'sh'
 
-    elif symbol.startswith(('4', '8')):
-        market = 'bj'
 
     # logger.debug(f"market => {market}")
 
@@ -68,7 +69,6 @@ def get_stock_market(symbol='', string=False):
 
         if market == 'bj':
             market = MARKET_BJ
-
     # logger.debug(f"market => {market}")
 
     return market

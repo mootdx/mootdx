@@ -64,7 +64,7 @@ class ReaderBase(ABC):
             market = get_stock_market(symbol, True)
 
         # 判断前缀(市场是sh和sz重置前缀)
-        if market.lower() in ['sh', 'sz']:
+        if market.lower() in ['sh', 'sz', 'bj']:
             symbol = market + symbol.lower().replace(market, '')
 
         # 判断后缀
@@ -78,7 +78,6 @@ class ReaderBase(ABC):
         for ex_ in suffix:
             ex_ = ex_.strip('.')
             vipdoc = Path(self.tdxdir) / 'vipdoc' / market / subdir / f'{symbol}.{ex_}'
-
             if Path(vipdoc).exists():
                 return vipdoc
 
@@ -98,7 +97,6 @@ class StdReader(ReaderBase):
         symbol = Path(symbol).stem
         reader = MooTdxDailyBarReader()
         vipdoc = self.find_path(symbol=symbol, subdir='lday', suffix='day')
-
         result = reader.get_df(str(vipdoc)) if vipdoc else None
         return to_data(result, symbol=symbol, **kwargs)
 
