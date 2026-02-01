@@ -105,7 +105,7 @@ def holiday(date=None, format_=None, country=None, result=False):
         return None
 
     df = df[df['国家'] == country]
-    df = df[df.index.isin([date])]
+    df = df[df.index.isin([pd.Timestamp(date)])]
 
     if result:
         return df
