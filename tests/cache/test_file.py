@@ -1,73 +1,54 @@
-import datetime
-import unittest
-from pathlib import Path
-from unittest import mock
+from __future__ import annotations
 
-import freezegun
 import pandas as pd
 
 from mootdx.cache import file_cache
 
-NUM_SAMPLES = 10
-DUMMY_TIME = datetime.datetime(2012, 1, 1, tzinfo=datetime.timezone.utc)
 
-number_of_times_called = 0
+def test_file_cache_reuses_fresh_dataframe(tmp_path):
+    cache_file = tmp_path / "sample.pkl"
+    calls = 0
+
+    @file_cache(cache_file, refresh_time=100)
+    def sample() -> pd.DataFrame:
+        nonlocal calls
+        calls += 1
+        return pd.DataFrame({"value": [calls]})
+
+    first = sample()
+    second = sample()
+
+    pd.testing.assert_frame_equal(first, second)
+    assert calls == 1
+    assert cache_file.is_file()
 
 
-def sample_function() -> pd.DataFrame:
-    data = {
-        'int': list(range(NUM_SAMPLES)),
-        'str': [str(i) for i in range(NUM_SAMPLES)],
-        'num': [float(i) for i in range(NUM_SAMPLES)],
-    }
+def test_file_cache_refreshes_expired_dataframe(tmp_path, monkeypatch):
+    cache_file = tmp_path / "sample.pkl"
+    calls = 0
 
-    return pd.DataFrame.from_dict(data)
+    @file_cache(cache_file, refresh_time=100)
+    def sample() -> pd.DataFrame:
+        nonlocal calls
+        calls += 1
+        return pd.DataFrame({"value": [calls]})
+
+    first = sample()
+    monkeypatch.setattr("mootdx.cache.file.time.time", lambda: cache_file.stat().st_mtime + 101)
+    second = sample()
+
+    assert first.iloc[0, 0] == 1
+    assert second.iloc[0, 0] == 2
+    assert calls == 2
 
 
-class TestCacheFile(unittest.TestCase):
-    def setUp(self) -> None:
-        self.filepath = 'sample.pkl'
-        Path(self.filepath).unlink(missing_ok=True)
+def test_file_cache_recovers_from_corrupt_pickle(tmp_path):
+    cache_file = tmp_path / "sample.pkl"
+    cache_file.write_bytes(b"not a pickle")
 
-    @mock.patch('pandas.DataFrame.to_pickle')
-    def test_caches_if_not_exists(self, mock_file: mock.MagicMock) -> None:
-        wrapped_func = file_cache(self.filepath)(sample_function)
+    @file_cache(cache_file)
+    def sample() -> pd.DataFrame:
+        return pd.DataFrame({"value": [42]})
 
-        actual_df = wrapped_func()
-        expected_df = sample_function()
-
-        pd.testing.assert_frame_equal(actual_df, expected_df)
-        mock_file.assert_called_once_with(self.filepath)
-
-    @freezegun.freeze_time(DUMMY_TIME)
-    @mock.patch('os.path.getmtime', return_value=DUMMY_TIME.timestamp())
-    @mock.patch('pandas.DataFrame.to_pickle')
-    def test_does_not_cache_if_not_expired(self, mock_file: mock.MagicMock, mock_getmtime: mock.MagicMock) -> None:
-        refresh_time = 100
-
-        expected_df = sample_function()
-        with mock.patch('pandas.read_pickle', return_value=expected_df):
-            wrapped_func = file_cache(self.filepath, refresh_time=refresh_time)(sample_function)
-
-            actual_df = wrapped_func()
-
-        pd.testing.assert_frame_equal(actual_df, expected_df)
-        mock_file.assert_not_called()
-
-    @freezegun.freeze_time(DUMMY_TIME, as_kwarg='frozen_time')
-    @mock.patch('os.path.getmtime', return_value=DUMMY_TIME.timestamp())
-    @mock.patch('pandas.DataFrame.to_pickle')
-    def test_caches_if_expired(self, mock_file: mock.MagicMock, mock_getmtime: mock.MagicMock,
-                               frozen_time=None) -> None:
-        refresh_time = 100
-        expiration_time = DUMMY_TIME + datetime.timedelta(seconds=refresh_time)
-
-        expected_df = sample_function()
-
-        frozen_time.move_to(expiration_time + datetime.timedelta(seconds=10))
-        with mock.patch('pandas.read_pickle', return_value=expected_df):
-            wrapped_func = file_cache(self.filepath, refresh_time=refresh_time)(sample_function)
-            actual_df = wrapped_func()
-
-        pd.testing.assert_frame_equal(actual_df, expected_df)
-        mock_file.assert_called_once_with(self.filepath)
+    result = sample()
+    assert result.iloc[0, 0] == 42

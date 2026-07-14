@@ -1,6 +1,10 @@
 import unittest
 
+import pytest
+
 from mootdx.quotes import Quotes
+
+pytestmark = pytest.mark.network
 
 
 class TestAdjust2(unittest.TestCase):

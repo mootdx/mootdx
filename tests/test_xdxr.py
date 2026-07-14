@@ -1,8 +1,12 @@
 import unittest
 from pathlib import Path
 
+import pytest
+
 from mootdx import get_config_path
 from mootdx.utils.adjust import get_xdxr
+
+pytestmark = pytest.mark.network
 
 
 class XDXRTestCase(unittest.TestCase):

@@ -1,7 +1,5 @@
-import os
-import secrets
-import shutil
 import tempfile
+import zipfile
 from pathlib import Path
 from struct import calcsize
 from struct import unpack
@@ -100,20 +98,23 @@ class Financial(BaseFinancial):
         """
 
         filename = kwargs.get('filename')
-        downfile = str(Path(downdir) / filename)
-        filesize = kwargs.get('filesize') if kwargs.get('filesize') else 0
+        if not filename:
+            raise ValueError('filename 不能为空')
+        filesize = kwargs.get('filesize') or 0
 
         logger.debug(f'{filename}: start download...')
-
-        if not filename:
-            raise Exception('Param filename is not set')
 
         api = TdxHq_API()
         api.need_setup = False
 
         with api.connect(*self.bestip):
             content = api.get_report_file_by_size(f'tdxfin/{filename}', filesize=filesize, reporthook=report_hook)
-            download_file = downfile and open(downfile, 'wb') or tempfile.NamedTemporaryFile(delete=True)
+            if downdir is not None:
+                destination = Path(downdir)
+                destination.mkdir(parents=True, exist_ok=True)
+                download_file = (destination / filename).open('w+b')
+            else:
+                download_file = tempfile.NamedTemporaryFile(suffix=Path(filename).suffix, delete=True)
             download_file.write(content)
             download_file.seek(0)
 
@@ -133,39 +134,30 @@ class Financial(BaseFinancial):
         :return:
         """
 
-        header_pack_format = '<1hI1H3L'
-        tmpdir = tempfile.gettempdir()
-
-        if download_file.name.endswith('.zip'):
-            tmpdir_root = tempfile.gettempdir()
-            subdir_name = f'mootdx_{secrets.randbelow(1000000)}'
-
-            tmpdir = Path(tmpdir_root, subdir_name)
-            shutil.rmtree(tmpdir, ignore_errors=True)
-
-            Path(tmpdir).mkdir(parents=True)
-            shutil.unpack_archive(download_file.name, extract_dir=tmpdir)
-
-            # only one file endswith .dat should be in zip archives
-            dat_file = None
-
-            for _file in os.listdir(tmpdir):
-                if str(_file).endswith('.dat'):
-                    dat_file = open(Path(tmpdir, str(_file)), 'rb')
-
-            if dat_file is None:
-                raise Exception('no dat file found in zip archive')
-
-        elif download_file.name.endswith('.dat'):
-            dat_file = download_file
-        else:
-            return None
+        header_pack_format = '<hIH3L'
+        suffix = Path(download_file.name).suffix.lower()
+        try:
+            if suffix == '.zip':
+                with zipfile.ZipFile(download_file) as archive:
+                    members = [name for name in archive.namelist() if name.lower().endswith('.dat')]
+                    if len(members) != 1:
+                        raise ValueError(f'财务压缩包应包含一个 .dat 文件，实际为 {len(members)} 个')
+                    payload = archive.read(members[0])
+            elif suffix == '.dat':
+                download_file.seek(0)
+                payload = download_file.read()
+            else:
+                raise ValueError(f'不支持的财务文件格式: {suffix}')
+        finally:
+            download_file.close()
 
         header_size = calcsize(header_pack_format)
-        stock_item_size = calcsize('<6s1c1L')
+        stock_item_format = '<6scL'
+        stock_item_size = calcsize(stock_item_format)
+        if len(payload) < header_size:
+            raise ValueError('财务数据文件头不完整')
 
-        data_header = dat_file.read(header_size)
-        stock_header = unpack(header_pack_format, data_header)
+        stock_header = unpack(header_pack_format, payload[:header_size])
 
         max_count = stock_header[2]
 
@@ -178,22 +170,20 @@ class Financial(BaseFinancial):
         results = []
 
         for stock_idx in range(0, max_count):
-            dat_file.seek(header_size + stock_idx * calcsize('<6s1c1L'))
-            si = dat_file.read(stock_item_size)
-            stock_item = unpack('<6s1c1L', si)
-            code = stock_item[0].decode('utf-8')
-            dat_file.seek(stock_item[2])
-
-            info_data = dat_file.read(calcsize(report_pack_format))
+            item_offset = header_size + stock_idx * stock_item_size
+            si = payload[item_offset:item_offset + stock_item_size]
+            if len(si) != stock_item_size:
+                raise ValueError(f'第 {stock_idx} 条证券索引不完整')
+            stock_item = unpack(stock_item_format, si)
+            code = stock_item[0].decode('ascii', errors='strict').rstrip('\x00')
+            info_offset = stock_item[2]
+            info_size = calcsize(report_pack_format)
+            info_data = payload[info_offset:info_offset + info_size]
+            if len(info_data) != info_size:
+                raise ValueError(f'{code} 的财务记录不完整')
             cw_info = unpack(report_pack_format, info_data)
             one_record = (code, report_date) + cw_info
             results.append(one_record)
-
-        if download_file.name.endswith('.zip'):
-            dat_file.close()
-            shutil.rmtree(tmpdir, ignore_errors=True)
-
-        download_file.close()
 
         return results
 
@@ -215,15 +205,13 @@ class Financial(BaseFinancial):
         for i in range(1, len(data[0]) - 1):
             column.append('col' + str(i))
 
-        df = pd.DataFrame(data=data, columns=column)
-        df.set_index('code', inplace=True)
+        df = pd.DataFrame(data=data, columns=column).set_index('code')
 
         if header == 'zh':
-            for i, v in enumerate(df.columns):
-                if i >= len(columns):
-                    columns.append(v)
-
-            df.columns = columns
+            labels = list(columns)
+            if len(labels) < len(df.columns):
+                labels.extend(df.columns[len(labels):])
+            df.columns = labels[:len(df.columns)]
 
         logger.debug(df.shape)
 

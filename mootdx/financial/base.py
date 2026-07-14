@@ -40,12 +40,11 @@ class BaseFinancial:
 
         config.setup()
 
-        try:
-            default = config.get('SERVER').get('GP')[0][1:]
-            self.bestip = config.get('BESTIP').get('GP', default)
-        except ValueError as ex:
-            logger.error(ex)
-            self.bestip = ('106.14.95.149', 7727)
+        hosts = config.get('SERVER.GP', [])
+        if not hosts:
+            raise ValueError('没有可用的财务数据服务器配置')
+        default = tuple(hosts[0][1:3])
+        self.bestip = tuple(config.get('BESTIP.GP') or default)
 
     def fetch_and_parse(self, report_hook=None, downdir=None, chunk_size=51200, *args, **kwargs):
         """
@@ -71,7 +70,9 @@ class BaseFinancial:
         """
 
         file = self.content(report_hook=report_hook, downdir=downdir, chunk_size=chunk_size, *args, **kwargs)
-        return file.close()
+        name = getattr(file, 'name', None)
+        file.close()
+        return name
 
     def content(self, report_hook=None, downdir=None, proxies=None, chunk_size=1024 * 50, *args, **kwargs):
         raise NotImplementedError('will impl in subclass')

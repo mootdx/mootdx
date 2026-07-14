@@ -1,3 +1,4 @@
+from importlib.util import find_spec
 from pathlib import Path
 from unittest import TestCase
 
@@ -5,12 +6,8 @@ import pytest
 
 from mootdx import get_config_path
 
-try:
-    import py_mini_racer
-
-    not_mini_racer = False
-except ImportError:
-    not_mini_racer = True
+pytestmark = pytest.mark.network
+not_mini_racer = find_spec('mini_racer') is None and find_spec('py_mini_racer') is None
 
 
 @pytest.mark.skipif(not_mini_racer, reason='py_mini_racer not installed')

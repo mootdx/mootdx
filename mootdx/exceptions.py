@@ -1,33 +1,38 @@
+"""Public exception hierarchy used by mootdx."""
+
+from __future__ import annotations
+
+from typing import Any
+
+
 class MootdxException(Exception):
-    """Base notifier exception. Catch this to catch all of :mod:`notifiers` errors"""
+    """Base class for all package-specific errors."""
 
-    def __init__(self, *args, **kwargs):
-        """
-        Looks for ``provider``, ``message`` and ``data`` in kwargs
-        :param args: Exception arguments
-        :param kwargs: Exception kwargs
-        """
-        self.provider = kwargs.get('provider')
-        self.response = kwargs.get('response')
-
-        self.message = kwargs.get('message')
-        self.data = kwargs.get('data')
-
+    def __init__(
+        self,
+        message: str | None = None,
+        *,
+        provider: str | None = None,
+        response: Any = None,
+        data: Any = None,
+    ) -> None:
+        self.provider = provider
+        self.response = response
+        self.message = message or self.__class__.__name__
+        self.data = data
         super().__init__(self.message)
 
-    def __repr__(self):
-        return f'<MOOTDXError: {self.message}>'
+    def __repr__(self) -> str:
+        return f"<{self.__class__.__name__}: {self.message}>"
 
 
-class MootdxValidationException(Exception):
-    def __init__(self, *args, **kwargs):
-        pass
+class MootdxValidationException(MootdxException, ValueError):
+    """Raised when a public API argument is invalid."""
 
 
-class MootdxModuleNotFoundError(Exception):
-    def __init__(self, *args, **kwargs):
-        pass
+class MootdxModuleNotFoundError(MootdxException, ModuleNotFoundError):
+    """Raised when an optional integration dependency is unavailable."""
 
 
 class FileNeedRefresh(FileNotFoundError):
-    pass
+    """Internal signal indicating that a cached file has expired."""

@@ -1,6 +1,9 @@
-import asyncio
+"""Download and parse TDX financial archives."""
+
+from __future__ import annotations
+
 import hashlib
-from functools import partial
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 from mootdx.financial import financial
@@ -8,113 +11,72 @@ from mootdx.logger import logger
 from mootdx.utils import TqdmUpTo
 
 
-def download(downdir, filename):
-    """
-    带进度条下载函数
-    :param downdir:
-    :param filename:
-    :return:
-    """
+def _md5(path: Path, chunk_size: int = 1024 * 1024) -> str:
+    digest = hashlib.md5()
+    with path.open("rb") as stream:
+        for chunk in iter(lambda: stream.read(chunk_size), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
 
-    with TqdmUpTo(unit='B', unit_scale=True, miniters=1, ascii=True) as t:
-        financial.Financial().fetch_only(report_hook=t.update_to, filename=filename, downdir=downdir)
 
+def download(downdir: str | Path, filename: str) -> bool:
+    with TqdmUpTo(unit="B", unit_scale=True, miniters=1, ascii=True) as progress:
+        financial.Financial().fetch_only(report_hook=progress.update_to, filename=filename, downdir=downdir)
     return True
 
 
-async def fetch_file(downdir, file_obj):
-    """
-    下载文件
+def fetch_file(downdir: str | Path, file_obj: dict):
+    """Download one manifest entry unless a verified copy already exists."""
 
-    :param downdir:
-    :param file_obj: 文件对象
-    :return:
-    """
+    filepath = Path(downdir) / file_obj["filename"]
+    if filepath.is_file() and file_obj.get("hash") == _md5(filepath):
+        logger.info("文件已存在且校验通过: %s", filepath)
+        return filepath
 
-    filepath = Path(downdir) / file_obj['filename']
-
-    # 判断文件是否存在, 验证文件名和哈希值
-    if filepath.exists() and file_obj['hash'] == hashlib.md5(open(filepath, 'rb').read()).hexdigest():
-        logger.warning(f'文件已经存在: {filepath}')
-        return None
-
-    result = await asyncio.get_event_loop().run_in_executor(
-        None,
-        partial(financial.Financial().fetch_only, report_hook=None, filename=file_obj['filename'], downdir=downdir),
+    financial.Financial().fetch_only(
+        report_hook=None,
+        filename=file_obj["filename"],
+        filesize=file_obj.get("filesize", 0),
+        downdir=downdir,
     )
+    if file_obj.get("hash") and _md5(filepath) != file_obj["hash"]:
+        filepath.unlink(missing_ok=True)
+        raise OSError(f"下载文件 MD5 校验失败: {filepath.name}")
+    return filepath
 
-    return result
 
-
-class Affair(object):
+class Affair:
     @staticmethod
-    def parse(downdir='.', filename=None, **kwargs):
-        """
-        按目录解析文件
-
-        :param downdir:
-        :param filename:
-        :return:
-        """
-
+    def parse(downdir: str | Path = ".", filename: str | None = None, **kwargs):
         if not filename:
-            logger.critical('文件名不能为空!')
-            return None
+            raise ValueError("filename 不能为空")
 
         filepath = Path(downdir) / filename
-        filepath.exists() or Affair.fetch(downdir, filename)
-
-        if Path(filepath).exists():
-            return financial.FinancialReader().to_data(filepath, **kwargs)
-
-        logger.warning(f'文件不存在：{filename}')
-
-        return None
+        if not filepath.is_file():
+            Affair.fetch(downdir=downdir, filename=filename)
+        if not filepath.is_file():
+            raise FileNotFoundError(filepath)
+        return financial.FinancialReader().to_data(filepath, **kwargs)
 
     @staticmethod
-    def files():
-        """
-        财务文件列表
-
-        :return:
-        """
-
-        history = financial.FinancialList()
-        results = history.fetch_and_parse()
-
-        return results
+    def files() -> list[dict]:
+        return financial.FinancialList().fetch_and_parse() or []
 
     @staticmethod
-    def fetch(downdir: str = None, filename: str = None):  # noqa
-        """
-        财务数据下载
-
-        :param downdir: 下载目录
-        :param filename: 文件名
-        :return:
-        """
-
-        history = financial.FinancialList()
-        crawler = financial.Financial()
-        downdir = downdir or '.'  # noqa
-
-        if not Path(downdir).is_dir():
-            logger.warning('下载目录不存在, 进行创建.')
-            Path(downdir).mkdir(parents=True)
+    def fetch(downdir: str | Path | None = None, filename: str | None = None):
+        destination = Path(downdir or ".")
+        destination.mkdir(parents=True, exist_ok=True)
 
         if filename:
-            logger.debug(f'下载文件 {filename}.')
+            with TqdmUpTo(unit="B", unit_scale=True, miniters=1, ascii=True) as progress:
+                financial.Financial().fetch_only(
+                    report_hook=progress.update_to,
+                    filename=filename,
+                    downdir=destination,
+                )
+            return destination / filename
 
-            with TqdmUpTo(unit='B', unit_scale=True, miniters=1, ascii=True) as t:
-                crawler.fetch_only(report_hook=t.update_to, filename=filename, downdir=downdir)
-
-            return True
-
-        tasks = []
-        event = asyncio.get_event_loop()
-
-        for x in history.fetch_and_parse():
-            task = event.create_task(fetch_file(file_obj=x, downdir=downdir))
-            tasks.append(task)
-
-        event.run_until_complete(asyncio.wait(tasks))
+        manifest = Affair.files()
+        workers = min(8, max(1, len(manifest)))
+        with ThreadPoolExecutor(max_workers=workers, thread_name_prefix="mootdx-finance") as pool:
+            return list(pool.map(lambda item: fetch_file(destination, item), manifest))

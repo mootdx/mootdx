@@ -1,204 +1,169 @@
-import logging
+"""Price adjustment helpers."""
+
+from __future__ import annotations
 
 import pandas as pd
 
 from mootdx.utils.factor import fq_factor
 
-logger = logging.getLogger(__name__)
+_OHLC = ["open", "high", "low", "close"]
+_ACTION_COLUMNS = ["fenhong", "peigu", "peigujia", "songzhuangu"]
 
 
-def factor_reversion(symbol: str, method: str = 'qfq', raw: pd.DataFrame = None) -> pd.DataFrame:
-    factor = fq_factor(symbol, method)
-
-    if not factor.empty:
-        factor = factor.sort_index(ascending=True)
-        raw = raw.sort_index(ascending=True)
-
-        data = pd.concat([raw, factor.loc[raw.index[0]: raw.index[-1], ['factor']]], axis=1)
-        data.factor = data.factor.fillna(method=('ffill', 'bfill')[method == 'qfq'], axis=0)
-        data.factor = data.factor.fillna(1.0, axis=0)
-        data.factor = data.factor.astype(float)
-
-        for col in ['open', 'high', 'low', 'close', ]:
-            data[col] = data[col] * data['factor']
-
-        return data
-
-    return raw
+def _method(value: str) -> str:
+    normalized = str(value).lower()
+    aliases = {"01": "qfq", "before": "qfq", "02": "hfq", "after": "hfq"}
+    normalized = aliases.get(normalized, normalized)
+    if normalized not in {"qfq", "hfq"}:
+        raise ValueError("复权方式必须是 qfq/01/before 或 hfq/02/after")
+    return normalized
 
 
-def _reversion(bfq_data, xdxr_data, type_):
-    if len(xdxr_data) <= 0:
-        return bfq_data
+def factor_reversion(symbol: str, method: str = "qfq", raw: pd.DataFrame | None = None) -> pd.DataFrame:
+    """Adjust prices with a remote factor series without adding fake rows."""
 
-    """使用数据库数据进行复权"""
-    info = xdxr_data.query('category==1')
-    bfq_data = bfq_data.assign(if_trade=1)
+    method = _method(method)
+    if raw is None or raw.empty:
+        return pd.DataFrame() if raw is None else raw.copy()
 
-    if len(info) > 0:
-        # 有除权数据
-        data = pd.concat([bfq_data, info.loc[bfq_data.index[0]: bfq_data.index[-1], ['category']]], axis=1)
-        data['if_trade'].fillna(value=0, inplace=True)
+    factors = fq_factor(symbol, method).sort_index()
+    if factors.empty:
+        return raw.copy()
 
-        data = data.fillna(method='ffill')
-        data = pd.concat(
-            [data, info.loc[bfq_data.index[0]: bfq_data.index[-1], ['fenhong', 'peigu', 'peigujia', 'songzhuangu']]],
-            axis=1)
+    data = raw.sort_index().copy()
+    combined_index = factors.index.union(data.index).sort_values()
+    aligned = factors["factor"].reindex(combined_index).ffill().bfill().reindex(data.index).astype(float)
+    if method == "qfq" and aligned.iloc[-1] != 0:
+        aligned = aligned / aligned.iloc[-1]
+
+    for column in _OHLC:
+        if column in data:
+            data[column] = data[column].astype(float) * aligned
+    data["factor"] = aligned
+    return data
+
+
+def _prepare_actions(xdxr_data: pd.DataFrame | None) -> pd.DataFrame:
+    if xdxr_data is None or xdxr_data.empty:
+        return pd.DataFrame()
+    actions = xdxr_data.copy()
+    if not isinstance(actions.index, pd.DatetimeIndex):
+        if "date" in actions:
+            actions.index = pd.to_datetime(actions["date"], errors="raise")
+        elif {"year", "month", "day"}.issubset(actions.columns):
+            actions.index = pd.to_datetime(actions[["year", "month", "day"]], errors="raise")
+        else:
+            raise ValueError("除权数据缺少日期")
+    actions.index = pd.to_datetime(actions.index).normalize()
+    return actions.sort_index()
+
+
+def _reversion(bfq_data: pd.DataFrame, xdxr_data: pd.DataFrame, type_: str) -> pd.DataFrame:
+    """Adjust stock prices using TDX category-1 corporate actions."""
+
+    method = _method(type_)
+    if bfq_data is None or bfq_data.empty:
+        return pd.DataFrame() if bfq_data is None else bfq_data.copy()
+
+    raw = bfq_data.sort_index().copy()
+    actions = _prepare_actions(xdxr_data)
+    if actions.empty or "category" not in actions:
+        return raw
+    actions = actions.loc[actions["category"].eq(1)].copy()
+    if actions.empty:
+        return raw
+
+    if "volume" not in raw and "vol" in raw:
+        raw["volume"] = raw["vol"]
+    required = set(_OHLC + ["volume"])
+    missing = sorted(required.difference(raw.columns))
+    if missing:
+        raise ValueError(f"行情数据缺少字段: {', '.join(missing)}")
+
+    for column in _ACTION_COLUMNS:
+        if column not in actions:
+            actions[column] = 0.0
+    events = actions[_ACTION_COLUMNS].groupby(level=0).last()
+
+    original_index = raw.index
+    data = raw.join(events, how="outer").sort_index()
+    data[_OHLC + ["volume"]] = data[_OHLC + ["volume"]].ffill()
+    data[_ACTION_COLUMNS] = data[_ACTION_COLUMNS].fillna(0.0)
+    data["preclose"] = (
+        data["close"].shift(1) * 10
+        - data["fenhong"]
+        + data["peigu"] * data["peigujia"]
+    ) / (10 + data["peigu"] + data["songzhuangu"])
+    ratio = (data["preclose"].shift(-1) / data["close"]).fillna(1.0)
+
+    if method == "qfq":
+        data["adj"] = ratio.iloc[::-1].cumprod()
+        for column in _OHLC + ["preclose"]:
+            data[column] = data[column] * data["adj"]
+        data["volume"] = data["volume"] / data["adj"]
     else:
-        data = pd.concat([bfq_data, info.loc[:, ['category', 'fenhong', 'peigu', 'peigujia', 'songzhuangu']]], axis=1)
+        data["adj"] = ratio.cumprod()
+        for column in _OHLC + ["preclose"]:
+            data[column] = data[column] / data["adj"]
+        data["volume"] = data["volume"] * data["adj"]
 
-    # 数据补全
-    data = data.fillna(0)
+    for column in ("high_limit", "low_limit"):
+        if column in data:
+            data[column] = data[column] * data["adj"] if method == "qfq" else data[column] / data["adj"]
 
-    # 计算前日收盘
-    data['preclose'] = (data['close'].shift(1) * 10 - data['fenhong'] + data['peigu'] * data['peigujia']) / (
-        10 + data['peigu'] + data['songzhuangu'])
-
-    # 前复权
-    if type_.lower() in ['01', 'qfq']:
-        data['adj'] = (data['preclose'].shift(-1) / data['close']).fillna(1)[::-1].cumprod()
-        # ohlc 数据进行复权计算
-        for col in ['open', 'high', 'low', 'close', 'preclose']:
-            data[col] = data[col] * data['adj']
-
-    # 后复权
-    if type_.lower() in ['02', 'hfq']:
-        data['adj'] = (data['preclose'].shift(-1) / data['close']).fillna(1).cumprod()
-        for col in ['open', 'high', 'low', 'close', 'preclose']:
-            data[col] = data[col] / data['adj']
-
-    # data["volume"] = data.get("volume", data.get("vol"))
-    data['volume'] = data['volume'] / data['adj']
-    # data['volume'] = data['volume'] / data['adj'] if 'volume' in data.columns else data['vol'] / data['adj']
-
-    try:
-        # 大该是涨跌幅
-        data['high_limit'] = data['high_limit'] * data['adj']
-        data['low_limit'] = data['low_limit'] * data['adj']
-    except:
-        pass
-
-    data = data.query('if_trade==1 and open != 0')
-    data = data.drop(['fenhong', 'peigu', 'peigujia', 'songzhuangu', 'if_trade', 'category'], axis=1, errors='ignore')
-
-    return data
+    data = data.loc[data.index.isin(original_index) & data["open"].ne(0)]
+    return data.drop(columns=_ACTION_COLUMNS, errors="ignore")
 
 
-def etf_reversion(data, xdxr, adjust='01'):
-    if len(xdxr) <= 0:
-        return data
+def etf_reversion(data: pd.DataFrame, xdxr: pd.DataFrame, adjust: str = "01") -> pd.DataFrame:
+    """Adjust fund prices using TDX category-11 split factors."""
 
-    xdxr = xdxr.query('category==11')
+    method = _method(adjust)
+    actions = _prepare_actions(xdxr)
+    if data is None or data.empty or actions.empty or "category" not in actions:
+        return data.copy()
+    actions = actions.loc[actions["category"].eq(11)]
+    if actions.empty or "suogu" not in actions:
+        return data.copy()
 
-    if len(xdxr) <= 0:
-        return data
+    result = data.copy()
+    if not isinstance(result.index, pd.DatetimeIndex):
+        if {"year", "month", "day"}.issubset(result.columns):
+            result.index = pd.to_datetime(result[["year", "month", "day"]])
+        elif "datetime" in result:
+            result.index = pd.to_datetime(result["datetime"])
+        else:
+            raise ValueError("基金行情缺少日期")
 
-    data['date'] = pd.to_datetime(data[['year', 'month', 'day']], utc=False)
-
-    data = data.set_index(['date'])
-    data = pd.concat([data, xdxr.loc[data.index[0]: data.index[-1], ['suogu', 'category']]], axis=1)
-
-    if adjust.lower() in ['01', 'qfq']:
-        # 前复权向前移动一天
-        # 向前传播
-        data['suogu'] = data['suogu'].fillna(method='bfill')
-        data['suogu'] = data['suogu'].fillna(1)
-        data['suogu'] = data['suogu'].shift(-1)
-
-        for col in ['open', 'high', 'low', 'close']:
-            data[col] = data[col] / data['suogu']
-
-    if adjust.lower() in ['02', 'hfq']:
-        data['suogu'] = data['suogu'].fillna(method='ffill')
-        data['suogu'] = data['suogu'].fillna(1)
-
-        for col in ['open', 'high', 'low', 'close']:
-            data[col] = data[col] * data['suogu']
-
-    data = data.drop(['suogu', 'category'], axis=1, errors='ignore')
-    data = data.set_index(['datetime'])
-
-    return data
+    factors = actions["suogu"].reindex(actions.index.union(result.index)).sort_index()
+    factors = (factors.bfill() if method == "qfq" else factors.ffill()).reindex(result.index).fillna(1.0)
+    if method == "qfq":
+        factors = factors.shift(-1, fill_value=1.0)
+    for column in _OHLC:
+        result[column] = result[column] / factors if method == "qfq" else result[column] * factors
+    return result
 
 
-def reversion(symbol, stock_data, xdxr, type_='01'):
-    def _fetch_xdxr(collections=None):
-        """获取股票除权信息数据"""
-        columns = [
-            'category',
-            'category_meaning',
-            'date',
-            'fenhong',
-            'fenshu',
-            'liquidity_after',
-            'liquidity_before',
-            'name',
-            'peigu',
-            'peigujia',
-            'shares_after',
-            'shares_before',
-            'songzhuangu',
-            'suogu',
-            'xingquanjia',
-        ]
+def reversion(symbol: str, stock_data: pd.DataFrame, xdxr: pd.DataFrame, type_: str = "01") -> pd.DataFrame:
+    """Adjust an OHLCV frame using the supplied TDX corporate actions."""
 
-        try:
-            data = collections
-
-            if len(data) <= 0:
-                return data
-
-            if 'date' not in data.columns:
-                data['date'] = pd.to_datetime(data[['year', 'month', 'day']], utc=False)
-                data = data.set_index(['date'])
-
-            # data = data.drop(['year', 'month', 'day', ], axis=1)
-            # data = pd.DataFrame([item for item in collections.find({"code": symbol})]).drop(["_id"], axis=1)
-            # data = collections
-            # data["date"] = pd.to_datetime(data["date"], utc=False)
-            # data["date"] = pd.to_datetime(xdxr[["year", "month", "day"]], utc=False)
-            # return data.set_index(["date", "code"], drop=False)
-            return data
-        except Exception as ex:
-            logger.error(ex)
-            return pd.DataFrame(data=[], columns=columns)
-
-    # '股票 日线/分钟线 动态复权接口'
-    # if isinstance(stock_data.index, pd.MultiIndex):
-    #     symbol = stock_data.index.remove_unused_levels().levels[1][0]
-    # else:
-    #     symbol = stock_data["code"][0]
-    # symbol = ''
-    # symbol = (
-    #     stock_data.index.remove_unused_levels().levels[1][0]
-    #     if isinstance(stock_data.index, pd.MultiIndex)
-    #     else stock_data["code"][0]
-    # )
-
-    if symbol[:2] in ['15', '16', '50', '51']:
-        stock_data = etf_reversion(data=stock_data, xdxr=_fetch_xdxr(xdxr), adjust=type_)
-
-    return factor_reversion(symbol=symbol, raw=stock_data, method=type_)
-    # return _reversion(bfq_data=stock_data, xdxr_data=_fetch_xdxr(xdxr), type_=type_)
+    _method(type_)
+    if symbol.startswith(("15", "16", "50", "51")):
+        return etf_reversion(stock_data, xdxr, type_)
+    return _reversion(stock_data, xdxr, type_)
 
 
-# 算法一样
-def baoli_qfq(df, xdxr):
-    peigu = xdxr['peigu']  # 配股
-    fenhong = xdxr['fenhong']  # 分红
-    peigujia = xdxr['peigujia']  # 配股价
-    songzhuangu = xdxr['songzhuangu']  # 送转股
+def baoli_qfq(df: pd.DataFrame, xdxr: pd.DataFrame) -> pd.DataFrame:
+    """Compatibility implementation of iterative forward adjustment."""
 
-    for i in range(0, len(xdxr)):
-        fh = fenhong[i]
-        pg = peigu[i]
-        pgj = peigujia[i]
-        szg = songzhuangu[i]
-        date = xdxr.index[i]
-
-        df.loc[df.index < date, 'close'] = (df['close'][df.index < date] * 10 - fh + pg * pgj) / (10 + pg + szg)
-        df.loc[df.index < date, 'open'] = (df['open'][df.index < date] * 10 - fh + pg * pgj) / (10 + pg + szg)
-        df.loc[df.index < date, 'high'] = (df['high'][df.index < date] * 10 - fh + pg * pgj) / (10 + pg + szg)
-        df.loc[df.index < date, 'low'] = (df['low'][df.index < date] * 10 - fh + pg * pgj) / (10 + pg + szg)
-
-    return df
+    result = df.copy()
+    for _, action in _prepare_actions(xdxr).iterrows():
+        before = result.index < action.name
+        denominator = 10 + action.get("peigu", 0) + action.get("songzhuangu", 0)
+        for column in _OHLC:
+            result.loc[before, column] = (
+                result.loc[before, column] * 10
+                - action.get("fenhong", 0)
+                + action.get("peigu", 0) * action.get("peigujia", 0)
+            ) / denominator
+    return result

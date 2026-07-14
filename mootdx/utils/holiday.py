@@ -18,13 +18,20 @@ from mootdx.logger import logger
 
 JS_DECODE = (Path(__file__).parent / 'holiday.js').read_text(encoding='utf-8')
 
+# 默认请求超时（秒），避免在网络异常时无限阻塞
+DEFAULT_TIMEOUT = httpx.Timeout(10.0, connect=5.0)
+
 
 def holidays() -> pd.DataFrame:
     try:
-        from py_mini_racer import MiniRacer
+        from mini_racer import MiniRacer
     except (ImportError, ModuleNotFoundError):
-        logging.warning('!!! 缺少依赖, 请使用次命令进行安装: pip install mini_racer')
-        raise MootdxModuleNotFoundError('!!! 缺少依赖, 请使用次命令进行安装: pip install mini_racer')
+        try:
+            from py_mini_racer import MiniRacer
+        except (ImportError, ModuleNotFoundError) as exc:
+            message = '缺少可选依赖，请安装: pip install "mootdx_plus[holiday]"'
+            logging.warning(message)
+            raise MootdxModuleNotFoundError(message) from exc
 
     cache_file = get_config_path('caches/holidays.plk')
 
@@ -33,10 +40,10 @@ def holidays() -> pd.DataFrame:
     def _holidays() -> pd.DataFrame:
 
         logger.debug('调用远程接口')
-        client = httpx.Client(verify=False)
-
         url = 'https://finance.sina.com.cn/realstock/company/klc_td_sh.txt'
-        res = client.get(url)
+        with httpx.Client(timeout=DEFAULT_TIMEOUT, follow_redirects=True) as client:
+            res = client.get(url)
+            res.raise_for_status()
 
         js_code = MiniRacer()
         js_code.eval(JS_DECODE)
@@ -105,7 +112,7 @@ def holiday(date=None, format_=None, country=None, result=False):
         return None
 
     df = df[df['国家'] == country]
-    df = df[df.index.isin([date])]
+    df = df.loc[df.index == pd.Timestamp(date)]
 
     if result:
         return df
@@ -118,10 +125,12 @@ def holiday(date=None, format_=None, country=None, result=False):
 @file_cache(filepath=get_config_path('caches/holiday.plk'), refresh_time=3600 * 24)
 def _holiday():
     logger.debug('调用远程接口')
-    res = httpx.get('https://www.tdx.com.cn/url/holiday/')
+    res = httpx.get('https://www.tdx.com.cn/url/holiday/', timeout=DEFAULT_TIMEOUT)
+    res.raise_for_status()
 
-    res.encoding = 'gbk'
-    ret = re.findall(r'<textarea id="data" style="display:none;">([\s\w\W]+)</textarea>', res.text, re.M)[0].strip()
+    # httpx 的 encoding 属性在不同版本行为不一致，直接用 content.decode 更可靠
+    text = res.content.decode('gbk', errors='replace')
+    ret = re.findall(r'<textarea id="data" style="display:none;">([\s\w\W]+)</textarea>', text, re.M)[0].strip()
 
     df = pd.read_csv(StringIO(ret), sep='|')
     df = df.iloc[:, :4]

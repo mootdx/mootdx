@@ -13,6 +13,9 @@ from tenacity import wait_fixed
 from mootdx.consts import return_last_value
 from mootdx.logger import logger
 
+# 默认请求超时（秒）
+DEFAULT_TIMEOUT = httpx.Timeout(10.0, connect=5.0)
+
 
 @retry(wait=wait_fixed(2), retry_error_callback=return_last_value, stop=stop_after_attempt(5))
 def get_adjust_year(symbol=None, year=None, factor='00'):
@@ -36,7 +39,7 @@ def get_adjust_year(symbol=None, year=None, factor='00'):
         'DNT': '1',
     }
 
-    client = httpx.Client()
+    client = httpx.Client(timeout=DEFAULT_TIMEOUT)
 
     if factor == 'before':
         factor = '01'
@@ -66,10 +69,12 @@ def get_adjust_year(symbol=None, year=None, factor='00'):
         df = df.set_index('date')
 
         return df
-    except httpx.HTTPError:
+    except httpx.HTTPStatusError:
         logger.warning('请求失败，正重试...')
     except httpx.ConnectError:
         logger.warning('网络连接失败，请重试...')
+    except httpx.HTTPError:
+        logger.warning('请求异常，正重试...')
     except IndexError as e:
         logger.warning('数据解析错误，请求太频繁，请稍后重试...')
         logger.debug(e)

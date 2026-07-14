@@ -1,193 +1,149 @@
+"""Command-line interface for mootdx."""
+
+from __future__ import annotations
+
 import logging
-import os
-import warnings
 from pathlib import Path
+
+import click
+from prettytable import PrettyTable
 
 from mootdx import __version__
 from mootdx.logger import logger
-from mootdx.utils import get_config_path
-from mootdx.utils import to_file
-
-try:
-    import click
-    from prettytable import PrettyTable
-except (ImportError, ModuleNotFoundError):
-    logging.basicConfig(level=logging.WARNING)
-    warnings.warn('!!! 缺少命令行依赖, 请使用次命令进行安装: pip install "mootdx[cli]"', DeprecationWarning)
-    logging.warning('!!! 缺少命令行依赖, 请使用次命令进行安装: pip install "mootdx[cli]"')
-    exit(-1)
+from mootdx.utils import get_config_path, to_file
 
 
-@click.group()
-@click.version_option(__version__, '-V', '--version', prog_name='Mootdx', message='%(prog)s: v%(version)s')
-@click.help_option('-h', '--help')
-def entry():
-    ...
+def _enable_logging(verbose: int = 0) -> None:
+    if not any(isinstance(handler, logging.StreamHandler) for handler in logger.handlers):
+        logger.addHandler(logging.StreamHandler())
+    logger.setLevel(logging.DEBUG if verbose else logging.INFO)
 
 
-@entry.command(help='读取股票在线行情数据.')
-@click.help_option('-h', '--help')
-@click.option('-o', '--output', default=None, help='输出文件, 支持CSV, HDF5, Excel等格式.')
-@click.option('-s', '--symbol', default='600000', help='股票代码.')
-@click.option('-a', '--action', default='bars', help='操作类型 (daily: 日线, minute: 一分钟线, fzline: 五分钟线).', )
-@click.option('-m', '--market', default='std', help='证券市场, 默认 std (std: 标准股票市场, ext: 扩展市场).')
-def quotes(symbol, action, market, output):
+def _output(frame, filename: str | None) -> None:
+    if filename:
+        to_file(frame, filename)
+        click.echo(f"已写入 {Path(filename).resolve()}")
+    else:
+        click.echo(frame)
+
+
+@click.group(context_settings={"help_option_names": ["-h", "--help"]})
+@click.version_option(__version__, "-V", "--version", prog_name="mootdx")
+def entry() -> None:
+    """读取通达信本地、在线行情及财务数据。"""
+
+
+@entry.command(help="读取股票在线行情数据。")
+@click.option("-o", "--output", type=click.Path(dir_okay=False, path_type=Path))
+@click.option("-s", "--symbol", default="600000", show_default=True)
+@click.option("-a", "--action", type=click.Choice(["daily", "minute", "fzline"]), default="daily", show_default=True)
+@click.option("-m", "--market", type=click.Choice(["std", "ext"]), default="std", show_default=True)
+def quotes(symbol: str, action: str, market: str, output: Path | None) -> None:
     from mootdx.quotes import Quotes
 
-    client = Quotes.factory(market=market, multithread=True)
-
-    try:
-        action = 'bars' if 'daily' else action
-        if action == 'daily':
-            frequency = 9
-        elif action == 'minute':
-            frequency = 8
-        elif action == 'fzline':
-            frequency = 0
-        else:
-            frequency = 9
-
-        feed = getattr(client, 'bars')(symbol=symbol, frequency=frequency)
-        to_file(feed, output) if output else None
-        click.echo(feed)
-    except Exception as e:
-        raise e
+    frequency = {"daily": 9, "minute": 8, "fzline": 0}[action]
+    with Quotes.factory(market=market) as client:
+        frame = client.bars(symbol=symbol, frequency=frequency)
+    _output(frame, str(output) if output else None)
 
 
-@entry.command(help='读取股票本地行情数据.')
-@click.help_option('-h', '--help')
-@click.option('-d', '--tdxdir', default='C:/new_tdx', help='通达信数据目录.')
-@click.option('-s', '--symbol', default='600000', help='股票代码.')
-@click.option('-a', '--action', default='daily', help='操作类型 (daily: 日线, minute: 一分钟线, fzline: 五分钟线).')
-@click.option('-m', '--market', default='std', help='证券市场, 默认 std (std: 标准股票市场, ext: 扩展市场).')
-@click.option('-o', '--output', default=None, help='输出文件, 支持 CSV, HDF5, Excel 等格式.')
-def reader(symbol, action, market, tdxdir, output):
+@entry.command(help="读取股票本地行情数据。")
+@click.option(
+    "-d",
+    "--tdxdir",
+    type=click.Path(exists=True, file_okay=False, path_type=Path),
+    required=True,
+    help="通达信安装根目录或 vipdoc 目录。",
+)
+@click.option("-s", "--symbol", default="600000", show_default=True)
+@click.option("-a", "--action", type=click.Choice(["daily", "minute", "fzline"]), default="daily", show_default=True)
+@click.option("-m", "--market", type=click.Choice(["std", "ext"]), default="std", show_default=True)
+@click.option("-o", "--output", type=click.Path(dir_okay=False, path_type=Path))
+def reader(symbol: str, action: str, market: str, tdxdir: Path, output: Path | None) -> None:
     from mootdx.reader import Reader
 
     client = Reader.factory(market=market, tdxdir=tdxdir)
-
-    try:
-        feed = getattr(client, action)(symbol=symbol)
-        to_file(feed, output) if output else None
-        click.echo(feed)
-    except Exception as e:
-        raise e
+    frame = getattr(client, action)(symbol=symbol)
+    _output(frame, str(output) if output else None)
 
 
-@entry.command(help='测试行情服务器.', name='bestip')
-@click.help_option('-h', '--help')
-@click.option('-l', '--limit', default=5, help='显示最快前几个，默认 5.')
-@click.option('-v', '--verbose', count=True, help='详细模式')
-def server(limit, verbose):
+@entry.command(help="测试行情服务器。", name="bestip")
+@click.option("-l", "--limit", type=click.IntRange(min=1), default=5, show_default=True)
+@click.option("-v", "--verbose", count=True)
+def bestip_command(limit: int, verbose: int) -> None:
     from mootdx.server import bestip
 
-    if verbose:
-        ch = logging.StreamHandler()
-        ch.setLevel(logging.DEBUG)
-
-        logger.addHandler(ch)
-        logger.setLevel(logging.DEBUG)
-
+    _enable_logging(verbose)
     bestip(limit=limit, console=True, sync=False)
-
-    config = get_config_path('config.json')
-    logger.info(f'[√] 已经将最优服务器IP写入配置文件 {config}')
+    click.echo(f"最优服务器已写入 {get_config_path('config.json')}")
 
 
-@entry.command(help='财务文件下载&解析.')
-@click.help_option('-h', '--help')
-@click.option('-p', '--parse', default=None, help='要解析文件名')
-@click.option('-f', '--fetch', default=None, help='下载财务文件的文件名')
-@click.option('-a', '--downall', is_flag=True, help='下载全部文件')
-@click.option('-o', '--output', default=None, help='输出文件, 支持 CSV, HDF5, Excel, JSON 等格式.')
-@click.option('-d', '--downdir', default='output', help='下载文件目录')
-@click.option('-l', '--listfile', is_flag=True, default=False, help='显示全部文件')
-@click.option('-v', '--verbose', count=True, help='详细模式')
-def affair(parse, fetch, downdir, output, downall, verbose, listfile):
+@entry.command(help="下载或解析财务文件。")
+@click.option("-p", "--parse", "parse_name")
+@click.option("-f", "--fetch", "fetch_name")
+@click.option("-a", "--downall", is_flag=True)
+@click.option("-o", "--output", type=click.Path(dir_okay=False, path_type=Path))
+@click.option("-d", "--downdir", type=click.Path(file_okay=False, path_type=Path), default=Path("output"))
+@click.option("-l", "--listfile", is_flag=True)
+@click.option("-v", "--verbose", count=True)
+def affair(
+    parse_name: str | None,
+    fetch_name: str | None,
+    downdir: Path,
+    output: Path | None,
+    downall: bool,
+    verbose: int,
+    listfile: bool,
+) -> None:
     from mootdx.affair import Affair
 
     if verbose:
-        ch = logging.StreamHandler()
-        ch.setLevel(logging.DEBUG)
-
-        logger.addHandler(ch)
-        logger.setLevel(logging.DEBUG)
-
-    files = Affair.files()
-
+        _enable_logging(verbose)
     if listfile:
-        t = PrettyTable(['filename', 'filesize', 'hash'])
-        t.align['filename'] = 'l'
-        t.align['filesize'] = 'l'
-        t.align['hash'] = 'l'
-        t.padding_width = 0
-
-        for x in files:
-            t.add_row([x['filename'], x['filesize'], x['hash']])
-
-        click.echo(t)
+        table = PrettyTable(["filename", "filesize", "hash"])
+        for item in Affair.files():
+            table.add_row([item["filename"], item["filesize"], item["hash"]])
+        click.echo(table)
         return
 
-    # download all files
-    if downall or fetch == 'all':
-        feed = Affair.fetch(downdir=downdir)
-        return to_file(feed, output) if output else None
+    if downall or fetch_name == "all":
+        paths = Affair.fetch(downdir=downdir)
+        click.echo(f"下载完成，共 {len(paths)} 个文件")
+        return
 
-    # download file
-    if fetch:
-        return Affair.fetch(downdir=downdir, filename=fetch.strip('.zip') + '.zip')
+    if fetch_name:
+        filename = f"{Path(fetch_name).stem}.zip"
+        click.echo(Affair.fetch(downdir=downdir, filename=filename))
+        return
 
-    # parse file
-    if parse:
-        parse = parse.strip('.zip') + '.zip'
-        files = [x['filename'] for x in files]
+    if parse_name:
+        filename = f"{Path(parse_name).stem}.zip"
+        frame = Affair.parse(downdir=downdir, filename=filename)
+        _output(frame, str(output) if output else None)
+        return
 
-        if parse in files:
-            # 文件不存在，先下载
-            Path(downdir, parse).exists() or Affair.fetch(downdir=downdir, filename=parse)
-            feed = Affair.parse(downdir=downdir, filename=parse)
-            output and to_file(feed, output)
-            click.echo(feed)
-        else:
-            logger.error('没找到要解析的文件.')
+    raise click.UsageError("请指定 --listfile、--fetch、--parse 或 --downall")
 
 
-@entry.command(help='批量下载行情数据.')
-@click.help_option('-h', '--help')
-@click.option('-o', '--output', default='bundle', help='转存文件目录.')
-@click.option('-s', '--symbol', default='600000', help='股票代码. 多个用,隔开')
-@click.option('-a', '--action', default='bars', help='操作类型 (daily: 日线, minute: 一分钟线, fzline: 五分钟线).')
-@click.option('-m', '--market', default='std', help='证券市场, 默认 std (std: 标准股票市场, ext: 扩展市场).')
-@click.option('-e', '--extension', default='csv', help='转存文件的格式, 支持 CSV, HDF5, Excel, JSON 等格式.')
-def bundle(symbol, action, market, output, extension):
-    """
-    批量下载行情数据
-    :return:
-    """
+@entry.command(help="批量下载在线行情数据。")
+@click.option("-o", "--output", type=click.Path(file_okay=False, path_type=Path), default=Path("bundle"))
+@click.option("-s", "--symbol", default="600000", help="多个代码用逗号分隔。")
+@click.option("-a", "--action", type=click.Choice(["daily", "minute", "fzline"]), default="daily")
+@click.option("-m", "--market", type=click.Choice(["std", "ext"]), default="std")
+@click.option("-e", "--extension", type=click.Choice(["csv", "xlsx", "json", "h5"]), default="csv")
+def bundle(symbol: str, action: str, market: str, output: Path, extension: str) -> None:
     from mootdx.quotes import Quotes
 
-    client = Quotes.factory(market=market, multithread=True)
-    symbol = symbol.replace('，', ',').strip(',').split(',')
-
-    for code in symbol:
-        try:
-            if action == 'daily':
-                frequency = 9
-            elif action == 'minute':
-                frequency = 8
-            elif action == 'fzline':
-                frequency = 0
-            else:
-                frequency = 9
-
-            feed = getattr(client, 'bars')(symbol=code, frequency=frequency)
-            output and to_file(feed, os.path.join(output, f'{code}.{extension}'))
-            click.echo('下载完成 {}'.format(code))
-        except Exception as e:
-            raise e
-
-    click.echo(f'[√] 下载文件到 "{os.path.realpath(output)}"')
+    output.mkdir(parents=True, exist_ok=True)
+    frequency = {"daily": 9, "minute": 8, "fzline": 0}[action]
+    symbols = [code.strip() for code in symbol.replace("，", ",").split(",") if code.strip()]
+    with Quotes.factory(market=market) as client:
+        for code in symbols:
+            frame = client.bars(symbol=code, frequency=frequency)
+            to_file(frame, output / f"{code}.{extension}")
+            click.echo(f"下载完成 {code}")
+    click.echo(f"文件目录: {output.resolve()}")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     entry()

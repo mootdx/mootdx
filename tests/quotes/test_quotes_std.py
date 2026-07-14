@@ -8,6 +8,8 @@ from mootdx.exceptions import MootdxValidationException
 from mootdx.logger import logger
 from mootdx.quotes import Quotes
 
+pytestmark = pytest.mark.network
+
 
 class TestStdQuotes(unittest.TestCase):
     client = None

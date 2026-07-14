@@ -1,4 +1,2 @@
-pytest-datadir
-pytest-cov
-pytest
-freezegun
+# The test suite intentionally uses only pytest.
+pytest>=8.3,<9

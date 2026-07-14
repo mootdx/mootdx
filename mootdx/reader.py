@@ -1,203 +1,148 @@
-from abc import ABC
+"""Readers for local TongDaXin data files."""
+
+from __future__ import annotations
+
+from collections.abc import Sequence
 from pathlib import Path
 
-from tdxpy.reader import TdxExHqDailyBarReader
-from tdxpy.reader import TdxLCMinBarReader
-from tdxpy.reader import TdxMinBarReader
+import pandas as pd
+from tdxpy.reader import TdxExHqDailyBarReader, TdxLCMinBarReader, TdxMinBarReader
 
 from mootdx.contrib.compat import MooTdxDailyBarReader
-from mootdx.utils import get_stock_market
-from mootdx.utils import to_data
+from mootdx.exceptions import MootdxValidationException
+from mootdx.utils import get_stock_market, to_data
 
 
-class Reader(object):
+class Reader:
     @staticmethod
-    def factory(market='std', **kwargs):
-        """
-        Reader 工厂方法
-
-        :param market: std 标准市场, ext 扩展市场
-        :param kwargs: 可变参数
-        :return:
-        """
-
-        if market == 'ext':
+    def factory(market: str = "std", **kwargs):
+        if not isinstance(market, str):
+            raise MootdxValidationException("market 必须是 'std' 或 'ext'")
+        market = market.lower()
+        if market == "std":
+            return StdReader(**kwargs)
+        if market == "ext":
             return ExtReader(**kwargs)
+        raise MootdxValidationException("market 必须是 'std' 或 'ext'")
 
-        return StdReader(**kwargs)
 
+class ReaderBase:
+    """Base local reader accepting either a TDX root or its ``vipdoc`` path."""
 
-class ReaderBase(ABC):
-    # 默认通达信安装目录
-    tdxdir = 'C:/new_tdx'
+    def __init__(self, tdxdir: str | Path | None = None) -> None:
+        if tdxdir is None:
+            raise MootdxValidationException("tdxdir 不能为空")
 
-    def __init__(self, tdxdir=None):
-        """
-        构造函数
+        supplied = Path(tdxdir).expanduser()
+        if not supplied.is_dir():
+            raise NotADirectoryError(f"tdxdir 目录不存在: {supplied}")
 
-        :param tdxdir: 通达信安装目录
-        """
-
-        if not Path(tdxdir).is_dir():
-            raise Exception('tdxdir 目录不存在')
-
-        self.tdxdir = tdxdir
-
-    def find_path(self, symbol=None, subdir='lday', suffix=None, **kwargs):
-        """
-        自动匹配文件路径，辅助函数
-
-        :param symbol:
-        :param subdir:
-        :param suffix:
-        :return: pd.dataFrame or None
-        """
-
-        # 判断市场, 带#扩展市场
-        if '#' in symbol:
-            market = 'ds'
-        # 通达信特有的板块指数88****开头的日线数据放在 sh 文件夹下
-        elif symbol.startswith('88'):
-            market = 'sh'
+        if supplied.name.lower() == "vipdoc":
+            self.vipdoc = supplied
+            self.tdxdir = supplied.parent
         else:
-            # 判断是sh还是sz
-            market = get_stock_market(symbol, True)
+            self.tdxdir = supplied
+            self.vipdoc = supplied / "vipdoc"
 
-        # 判断前缀(市场是sh和sz重置前缀)
-        if market.lower() in ['sh', 'sz']:
-            symbol = market + symbol.lower().replace(market, '')
+        if not self.vipdoc.is_dir():
+            raise NotADirectoryError(f"vipdoc 目录不存在: {self.vipdoc}")
 
-        # 判断后缀
-        suffix = suffix if isinstance(suffix, list) else [suffix]
+    def find_path(
+        self,
+        symbol: str,
+        subdir: str = "lday",
+        suffix: str | Sequence[str] | None = None,
+        **kwargs,
+    ) -> Path | tuple[str, str, list[str]] | None:
+        if not isinstance(symbol, str) or not symbol.strip():
+            raise MootdxValidationException("symbol 不能为空")
 
-        # 调试使用
-        if kwargs.get('debug'):
-            return market, symbol, suffix
+        symbol = symbol.strip().lower()
+        if "#" in symbol:
+            market = "ds"
+        elif symbol.startswith("88"):
+            market = "sh"
+        else:
+            market = get_stock_market(symbol, string=True)
 
-        # 遍历扩展名
-        for ex_ in suffix:
-            ex_ = ex_.strip('.')
-            vipdoc = Path(self.tdxdir) / 'vipdoc' / market / subdir / f'{symbol}.{ex_}'
+        if market in {"sh", "sz", "bj"}:
+            for prefix in ("sh", "sz", "bj"):
+                if symbol.startswith(prefix):
+                    symbol = symbol[len(prefix):]
+                    break
+            symbol = f"{market}{symbol}"
 
-            if Path(vipdoc).exists():
-                return vipdoc
+        if suffix is None:
+            suffixes: list[str] = []
+        elif isinstance(suffix, str):
+            suffixes = [suffix]
+        else:
+            suffixes = list(suffix)
+        suffixes = [item.lstrip(".") for item in suffixes if item]
 
+        if kwargs.get("debug"):
+            return market, symbol, suffixes
+
+        for extension in suffixes:
+            candidate = self.vipdoc / market / subdir / f"{symbol}.{extension}"
+            if candidate.is_file():
+                return candidate
         return None
 
 
 class StdReader(ReaderBase):
-    """股票市场"""
+    """Reader for Shanghai, Shenzhen and Beijing securities."""
 
-    def daily(self, symbol=None, **kwargs):
-        """
-        获取日线数据
+    def daily(self, symbol: str, **kwargs) -> pd.DataFrame:
+        normalized = Path(symbol).stem
+        filepath = self.find_path(normalized, subdir="lday", suffix="day")
+        result = MooTdxDailyBarReader().get_df(str(filepath)) if filepath else None
+        return to_data(result, symbol=normalized, **kwargs)
 
-        :param symbol: 证券代码
-        :return: pd.dataFrame or None
-        """
-        symbol = Path(symbol).stem
-        reader = MooTdxDailyBarReader()
-        vipdoc = self.find_path(symbol=symbol, subdir='lday', suffix='day')
+    def minute(self, symbol: str, suffix: int | str = 1, **kwargs) -> pd.DataFrame:
+        normalized = Path(symbol).stem
+        is_five_minute = str(suffix) == "5"
+        subdir = "fzline" if is_five_minute else "minline"
+        extensions = ["lc5", "5"] if is_five_minute else ["lc1", "1"]
+        filepath = self.find_path(normalized, subdir=subdir, suffix=extensions)
+        if filepath is None:
+            return pd.DataFrame()
 
-        result = reader.get_df(str(vipdoc)) if vipdoc else None
-        return to_data(result, symbol=symbol, **kwargs)
+        parser = TdxLCMinBarReader() if filepath.suffix.startswith(".lc") else TdxMinBarReader()
+        return to_data(parser.get_df(str(filepath)), symbol=normalized, **kwargs)
 
-    def minute(self, symbol=None, suffix=1, **kwargs):  # noqa
-        """
-        获取1, 5分钟线
+    def fzline(self, symbol: str, **kwargs) -> pd.DataFrame:
+        return self.minute(symbol, suffix=5, **kwargs)
 
-        :param suffix: 文件前缀
-        :param symbol: 证券代码
-        :return: pd.dataFrame or None
-        """
-        symbol = Path(symbol).stem
-        subdir = 'fzline' if str(suffix) == '5' else 'minline'
-        suffix = ['lc5', '5'] if str(suffix) == '5' else ['lc1', '1']
-        symbol = self.find_path(symbol, subdir=subdir, suffix=suffix)
-
-        if symbol is not None:
-            reader = TdxMinBarReader() if 'lc' not in symbol.suffix else TdxLCMinBarReader()
-            return reader.get_df(str(symbol))
-
-        return None
-
-    def fzline(self, symbol=None):
-        """
-        分钟线数据
-
-        :param symbol: 自定义板块股票列表, 类型 list
-        :return: pd.dataFrame or Bool
-        """
-        return self.minute(symbol, suffix=5)
-
-    def block_new(self, name: str = None, symbol: list = None, group=False, **kwargs):
-        """
-        自定义板块数据操作
-
-        :param name: 自定义板块名称
-        :param symbol: 自定义板块股票列表, 类型 list
-        :param group:
-        :return: pd.dataFrame or Bool
-        """
+    def block_new(self, name: str | None = None, symbol: list[str] | None = None, group: bool = False, **kwargs):
         from mootdx.tools.customize import Customize
 
-        reader = Customize(tdxdir=self.tdxdir)
-
+        reader = Customize(tdxdir=str(self.tdxdir))
         if symbol:
             return reader.create(name=name, symbol=symbol, **kwargs)
-
         return reader.search(name=name, group=group)
 
-    def block(self, symbol='', group=False, **kwargs):
-        """
-        获取板块数据
-
-        :param symbol:  板块文件
-        :param group:   分组解析
-        :return: pd.dataFrame or None
-        """
-        # from mootdx.block import BlockParse
+    def block(self, symbol: str = "", group: bool = False, **kwargs):
         from mootdx.parse import BaseParse
 
-        return BaseParse(self.tdxdir).parse(symbol, group=group, **kwargs)
+        return BaseParse(str(self.tdxdir)).parse(symbol, group=group, **kwargs)
 
 
 class ExtReader(ReaderBase):
-    """扩展市场读取"""
+    """Reader for TDX extended-market files."""
 
-    def __init__(self, tdxdir=None):
-        super(ExtReader, self).__init__(tdxdir)
+    def __init__(self, tdxdir: str | Path | None = None) -> None:
+        super().__init__(tdxdir)
         self.reader = TdxExHqDailyBarReader()
 
-    def daily(self, symbol=None):
-        """
-        获取扩展市场日线数据
+    def daily(self, symbol: str) -> pd.DataFrame:
+        filepath = self.find_path(symbol, subdir="lday", suffix="day")
+        return to_data(self.reader.get_df(str(filepath)) if filepath else None)
 
-        :return: pd.dataFrame or None
-        """
+    def minute(self, symbol: str) -> pd.DataFrame:
+        filepath = self.find_path(symbol, subdir="minline", suffix=["lc1", "1"])
+        return to_data(self.reader.get_df(str(filepath)) if filepath else None)
 
-        vipdoc = self.find_path(symbol=symbol, subdir='lday', suffix='day')
-        return self.reader.get_df(str(vipdoc)) if vipdoc else None
-
-    def minute(self, symbol=None):
-        """
-        获取扩展市场分钟线数据
-
-        :return: pd.dataFrame or None
-        """
-
-        if not symbol:
-            return None
-
-        vipdoc = self.find_path(symbol=symbol, subdir='minline', suffix=['lc1', '1'])
-        return self.reader.get_df(str(vipdoc)) if vipdoc else None
-
-    def fzline(self, symbol=None):
-        """
-        获取日线数据
-
-        :return: pd.dataFrame or None
-        """
-
-        vipdoc = self.find_path(symbol=symbol, subdir='fzline', suffix='lc5')
-        return self.reader.get_df(str(vipdoc)) if symbol else None
+    def fzline(self, symbol: str) -> pd.DataFrame:
+        filepath = self.find_path(symbol, subdir="fzline", suffix=["lc5", "5"])
+        return to_data(self.reader.get_df(str(filepath)) if filepath else None)

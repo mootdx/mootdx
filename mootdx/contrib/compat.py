@@ -1,5 +1,6 @@
 import socket
 import threading
+from pathlib import Path
 
 from tdxpy.base_socket_client import BaseSocketClient
 from tdxpy.base_socket_client import CONNECT_TIMEOUT
@@ -27,6 +28,8 @@ class MooTdxDailyBarReader(TdxDailyBarReader):
         'SZ_INDEX',
         'SZ_FUND',
         'SZ_BOND',
+        'BJ_A_STOCK',
+        'BJ_INDEX',
     ]
 
     SECURITY_COEFFICIENT = {
@@ -41,12 +44,14 @@ class MooTdxDailyBarReader(TdxDailyBarReader):
         'SZ_INDEX': [0.01, 1.0],
         'SZ_FUND': [0.001, 0.01],
         'SZ_BOND': [0.001, 0.01],
+        'BJ_A_STOCK': [0.01, 0.01],
+        'BJ_INDEX': [0.01, 1.0],
     }
 
     def get_security_type(self, fname):
-
-        exchange = str(fname[-12:-10]).lower()
-        code_head = fname[-10:-8]
+        basename = Path(fname).stem.lower()
+        exchange = basename[:2]
+        code_head = basename[2:4]
 
         if exchange == SECURITY_EXCHANGE[0]:
             if code_head in ['00', '30']:
@@ -88,8 +93,12 @@ class MooTdxDailyBarReader(TdxDailyBarReader):
 
             return 'SH_OTHER'
 
-        logger.error('Unknown security exchange !\n')
-        raise NotImplementedError
+        if exchange == 'bj':
+            if basename[2:].startswith('899'):
+                return 'BJ_INDEX'
+            return 'BJ_A_STOCK'
+
+        raise ValueError(f'不支持的交易所文件名: {Path(fname).name}')
 
 
 class MooBaseSocketClient(BaseSocketClient):

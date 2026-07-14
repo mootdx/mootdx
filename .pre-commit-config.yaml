@@ -1,84 +1,22 @@
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.4.0
+    rev: v5.0.0
     hooks:
-      - id: trailing-whitespace  # Trim trailing whitespace
-      - id: check-merge-conflict  # Check for files that contain merge conflict strings
-      - id: check-case-conflict
-      - id: double-quote-string-fixer  # Replace double quoted strings with single quoted strings
-      - id: end-of-file-fixer  # Make sure files end in a newline and only a newline
-      - id: requirements-txt-fixer  # Sort entries in requirements.txt and remove incorrect entry for pkg-resources==0.0.0
-      - id: fix-encoding-pragma  # Remove the coding pragma: # -*- coding: utf-8 -*-
-        args: [ "--remove" ]
-      - id: mixed-line-ending  # Replace or check mixed line ending
-        args: [ "--fix=lf" ]
       - id: check-ast
-        name: Check python ast
-        description: Simply check whether the files parse as valid python.
-        entry: check-ast
-        language: python
-        types: [ python ]
+      - id: check-case-conflict
+      - id: check-merge-conflict
+      - id: check-toml
+      - id: check-yaml
+      - id: end-of-file-fixer
+      - id: mixed-line-ending
+        args: ["--fix=lf"]
+      - id: trailing-whitespace
 
-
-  - repo: https://gitee.com/ibopo/pre-commit-hooks
-    rev: v1.1.9
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.15.21
     hooks:
-      - id: forbid-crlf
-      - id: remove-crlf
-      - id: forbid-tabs
-      - id: remove-tabs
+      - id: ruff-check
+        args: ["--fix"]
+      - id: ruff-format
 
-  - repo: https://github.com/asottile/reorder_python_imports
-    rev: v3.9.0
-    hooks:
-      - id: reorder-python-imports
-
-  - repo: https://github.com/python-poetry/poetry
-    rev: '1.5.0'
-    hooks:
-      - id: poetry-export
-        args: [ "-f", "requirements.txt", "-o", "requirements.txt", "--without-hashes" ]
-
-  - repo: https://github.com/commitizen-tools/commitizen
-    rev: '3.2.2'
-    hooks:
-      - id: commitizen
-        name: commitizen check
-        entry: cz check
-        args: [ --allow-abort, --commit-msg-file ]
-        stages: [ commit-msg ]
-        language: python
-        language_version: python3
-        minimum_pre_commit_version: "1.4.3"
-
-#      - id: commitizen-branch
-#        name: commitizen check branch
-#        description: >
-#          Check all commit messages that are already on the current branch but not the
-#          default branch on the origin repository. Useful for checking messages after
-#          the fact (e.g., pre-push or in CI) without an expensive check of the entire
-#          repository history.
-#        entry: cz check
-#        args: [ --rev-range, origin/HEAD..HEAD ]
-#        always_run: true
-#        pass_filenames: false
-#        language: python
-#        language_version: python3
-#        minimum_pre_commit_version: "1.4.3"
-
-exclude: |
-  (?x)^(
-    docs\/.*|
-    .*migrations\/.*|
-    sample\/.*|
-    notebooks\/.*|
-    \.ipynb_checkpoints|
-    setup\.cfg|
-    fabfile\.py|
-    .*?proto.*|
-    .*?\.yaml|
-    .*?\.yml|
-    .*?\.dat|
-    .*?\.txt|
-    .*?\.md
-  )
+exclude: ^(docs/|mootdx/utils/demjson\.py|tests/fixtures/)

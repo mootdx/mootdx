@@ -35,6 +35,7 @@ class TestAdjust(unittest.TestCase):
         self.assertFalse(data.empty)
 
 
+@pytest.mark.network
 class TestAdjustUtil(unittest.TestCase):
     symbol = '600036'
 

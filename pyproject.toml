@@ -1,82 +1,78 @@
-[tool.poetry]
-name = "mootdx"
-version = "0.11.7"
-description = "通达信数据读取接口."
-authors = ["bopo <ibopo@126.com>"]
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mootdx_plus"
+version = "0.12.0"
+description = "通达信本地数据、行情与财务数据读取工具"
 readme = "README.md"
-license = "MIT license"
-homepage = "https://www.mootdx.com"
-repository = "https://github.com/mootdx/mootdx"
+requires-python = ">=3.12"
+license = "MIT"
+authors = [{name = "bopo", email = "ibopo@126.com"}]
+keywords = ["tongdaxin", "tdx", "finance", "market-data", "pandas"]
 classifiers = [
-    "Development Status :: 2 - Pre-Alpha",
+    "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
-    "License :: OSI Approved :: MIT License",
-    "Natural Language :: English",
-    "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.6",
-    "Programming Language :: Python :: 3.7",
-    "Programming Language :: Python :: 3.8",
-    "Programming Language :: Python :: 3.9",
-    "Programming Language :: Python :: 3.10",
-    "Programming Language :: Python :: 3.11",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Topic :: Office/Business :: Financial :: Investment",
+]
+dependencies = [
+    "click>=8.1,<9",
+    "httpx>=0.27,<1",
+    "pandas>=2.2,<4",
+    "prettytable>=3.10,<4",
+    "tdxpy>=0.2.7,<1",
+    "tenacity>=8.2,<10",
+    "tqdm>=4.66,<5",
 ]
 
+[project.optional-dependencies]
+# Kept for compatibility: CLI dependencies are now installed with the core package.
+cli = []
+holiday = ["mini-racer>=0.12,<1"]
+all = ["mini-racer>=0.12,<1"]
+test = ["pytest>=8.3,<9"]
 
-[tool.poetry.scripts]
+[project.scripts]
 mootdx = "mootdx.__main__:entry"
 
+[project.urls]
+Homepage = "https://github.com/mootdx/mootdx"
+Documentation = "https://mootdx.readthedocs.io/"
+Repository = "https://github.com/mootdx/mootdx"
+Issues = "https://github.com/mootdx/mootdx/issues"
 
-[tool.poetry.dependencies]
-python = "^3.8"
-httpx = "^0.25.0"
-tenacity = "^8.1.0"
-tdxpy = "^0.2.5"
-tqdm = "*"
-prettytable = "^3.5.0"
-click = "^8.1.3"
-typing-extensions = "^4.5.0"
-mini-racer = "^0.12.0"
-
-[tool.poetry.group.test.dependencies]
-pytest-cov = "^4.0.0"
-freezegun = "^1.2.2"
-pytest = "^7.3.1"
-
-[build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
-
+[tool.setuptools.packages.find]
+include = ["mootdx*"]
+exclude = ["tests*"]
 
 [tool.pytest.ini_options]
-testpaths = "tests"
-addopts = "-p no:warnings"
-log_cli = 0
-log_cli_level = "DEBUG"
-
-
-[tool.commitizen]
-tag_format = "v$version"
-annotated_tag = true
-changelog_file = "docs/history.md"
-changelog_incremental = true
-update_changelog_on_bump = true
-version_provider = "poetry"
-version_files = [
-    "mootdx/__init__.py:__version__",
+testpaths = ["tests"]
+addopts = "-ra --strict-markers -m 'not network and not integration'"
+markers = [
+    "network: requires live public network services",
+    "integration: exercises an external local data installation",
 ]
+asyncio_default_fixture_loop_scope = "function"
 
+[tool.ruff]
+target-version = "py312"
+line-length = 120
+extend-exclude = ["mootdx/utils/demjson.py"]
 
-[tool.poe.tasks]
-venv = "poetry install --sync"
-lock = "poetry lock --no-update"
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM"]
+ignore = ["E501"]
 
-test = "poetry run pytest"
-lint = "ruff check ./mootdx/*.py"
+[tool.coverage.run]
+branch = true
+source = ["mootdx"]
 
-dist = "poetry build -v"
-bump = "cz bump --yes -ch -cc --increment"
-
-sync = "make sync"
-pypi = "poetry publish --build --skip-existing"
-
-#{MAJOR,MINOR,PATCH}
+[tool.coverage.report]
+show_missing = true
+skip_covered = true
