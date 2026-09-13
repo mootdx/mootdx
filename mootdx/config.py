@@ -1,11 +1,6 @@
-"""
-用于管理缓存的配置数据
-使用前必须先调用 init() 。
-"""
 import copy
+import json
 from pathlib import Path
-
-import simplejson as json
 
 from mootdx.consts import EX_HOSTS
 from mootdx.consts import GP_HOSTS
@@ -34,12 +29,19 @@ def setup():
     """
     global settings
 
-    try:
-        options = json.load(open(CONF, 'r', encoding='utf-8'))
+    def load_config():
+        with open(CONF, 'r', encoding='utf-8') as f:
+            options = json.load(f)
+        # options = json.load(open(CONF, 'r', encoding='utf-8'))
         settings.update(options)
+
+    try:
+        load_config()
     except (json.JSONDecodeError, FileNotFoundError):
         logger.warning(f'未找到配置文件 {CONF}, 正在生成配置文件.')
-        bestip() and setup()
+        bestip(console=False, limit=5, sync=False)
+    finally:
+        load_config()
 
     return True if settings else False
 
@@ -56,7 +58,7 @@ def has(key, value):
     return value in settings[key]
 
 
-def set(key, value):
+def set(key, value):  # noqa
     """
     通过 key 设置某一项值
 
