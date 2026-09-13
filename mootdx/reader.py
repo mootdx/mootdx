@@ -1,16 +1,15 @@
 from abc import ABC
 from pathlib import Path
 
-from pytdx.reader import TdxExHqDailyBarReader
-from pytdx.reader import TdxLCMinBarReader
-from pytdx.reader import TdxMinBarReader
+from tdxpy.reader import TdxExHqDailyBarReader
+from tdxpy.reader import TdxLCMinBarReader
+from tdxpy.reader import TdxMinBarReader
 
-from mootdx import block
 from mootdx.contrib.compat import MooTdxDailyBarReader
 from mootdx.utils import get_stock_market
+from mootdx.utils import to_data
 
 
-# 股票市场
 class Reader(object):
     @staticmethod
     def factory(market='std', **kwargs):
@@ -29,8 +28,6 @@ class Reader(object):
 
 
 class ReaderBase(ABC):
-    """股票市场"""
-
     # 默认通达信安装目录
     tdxdir = 'C:/new_tdx'
 
@@ -59,12 +56,15 @@ class ReaderBase(ABC):
         # 判断市场, 带#扩展市场
         if '#' in symbol:
             market = 'ds'
+        # 通达信特有的板块指数88****开头的日线数据放在 sh 文件夹下
+        elif symbol.startswith('88'):
+            market = 'sh'
         else:
             # 判断是sh还是sz
             market = get_stock_market(symbol, True)
 
         # 判断前缀(市场是sh和sz重置前缀)
-        if market.lower() in ['sh', 'sz']:
+        if market.lower() in ['sh', 'sz', 'bj']:
             symbol = market + symbol.lower().replace(market, '')
 
         # 判断后缀
@@ -88,19 +88,21 @@ class ReaderBase(ABC):
 class StdReader(ReaderBase):
     """股票市场"""
 
-    def daily(self, symbol=None):
+    def daily(self, symbol=None, **kwargs):
         """
         获取日线数据
 
         :param symbol: 证券代码
         :return: pd.dataFrame or None
         """
+        symbol = Path(symbol).stem
         reader = MooTdxDailyBarReader()
         vipdoc = self.find_path(symbol=symbol, subdir='lday', suffix='day')
 
-        return reader.get_df(str(vipdoc)) if vipdoc else None
+        result = reader.get_df(str(vipdoc)) if vipdoc else None
+        return to_data(result, symbol=symbol, **kwargs)
 
-    def minute(self, symbol=None, suffix=1):
+    def minute(self, symbol=None, suffix=1, **kwargs):  # noqa
         """
         获取1, 5分钟线
 
@@ -108,12 +110,13 @@ class StdReader(ReaderBase):
         :param symbol: 证券代码
         :return: pd.dataFrame or None
         """
+        symbol = Path(symbol).stem
         subdir = 'fzline' if str(suffix) == '5' else 'minline'
         suffix = ['lc5', '5'] if str(suffix) == '5' else ['lc1', '1']
         symbol = self.find_path(symbol, subdir=subdir, suffix=suffix)
 
         if symbol is not None:
-            reader = (TdxMinBarReader() if 'lc' not in symbol.suffix else TdxLCMinBarReader())
+            reader = TdxMinBarReader() if 'lc' not in symbol.suffix else TdxLCMinBarReader()
             return reader.get_df(str(symbol))
 
         return None
@@ -136,8 +139,14 @@ class StdReader(ReaderBase):
         :param group:
         :return: pd.dataFrame or Bool
         """
+        from mootdx.tools.customize import Customize
 
-        return block.blocknew(self.tdxdir, name, symbol, group=group, **kwargs)
+        reader = Customize(tdxdir=self.tdxdir)
+
+        if symbol:
+            return reader.create(name=name, symbol=symbol, **kwargs)
+
+        return reader.search(name=name, group=group)
 
     def block(self, symbol='', group=False, **kwargs):
         """
@@ -147,8 +156,10 @@ class StdReader(ReaderBase):
         :param group:   分组解析
         :return: pd.dataFrame or None
         """
+        # from mootdx.block import BlockParse
+        from mootdx.parse import BaseParse
 
-        return block.block(self.tdxdir, symbol, group=group, **kwargs)
+        return BaseParse(self.tdxdir).parse(symbol, group=group, **kwargs)
 
 
 class ExtReader(ReaderBase):
